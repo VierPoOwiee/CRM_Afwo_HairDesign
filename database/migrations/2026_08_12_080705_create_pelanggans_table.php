@@ -10,18 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('pelanggans', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama');
-        $table->string('nomor_whatsapp')->unique(); // biasanya unik untuk identifikasi
-        $table->string('username_ig')->nullable();
-        $table->enum('jenis_kelamin', ['L', 'P'])->nullable(); // atau string biasa
-        $table->text('catatan_khusus')->nullable();
-        $table->string('alamat')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('pelanggans', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
+            $table->string('no_wa')->unique();
+            $table->string('username_instagram')->nullable();
+            $table->text('catatan_khusus')->nullable();
+            $table->string('jenis_rambut')->nullable();
+            $table->string('alamat')->nullable();
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
