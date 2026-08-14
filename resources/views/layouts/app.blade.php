@@ -10,22 +10,35 @@
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col">
     <header class="bg-white border-b border-gray-200">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-8">
-                <a href="{{ route('pelanggan.index') }}" class="text-lg font-bold tracking-tight">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+            <div class="flex min-w-0 items-center gap-3 sm:gap-8">
+                <a href="{{ route('pelanggan.index') }}" class="shrink-0 text-lg font-bold tracking-tight">
                     Afwo<span class="text-violet-600">.</span>
                 </a>
-                <nav class="hidden sm:flex items-center gap-1 text-sm">
+                <nav class="flex items-center gap-0.5 overflow-x-auto text-sm sm:gap-1">
                     <a href="{{ route('pelanggan.index') }}"
-                       class="px-3 py-2 rounded-md {{ request()->routeIs('pelanggan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('pelanggan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
                         Data Pelanggan
+                    </a>
+                    <a href="{{ route('karyawan.index') }}"
+                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('karyawan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                        Karyawan
                     </a>
                 </nav>
             </div>
-            <a href="{{ route('pelanggan.create') }}"
-               class="inline-flex items-center gap-2 rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
-                <span class="text-lg leading-none">+</span> Tambah Pelanggan
-            </a>
+            @if (request()->routeIs('karyawan.*'))
+                <a href="{{ route('karyawan.create') }}"
+                   class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
+                    <span class="text-lg leading-none">+</span>
+                    <span class="hidden sm:inline">Tambah Karyawan</span>
+                </a>
+            @else
+                <a href="{{ route('pelanggan.create') }}"
+                   class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
+                    <span class="text-lg leading-none">+</span>
+                    <span class="hidden sm:inline">Tambah Pelanggan</span>
+                </a>
+            @endif
         </div>
     </header>
 
@@ -51,7 +64,7 @@
 
     <footer class="border-t border-gray-200 bg-white">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 text-center text-xs text-gray-400">
-            Afwo Website &mdash; Data Pelanggan
+            Afwo Website
         </div>
     </footer>
 </body>
