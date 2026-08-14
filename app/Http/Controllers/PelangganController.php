@@ -30,6 +30,11 @@ class PelangganController extends Controller
         return view('pelanggans.create');
     }
 
+    public function show(Pelanggan $pelanggan)
+    {
+        return view('pelanggans.show', compact('pelanggan'));
+    }
+
     public function store(Request $request)
     {
         $data = $this->validated($request);

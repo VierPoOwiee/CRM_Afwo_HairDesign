@@ -9,6 +9,7 @@ Route::resource('pelanggan', PelangganController::class)->only([
     'index',
     'create',
     'store',
+    'show',
     'edit',
     'update',
     'destroy',

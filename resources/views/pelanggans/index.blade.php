@@ -38,7 +38,7 @@
         </div>
     @else
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div class="overflow-x-auto">
+            <div class="hidden overflow-x-auto md:block">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr class="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -74,6 +74,10 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center justify-end gap-3 text-sm">
+                                        <a href="{{ route('pelanggan.show', $p) }}"
+                                           class="font-medium text-blue-600 hover:text-blue-800">
+                                            Detail
+                                        </a>
                                         <a href="{{ route('pelanggan.edit', $p) }}"
                                            class="font-medium text-violet-600 hover:text-violet-800">
                                             Edit
@@ -92,6 +96,65 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <div class="divide-y divide-gray-100 md:hidden">
+                @foreach ($pelanggans as $p)
+                    <div class="px-4 py-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="font-medium text-gray-900">{{ $p->nama }}</p>
+                            @if ($p->catatan_khusus)
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800" title="Ada catatan khusus">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                                    Catatan
+                                </span>
+                            @endif
+                        </div>
+                        <dl class="mt-2 space-y-1 text-sm">
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-gray-500">WhatsApp</dt>
+                                <dd class="text-right text-gray-900">
+                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $p->no_wa) }}" target="_blank" class="text-green-600 hover:underline">
+                                        {{ $p->no_wa }}
+                                    </a>
+                                </dd>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-gray-500">Instagram</dt>
+                                <dd class="text-right text-gray-900">{{ $p->username_instagram ? ltrim($p->username_instagram, '@') : '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-gray-500">Jenis Kelamin</dt>
+                                <dd class="text-right text-gray-900">{{ $p->jenis_kelamin ? ($p->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-gray-500">Jenis Rambut</dt>
+                                <dd class="text-right text-gray-900">{{ $p->jenis_rambut ?? '-' }}</dd>
+                            </div>
+                            <div class="flex justify-between gap-4">
+                                <dt class="text-gray-500">Alamat</dt>
+                                <dd class="text-right text-gray-900">{{ $p->alamat ?? '-' }}</dd>
+                            </div>
+                        </dl>
+                        <div class="mt-3 flex items-center gap-4 text-sm">
+                            <a href="{{ route('pelanggan.show', $p) }}" class="font-medium text-blue-600 hover:text-blue-800">
+                                Detail
+                            </a>
+                            <a href="{{ route('pelanggan.edit', $p) }}" class="font-medium text-violet-600 hover:text-violet-800">
+                                Edit
+                            </a>
+                            <form action="{{ route('pelanggan.destroy', $p) }}" method="POST"
+                                  class="ml-auto"
+                                  onsubmit="return confirm('Hapus pelanggan &quot;{{ addslashes($p->nama) }}&quot;?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="font-medium text-red-600 hover:text-red-800">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
             @if ($pelanggans->hasPages())
