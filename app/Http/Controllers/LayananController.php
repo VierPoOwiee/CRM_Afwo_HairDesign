@@ -12,6 +12,9 @@ class LayananController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
+        $kategoriFilter = trim((string) $request->query('kategori'));
+
+        $kategoriList = ['Potong', 'Styling', 'Treatment Rambut', 'Warna Rambut', 'Treatment'];
 
         $layanans = Layanan::query()
             ->with('hargaLayanan')
@@ -19,12 +22,15 @@ class LayananController extends Controller
                 $query->where('nama_layanan', 'like', "%{$q}%")
                     ->orWhere('kategori', 'like', "%{$q}%");
             })
+            ->when($kategoriFilter !== '', function ($query) use ($kategoriFilter) {
+                $query->where('kategori', $kategoriFilter);
+            })
             ->orderBy('kategori')
             ->orderBy('nama_layanan')
             ->paginate(10)
             ->withQueryString();
 
-        return view('layanans.index', compact('layanans', 'q'));
+        return view('layanans.index', compact('layanans', 'q', 'kategoriFilter', 'kategoriList'));
     }
 
     public function create()
@@ -100,11 +106,9 @@ class LayananController extends Controller
         $data = $request->validate([
             'nama_layanan' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
-            'termasuk_potong' => ['sometimes', 'boolean'],
             'aktif' => ['sometimes', 'boolean'],
         ]);
 
-        $data['termasuk_potong'] = $request->boolean('termasuk_potong');
         $data['aktif'] = $request->boolean('aktif');
 
         return $data;

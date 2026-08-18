@@ -52,24 +52,17 @@
 
         <div>
             <label for="kategori" class="block text-sm font-medium text-gray-700">Kategori <span class="text-red-500">*</span></label>
-            <input type="text" name="kategori" id="kategori" list="kategori-options" value="{{ old('kategori', $layanan->kategori ?? '') }}" required
-                   class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
-            <datalist id="kategori-options">
+            <select name="kategori" id="kategori" required
+                    class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                <option value="">-- Pilih Kategori --</option>
                 @foreach ($kategoriOptions as $k)
-                    <option value="{{ $k }}"></option>
+                    <option value="{{ $k }}" {{ old('kategori', $layanan->kategori ?? '') === $k ? 'selected' : '' }}>{{ $k }}</option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
     </div>
 
     <div class="flex flex-wrap items-start gap-x-8 gap-y-3">
-        <label class="flex items-center gap-2 text-sm text-gray-700">
-            <input type="hidden" name="termasuk_potong" value="0">
-            <input type="checkbox" name="termasuk_potong" value="1"
-                   @checked(old('termasuk_potong', $layanan->termasuk_potong ?? false))
-                   class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500">
-            Termasuk Potong
-        </label>
         <label class="flex items-center gap-2 text-sm text-gray-700">
             <input type="hidden" name="aktif" value="0">
             <input type="checkbox" name="aktif" value="1"
@@ -77,9 +70,6 @@
                    class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500">
             Aktif
         </label>
-        <p class="w-full text-xs text-gray-500">
-            Ceklis "Termasuk Potong" untuk layanan kategori Potong &mdash; dipakai untuk exclude dari basis komisi harian staf skema persen.
-        </p>
     </div>
 
     <div>
@@ -111,7 +101,7 @@
                     <div data-row class="grid grid-cols-1 gap-3 rounded-md border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
-                            <input type="text" name="varian[]" value="{{ $row['varian'] }}" placeholder="default / S / M / L / 125rb" required class="{{ $inputClass }}">
+                            <input type="text" name="varian[]" value="{{ $row['varian'] }}" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>
@@ -141,7 +131,7 @@
                     <div data-row class="grid grid-cols-1 gap-3 rounded-md border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
-                            <input type="text" name="varian[]" placeholder="default / S / M / L / 125rb" required class="{{ $inputClass }}">
+                            <input type="text" name="varian[]" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>
@@ -175,7 +165,7 @@
             <div data-row class="grid grid-cols-1 gap-3 rounded-md border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
-                    <input type="text" name="varian[]" placeholder="default / S / M / L / 125rb" required class="{{ $inputClass }}">
+                    <input type="text" name="varian[]" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>

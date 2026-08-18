@@ -13,13 +13,29 @@
 
         <form action="{{ route('layanan.index') }}" method="GET" class="flex w-full max-w-sm items-center gap-2">
             <input type="text" name="q" value="{{ $q }}"
-                   placeholder="Cari nama layanan, kategori..."
+                   placeholder="Cari nama layanan..."
                    class="block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+            @if ($kategoriFilter !== '')
+                <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
+            @endif
             <button type="submit"
                     class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 Cari
             </button>
         </form>
+    </div>
+
+    <div class="mb-4 flex flex-wrap items-center gap-2">
+        <a href="{{ route('layanan.index', array_merge(request()->except('kategori', 'page'), $q !== '' ? ['q' => $q] : [])) }}"
+           class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+            Semua
+        </a>
+        @foreach ($kategoriList as $k)
+            <a href="{{ route('layanan.index', array_merge(request()->except('kategori', 'page'), ['kategori' => $k])) }}"
+               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $k ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                {{ $k }}
+            </a>
+        @endforeach
     </div>
 
     @if ($layanans->isEmpty())
@@ -42,9 +58,6 @@
                 <div class="flex flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                     <div class="flex items-start justify-between gap-2">
                         <p class="font-medium text-gray-900">{{ $l->nama_layanan }}</p>
-                        @if ($l->termasuk_potong)
-                            <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">Potong</span>
-                        @endif
                     </div>
 
                     <div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">

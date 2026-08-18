@@ -28,6 +28,10 @@
                        class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('layanan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
                         Layanan
                     </a>
+                    <a href="{{ route('produk.index') }}"
+                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('produk.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                        Produk
+                    </a>
                 </nav>
             </div>
             @if (request()->routeIs('karyawan.*'))
@@ -41,6 +45,12 @@
                    class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
                     <span class="text-lg leading-none">+</span>
                     <span class="hidden sm:inline">Tambah Layanan</span>
+                </a>
+            @elseif (request()->routeIs('produk.*'))
+                <a href="{{ route('produk.create') }}"
+                   class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
+                    <span class="text-lg leading-none">+</span>
+                    <span class="hidden sm:inline">Tambah Produk</span>
                 </a>
             @else
                 <a href="{{ route('pelanggan.create') }}"

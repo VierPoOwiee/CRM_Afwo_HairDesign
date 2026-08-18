@@ -15,12 +15,10 @@ class Layanan extends Model
     protected $fillable = [
         'nama_layanan',
         'kategori',
-        'termasuk_potong',
         'aktif',
     ];
 
     protected $casts = [
-        'termasuk_potong' => 'boolean',
         'aktif' => 'boolean',
     ];
 

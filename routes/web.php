@@ -3,6 +3,7 @@
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/pelanggan');
@@ -17,6 +18,16 @@ Route::resource('pelanggan', PelangganController::class)->only([
 ]);
 
 Route::resource('layanan', LayananController::class)->only([
+    'index',
+    'create',
+    'store',
+    'show',
+    'edit',
+    'update',
+    'destroy',
+]);
+
+Route::resource('produk', ProdukController::class)->only([
     'index',
     'create',
     'store',
