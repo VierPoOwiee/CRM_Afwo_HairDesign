@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('produk', function (Blueprint $table) {
             $table->id();
             $table->string('nama_produk');
-            $table->enum('merek', ['Alfaparf', 'Milbon', 'Keaune']);
+            $table->enum('merek', ['Alfaparf', 'Milbon', 'Keaune', 'Omni', 'Matrix']);
             $table->enum('kategori_produk', ['dijual', 'dipakai_layanan'])->default('dipakai_layanan');
             $table->enum('satuan', ['pcs', '/10ml']);
             $table->decimal('harga_per_satuan', 15, 2);

@@ -70,6 +70,32 @@
                    class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500">
             Aktif
         </label>
+        <label class="flex items-center gap-2 text-sm text-gray-700">
+            <input type="hidden" name="termasuk_potong" value="0">
+            <input type="checkbox" name="termasuk_potong" value="1"
+                   @checked(old('termasuk_potong', $layanan->termasuk_potong ?? false))
+                   class="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500">
+            Termasuk Potong
+            <span class="text-[11px] text-gray-400">(exclude dari basis komisi persen_omset_harian)</span>
+        </label>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Produk yang Digunakan</label>
+        <p class="mt-0.5 text-xs text-gray-500">Pilih produk (merk) apa saja yang bisa dipakai untuk layanan ini. Bisa lebih dari satu.</p>
+        @php
+            $selectedProdukIds = old('produk_ids', isset($layanan) ? $layanan->produk->pluck('id')->toArray() : []);
+        @endphp
+        <select name="produk_ids[]" multiple
+                class="mt-2 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500"
+                style="min-height: 120px;">
+            @foreach ($produkList as $p)
+                <option value="{{ $p->id }}" {{ in_array($p->id, $selectedProdukIds) ? 'selected' : '' }}>
+                    {{ $p->merek }} — {{ $p->nama_produk }} ({{ $p->labelHarga() }})
+                </option>
+            @endforeach
+        </select>
+        <p class="mt-1 text-[11px] text-gray-400">Tahan Ctrl/Cmd untuk memilih lebih dari satu. Kosongkan jika layanan ini tidak menggunakan produk.</p>
     </div>
 
     <div>

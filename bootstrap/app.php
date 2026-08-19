@@ -10,6 +10,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withSchedule(function ($schedule): void {
+        $schedule->command('komisi:hitung-harian')->dailyAt('23:50');
+    })
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })

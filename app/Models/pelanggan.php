@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pelanggan extends Model
 {
@@ -20,4 +21,9 @@ class Pelanggan extends Model
         'jenis_rambut',
         'alamat',
     ];
+
+    public function transaksiKunjungan(): HasMany
+    {
+        return $this->hasMany(TransaksiKunjungan::class, 'id_pelanggan');
+    }
 }

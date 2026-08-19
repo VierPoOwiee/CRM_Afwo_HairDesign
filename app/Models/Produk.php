@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Produk extends Model
 {
@@ -28,6 +29,11 @@ class Produk extends Model
         'stok' => 'integer',
         'aktif' => 'boolean',
     ];
+
+    public function layanan(): BelongsToMany
+    {
+        return $this->belongsToMany(Layanan::class, 'layanan_produk', 'id_produk', 'id_layanan');
+    }
 
     public function labelKategori(): string
     {

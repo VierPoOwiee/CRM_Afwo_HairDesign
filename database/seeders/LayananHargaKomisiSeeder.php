@@ -20,10 +20,11 @@ class LayananHargaKomisiSeeder extends Seeder
     public function run(): void
     {
         // helper kecil biar penulisan lebih ringkas
-        $buat = function (string $nama, string $kategori, array $varianList) {
+        $buat = function (string $nama, string $kategori, array $varianList, bool $termasukPotong = false) {
             $layanan = Layanan::create([
                 'nama_layanan' => $nama,
                 'kategori' => $kategori,
+                'termasuk_potong' => $termasukPotong,
             ]);
 
             foreach ($varianList as $v) {
@@ -50,16 +51,16 @@ class LayananHargaKomisiSeeder extends Seeder
         // ===================== POTONG (excluded dari basis komisi Ari) =====================
         $buat('Gunting Wanita', 'Potong', [
             ['varian' => 'default', 'harga_min' => 200000],
-        ]);
+        ], true);
         $buat('Gunting Pria', 'Potong', [
             ['varian' => 'default', 'harga_min' => 150000],
-        ]);
+        ], true);
         $buat('Gunting Anak', 'Potong', [
             ['varian' => 'default', 'harga_min' => 150000],
-        ]);
+        ], true);
         $buat('Potong Poni', 'Potong', [
             ['varian' => 'default', 'harga_min' => 75000],
-        ]);
+        ], true);
 
         // ===================== STYLING (KOMISI DIKONFIRMASI) =====================
         $buat('Cuci Catok / Styling + Blow', 'Styling', [

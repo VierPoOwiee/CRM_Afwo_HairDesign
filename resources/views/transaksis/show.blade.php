@@ -1,0 +1,244 @@
+@extends('layouts.app')
+
+@section('title', 'Detail Transaksi '.$transaksi->no_struk)
+
+@section('content')
+    <div class="flex flex-wrap items-center gap-4">
+        <a href="{{ route('transaksi.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Detail Transaksi</h1>
+            <p class="mt-1 text-sm text-gray-500">{{ $transaksi->no_struk }}</p>
+        </div>
+        <div class="ml-auto flex items-center gap-4 text-sm">
+            @if ($transaksi->status === 'selesai')
+                <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">Selesai</span>
+            @else
+                <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Batal</span>
+            @endif
+            <button onclick="window.print()" class="font-medium text-gray-600 hover:text-gray-800">
+                🖨️ Cetak Struk
+            </button>
+            @if ($transaksi->status === 'selesai')
+                <form action="{{ route('transaksi.cancel', $transaksi) }}" method="POST"
+                      onsubmit="return confirm('Batalkan transaksi ini? Stok produk akan dikembalikan dan komisi dihapus.')">
+                    @csrf
+                    @method('PUT')
+                    <button type="submit" class="font-medium text-orange-600 hover:text-orange-800">Batal</button>
+                </form>
+            @endif
+            <form action="{{ route('transaksi.destroy', $transaksi) }}" method="POST"
+                  onsubmit="return confirm('Hapus transaksi &quot;{{ addslashes($transaksi->no_struk) }}&quot;? Stok produk akan dikembalikan.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="font-medium text-red-600 hover:text-red-800">Hapus</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="lg:col-span-2 space-y-6">
+            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 class="mb-4 text-base font-semibold text-gray-900">Informasi Transaksi</h2>
+                <dl class="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <dt class="text-gray-500">Pelanggan</dt>
+                        <dd class="mt-0.5 font-medium text-gray-900">{{ $transaksi->pelanggan->nama ?? '-' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Waktu Kunjungan</dt>
+                        <dd class="mt-0.5 text-gray-900">{{ $transaksi->waktu_kunjungan->format('d M Y, H:i') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Jenis Pengerjaan</dt>
+                        <dd class="mt-0.5 text-gray-900">{{ ucfirst($transaksi->jenis_pengerjaan) }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-500">Metode Pembayaran</dt>
+                        <dd class="mt-0.5 text-gray-900">{{ $transaksi->labelMetode() }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-base font-semibold text-gray-900">Item Transaksi</h2>
+                </div>
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                        <tr>
+                            <th class="px-4 py-3">#</th>
+                            <th class="px-4 py-3">Layanan</th>
+                            <th class="px-4 py-3">Produk Digunakan</th>
+                            <th class="px-4 py-3">Staf</th>
+                            <th class="px-4 py-3 text-right">Harga</th>
+                            <th class="px-4 py-3 text-right">Qty</th>
+                            <th class="px-4 py-3 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach ($transaksi->details as $i => $d)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-gray-500">{{ $i + 1 }}</td>
+                                <td class="px-4 py-3">
+                                    @if ($d->tipe_item === 'layanan')
+                                        <div class="font-medium text-gray-900">
+                                            {{ $d->layanan->nama_layanan ?? '-' }}
+                                            @if ($d->varian_dipilih)
+                                                <span class="text-xs text-gray-400">({{ $d->varian_dipilih }})</span>
+                                            @endif
+                                        </div>
+                                        @if ($d->gram_pemakaian_tambahan > 0)
+                                            <div class="text-xs text-gray-500">Tambahan: {{ $d->gram_pemakaian_tambahan }}gr</div>
+                                        @endif
+                                        @if ($d->ketebalan_rambut)
+                                            <div class="text-xs text-gray-400">Rambut: {{ $d->ketebalan_rambut }}</div>
+                                        @endif
+                                    @else
+                                        <div class="font-medium text-gray-900">
+                                            <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">Produk</span>
+                                            {{ $d->produk->nama_produk ?? '-' }}
+                                        </div>
+                                    @endif
+                                    @if ($d->catatan)
+                                        <div class="mt-1 text-xs text-gray-400 italic">{{ $d->catatan }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3">
+                                    @if ($d->produkPenggunaan->isEmpty())
+                                        <span class="text-xs text-gray-400">-</span>
+                                    @else
+                                        <div class="space-y-1">
+                                            @foreach ($d->produkPenggunaan as $pu)
+                                                <div class="text-xs">
+                                                    <span class="font-medium text-gray-700">{{ $pu->produk->merek ?? '-' }}</span>
+                                                    <span class="text-gray-500">{{ $pu->produk->nama_produk ?? '' }}</span>
+                                                    <span class="text-gray-400">({{ $pu->pemakaian_ml }}ml)</span>
+                                                    <span class="text-gray-400">Rp{{ number_format((float) $pu->subtotal, 0, ',', '.') }}</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">{{ $d->staf->nama ?? '-' }}</td>
+                                <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format((float) $d->harga_saat_transaksi, 0, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-right text-gray-900">{{ $d->qty }}</td>
+                                <td class="px-4 py-3 text-right font-medium text-gray-900">Rp{{ number_format((float) $d->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-gray-50">
+                        <tr>
+                            <td colspan="6" class="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total Bayar</td>
+                            <td class="px-4 py-3 text-right text-sm font-bold text-gray-900">Rp{{ number_format((float) $transaksi->total_bayar, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 class="mb-4 text-base font-semibold text-gray-900">Komisi per Staf</h2>
+
+                @if ($transaksi->komisiTransaksi->isEmpty())
+                    <p class="text-sm text-gray-400">Belum ada data komisi.</p>
+                @else
+                    <div class="space-y-4">
+                        @foreach ($transaksi->komisiTransaksi as $kt)
+                            @php
+                                $staf = $kt->staf;
+                                $isPersen = $staf && $staf->skema_komisi === 'persen_omset_harian';
+                            @endphp
+                            <div class="rounded-md border border-gray-100 p-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">{{ $staf->nama ?? 'Staf #' . $kt->id_staf }}</p>
+                                        <p class="text-xs text-gray-500">
+                                            @if ($isPersen)
+                                                Skema: {{ $staf->persen_komisi_harian }}% dari omset harian
+                                            @else
+                                                Skema: per layanan
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                                <form action="{{ route('transaksi.komisi-staf.update', $transaksi) }}" method="POST" class="mt-2 flex items-end gap-2">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="komisi_staf_id" value="{{ $kt->id }}">
+                                    <div class="flex-1">
+                                        <label class="block text-[11px] font-medium text-gray-500">Jumlah Komisi (Rp)</label>
+                                        <input type="number" name="jumlah_komisi" value="{{ $kt->jumlah_komisi }}" min="0" step="1000"
+                                               class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1.5 text-sm">
+                                    </div>
+                                    <div class="flex-1">
+                                        <label class="block text-[11px] font-medium text-gray-500">Keterangan</label>
+                                        <input type="text" name="keterangan" value="{{ $kt->keterangan }}" placeholder="Opsional"
+                                               class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1.5 text-sm">
+                                    </div>
+                                    <button type="submit" class="mb-0.5 rounded-md bg-violet-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-violet-700">Simpan</button>
+                                </form>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 class="mb-4 text-base font-semibold text-gray-900">Detail Komisi per Item</h2>
+                @php
+                    $detailsWithKomisi = $transaksi->details->filter(fn ($d) => $d->komisi_nominal !== null);
+                @endphp
+
+                @if ($detailsWithKomisi->isEmpty())
+                    <p class="text-sm text-gray-400">Belum ada data komisi per item.</p>
+                @else
+                    <div class="space-y-3">
+                        @foreach ($detailsWithKomisi->groupBy('id_staf') as $stafId => $details)
+                            @php
+                                $staf = $details->first()->staf;
+                            @endphp
+                            <div>
+                                <p class="text-xs font-semibold text-gray-700 mb-1">{{ $staf->nama ?? 'Staf #' . $stafId }}</p>
+                                <div class="space-y-1">
+                                    @foreach ($details as $d)
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="text-gray-600">
+                                                {{ $d->tipe_item === 'layanan' ? ($d->layanan->nama_layanan ?? 'Layanan') : 'Produk' }}
+                                                @if ($d->varian_dipilih)
+                                                    <span class="text-gray-400">({{ $d->varian_dipilih }})</span>
+                                                @endif
+                                            </span>
+                                            <div class="flex items-center gap-1">
+                                                <form action="{{ route('transaksi.komisi.update', $transaksi) }}" method="POST" class="inline-flex items-center gap-1">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="detail_id" value="{{ $d->id }}">
+                                                    <input type="number" name="komisi_nominal" value="{{ $d->komisi_nominal }}" min="0" step="1000"
+                                                           class="w-24 rounded-md border-gray-300 px-2 py-1 text-xs text-right">
+                                                    <button type="submit" class="text-xs text-violet-600 hover:text-violet-800">OK</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media print {
+            nav, header nav, footer, .no-print, form[action*="destroy"],
+            form[action*="cancel"], form[action*="komisi"],
+            form[action*="komisi-staf"], button[onclick="window.print()"] {
+                display: none !important;
+            }
+            body { background: white !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+@endsection

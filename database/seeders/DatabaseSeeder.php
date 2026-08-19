@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(LayananHargaKomisiSeeder::class);
+        $this->call(ProdukDummySeeder::class);
+        $this->call(LayananProdukSeeder::class);
     }
 }

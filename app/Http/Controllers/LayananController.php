@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HargaLayanan;
 use App\Models\Layanan;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,12 +36,18 @@ class LayananController extends Controller
 
     public function create()
     {
-        return view('layanans.create');
+        $produkList = Produk::where('aktif', true)
+            ->where('kategori_produk', 'dipakai_layanan')
+            ->orderBy('merek')
+            ->orderBy('nama_produk')
+            ->get();
+
+        return view('layanans.create', compact('produkList'));
     }
 
     public function show(Layanan $layanan)
     {
-        $layanan->load('hargaLayanan');
+        $layanan->load('hargaLayanan', 'produk');
 
         return view('layanans.show', compact('layanan'));
     }
@@ -50,11 +57,15 @@ class LayananController extends Controller
         $data = $this->validatedMain($request);
         $rows = $this->validatedRows($request);
 
-        $layanan = DB::transaction(function () use ($data, $rows) {
+        $layanan = DB::transaction(function () use ($data, $rows, $request) {
             $layanan = Layanan::create($data);
 
             foreach ($rows as $row) {
                 HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
+            }
+
+            if ($request->has('produk_ids')) {
+                $layanan->produk()->sync($request->produk_ids);
             }
 
             return $layanan;
@@ -67,9 +78,15 @@ class LayananController extends Controller
 
     public function edit(Layanan $layanan)
     {
-        $layanan->load('hargaLayanan');
+        $layanan->load('hargaLayanan', 'produk');
 
-        return view('layanans.edit', compact('layanan'));
+        $produkList = Produk::where('aktif', true)
+            ->where('kategori_produk', 'dipakai_layanan')
+            ->orderBy('merek')
+            ->orderBy('nama_produk')
+            ->get();
+
+        return view('layanans.edit', compact('layanan', 'produkList'));
     }
 
     public function update(Request $request, Layanan $layanan)
@@ -84,6 +101,8 @@ class LayananController extends Controller
             foreach ($rows as $row) {
                 HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
             }
+
+            $layanan->produk()->sync($request->produk_ids ?? []);
         });
 
         return redirect()
@@ -107,9 +126,11 @@ class LayananController extends Controller
             'nama_layanan' => ['required', 'string', 'max:255'],
             'kategori' => ['required', 'string', 'max:100'],
             'aktif' => ['sometimes', 'boolean'],
+            'termasuk_potong' => ['sometimes', 'boolean'],
         ]);
 
         $data['aktif'] = $request->boolean('aktif');
+        $data['termasuk_potong'] = $request->boolean('termasuk_potong');
 
         return $data;
     }
