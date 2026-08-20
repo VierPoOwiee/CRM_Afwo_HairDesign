@@ -353,7 +353,7 @@
                         '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
                             '<div>' +
                                 '<label class="block text-xs font-medium text-gray-500">Staf 2 (Bantuan) <span class="text-red-500">*</span></label>' +
-                                '<select name="items[' + idx + '][id_staf_2]" class="staf2-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" required onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
+                                '<select name="items[' + idx + '][id_staf_2]" class="staf2-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
                             '</div>' +
                             '<div class="komisi2-section">' +
                                 '<label class="block text-xs font-medium text-gray-500">Komisi Staf 2 (Rp)</label>' +

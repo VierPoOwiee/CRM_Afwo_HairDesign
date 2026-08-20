@@ -105,7 +105,7 @@ class TransaksiController extends Controller
             }
         }
 
-        DB::transaction(function () use ($request) {
+        $transaksi = DB::transaction(function () use ($request) {
             $noStruk = TransaksiKunjungan::generateNoStruk();
             $isBerdua = $request->jenis_pengerjaan === 'berdua';
 
@@ -197,11 +197,13 @@ class TransaksiController extends Controller
 
             // Sync komisi_transaksi for each unique staff
             KomisiTransaksi::syncForTransaksi($transaksi);
+
+            return $transaksi;
         });
 
         return redirect()
             ->route('transaksi.index')
-            ->with('success', 'Transaksi "'.$noStruk.'" berhasil disimpan.');
+            ->with('success', 'Transaksi "'.$transaksi->no_struk.'" berhasil disimpan.');
     }
 
     public function show(TransaksiKunjungan $transaksi)

@@ -14,7 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('komisi:hitung-harian')->dailyAt('23:50');
     })
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
