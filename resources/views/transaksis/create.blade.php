@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <form action="{{ route('transaksi.store') }}" method="POST" id="transaksiForm" class="mt-6 max-w-4xl space-y-6">
+    <form action="{{ route('transaksi.store') }}" method="POST" id="transaksiForm" class="mt-6 max-w-4xl space-y-6 px-0 sm:px-0">
         @csrf
 
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -357,7 +357,7 @@
                             '</div>' +
                             '<div class="komisi2-section">' +
                                 '<label class="block text-xs font-medium text-gray-500">Komisi Staf 2 (Rp)</label>' +
-                                '<input type="number" name="items[' + idx + '][komisi_nominal_2]" min="0" step="1000" class="komisi-input-2 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
+                                '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
                                 '<p class="mt-0.5 text-[11px] text-gray-400 komisi-note-2"></p>' +
                             '</div>' +
                         '</div>' +
@@ -389,7 +389,7 @@
                 '</div>' +
                 '<div>' +
                     '<label class="block text-xs font-medium text-gray-500">Komisi Staf 1 (Rp)</label>' +
-                    '<input type="number" name="items[' + idx + '][komisi_nominal_1]" min="0" step="1000" class="komisi-input-1 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
+                    '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_1]" class="komisi-input-1 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
                     '<p class="mt-0.5 text-[11px] text-gray-400 komisi-note-1"></p>' +
                 '</div>' +
             '</div>' +
@@ -412,11 +412,11 @@
                         '</div>' +
                         '<div>' +
                             '<label class="block text-xs font-medium text-gray-500 qty-label">Jumlah</label>' +
-                            '<input type="number" name="items[' + idx + '][qty]" value="1" min="0.01" step="0.01" class="qty-field mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="syncQty(' + idx + ')">' +
+                            '<input type="number" name="items[' + idx + '][qty]" value="1" min="1" step="1" class="qty-field mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="syncQty(' + idx + ')">' +
                         '</div>' +
-                        '<div>' +
-                            '<label class="block text-xs font-medium text-gray-500">Staf (Opsional)</label>' +
-                            '<select name="items[' + idx + '][id_staf_1]" class="staf1-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' + stafOptsHtml() + '</select>' +
+                        '<div class="sm:col-span-2 rounded-md bg-violet-50 p-3">' +
+                            '<label class="block text-xs font-medium text-violet-600">Total Harga</label>' +
+                            '<p class="mt-1 text-lg font-bold text-violet-700 produk-subtotal-display">Rp0</p>' +
                         '</div>' +
                         '<div class="sm:col-span-2">' +
                             '<label class="block text-xs font-medium text-gray-500">Catatan</label>' +
@@ -513,22 +513,22 @@
             var usageList = row.querySelector('.produk-usage-list');
             var pIdx = usageList.children.length;
 
-            var html = '<div class="produk-usage-item flex items-end gap-2 rounded-md bg-gray-50 p-2">' +
+            var html = '<div class="produk-usage-item flex flex-col gap-2 rounded-md bg-gray-50 p-2 sm:flex-row sm:items-end">' +
                 '<div class="flex-1">' +
                     '<label class="block text-[11px] font-medium text-gray-500">Merk / Produk</label>' +
                     '<select name="items[' + idx + '][produk_penggunaan][' + pIdx + '][id_produk]" class="produk-select block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" onchange="onProdukUsageChange(this, ' + idx + ')">' +
                         '<option value="">-- Pilih Merk --</option>' +
                     '</select>' +
                 '</div>' +
-                '<div class="w-28">' +
+                '<div class="w-full sm:w-28">' +
                     '<label class="block text-[11px] font-medium text-gray-500">Pemakaian (/10ml)</label>' +
                     '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" onchange="recalcHarga(' + idx + ')">' +
                 '</div>' +
-                '<div class="w-28">' +
+                '<div class="w-full sm:w-28">' +
                     '<label class="block text-[11px] font-medium text-gray-500">Harga/10ml</label>' +
                     '<p class="text-xs font-medium text-gray-700 mt-1.5 produk-unit-harga">Rp0</p>' +
                 '</div>' +
-                '<div class="w-28">' +
+                '<div class="w-full sm:w-28">' +
                     '<label class="block text-[11px] font-medium text-gray-500">Subtotal</label>' +
                     '<p class="text-xs font-bold text-emerald-700 mt-1.5 produk-subtotal-display">Rp0</p>' +
                 '</div>' +
@@ -741,12 +741,13 @@
             row.querySelector('.produk-harga-display').textContent = 'Rp' + fmt(harga);
             row.querySelector('.produk-stok-display').textContent = stok;
             row.querySelector('.produk-satuan-display').textContent = '/' + satuan;
-            row.querySelector('.harga-display').value = harga;
             row.querySelector('.harga-input').value = harga;
             row.querySelector('.qty-field').value = 1;
             row.querySelector('.qty-input').value = 1;
 
-            // Dynamic qty label
+            var produkSubtotal = row.querySelector('.produk-subtotal-display');
+            if (produkSubtotal) produkSubtotal.textContent = 'Rp' + fmt(harga);
+
             var qtyLabel = row.querySelector('.qty-label');
             if (satuan === 'pcs') {
                 qtyLabel.textContent = 'Jumlah dibeli (pcs)';
@@ -754,7 +755,6 @@
                 qtyLabel.textContent = 'Jumlah (' + satuan + ')';
             }
 
-            // Stock warning
             var stokWarning = row.querySelector('.stok-warning');
             if (stok <= 0) {
                 stokWarning.textContent = 'Stok habis!';
@@ -772,8 +772,17 @@
 
         window.syncQty = function(idx) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
-            var qty = row.querySelector('.qty-field').value || 1;
+            var qty = parseInt(row.querySelector('.qty-field').value) || 1;
+            if (qty < 1) qty = 1;
+            row.querySelector('.qty-field').value = qty;
             row.querySelector('.qty-input').value = qty;
+
+            var harga = parseFloat(row.querySelector('.harga-input')?.value) || 0;
+            var produkSubtotal = row.querySelector('.produk-subtotal-display');
+            if (produkSubtotal) {
+                var total = harga * qty;
+                produkSubtotal.textContent = 'Rp' + fmt(total);
+            }
 
             // Check stock warning
             var stokDisplay = row.querySelector('.produk-stok-display');

@@ -75,7 +75,8 @@
             @endif
         </div>
     @else
-        <div class="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+        {{-- Desktop table --}}
+        <div class="mt-6 hidden overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm md:block">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <tr>
@@ -112,6 +113,31 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile cards --}}
+        <div class="mt-6 space-y-3 md:hidden">
+            @foreach ($transaksis as $t)
+                <a href="{{ route('transaksi.show', $t) }}" class="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:bg-gray-50">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-semibold text-gray-900 truncate">{{ $t->no_struk }}</p>
+                            <p class="mt-0.5 text-xs text-gray-500">{{ $t->pelanggan->nama ?? '-' }}</p>
+                        </div>
+                        <span class="shrink-0 text-sm font-bold text-gray-900">Rp{{ number_format((float) $t->total_bayar, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                        <span>{{ $t->waktu_kunjungan->format('d M Y H:i') }}</span>
+                        <span>·</span>
+                        <span class="rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-700">{{ $t->labelMetode() }}</span>
+                        @if ($t->status === 'selesai')
+                            <span class="rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700">Selesai</span>
+                        @else
+                            <span class="rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-700">Batal</span>
+                        @endif
+                    </div>
+                </a>
+            @endforeach
         </div>
 
         @if ($transaksis->hasPages())

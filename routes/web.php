@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardOwnerController;
+use App\Http\Controllers\InsightController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanKomisiController;
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
     Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
     Route::post('/laporan/rekap-komisi/hitung-ulang', [LaporanController::class, 'hitungUlang'])->name('laporan.rekap-komisi.hitung-ulang');
+    Route::post('/laporan/insight/generate', [InsightController::class, 'generate'])->name('laporan.insight.generate');
 });
 
 // Existing routes (accessible to all for now)

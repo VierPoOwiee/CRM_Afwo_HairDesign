@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailTransaksi;
+use App\Models\InsightAi;
 use App\Models\Karyawan;
 use App\Models\KomisiHarianSpesial;
 use App\Models\KomisiTransaksi;
@@ -41,7 +42,7 @@ class LaporanController extends Controller
             $baseQuery->where('metode_pembayaran', $metode);
         }
 
-        $transaksis = $baseQuery->clone()->with('pelanggan')->orderBy('waktu_kunjungan', 'desc')->get();
+        $transaksis = $baseQuery->clone()->with(['pelanggan', 'komisiTransaksi.staf'])->orderBy('waktu_kunjungan', 'desc')->get();
 
         $totalOmset = $transaksis->sum('total_bayar');
         $jumlahTransaksi = $transaksis->count();
@@ -70,10 +71,18 @@ class LaporanController extends Controller
 
         $karyawans = Karyawan::orderBy('nama')->get();
 
+        $insightPeriode = Carbon::parse($dari)->startOfMonth()->toDateString();
+        $insight = InsightAi::where('periode', $insightPeriode)->first();
+        $insightCooldown = false;
+        if ($insight && $insight->dibuat_pada->diffInMinutes(now()) < 60) {
+            $insightCooldown = true;
+        }
+
         return view('laporan.penjualan', compact(
             'dari', 'sampai', 'preset', 'transaksis', 'totalOmset',
             'jumlahTransaksi', 'rataRata', 'trenHarian', 'breakdownKategori',
             'karyawans', 'jenisPengerjaan', 'stafId', 'metode',
+            'insight', 'insightPeriode', 'insightCooldown',
         ));
     }
 

@@ -75,7 +75,7 @@ class TransaksiController extends Controller
             'metode_pembayaran' => ['required', 'in:cash,qris,debit,kartu_kredit,transfer'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.tipe_item' => ['required', 'in:layanan,produk'],
-            'items.*.id_staf_1' => ['required', 'exists:karyawans,id'],
+            'items.*.id_staf_1' => ['nullable', 'exists:karyawans,id'],
             'items.*.id_staf_2' => ['nullable', 'exists:karyawans,id'],
             'items.*.id_layanan' => ['nullable', 'exists:layanan,id'],
             'items.*.id_produk' => ['nullable', 'exists:produk,id'],
@@ -93,6 +93,9 @@ class TransaksiController extends Controller
         foreach ($request->items as $idx => $item) {
             if ($item['tipe_item'] === 'layanan' && empty($item['id_layanan'])) {
                 return back()->withErrors(['items.' . $idx . '.id_layanan' => 'Wajib dipilih untuk item layanan.'])->withInput();
+            }
+            if ($item['tipe_item'] === 'layanan' && empty($item['id_staf_1'])) {
+                return back()->withErrors(['items.' . $idx . '.id_staf_1' => 'Staf wajib dipilih untuk item layanan.'])->withInput();
             }
             if ($item['tipe_item'] === 'produk' && empty($item['id_produk'])) {
                 return back()->withErrors(['items.' . $idx . '.id_produk' => 'Wajib dipilih untuk item produk.'])->withInput();
@@ -127,7 +130,7 @@ class TransaksiController extends Controller
                 // Detail for staf 1 (primary — carries the subtotal)
                 $detail1 = DetailTransaksi::create([
                     'id_transaksi' => $transaksi->id,
-                    'id_staf' => $item['id_staf_1'],
+                    'id_staf' => $item['id_staf_1'] ?? null,
                     'tipe_item' => $item['tipe_item'],
                     'id_layanan' => $item['id_layanan'] ?? null,
                     'id_produk' => $item['id_produk'] ?? null,

@@ -3,20 +3,20 @@
 @section('title', 'Detail Transaksi '.$transaksi->no_struk)
 
 @section('content')
-    <div class="flex flex-wrap items-center gap-4">
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4">
         <a href="{{ route('transaksi.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Detail Transaksi</h1>
-            <p class="mt-1 text-sm text-gray-500">{{ $transaksi->no_struk }}</p>
+        <div class="min-w-0 flex-1">
+            <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Detail Transaksi</h1>
+            <p class="mt-1 text-sm text-gray-500 truncate">{{ $transaksi->no_struk }}</p>
         </div>
-        <div class="ml-auto flex items-center gap-4 text-sm">
+        <div class="flex items-center gap-2 text-sm sm:gap-4">
             @if ($transaksi->status === 'selesai')
                 <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">Selesai</span>
             @else
                 <span class="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700">Batal</span>
             @endif
             <button onclick="window.print()" class="font-medium text-gray-600 hover:text-gray-800">
-                🖨️ Cetak Struk
+                Cetak
             </button>
             @if ($transaksi->status === 'selesai')
                 <form action="{{ route('transaksi.cancel', $transaksi) }}" method="POST"
@@ -63,6 +63,7 @@
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h2 class="text-base font-semibold text-gray-900">Item Transaksi</h2>
                 </div>
+                <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                         <tr>
@@ -133,6 +134,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                </div>
             </div>
         </div>
 
@@ -162,13 +164,13 @@
                                         </p>
                                     </div>
                                 </div>
-                                <form action="{{ route('transaksi.komisi-staf.update', $transaksi) }}" method="POST" class="mt-2 flex items-end gap-2">
+                                <form action="{{ route('transaksi.komisi-staf.update', $transaksi) }}" method="POST" class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end">
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="komisi_staf_id" value="{{ $kt->id }}">
                                     <div class="flex-1">
                                         <label class="block text-[11px] font-medium text-gray-500">Jumlah Komisi (Rp)</label>
-                                        <input type="number" name="jumlah_komisi" value="{{ $kt->jumlah_komisi }}" min="0" step="1000"
+                                        <input type="text" inputmode="numeric" name="jumlah_komisi" value="{{ $kt->jumlah_komisi }}"
                                                class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1.5 text-sm">
                                     </div>
                                     <div class="flex-1">
@@ -214,7 +216,7 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <input type="hidden" name="detail_id" value="{{ $d->id }}">
-                                                    <input type="number" name="komisi_nominal" value="{{ $d->komisi_nominal }}" min="0" step="1000"
+                                                    <input type="text" inputmode="numeric" name="komisi_nominal" value="{{ $d->komisi_nominal }}"
                                                            class="w-24 rounded-md border-gray-300 px-2 py-1 text-xs text-right">
                                                     <button type="submit" class="text-xs text-violet-600 hover:text-violet-800">OK</button>
                                                 </form>
