@@ -4,16 +4,16 @@
 @endphp
 
 <div class="space-y-6">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2" id="merek_grid">
         <div>
             <label for="nama_produk" class="block text-sm font-medium text-gray-700">Nama Produk <span class="text-red-500">*</span></label>
             <input type="text" name="nama_produk" id="nama_produk" value="{{ old('nama_produk', $produk->nama_produk ?? '') }}" required
                    class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
         </div>
 
-        <div>
+        <div id="merek_wrapper">
             <label for="merek" class="block text-sm font-medium text-gray-700">Merek <span class="text-red-500">*</span></label>
-            <select name="merek" id="merek" required
+            <select name="merek" id="merek"
                     class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
                 <option value="" {{ old('merek', $produk->merek ?? '') === '' ? 'selected' : '' }}>-- Pilih Merek --</option>
                 @foreach ($merekOptions as $m)
@@ -101,6 +101,9 @@
         var hargaNote = document.getElementById('harga_note');
         var stokWrapper = document.getElementById('stok_wrapper');
         var stokInput = document.getElementById('stok');
+        var merekGrid = document.getElementById('merek_grid');
+        var merekWrapper = document.getElementById('merek_wrapper');
+        var merekSelect = document.getElementById('merek');
 
         var config = {
             dijual: {
@@ -108,14 +111,16 @@
                 satuanLabel: 'pcs',
                 satuanNote: 'Satuan otomatis: pcs',
                 hargaNote: 'Harga jual per 1 pcs produk.',
-                showStok: true
+                showStok: true,
+                showMerek: false
             },
             dipakai_layanan: {
                 satuan: '/10ml',
                 satuanLabel: '/10ml',
                 satuanNote: 'Satuan otomatis: /10ml',
                 hargaNote: 'Harga modal per 10ml bahan yang digunakan saat layanan.',
-                showStok: false
+                showStok: false,
+                showMerek: true
             }
         };
 
@@ -134,6 +139,19 @@
                 stokWrapper.style.display = 'none';
                 stokInput.removeAttribute('required');
                 stokInput.value = 0;
+            }
+
+            if (cfg.showMerek) {
+                merekWrapper.style.display = '';
+                merekSelect.setAttribute('required', 'required');
+                merekGrid.classList.add('sm:grid-cols-2');
+                merekGrid.classList.remove('sm:grid-cols-1');
+            } else {
+                merekWrapper.style.display = 'none';
+                merekSelect.removeAttribute('required');
+                merekSelect.value = '';
+                merekGrid.classList.remove('sm:grid-cols-2');
+                merekGrid.classList.add('sm:grid-cols-1');
             }
         }
 

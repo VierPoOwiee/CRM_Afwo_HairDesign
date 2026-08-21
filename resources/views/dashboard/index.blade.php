@@ -90,7 +90,7 @@
                         <li class="px-6 py-3 flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">{{ $produk->nama_produk }}</p>
-                                <p class="text-xs text-gray-500">{{ $produk->merek }} &middot; {{ $produk->labelKategori() }}</p>
+                                <p class="text-xs text-gray-500">@if ($produk->merek){{ $produk->merek }} &middot; @endif{{ $produk->labelKategori() }}</p>
                             </div>
                             <span class="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700">
                                 {{ $produk->stok }} {{ $produk->satuan }}

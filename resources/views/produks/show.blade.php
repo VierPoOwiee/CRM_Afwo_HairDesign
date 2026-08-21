@@ -26,10 +26,12 @@
 
     <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <dl class="space-y-3 text-sm">
+            @if ($produk->kategori_produk !== 'dijual')
             <div class="flex justify-between gap-4">
                 <dt class="text-gray-500">Merek</dt>
                 <dd class="text-right text-gray-900">{{ $produk->merek }}</dd>
             </div>
+            @endif
             <div class="flex justify-between gap-4">
                 <dt class="text-gray-500">Kategori</dt>
                 <dd class="text-right text-gray-900">

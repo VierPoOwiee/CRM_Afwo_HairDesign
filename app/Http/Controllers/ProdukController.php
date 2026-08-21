@@ -85,7 +85,7 @@ class ProdukController extends Controller
     {
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
-            'merek' => ['required', 'in:Alfaparf,Milbon,Keaune'],
+            'merek' => ['nullable', 'required_if:kategori_produk,dipakai_layanan', 'in:Alfaparf,Milbon,Keaune'],
             'kategori_produk' => ['required', 'in:dijual,dipakai_layanan'],
             'satuan' => ['required', 'in:pcs,/10ml'],
             'harga_per_satuan' => ['required', 'numeric', 'min:0'],
@@ -95,6 +95,10 @@ class ProdukController extends Controller
 
         $data['aktif'] = $request->boolean('aktif');
         $data['stok'] = $data['stok'] ?? 0;
+
+        if (array_key_exists('merek', $data) && ($data['merek'] ?? '') === '') {
+            $data['merek'] = null;
+        }
 
         return $data;
     }

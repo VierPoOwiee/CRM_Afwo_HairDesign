@@ -70,7 +70,9 @@
                     </div>
 
                     <div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-                        <span class="rounded-full bg-violet-50 px-2 py-0.5 font-medium text-violet-700">{{ $p->merek }}</span>
+                        @if ($p->kategori_produk !== 'dijual')
+                            <span class="rounded-full bg-violet-50 px-2 py-0.5 font-medium text-violet-700">{{ $p->merek }}</span>
+                        @endif
                         <span class="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-blue-700">{{ $p->labelKategori() }}</span>
                         @if ($p->aktif)
                             <span class="rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700">Aktif</span>
