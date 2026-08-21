@@ -10,15 +10,17 @@ class ProdukDummySeeder extends Seeder
     public function run(): void
     {
         $buat = function (string $nama, string $merek, float $hargaPer10, string $satuan, string $kategori, float $harga = null, int $stok = 500) {
-            Produk::create([
-                'nama_produk' => $nama,
-                'merek' => $merek,
-                'kategori_produk' => $kategori,
-                'satuan' => $satuan,
-                'harga_per_satuan' => $hargaPer10,
-                'stok' => $stok,
-                'aktif' => true,
-            ]);
+            Produk::firstOrCreate(
+                ['nama_produk' => $nama],
+                [
+                    'merek' => $merek,
+                    'kategori_produk' => $kategori,
+                    'satuan' => $satuan,
+                    'harga_per_satuan' => $hargaPer10,
+                    'stok' => $stok,
+                    'aktif' => true,
+                ]
+            );
         };
 
         // ===== /10ml, dipakai_layanan (harga PER 10 GRAM / 10 ML) =====
@@ -39,8 +41,35 @@ class ProdukDummySeeder extends Seeder
         $buat('Keaune Oxidant', 'Keaune', 25000, '/10ml', 'dipakai_layanan');
 
         // ===== PCS, dijual (harga LANGSUNG PER 1 PCS, stok default lebih kecil) =====
-        Produk::create(['nama_produk' => 'Alfaparf Shampoo 250ml', 'merek' => 'Alfaparf', 'kategori_produk' => 'dijual', 'satuan' => 'pcs', 'harga_per_satuan' => 185000, 'stok' => 30, 'aktif' => true]);
-        Produk::create(['nama_produk' => 'Milbon Hair Serum', 'merek' => 'Milbon', 'kategori_produk' => 'dijual', 'satuan' => 'pcs', 'harga_per_satuan' => 220000, 'stok' => 30, 'aktif' => true]);
-        Produk::create(['nama_produk' => 'Matrix Conditioner 250ml', 'merek' => 'Matrix', 'kategori_produk' => 'dijual', 'satuan' => 'pcs', 'harga_per_satuan' => 165000, 'stok' => 30, 'aktif' => true]);
+        // Kategori "Dijual Per PCS" tidak memakai merek (merek = null).
+        $buatPcs = function (string $nama, float $harga, int $stok = 30) {
+            Produk::firstOrCreate(
+                ['nama_produk' => $nama],
+                [
+                    'merek' => null,
+                    'kategori_produk' => 'dijual',
+                    'satuan' => 'pcs',
+                    'harga_per_satuan' => $harga,
+                    'stok' => $stok,
+                    'aktif' => true,
+                ]
+            );
+        };
+
+        $buatPcs('Alfaparf Shampoo 250ml', 185000);
+        $buatPcs('Milbon Hair Serum', 220000);
+        $buatPcs('Matrix Conditioner 250ml', 165000);
+
+        $buatPcs('Shampoo Vegan 300ml', 350000);
+        $buatPcs('Conditioner Vegan 250ml', 375000);
+        $buatPcs('Shampo Rontok 250ml', 350000);
+        $buatPcs('Hair Tonic 125ml', 350000);
+        $buatPcs('Penumbuh Rambut', 550000);
+        $buatPcs('Shampo Ketombe Keaune 300ml', 350000);
+        $buatPcs('Shampo Sensitive Keaune 300ml', 350000);
+        $buatPcs('Hair Spray Keaune', 350000);
+        $buatPcs('Silky Treatment 200ml', 350000);
+        $buatPcs('Elujuda Serum 120ml', 450000);
+        $buatPcs('Shampo Silver 200ml', 200000);
     }
 }
