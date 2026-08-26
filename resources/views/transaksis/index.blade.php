@@ -19,12 +19,22 @@
     </div>
 
     <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <form action="{{ route('transaksi.index') }}" method="GET" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <form action="{{ route('transaksi.index') }}" method="GET" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <div>
                 <label class="block text-xs font-medium text-gray-500">Cari</label>
                 <input type="text" name="q" value="{{ $q }}"
                        placeholder="No struk, nama pelanggan..."
                        class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500">Layanan</label>
+                <select name="layanan"
+                        class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                    <option value="">Semua Layanan</option>
+                    @foreach ($layanans as $l)
+                        <option value="{{ $l->id }}" {{ $layananFilter == $l->id ? 'selected' : '' }}>{{ $l->nama_layanan }}</option>
+                    @endforeach
+                </select>
             </div>
             <div>
                 <label class="block text-xs font-medium text-gray-500">Dari Tanggal</label>
@@ -50,7 +60,7 @@
                         class="rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
                     Filter
                 </button>
-                @if ($q !== '' || $statusFilter !== '' || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
+                @if ($q !== '' || $statusFilter !== '' || $layananFilter > 0 || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
                     <a href="{{ route('transaksi.index') }}"
                        class="rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                         Reset
@@ -63,7 +73,7 @@
     @if ($transaksis->isEmpty())
         <div class="mt-6 rounded-lg border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
             <p class="text-sm font-medium text-gray-700">Belum ada data transaksi.</p>
-            @if ($q !== '' || $statusFilter !== '' || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
+            @if ($q !== '' || $statusFilter !== '' || $layananFilter > 0 || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
                 <p class="mt-1 text-sm text-gray-500">Tidak ditemukan hasil untuk filter yang dipilih.</p>
                 <a href="{{ route('transaksi.index') }}" class="mt-4 inline-block text-sm font-medium text-violet-600 hover:text-violet-700">
                     &larr; Tampilkan semua

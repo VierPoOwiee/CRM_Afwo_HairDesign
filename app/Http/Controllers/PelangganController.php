@@ -81,7 +81,7 @@ class PelangganController extends Controller
 
         $rules = [
             'nama' => ['required', 'string', 'max:255'],
-            'no_wa' => ['required', 'string', 'max:255', $noWaUnique],
+            'no_wa' => ['required', 'string', 'max:255', $noWaUnique, 'regex:/^\+[1-9]\d{5,14}$/'],
             'username_instagram' => ['nullable', 'string', 'max:255'],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'jenis_rambut' => ['nullable', 'string', 'max:255'],
@@ -89,6 +89,10 @@ class PelangganController extends Controller
             'catatan_khusus' => ['nullable', 'string'],
         ];
 
-        return $request->validate($rules);
+        $messages = [
+            'no_wa.regex' => 'No. WhatsApp harus diawali kode negara, contoh: +6281234567890.',
+        ];
+
+        return $request->validate($rules, $messages);
     }
 }

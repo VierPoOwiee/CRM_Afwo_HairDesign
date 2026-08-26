@@ -92,9 +92,13 @@
                         </a>
                     @endif
 
-                    {{-- User dropdown --}}
+                    {{-- User area --}}
                     <div class="relative flex items-center gap-2 no-print">
-                        <span class="hidden text-sm text-gray-500 sm:inline">{{ Auth::user()->name }}</span>
+                        <a href="{{ route('profile.show') }}"
+                           class="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 {{ request()->routeIs('profile.*') ? 'bg-violet-50 text-violet-700' : '' }}">
+                            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                            <span class="max-w-[10rem] truncate">{{ Auth::user()->name }}</span>
+                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
                             <button type="submit" class="rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200">

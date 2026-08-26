@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\DetailTransaksi;
 use App\Models\DetailTransaksiProduk;
-use App\Models\HargaLayanan;
 use App\Models\Karyawan;
 use App\Models\KomisiTransaksi;
 use App\Models\Layanan;
@@ -21,6 +20,7 @@ class TransaksiController extends Controller
         $q = trim((string) $request->query('q'));
         $statusFilter = trim((string) $request->query('status'));
         $metodeFilter = trim((string) $request->query('metode'));
+        $layananFilter = (int) $request->query('layanan');
         $dari = $request->query('dari');
         $sampai = $request->query('sampai');
 
@@ -36,25 +36,31 @@ class TransaksiController extends Controller
             ->when($metodeFilter !== '' && in_array($metodeFilter, ['cash', 'qris', 'debit', 'kartu_kredit', 'transfer']), function ($query) use ($metodeFilter) {
                 $query->where('metode_pembayaran', $metodeFilter);
             })
+            ->when($layananFilter > 0, function ($query) use ($layananFilter) {
+                $query->whereHas('details', fn ($qr) => $qr->where('id_layanan', $layananFilter));
+            })
             ->when($dari !== '' && $dari !== null, function ($query) use ($dari) {
                 $query->where('waktu_kunjungan', '>=', $dari);
             })
             ->when($sampai !== '' && $sampai !== null, function ($query) use ($sampai) {
-                $query->where('waktu_kunjungan', '<=', $sampai . ' 23:59:59');
+                $query->where('waktu_kunjungan', '<=', $sampai.' 23:59:59');
             })
             ->orderByDesc('waktu_kunjungan')
             ->paginate(15)
             ->withQueryString();
 
-        return view('transaksis.index', compact('transaksis', 'q', 'statusFilter', 'metodeFilter', 'dari', 'sampai'));
+        $layanans = Layanan::where('aktif', true)->orderBy('nama_layanan')->get();
+
+        return view('transaksis.index', compact('transaksis', 'q', 'statusFilter', 'metodeFilter', 'layananFilter', 'layanans', 'dari', 'sampai'));
     }
 
     public function create()
     {
         $pelanggans = Pelanggan::orderBy('nama')->get();
         $karyawans = Karyawan::orderBy('nama')->get();
+        $produks = Produk::where('aktif', true)->orderBy('merek')->orderBy('nama_produk')->get();
 
-        return view('transaksis.create', compact('pelanggans', 'karyawans'));
+        return view('transaksis.create', compact('pelanggans', 'karyawans', 'produks'));
     }
 
     public function store(Request $request)
@@ -62,8 +68,9 @@ class TransaksiController extends Controller
         // Convert empty string IDs to null so nullable+exists rules work
         $cleanedItems = array_map(function ($item) {
             foreach (['id_layanan', 'id_produk', 'id_staf_1', 'id_staf_2'] as $field) {
-                $item[$field] = !empty($item[$field]) ? $item[$field] : null;
+                $item[$field] = ! empty($item[$field]) ? $item[$field] : null;
             }
+
             return $item;
         }, $request->items);
         $request->merge(['items' => $cleanedItems]);
@@ -92,19 +99,19 @@ class TransaksiController extends Controller
         // Manual cross-field validation
         foreach ($request->items as $idx => $item) {
             if ($item['tipe_item'] === 'layanan' && empty($item['id_layanan'])) {
-                return back()->withErrors(['items.' . $idx . '.id_layanan' => 'Wajib dipilih untuk item layanan.'])->withInput();
+                return back()->withErrors(['items.'.$idx.'.id_layanan' => 'Wajib dipilih untuk item layanan.'])->withInput();
             }
             if ($item['tipe_item'] === 'layanan' && empty($item['id_staf_1'])) {
-                return back()->withErrors(['items.' . $idx . '.id_staf_1' => 'Staf wajib dipilih untuk item layanan.'])->withInput();
+                return back()->withErrors(['items.'.$idx.'.id_staf_1' => 'Staf wajib dipilih untuk item layanan.'])->withInput();
             }
             if ($item['tipe_item'] === 'produk' && empty($item['id_produk'])) {
-                return back()->withErrors(['items.' . $idx . '.id_produk' => 'Wajib dipilih untuk item produk.'])->withInput();
+                return back()->withErrors(['items.'.$idx.'.id_produk' => 'Wajib dipilih untuk item produk.'])->withInput();
             }
             if ($request->jenis_pengerjaan === 'berdua' && empty($item['id_staf_2'])) {
-                return back()->withErrors(['items.' . $idx . '.id_staf_2' => 'Jenis berdua wajib pilih 2 staf.'])->withInput();
+                return back()->withErrors(['items.'.$idx.'.id_staf_2' => 'Jenis berdua wajib pilih 2 staf.'])->withInput();
             }
-            if ($request->jenis_pengerjaan === 'sendiri' && !empty($item['id_staf_2'])) {
-                return back()->withErrors(['items.' . $idx . '.id_staf_2' => 'Staf ke-2 hanya untuk jenis berdua.'])->withInput();
+            if ($request->jenis_pengerjaan === 'sendiri' && ! empty($item['id_staf_2'])) {
+                return back()->withErrors(['items.'.$idx.'.id_staf_2' => 'Staf ke-2 hanya untuk jenis berdua.'])->withInput();
             }
         }
 
@@ -140,7 +147,7 @@ class TransaksiController extends Controller
                     'qty' => $qty,
                     'harga_saat_transaksi' => $harga,
                     'subtotal' => $subtotal,
-                    'komisi_nominal' => !empty($item['komisi_nominal_1']) ? $item['komisi_nominal_1'] : null,
+                    'komisi_nominal' => ! empty($item['komisi_nominal_1']) ? $item['komisi_nominal_1'] : null,
                     'catatan' => $item['catatan'] ?? null,
                 ]);
 
@@ -158,19 +165,19 @@ class TransaksiController extends Controller
                         'qty' => 1,
                         'harga_saat_transaksi' => 0,
                         'subtotal' => 0,
-                        'komisi_nominal' => !empty($item['komisi_nominal_2']) ? $item['komisi_nominal_2'] : null,
-                        'catatan' => '(Staf ke-2) ' . ($item['catatan'] ?? ''),
+                        'komisi_nominal' => ! empty($item['komisi_nominal_2']) ? $item['komisi_nominal_2'] : null,
+                        'catatan' => '(Staf ke-2) '.($item['catatan'] ?? ''),
                     ]);
                 }
 
                 // Deduct stock for standalone produk sales
-                if ($item['tipe_item'] === 'produk' && !empty($item['id_produk'])) {
+                if ($item['tipe_item'] === 'produk' && ! empty($item['id_produk'])) {
                     $produk = Produk::lockForUpdate()->findOrFail($item['id_produk']);
                     $produk->decrement('stok', $qty);
                 }
 
                 // Save product usage for layanan items (deduct stock + track cost)
-                if ($item['tipe_item'] === 'layanan' && !empty($item['produk_penggunaan'])) {
+                if ($item['tipe_item'] === 'layanan' && ! empty($item['produk_penggunaan'])) {
                     foreach ($item['produk_penggunaan'] as $pu) {
                         if (empty($pu['id_produk']) || empty($pu['pemakaian_ml'])) {
                             continue;
@@ -320,8 +327,11 @@ class TransaksiController extends Controller
     {
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'no_wa' => ['nullable', 'string', 'max:50'],
+            'no_wa' => ['nullable', 'string', 'max:50', 'regex:/^\+[1-9]\d{5,14}$/'],
+            'jenis_kelamin' => ['nullable', 'in:L,P'],
             'jenis_rambut' => ['nullable', 'string', 'max:100'],
+        ], [
+            'no_wa.regex' => 'No. WhatsApp harus diawali kode negara, contoh: +6281234567890.',
         ]);
 
         $pelanggan = Pelanggan::create($data);

@@ -120,14 +120,27 @@
                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">No. WhatsApp</label>
-                    <input type="text" id="new_pelanggan_wa"
-                           class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                    <x-phone-input name="new_pelanggan_wa" label="No. WhatsApp" placeholder="812xxxxxxx" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
+                    <select id="new_pelanggan_kelamin"
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                        <option value="">-- Pilih --</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenis Rambut</label>
-                    <input type="text" id="new_pelanggan_rambut"
-                           class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                    <select id="new_pelanggan_rambut"
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                        <option value="">-- Pilih --</option>
+                        <option value="Lurus">Lurus</option>
+                        <option value="Ikal">Ikal</option>
+                        <option value="Bergelombang">Bergelombang</option>
+                        <option value="Keriting">Keriting</option>
+                    </select>
                 </div>
             </div>
             <div id="new_pelanggan_error" class="mt-3 text-sm text-red-600 hidden"></div>
@@ -147,6 +160,7 @@
     <script>
     (function() {
         var karyawans = @json($karyawans);
+        var allProduks = @json($produks);
         var itemIndex = 0;
 
         // --- Helpers ---
@@ -242,7 +256,8 @@
                 body: JSON.stringify({
                     nama: nama,
                     no_wa: document.getElementById('new_pelanggan_wa').value.trim(),
-                    jenis_rambut: document.getElementById('new_pelanggan_rambut').value.trim()
+                    jenis_kelamin: document.getElementById('new_pelanggan_kelamin').value,
+                    jenis_rambut: document.getElementById('new_pelanggan_rambut').value
                 })
             })
             .then(function(r) { return r.json(); })
@@ -250,7 +265,10 @@
                 selectPelanggan(p.id, p.nama);
                 modal.style.display = 'none';
                 document.getElementById('new_pelanggan_nama').value = '';
-                document.getElementById('new_pelanggan_wa').value = '';
+                var waNumberInput = document.getElementById('new_pelanggan_wa_number');
+                waNumberInput.value = '';
+                waNumberInput.dispatchEvent(new Event('input'));
+                document.getElementById('new_pelanggan_kelamin').value = '';
                 document.getElementById('new_pelanggan_rambut').value = '';
             })
             .catch(function() {
@@ -267,8 +285,10 @@
                 if (!berdua) {
                     var select = el.querySelector('select');
                     if (select) select.value = '';
-                    var komisiInput = el.querySelector('input[type="number"]');
+                    var komisiInput = el.querySelector('.komisi-input-2');
                     if (komisiInput) komisiInput.value = '';
+                    var note2 = el.querySelector('.komisi-note-2');
+                    if (note2) note2.textContent = '';
                 }
             });
         };
@@ -355,7 +375,7 @@
                                 '<label class="block text-xs font-medium text-gray-500">Staf 2 (Bantuan) <span class="text-red-500">*</span></label>' +
                                 '<select name="items[' + idx + '][id_staf_2]" class="staf2-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
                             '</div>' +
-                            '<div class="komisi2-section">' +
+                            '<div>' +
                                 '<label class="block text-xs font-medium text-gray-500">Komisi Staf 2 (Rp)</label>' +
                                 '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
                                 '<p class="mt-0.5 text-[11px] text-gray-400 komisi-note-2"></p>' +
@@ -368,7 +388,7 @@
                 '<label class="block text-xs font-semibold uppercase tracking-wide text-emerald-600 mb-1">Produk yang Digunakan</label>' +
                 '<p class="text-[11px] text-gray-400 mb-2">Pilih merk produk dan masukkan pemakaian (ml). Harga otomatis dihitung /10ml.</p>' +
                 '<div class="produk-usage-list space-y-2"></div>' +
-                '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-violet-600 hover:text-violet-800">+ Tambah Produk</button>' +
+                '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-violet-600 hover:text-violet-800" onclick="addProdukUsageRow(' + idx + ')">+ Tambah Produk</button>' +
             '</div>' +
             '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 pb-3 mb-3">' +
                 '<div>' +
@@ -497,12 +517,8 @@
                     var usageList = row.querySelector('.produk-usage-list');
                     usageList.innerHTML = '';
 
-                    if (layanan.produk && layanan.produk.length > 0) {
-                        addProdukUsageRow(idx);
-                        produkSection.classList.remove('hidden');
-                    } else {
-                        produkSection.classList.add('hidden');
-                    }
+                    produkSection.classList.remove('hidden');
+                    addProdukUsageRow(idx);
 
                     onVarianChange(idx);
                 });
@@ -521,7 +537,7 @@
                     '</select>' +
                 '</div>' +
                 '<div class="w-full sm:w-28">' +
-                    '<label class="block text-[11px] font-medium text-gray-500">Pemakaian (/10ml)</label>' +
+                    '<label class="block text-[11px] font-medium text-gray-500">Penambahan (/10ml)</label>' +
                     '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" onchange="recalcHarga(' + idx + ')">' +
                 '</div>' +
                 '<div class="w-full sm:w-28">' +
@@ -538,6 +554,9 @@
             usageList.insertAdjacentHTML('beforeend', html);
 
             var produkList = JSON.parse(row.dataset.produkList || '[]');
+            if (!produkList || produkList.length === 0) {
+                produkList = allProduks;
+            }
             var newSelect = usageList.lastElementChild.querySelector('.produk-select');
             produkList.forEach(function(p) {
                 var opt = document.createElement('option');
@@ -808,7 +827,6 @@
             var selClass = stafNum === 1 ? '.staf1-select' : '.staf2-select';
             var noteClass = stafNum === 1 ? '.komisi-note-1' : '.komisi-note-2';
             var inputClass = stafNum === 1 ? '.komisi-input-1' : '.komisi-input-2';
-            var sectionClass = stafNum === 1 ? '.komisi-note-1' : '.komisi2-section';
 
             var stafSelect = row.querySelector(selClass);
             var stafId = stafSelect.value;
@@ -816,10 +834,9 @@
 
             if (staf && staf.skema_komisi === 'persen_omset_harian') {
                 var input = row.querySelector(inputClass);
-                if (input) input.value = '';
+                if (input) { input.value = ''; input.closest('div').style.display = 'none'; }
                 var note = row.querySelector(noteClass);
                 if (note) note.textContent = 'Komisi staf ini dihitung otomatis dari omset harian.';
-                if (input) input.closest('div').style.display = 'none';
             } else {
                 var input = row.querySelector(inputClass);
                 if (input) input.closest('div').style.display = '';

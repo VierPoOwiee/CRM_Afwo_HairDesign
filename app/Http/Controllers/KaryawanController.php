@@ -69,7 +69,8 @@ class KaryawanController extends Controller
     {
         $rules = [
             'nama' => ['required', 'string', 'max:255'],
-            'kontak' => ['nullable', 'string', 'max:255'],
+            'kontak' => ['nullable', 'string', 'max:255', 'regex:/^\+[1-9]\d{5,14}$/'],
+            'gaji_pokok' => ['nullable', 'numeric', 'min:0'],
             'skema_komisi' => ['required', 'in:per_layanan,persen_omset_harian'],
             'persen_komisi_harian' => [
                 'nullable',
@@ -80,7 +81,11 @@ class KaryawanController extends Controller
             ],
         ];
 
-        $data = $request->validate($rules);
+        $messages = [
+            'kontak.regex' => 'Kontak harus diawali kode negara, contoh: +6281234567890.',
+        ];
+
+        $data = $request->validate($rules, $messages);
 
         if ($data['skema_komisi'] === 'per_layanan') {
             $data['persen_komisi_harian'] = null;

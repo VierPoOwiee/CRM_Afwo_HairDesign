@@ -13,12 +13,24 @@
                    class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
         </div>
 
-        <div>
-            <label for="kontak" class="block text-sm font-medium text-gray-700">Kontak</label>
-            <input type="text" name="kontak" id="kontak" value="{{ old('kontak', $karyawan->kontak ?? '') }}"
-                   placeholder="No. WA / telepon"
-                   class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+        <x-phone-input
+            name="kontak"
+            label="Kontak (No. WA / Telepon)"
+            :value="$karyawan->kontak ?? ''"
+            placeholder="812xxxxxxx" />
+    </div>
+
+    <div>
+        <label for="gaji_pokok" class="block text-sm font-medium text-gray-700">Gaji Pokok (per bulan)</label>
+        <div class="mt-1 flex items-center gap-2">
+            <span class="text-sm text-gray-500">Rp</span>
+            <input type="number" name="gaji_pokok" id="gaji_pokok"
+                   value="{{ old('gaji_pokok', $karyawan->gaji_pokok ?? '') }}"
+                   min="0" step="1000"
+                   placeholder="3000000"
+                   class="block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
         </div>
+        <p class="mt-0.5 text-xs text-gray-500">Gaji pokok bulanan, independen dari skema komisi.</p>
     </div>
 
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">

@@ -5,10 +5,10 @@ use App\Http\Controllers\DashboardOwnerController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\LaporanKomisiController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Profile
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profil/info', [ProfileController::class, 'updateInfo'])->name('profile.info.update');
+    Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+});
 
 Route::redirect('/', '/pelanggan');
 
@@ -27,8 +34,12 @@ Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/laporan/pelanggan-aktif', [LaporanController::class, 'pelangganAktif'])->name('laporan.pelanggan-aktif');
     Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
     Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
+    Route::get('/laporan/pendapatan-karyawan', [LaporanController::class, 'pendapatanKaryawan'])->name('laporan.pendapatan-karyawan');
+    Route::get('/laporan/rekap-komisi/cetak', [LaporanController::class, 'cetakRekapKomisi'])->name('laporan.rekap-komisi.cetak');
+    Route::get('/laporan/rekap-komisi/staf/{karyawan}', [LaporanController::class, 'slipPendapatan'])->name('laporan.rekap-komisi.slip');
     Route::post('/laporan/rekap-komisi/hitung-ulang', [LaporanController::class, 'hitungUlang'])->name('laporan.rekap-komisi.hitung-ulang');
     Route::post('/laporan/insight/generate', [InsightController::class, 'generate'])->name('laporan.insight.generate');
+    Route::post('/laporan/insight/tanya', [InsightController::class, 'tanya'])->name('laporan.insight.tanya');
 });
 
 // Existing routes (accessible to all for now)

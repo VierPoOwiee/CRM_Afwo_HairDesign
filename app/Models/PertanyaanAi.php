@@ -4,21 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InsightAi extends Model
+class PertanyaanAi extends Model
 {
-    protected $table = 'insight_ai';
+    protected $table = 'pertanyaan_ai';
 
     protected $fillable = [
         'periode',
-        'data_ringkasan',
-        'konten_insight',
+        'pertanyaan',
+        'jawaban',
         'dibuat_pada',
     ];
 
     protected $casts = [
         'periode' => 'date',
-        'data_ringkasan' => 'array',
-        'konten_insight' => 'array',
         'dibuat_pada' => 'datetime',
     ];
 }

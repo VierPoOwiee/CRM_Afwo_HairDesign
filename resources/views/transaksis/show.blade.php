@@ -78,6 +78,10 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach ($transaksi->details as $i => $d)
+                            @php
+                                $totalProduk = (float) $d->produkPenggunaan->sum('subtotal');
+                                $hargaDasar = (float) $d->harga_saat_transaksi - $totalProduk;
+                            @endphp
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-gray-500">{{ $i + 1 }}</td>
                                 <td class="px-4 py-3">
@@ -121,7 +125,13 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 text-gray-700">{{ $d->staf->nama ?? '-' }}</td>
-                                <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format((float) $d->harga_saat_transaksi, 0, ',', '.') }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    @if ($d->tipe_item === 'layanan' && $totalProduk > 0)
+                                        <div class="text-xs text-gray-500">Dasar: Rp{{ number_format($hargaDasar, 0, ',', '.') }}</div>
+                                        <div class="text-xs text-emerald-600">+Produk: Rp{{ number_format($totalProduk, 0, ',', '.') }}</div>
+                                    @endif
+                                    <div class="text-gray-900">Rp{{ number_format((float) $d->harga_saat_transaksi, 0, ',', '.') }}</div>
+                                </td>
                                 <td class="px-4 py-3 text-right text-gray-900">{{ $d->qty }}</td>
                                 <td class="px-4 py-3 text-right font-medium text-gray-900">Rp{{ number_format((float) $d->subtotal, 0, ',', '.') }}</td>
                             </tr>
@@ -136,9 +146,36 @@
                 </table>
                 </div>
             </div>
-        </div>
+            </div>
 
-        <div class="space-y-6">
+            @php
+                $totalHargaDasar = 0;
+                $totalBiayaProduk = 0;
+                foreach ($transaksi->details as $d) {
+                    $totalProduk = (float) $d->produkPenggunaan->sum('subtotal');
+                    $totalBiayaProduk += $totalProduk;
+                    $totalHargaDasar += (float) $d->harga_saat_transaksi - $totalProduk;
+                }
+            @endphp
+            @if ($totalBiayaProduk > 0)
+                <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                    <h3 class="mb-3 text-sm font-semibold text-gray-900">Rincian Harga</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Harga Dasar Layanan</span>
+                            <span class="font-medium text-gray-900">Rp{{ number_format($totalHargaDasar, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Biaya Produk</span>
+                            <span class="font-medium text-emerald-700">+ Rp{{ number_format($totalBiayaProduk, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="border-t border-gray-100 pt-2 flex justify-between font-semibold">
+                            <span class="text-gray-900">Total Bayar</span>
+                            <span class="text-gray-900">Rp{{ number_format((float) $transaksi->total_bayar, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 class="mb-4 text-base font-semibold text-gray-900">Komisi per Staf</h2>
 

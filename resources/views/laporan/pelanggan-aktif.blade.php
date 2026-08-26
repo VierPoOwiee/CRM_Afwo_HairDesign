@@ -1,8 +1,9 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Data Pelanggan Aktif')
 
 @section('content')
+    @include('laporan._nav')
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Data Pelanggan Aktif</h1>
         <p class="mt-1 text-sm text-gray-500">Pelanggan dengan minimal 1 transaksi dalam periode yang dipilih.</p>

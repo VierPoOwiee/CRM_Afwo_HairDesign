@@ -10,12 +10,12 @@
                    class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
         </div>
 
-        <div>
-            <label for="no_wa" class="block text-sm font-medium text-gray-700">No. WhatsApp <span class="text-red-500">*</span></label>
-            <input type="text" name="no_wa" id="no_wa" value="{{ old('no_wa', $pelanggan->no_wa ?? '') }}" required
-                   placeholder="+62 812 3456 7890"
-                   class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
-        </div>
+        <x-phone-input
+            name="no_wa"
+            label="No. WhatsApp"
+            :required="true"
+            :value="$pelanggan->no_wa ?? ''"
+            placeholder="812xxxxxxx" />
 
         <div>
             <label for="username_instagram" class="block text-sm font-medium text-gray-700">Username Instagram</label>

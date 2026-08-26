@@ -18,11 +18,20 @@ class Karyawan extends Model
         'kontak',
         'skema_komisi',
         'persen_komisi_harian',
+        'gaji_pokok',
     ];
 
     protected $casts = [
         'persen_komisi_harian' => 'decimal:2',
+        'gaji_pokok' => 'decimal:2',
     ];
+
+    public function labelSkema(): string
+    {
+        return $this->skema_komisi === 'persen_omset_harian'
+            ? 'Persen Omset Harian ('.$this->persen_komisi_harian.'%)'
+            : 'Per Layanan';
+    }
 
     public function detailTransaksi(): HasMany
     {

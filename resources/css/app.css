@@ -46,4 +46,9 @@
     tr {
         page-break-inside: avoid;
     }
+
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+    }
 }

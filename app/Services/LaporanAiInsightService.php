@@ -27,7 +27,7 @@ class LaporanAiInsightService
         );
     }
 
-    private function agregasiData(Carbon $bulan): array
+    public function agregasiData(Carbon $bulan): array
     {
         $bulanIni = $bulan->copy()->startOfMonth();
         $bulanLalu = $bulan->copy()->subMonth()->startOfMonth();
@@ -94,10 +94,10 @@ class LaporanAiInsightService
         $akhirLalu = $bulanLalu->copy()->endOfMonth();
 
         $kategoriIni = DetailTransaksi::whereHas('transaksi', function ($q) use ($awalIni, $akhirIni) {
-                $q->where('waktu_kunjungan', '>=', $awalIni)
-                  ->where('waktu_kunjungan', '<=', $akhirIni)
-                  ->where('status', 'selesai');
-            })
+            $q->where('waktu_kunjungan', '>=', $awalIni)
+                ->where('waktu_kunjungan', '<=', $akhirIni)
+                ->where('status', 'selesai');
+        })
             ->where('tipe_item', 'layanan')
             ->join('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
             ->selectRaw('layanan.kategori, sum(detail_transaksi.subtotal) as total_subtotal')
@@ -105,10 +105,10 @@ class LaporanAiInsightService
             ->pluck('total_subtotal', 'kategori');
 
         $kategoriLalu = DetailTransaksi::whereHas('transaksi', function ($q) use ($awalLalu, $akhirLalu) {
-                $q->where('waktu_kunjungan', '>=', $awalLalu)
-                  ->where('waktu_kunjungan', '<=', $akhirLalu)
-                  ->where('status', 'selesai');
-            })
+            $q->where('waktu_kunjungan', '>=', $awalLalu)
+                ->where('waktu_kunjungan', '<=', $akhirLalu)
+                ->where('status', 'selesai');
+        })
             ->where('tipe_item', 'layanan')
             ->join('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
             ->selectRaw('layanan.kategori, sum(detail_transaksi.subtotal) as total_subtotal')
@@ -128,19 +128,53 @@ class LaporanAiInsightService
         return $breakdown;
     }
 
-    private function panggilGeminiApi(array $dataRingkasan): string
+    private function panggilGeminiApi(array $dataRingkasan): array
     {
         $systemPrompt = 'Kamu adalah analis bisnis untuk salon kecantikan. Kamu akan diberi data ringkasan '
-            . 'keuangan bulan ini dibanding bulan lalu. Berikan analisa singkat (maksimal 4-5 paragraf) '
-            . 'dalam Bahasa Indonesia yang mudah dipahami pemilik salon (bukan orang teknis): sorot tren '
-            . 'penting (naik/turun dan kemungkinan sebabnya berdasarkan data yang ada), dan tutup dengan '
-            . '2-3 rekomendasi actionable. Jangan mengarang angka di luar data yang diberikan. Jangan pakai markdown, tulis paragraf biasa.';
+            .'keuangan bulan ini dibanding bulan lalu. JANGAN menjawab dengan paragraf panjang. '
+            .'Balas HANYA dalam format JSON valid (tanpa markdown code fence, tanpa teks pembuka/penutup) '
+            .'dengan struktur persis seperti ini:'
+            .'{'
+            .'"headline": "satu kalimat pendek (maks 15 kata) rangkuman inti bulan ini, contoh: Omset naik 64% didorong Treatment Rambut",'
+            .'"sentiment": "positive ATAU negative ATAU neutral (berdasarkan tren omset dominan)",'
+            .'"sorotan": ['
+            .'  {"teks": "poin singkat maks 12 kata, contoh: Treatment Rambut naik jadi Rp4.000.000", "trend": "up ATAU down ATAU neutral"},'
+            .'  ... (3-4 poin sorotan paling penting saja, urutkan dari paling signifikan)'
+            .'],'
+            .'"rekomendasi": ["rekomendasi singkat maks 12 kata", ... (maksimal 3 item, actionable, bukan teori)]'
+            .'} '
+            .'Jangan mengarang angka di luar data yang diberikan. Setiap poin sorotan dan rekomendasi HARUS singkat dan langsung ke inti, hindari kalimat penjelas panjang.';
 
-        $userMessage = "Data ringkasan bulan ini vs bulan lalu:\n\n" . json_encode($dataRingkasan, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $userMessage = "Data ringkasan bulan ini vs bulan lalu:\n\n".json_encode($dataRingkasan, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
+        $konten = $this->postKeGemini($systemPrompt, $userMessage);
+
+        return $this->parseInsightJson($konten);
+    }
+
+    public function tanyaJawab(Carbon $bulan, string $pertanyaan): string
+    {
+        $dataRingkasan = $this->agregasiData($bulan);
+
+        $systemPromptTanyaJawab = 'Kamu adalah analis bisnis untuk salon kecantikan. Owner akan bertanya '
+            .'sesuatu terkait data bisnisnya. Berikut data ringkasan bulan ini vs bulan lalu yang tersedia: '
+            .json_encode($dataRingkasan, JSON_UNESCAPED_UNICODE).'. '
+            .'Jawab pertanyaan owner secara LANGSUNG dan RINGKAS (maksimal 3-4 kalimat atau beberapa poin '
+            .'singkat kalau perlu), dalam Bahasa Indonesia. Kalau pertanyaan owner butuh data yang TIDAK '
+            .'tersedia dalam ringkasan ini, katakan terus terang bahwa datanya tidak tersedia di ringkasan '
+            .'ini, jangan mengarang jawaban. Hindari paragraf panjang, langsung ke inti jawaban.';
+
+        $userMessage = 'Pertanyaan owner: '.$pertanyaan;
+
+        return $this->postKeGemini($systemPromptTanyaJawab, $userMessage);
+    }
+
+    private function postKeGemini(string $systemPrompt, string $userMessage): string
+    {
         $response = Http::timeout(30)->post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
-                . '?key=' . config('services.gemini.key'),
+            'https://generativelanguage.googleapis.com/v1beta/models/'
+                .config('services.gemini.model', 'gemini-3.6-flash')
+                .':generateContent?key='.config('services.gemini.key'),
             [
                 'systemInstruction' => [
                     'parts' => [['text' => $systemPrompt]],
@@ -162,7 +196,7 @@ class LaporanAiInsightService
                 'body' => $response->body(),
             ]);
 
-            throw new \RuntimeException('Gemini API gagal merespons (status: ' . $response->status() . ')');
+            throw new \RuntimeException('Gemini API gagal merespons (status: '.$response->status().')');
         }
 
         $konten = $response->json('candidates.0.content.parts.0.text');
@@ -174,5 +208,75 @@ class LaporanAiInsightService
         }
 
         return $konten;
+    }
+
+    private function parseInsightJson(string $konten): array
+    {
+        try {
+            $hasil = json_decode($this->ekstrakJsonObject($konten), true);
+
+            if (! is_array($hasil) || empty($hasil['headline'])) {
+                throw new \RuntimeException('Struktur JSON insight tidak valid');
+            }
+
+            $sorotan = collect($hasil['sorotan'] ?? [])
+                ->map(function ($item) {
+                    $trend = $item['trend'] ?? 'neutral';
+
+                    return [
+                        'teks' => trim((string) ($item['teks'] ?? '')),
+                        'trend' => in_array($trend, ['up', 'down', 'neutral'], true) ? $trend : 'neutral',
+                    ];
+                })
+                ->filter(fn ($item) => $item['teks'] !== '')
+                ->take(4)
+                ->values()
+                ->toArray();
+
+            $rekomendasi = collect($hasil['rekomendasi'] ?? [])
+                ->map(fn ($item) => trim((string) $item))
+                ->filter(fn ($item) => $item !== '')
+                ->take(3)
+                ->values()
+                ->toArray();
+
+            $sentiment = $hasil['sentiment'] ?? 'neutral';
+
+            return [
+                'headline' => trim((string) $hasil['headline']),
+                'sentiment' => in_array($sentiment, ['positive', 'negative', 'neutral'], true) ? $sentiment : 'neutral',
+                'sorotan' => $sorotan,
+                'rekomendasi' => $rekomendasi,
+            ];
+        } catch (\Throwable $e) {
+            Log::warning('Gagal parse JSON insight dari Gemini', [
+                'error' => $e->getMessage(),
+                'raw' => mb_substr($konten, 0, 500),
+            ]);
+
+            return $this->fallbackInsight();
+        }
+    }
+
+    private function ekstrakJsonObject(string $konten): string
+    {
+        $awal = strpos($konten, '{');
+        $akhir = strrpos($konten, '}');
+
+        if ($awal === false || $akhir === false || $akhir < $awal) {
+            return $konten;
+        }
+
+        return substr($konten, $awal, $akhir - $awal + 1);
+    }
+
+    private function fallbackInsight(): array
+    {
+        return [
+            'headline' => 'Gagal memproses analisa, coba generate ulang.',
+            'sentiment' => 'neutral',
+            'sorotan' => [],
+            'rekomendasi' => [],
+        ];
     }
 }
