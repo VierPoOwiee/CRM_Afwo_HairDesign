@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-900">Laporan Penjualan</h1>
             <p class="mt-1 text-sm text-gray-500">Analisa penjualan dan tren omset.</p>
         </div>
-        <button onclick="window.print()" class="inline-flex shrink-0 items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 no-print">
+        <button onclick="window.print()" class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 no-print">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
             Cetak
         </button>
@@ -115,11 +115,11 @@
 
         {{-- Grafik perbandingan bulan ini vs bulan lalu (dari data database) --}}
         <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2 no-print">
-            <div class="rounded-lg border border-purple-100 bg-white p-4">
+            <div class="rounded-lg border border-purple-100 bg-card p-4">
                 <h3 class="mb-3 text-sm font-semibold text-gray-900">Omset: Bulan Ini vs Bulan Lalu</h3>
                 <div class="relative h-56"><canvas id="chartPerbandinganOmset"></canvas></div>
             </div>
-            <div class="rounded-lg border border-purple-100 bg-white p-4">
+            <div class="rounded-lg border border-purple-100 bg-card p-4">
                 <h3 class="mb-3 text-sm font-semibold text-gray-900">Breakdown Kategori Layanan</h3>
                 <div class="relative h-56"><canvas id="chartBreakdownKategori"></canvas></div>
             </div>
@@ -132,7 +132,7 @@
                     @php
                         $ikon = $trendIcon[$sorotan['trend'] ?? 'neutral'];
                     @endphp
-                    <div class="flex items-start gap-2.5 rounded-lg border border-purple-100 bg-white/70 px-4 py-3">
+                    <div class="flex items-start gap-2.5 rounded-lg border border-purple-100 bg-card/70 px-4 py-3">
                         <svg class="mt-0.5 h-5 w-5 shrink-0 {{ $ikon['class'] }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $ikon['path'] }}"/>
                         </svg>
@@ -144,7 +144,7 @@
 
         {{-- Rekomendasi: checklist ringkas --}}
         @if ($insightValid && !empty($insightData['rekomendasi']))
-            <div class="mt-4 rounded-lg bg-white/70 px-4 py-3">
+            <div class="mt-4 rounded-lg bg-card/70 px-4 py-3">
                 <p class="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-purple-600">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
@@ -188,14 +188,14 @@
                 <input type="hidden" name="periode" value="{{ $insightPeriode }}">
                 <textarea name="pertanyaan" rows="2" maxlength="500" required
                     placeholder="Contoh: kenapa omset kategori Warna Rambut turun drastis?"
-                    class="block w-full resize-y rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">{{ old('pertanyaan') }}</textarea>
+                    class="block w-full resize-y rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">{{ old('pertanyaan') }}</textarea>
                 @error('pertanyaan')
                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                 @enderror
                 <div class="mt-2 flex items-center justify-end gap-3">
                     <span class="text-[10px] text-gray-400">Maksimal 500 karakter</span>
                     <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-md bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50">
+                        class="inline-flex items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-medium text-white hover:bg-dark-hover disabled:cursor-not-allowed disabled:opacity-50">
                         Kirim
                     </button>
                 </div>
@@ -207,12 +207,12 @@
                     @foreach ($tanyaRiwayat as $item)
                         <div>
                             <div class="flex justify-end">
-                                <div class="max-w-[85%] rounded-lg rounded-br-none bg-violet-600 px-3 py-2 text-sm font-medium text-white">
+                                <div class="max-w-[85%] rounded-lg rounded-br-none bg-dark px-3 py-2 text-sm font-medium text-white">
                                     {{ $item->pertanyaan }}
                                 </div>
                             </div>
                             <div class="mt-2 flex justify-start">
-                                <div class="max-w-[90%] whitespace-pre-line rounded-lg rounded-bl-none bg-white px-3 py-2 text-left text-sm leading-relaxed text-gray-700 ring-1 ring-gray-200">
+                                <div class="max-w-[90%] whitespace-pre-line rounded-lg rounded-bl-none bg-card px-3 py-2 text-left text-sm leading-relaxed text-gray-700 ring-1 ring-gray-200">
                                     {{ $item->jawaban }}
                                 </div>
                             </div>
@@ -226,16 +226,16 @@
 
     {{-- Ringkasan --}}
     <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Total Omset</p>
             <p class="mt-2 text-2xl font-bold text-gray-900">Rp{{ number_format($totalOmset, 0, ',', '.') }}</p>
             <p class="mt-1 text-xs text-gray-400">{{ $dari }} s/d {{ $sampai }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Jumlah Transaksi</p>
             <p class="mt-2 text-2xl font-bold text-gray-900">{{ $jumlahTransaksi }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Rata-rata per Transaksi</p>
             <p class="mt-2 text-2xl font-bold text-gray-900">Rp{{ number_format($rataRata, 0, ',', '.') }}</p>
         </div>
@@ -243,7 +243,7 @@
 
     {{-- Chart Tren Harian --}}
     @if ($trenHarian->isNotEmpty())
-        <div class="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm no-print">
+        <div class="mt-6 rounded-lg border border-gray-200 bg-card p-6 shadow-sm no-print">
             <h2 class="text-base font-semibold text-gray-900 mb-4">Tren Omset Harian</h2>
             <canvas id="chartTren" height="80"></canvas>
         </div>
@@ -251,7 +251,7 @@
 
     {{-- Breakdown Kategori Layanan --}}
     @if ($breakdownKategori->isNotEmpty())
-        <div class="mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div class="mt-6 rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
                 <h2 class="text-base font-semibold text-gray-900">Breakdown per Kategori Layanan</h2>
             </div>
@@ -279,7 +279,7 @@
     @endif
 
     {{-- Tabel Transaksi --}}
-    <div class="mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div class="mt-6 rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">
             <h2 class="text-base font-semibold text-gray-900">Daftar Transaksi ({{ $transaksis->count() }})</h2>
         </div>

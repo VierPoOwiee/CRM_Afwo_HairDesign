@@ -8,6 +8,46 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* --- Surface --- */
+    --color-surface: #F5F6F8;
+    --color-card: #FFFFFF;
+    --color-card-hover: #FAFAFB;
+    --color-card-warm: #FBF8F2;
+    --color-card-warm-border: #EFE8D8;
+
+    /* --- Text --- */
+    --color-text-primary: #111827;
+    --color-text-secondary: #4B5563;
+    --color-text-muted: #8E95A2;
+
+    /* --- Accent / Brand --- */
+    --color-accent: #E5A93C;
+    --color-accent-text: #D4A537;
+    --color-accent-light: #FDF6E9;
+    --color-accent-ring: #E5A93C66;
+
+    /* --- Success --- */
+    --color-success: #16A34A;
+    --color-success-bg: #DCFCE7;
+
+    /* --- Danger --- */
+    --color-danger: #EF4444;
+    --color-danger-bg: #FEF2F2;
+
+    /* --- Badge --- */
+    --color-badge-warm-bg: #F8EFE4;
+    --color-badge-warm-text: #8A5826;
+    --color-badge-neutral-bg: #EAECEF;
+    --color-badge-neutral-text: #4B5563;
+
+    /* --- Dark / Sidebar --- */
+    --color-dark: #1E2024;
+    --color-dark-hover: #2B2D33;
+    --color-sidebar: #1F2123;
+    --color-sidebar-active: #383A3F;
+    --color-sidebar-divider: #2C2F36;
+    --color-dark-muted: #9CA3AF;
 }
 
 @media print {

@@ -10,7 +10,7 @@
             <p class="mt-1 text-sm text-gray-500">Detail informasi produk.</p>
         </div>
         <div class="ml-auto flex items-center gap-4 text-sm">
-            <a href="{{ route('produk.edit', $produk) }}" class="font-medium text-violet-600 hover:text-violet-800">
+            <a href="{{ route('produk.edit', $produk) }}" class="font-medium text-accent-text hover:text-accent">
                 Edit
             </a>
             <form action="{{ route('produk.destroy', $produk) }}" method="POST"
@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
         <dl class="space-y-3 text-sm">
             @if ($produk->kategori_produk !== 'dijual')
             <div class="flex justify-between gap-4">

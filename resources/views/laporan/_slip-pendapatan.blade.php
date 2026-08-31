@@ -143,7 +143,7 @@
     </div>
 
     {{-- Total pendapatan --}}
-    <div class="border-t-2 border-violet-300 bg-violet-50 px-6 py-5">
+    <div class="border-t-2 border-accent/30 bg-accent-light px-6 py-5">
         <table class="w-full text-sm">
             <tbody>
                 <tr>
@@ -154,9 +154,9 @@
                     <td class="py-1 text-gray-700">Gaji Pokok <span class="text-xs text-gray-400">(bulanan)</span></td>
                     <td class="py-1 text-right font-medium text-gray-900">Rp{{ number_format($slip['gaji_pokok'], 0, ',', '.') }}</td>
                 </tr>
-                <tr class="border-t-2 border-violet-300">
-                    <td class="pt-3 text-base font-bold text-violet-900">TOTAL PENDAPATAN</td>
-                    <td class="pt-3 text-right text-2xl font-extrabold text-violet-900">Rp{{ number_format($slip['total_pendapatan'], 0, ',', '.') }}</td>
+                    <tr class="border-t-2 border-accent/30">
+                        <td class="pt-3 text-base font-bold text-text-primary">TOTAL PENDAPATAN</td>
+                        <td class="pt-3 text-right text-2xl font-extrabold text-text-primary">Rp{{ number_format($slip['total_pendapatan'], 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>

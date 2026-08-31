@@ -11,7 +11,7 @@
 <div class="no-print mb-6 flex flex-wrap items-center gap-1 border-b border-gray-200 pb-3">
     @foreach ($laporanTabs as $tab)
         <a href="{{ route($tab['route']) }}"
-           class="whitespace-nowrap rounded-md px-3 py-2 text-sm {{ request()->routeIs($tab['route']) ? 'bg-violet-600 font-semibold text-white shadow-sm' : 'font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+           class="whitespace-nowrap rounded-md px-3 py-2 text-sm {{ request()->routeIs($tab['route']) ? 'bg-dark font-semibold text-white shadow-sm' : 'font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
             {{ $tab['label'] }}
         </a>
     @endforeach

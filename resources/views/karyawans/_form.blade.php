@@ -10,7 +10,7 @@
         <div>
             <label for="nama" class="block text-sm font-medium text-gray-700">Nama <span class="text-red-500">*</span></label>
             <input type="text" name="nama" id="nama" value="{{ old('nama', $karyawan->nama ?? '') }}" required
-                   class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                   class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
         </div>
 
         <x-phone-input
@@ -28,7 +28,7 @@
                    value="{{ old('gaji_pokok', $karyawan->gaji_pokok ?? '') }}"
                    min="0" step="1000"
                    placeholder="3000000"
-                   class="block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                   class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
         </div>
         <p class="mt-0.5 text-xs text-gray-500">Gaji pokok bulanan, independen dari skema komisi.</p>
     </div>
@@ -41,7 +41,7 @@
                     <label class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
                         <input type="radio" name="skema_komisi" value="{{ $value }}"
                                @checked((string) old('skema_komisi', $karyawan->skema_komisi ?? 'per_layanan') === $value)
-                               class="h-4 w-4 border-gray-300 text-violet-600 focus:ring-violet-500">
+                               class="h-4 w-4 border-gray-300 text-accent-text focus:ring-accent/30">
                         {{ $label }}
                     </label>
                 @endforeach
@@ -57,7 +57,7 @@
                 <input type="number" name="persen_komisi_harian" id="persen_komisi_harian"
                        value="{{ old('persen_komisi_harian', $karyawan->persen_komisi_harian ?? '') }}"
                        min="0" max="100" step="0.01"
-                       class="block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                       class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
                 <span class="text-sm text-gray-500">%</span>
             </div>
         </div>
@@ -65,11 +65,11 @@
 
     <div class="flex items-center gap-3">
         <button type="submit"
-                class="rounded-md bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
+                class="rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
             {{ $submitLabel }}
         </button>
         <a href="{{ route('karyawan.index') }}"
-           class="rounded-md bg-white px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+           class="rounded-lg bg-card px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
             Batal
         </a>
     </div>
@@ -80,6 +80,7 @@
         var radios = document.querySelectorAll('input[name="skema_komisi"]');
         var persenField = document.getElementById('persen-field');
         var persenInput = document.getElementById('persen_komisi_harian');
+        var gajiInput = document.getElementById('gaji_pokok');
 
         function togglePersen() {
             var checked = document.querySelector('input[name="skema_komisi"]:checked');
@@ -93,5 +94,34 @@
         });
 
         togglePersen();
+
+        /* Format harga gaji pokok */
+        function parseFormatted(str) {
+            return parseInt(str.replace(/\./g, '').replace(/,/g, ''), 10) || 0;
+        }
+
+        function formatNumber(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatHarga(el) {
+            var raw = parseFormatted(el.value);
+            el.value = raw ? formatNumber(raw) : '';
+        }
+
+        function unformatHarga(el) {
+            el.value = el.value.replace(/\./g, '');
+        }
+
+        if (gajiInput) {
+            gajiInput.addEventListener('focus', function () { unformatHarga(this); });
+            gajiInput.addEventListener('blur', function () { formatHarga(this); });
+        }
+
+        document.querySelector('form').addEventListener('submit', function () {
+            if (gajiInput) unformatHarga(gajiInput);
+        });
+
+        if (gajiInput && gajiInput.value) formatHarga(gajiInput);
     })();
 </script>

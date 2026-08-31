@@ -14,7 +14,7 @@
             <p class="mt-1 text-sm text-gray-500">Detail harga &amp; komisi tiap varian.</p>
         </div>
         <div class="ml-auto flex items-center gap-4 text-sm">
-            <a href="{{ route('layanan.edit', $layanan) }}" class="font-medium text-violet-600 hover:text-violet-800">
+            <a href="{{ route('layanan.edit', $layanan) }}" class="font-medium text-accent-text hover:text-accent">
                 Edit
             </a>
             <form action="{{ route('layanan.destroy', $layanan) }}" method="POST"
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
         <dl class="space-y-3 text-sm">
             <div class="flex justify-between gap-4">
                 <dt class="text-gray-500">Kategori</dt>
@@ -64,7 +64,7 @@
         </dl>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white shadow-sm sm:overflow-x-auto">
+    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card shadow-sm sm:overflow-x-auto">
         <table class="w-full text-sm">
             <thead class="hidden sm:table-header-group">
                 <tr class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">

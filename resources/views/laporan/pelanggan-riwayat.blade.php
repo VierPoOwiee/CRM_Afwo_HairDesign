@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="mb-6">
-        <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}" class="text-sm text-violet-600 hover:text-violet-700">&larr; Kembali ke Pelanggan Aktif</a>
+        <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}" class="text-sm text-accent-text hover:text-accent">&larr; Kembali ke Pelanggan Aktif</a>
         <div class="mt-2">
             <h1 class="text-2xl font-bold text-gray-900">{{ $pelanggan->nama }}</h1>
             <p class="mt-1 text-sm text-gray-500">Riwayat transaksi lengkap &middot; {{ $pelanggan->no_wa }}</p>
@@ -12,15 +12,15 @@
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Total Kunjungan</p>
             <p class="mt-2 text-2xl font-bold text-gray-900">{{ $jumlahKunjungan }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Total Belanja</p>
             <p class="mt-2 text-2xl font-bold text-gray-900">Rp{{ number_format($totalBelanja, 0, ',', '.') }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <p class="text-sm font-medium text-gray-500">Kunjungan Terakhir</p>
             <p class="mt-2 text-lg font-bold text-gray-900">
                 {{ $transaksis->first() ? $transaksis->first()->waktu_kunjungan->format('d M Y') : '-' }}
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div class="rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100">
             <h2 class="text-base font-semibold text-gray-900">Riwayat Transaksi</h2>
         </div>

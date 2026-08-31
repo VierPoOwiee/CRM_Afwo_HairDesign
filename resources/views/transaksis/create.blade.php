@@ -23,36 +23,36 @@
                         <div class="relative flex-1">
                             <input type="text" id="pelanggan_search" placeholder="Ketik nama atau no WA..."
                                    autocomplete="off"
-                                   class="block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                                   class="block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                             <input type="hidden" name="id_pelanggan" id="id_pelanggan" value="{{ old('id_pelanggan') }}">
-                            <div id="pelanggan_results" class="absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm max-h-48 overflow-y-auto hidden"></div>
+                            <div id="pelanggan_results" class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-card shadow-sm max-h-48 overflow-y-auto hidden"></div>
                         </div>
                         <button type="button" id="addPelangganBtn"
-                                class="shrink-0 rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                class="shrink-0 rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                             + Pelanggan Baru
                         </button>
                     </div>
                     <div id="pelanggan_selected" class="mt-2 hidden">
-                        <span class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-700">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-accent-light px-3 py-1 text-xs font-medium text-accent-text">
                             <span id="pelanggan_nama"></span>
-                            <button type="button" onclick="clearPelanggan()" class="ml-1 text-violet-400 hover:text-violet-600">&times;</button>
+                            <button type="button" onclick="clearPelanggan()" class="ml-1 text-text-muted hover:text-accent">&times;</button>
                         </span>
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Waktu Kunjungan <span class="text-red-500">*</span></label>
                     <input type="datetime-local" name="waktu_kunjungan" value="{{ old('waktu_kunjungan', date('Y-m-d\TH:i')) }}" required
-                           class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                           class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenis Pengerjaan <span class="text-red-500">*</span></label>
                     <div class="mt-1 flex gap-4">
                         <label class="flex items-center gap-1.5 text-sm">
-                            <input type="radio" name="jenis_pengerjaan" value="sendiri" {{ old('jenis_pengerjaan', 'sendiri') === 'sendiri' ? 'checked' : '' }} class="text-violet-600" required onchange="onJenisChange()">
+                            <input type="radio" name="jenis_pengerjaan" value="sendiri" {{ old('jenis_pengerjaan', 'sendiri') === 'sendiri' ? 'checked' : '' }} class="text-accent" required onchange="onJenisChange()">
                             Sendiri
                         </label>
                         <label class="flex items-center gap-1.5 text-sm">
-                            <input type="radio" name="jenis_pengerjaan" value="berdua" {{ old('jenis_pengerjaan') === 'berdua' ? 'checked' : '' }} class="text-violet-600" onchange="onJenisChange()">
+                            <input type="radio" name="jenis_pengerjaan" value="berdua" {{ old('jenis_pengerjaan') === 'berdua' ? 'checked' : '' }} class="text-accent" onchange="onJenisChange()">
                             Berdua
                         </label>
                     </div>
@@ -60,7 +60,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Metode Pembayaran <span class="text-red-500">*</span></label>
                     <select name="metode_pembayaran" required
-                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                            class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                         <option value="">-- Pilih --</option>
                         <option value="cash" {{ old('metode_pembayaran') === 'cash' ? 'selected' : '' }}>Cash</option>
                         <option value="qris" {{ old('metode_pembayaran') === 'qris' ? 'selected' : '' }}>QRIS</option>
@@ -79,7 +79,7 @@
                     <p class="mt-0.5 text-xs text-gray-500">Tambahkan layanan atau produk yang dikerjakan.</p>
                 </div>
                 <button type="button" id="addItemBtn"
-                        class="rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        class="rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     + Tambah Item
                 </button>
             </div>
@@ -99,11 +99,11 @@
 
         <div class="flex items-center gap-3">
             <button type="submit" id="submitBtn"
-                    class="rounded-md bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover disabled:opacity-50 disabled:cursor-not-allowed">
                 Simpan Transaksi
             </button>
             <a href="{{ route('transaksi.index') }}"
-               class="rounded-md bg-white px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+               class="rounded-lg bg-card px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 Batal
             </a>
         </div>
@@ -117,7 +117,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Nama <span class="text-red-500">*</span></label>
                     <input type="text" id="new_pelanggan_nama" required
-                           class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                           class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                 </div>
                 <div>
                     <x-phone-input name="new_pelanggan_wa" label="No. WhatsApp" placeholder="812xxxxxxx" />
@@ -125,7 +125,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
                     <select id="new_pelanggan_kelamin"
-                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                            class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                         <option value="">-- Pilih --</option>
                         <option value="L">Laki-laki</option>
                         <option value="P">Perempuan</option>
@@ -134,7 +134,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jenis Rambut</label>
                     <select id="new_pelanggan_rambut"
-                            class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                            class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                         <option value="">-- Pilih --</option>
                         <option value="Lurus">Lurus</option>
                         <option value="Ikal">Ikal</option>
@@ -146,11 +146,11 @@
             <div id="new_pelanggan_error" class="mt-3 text-sm text-red-600 hidden"></div>
             <div class="mt-4 flex items-center justify-end gap-2">
                 <button type="button" id="cancelPelangganBtn"
-                        class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                        class="rounded-lg bg-card px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     Batal
                 </button>
                 <button type="button" id="savePelangganBtn"
-                        class="rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
+                        class="rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
                     Simpan
                 </button>
             </div>
@@ -211,7 +211,7 @@
                             return;
                         }
                         resultsDiv.innerHTML = data.map(function(p) {
-                            return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-violet-50" onclick="selectPelanggan(' + p.id + ', \'' + p.nama.replace(/'/g, "\\'") + '\')">' + p.nama + (p.no_wa ? ' <span class="text-gray-400">(' + p.no_wa + ')</span>' : '') + '</div>';
+                            return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-accent-light" onclick="selectPelanggan(' + p.id + ', \'' + p.nama.replace(/'/g, "\\'") + '\')">' + p.nama + (p.no_wa ? ' <span class="text-gray-400">(' + p.no_wa + ')</span>' : '') + '</div>';
                         }).join('');
                         resultsDiv.classList.remove('hidden');
                     });
@@ -306,13 +306,13 @@
         }
 
         function buildItemHtml(idx) {
-            return '<div class="item-row rounded-md border border-gray-200 p-4" data-idx="' + idx + '">' +
+            return '<div class="item-row rounded-lg border border-gray-200 p-4" data-idx="' + idx + '">' +
                 '<div class="flex items-start justify-between gap-2 mb-3">' +
                     '<div class="flex items-center gap-3">' +
                         '<span class="item-number text-xs font-semibold text-gray-400">#' + (idx + 1) + '</span>' +
                         '<div class="flex gap-2">' +
-                            '<label class="flex items-center gap-1 text-sm"><input type="radio" name="items[' + idx + '][tipe_item]" value="layanan" checked onchange="switchTipe(' + idx + ', \'layanan\')" class="text-violet-600"> Layanan</label>' +
-                            '<label class="flex items-center gap-1 text-sm"><input type="radio" name="items[' + idx + '][tipe_item]" value="produk" onchange="switchTipe(' + idx + ', \'produk\')" class="text-violet-600"> Produk</label>' +
+                            '<label class="flex items-center gap-1 text-sm"><input type="radio" name="items[' + idx + '][tipe_item]" value="layanan" checked onchange="switchTipe(' + idx + ', \'layanan\')" class="text-accent"> Layanan</label>' +
+                            '<label class="flex items-center gap-1 text-sm"><input type="radio" name="items[' + idx + '][tipe_item]" value="produk" onchange="switchTipe(' + idx + ', \'produk\')" class="text-accent"> Produk</label>' +
                         '</div>' +
                     '</div>' +
                     '<button type="button" onclick="removeItem(this)" class="text-sm font-medium text-red-600 hover:text-red-800">Hapus</button>' +
@@ -355,29 +355,29 @@
 
         function buildLayananBody(idx) {
             return '<div class="border-b border-gray-100 pb-3 mb-3">' +
-                '<label class="block text-xs font-semibold uppercase tracking-wide text-violet-600 mb-1">Layanan</label>' +
-                '<input type="text" placeholder="Cari layanan..." class="search-layanan block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500" autocomplete="off">' +
-                '<div class="search-layanan-results mt-1 hidden rounded-md border border-gray-200 bg-white shadow-sm max-h-48 overflow-y-auto"></div>' +
+                '<label class="block text-xs font-semibold uppercase tracking-wide text-accent-text mb-1">Layanan</label>' +
+                '<input type="text" placeholder="Cari layanan..." class="search-layanan block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30" autocomplete="off">' +
+                '<div class="search-layanan-results mt-1 hidden rounded-lg border border-gray-200 bg-card shadow-sm max-h-48 overflow-y-auto"></div>' +
                 '<div class="layanan-info mt-2 hidden">' +
                     '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
                         '<div>' +
                             '<label class="block text-xs font-medium text-gray-500">Varian</label>' +
-                            '<select name="items[' + idx + '][varian_dipilih]" class="varian-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="onVarianChange(' + idx + ')"></select>' +
+                            '<select name="items[' + idx + '][varian_dipilih]" class="varian-select mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted" onchange="onVarianChange(' + idx + ')"></select>' +
                         '</div>' +
                         '<div>' +
                             '<label class="block text-xs font-medium text-gray-500">Staf 1 (Pengerjaan) <span class="text-red-500">*</span></label>' +
-                            '<select name="items[' + idx + '][id_staf_1]" class="staf1-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" required onchange="onStafChange(' + idx + ', 1)">' + stafOptsHtml() + '</select>' +
+                            '<select name="items[' + idx + '][id_staf_1]" class="staf1-select mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted" required onchange="onStafChange(' + idx + ', 1)">' + stafOptsHtml() + '</select>' +
                         '</div>' +
                     '</div>' +
                     '<div class="staf2-section mt-3" style="display:none">' +
                         '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
                             '<div>' +
                                 '<label class="block text-xs font-medium text-gray-500">Staf 2 (Bantuan) <span class="text-red-500">*</span></label>' +
-                                '<select name="items[' + idx + '][id_staf_2]" class="staf2-select mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
+                                '<select name="items[' + idx + '][id_staf_2]" class="staf2-select mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
                             '</div>' +
                             '<div>' +
                                 '<label class="block text-xs font-medium text-gray-500">Komisi Staf 2 (Rp)</label>' +
-                                '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2 mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
+                                '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2 mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted">' +
                                 '<p class="mt-0.5 text-[11px] text-gray-400 komisi-note-2"></p>' +
                             '</div>' +
                         '</div>' +
@@ -388,16 +388,16 @@
                 '<label class="block text-xs font-semibold uppercase tracking-wide text-emerald-600 mb-1">Produk yang Digunakan</label>' +
                 '<p class="text-[11px] text-gray-400 mb-2">Pilih merk produk dan masukkan pemakaian (ml). Harga otomatis dihitung /10ml.</p>' +
                 '<div class="produk-usage-list space-y-2"></div>' +
-                '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-violet-600 hover:text-violet-800" onclick="addProdukUsageRow(' + idx + ')">+ Tambah Produk</button>' +
+                '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-accent-text hover:text-accent" onclick="addProdukUsageRow(' + idx + ')">+ Tambah Produk</button>' +
             '</div>' +
             '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 pb-3 mb-3">' +
                 '<div>' +
                     '<label class="block text-xs font-medium text-gray-500">Ketebalan Rambut</label>' +
-                    '<input type="text" name="items[' + idx + '][ketebalan_rambut]" placeholder="Contoh: Tipis, Sedang, Tebal..." class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm">' +
+                    '<input type="text" name="items[' + idx + '][ketebalan_rambut]" placeholder="Contoh: Tipis, Sedang, Tebal..." class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted">' +
                 '</div>' +
                 '<div class="gram-section hidden">' +
                     '<label class="block text-xs font-medium text-gray-500">Gram Pemakaian Tambahan</label>' +
-                    '<input type="number" name="items[' + idx + '][gram_pemakaian_tambahan]" value="0" min="0" step="1" class="gram-input mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="recalcHarga(' + idx + ')">' +
+                    '<input type="number" name="items[' + idx + '][gram_pemakaian_tambahan]" value="0" min="0" step="1" class="gram-input mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted" onchange="recalcHarga(' + idx + ')">' +
                     '<p class="mt-0.5 text-[11px] text-gray-400">Kelebihan gram dari pemakaian normal</p>' +
                 '</div>' +
             '</div>' +
@@ -420,7 +420,7 @@
         }
 
         function buildProdukBody(idx) {
-            return '<input type="text" placeholder="Cari produk..." class="search-produk mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500" autocomplete="off">' +
+            return '<input type="text" placeholder="Cari produk..." class="search-produk mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none" autocomplete="off">' +
                 '<div class="search-produk-results mt-1 hidden rounded-md border border-gray-200 bg-white shadow-sm max-h-48 overflow-y-auto"></div>' +
                 '<div class="produk-info mt-2 hidden">' +
                     '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
@@ -434,9 +434,9 @@
                             '<label class="block text-xs font-medium text-gray-500 qty-label">Jumlah</label>' +
                             '<input type="number" name="items[' + idx + '][qty]" value="1" min="1" step="1" class="qty-field mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="syncQty(' + idx + ')">' +
                         '</div>' +
-                        '<div class="sm:col-span-2 rounded-md bg-violet-50 p-3">' +
-                            '<label class="block text-xs font-medium text-violet-600">Total Harga</label>' +
-                            '<p class="mt-1 text-lg font-bold text-violet-700 produk-subtotal-display">Rp0</p>' +
+                        '<div class="sm:col-span-2 rounded-lg bg-accent-light p-3">' +
+                            '<label class="block text-xs font-medium text-accent-text">Total Harga</label>' +
+                            '<p class="mt-1 text-lg font-bold text-text-primary produk-subtotal-display">Rp0</p>' +
                         '</div>' +
                         '<div class="sm:col-span-2">' +
                             '<label class="block text-xs font-medium text-gray-500">Catatan</label>' +
@@ -463,7 +463,7 @@
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="px-3 py-2 text-sm text-gray-400">Tidak ditemukan</div>'; results.classList.remove('hidden'); return; }
                             results.innerHTML = data.map(function(l) {
-                                return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-violet-50" onclick="selectLayanan(' + idx + ',' + l.id + ')">' + l.nama_layanan + ' <span class="text-xs text-gray-400">(' + l.kategori + ')</span></div>';
+                                return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-accent-light" onclick="selectLayanan(' + idx + ',' + l.id + ')">' + l.nama_layanan + ' <span class="text-xs text-text-muted">(' + l.kategori + ')</span></div>';
                             }).join('');
                             results.classList.remove('hidden');
                         });
@@ -740,7 +740,7 @@
                             if (data.length === 0) { results.innerHTML = '<div class="px-3 py-2 text-sm text-gray-400">Tidak ditemukan</div>'; results.classList.remove('hidden'); return; }
                             results.innerHTML = data.map(function(p) {
                                 var stokClass = p.stok <= 0 ? 'text-red-500' : '';
-                                return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-violet-50" onclick="selectProduk(' + idx + ',' + p.id + ',\'' + p.nama_produk.replace(/'/g, "\\'") + '\',' + p.harga_per_satuan + ',' + p.stok + ',\'' + p.satuan + '\')">' +
+                                return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-accent-light" onclick="selectProduk(' + idx + ',' + p.id + ',\'' + p.nama_produk.replace(/'/g, "\\'") + '\',' + p.harga_per_satuan + ',' + p.stok + ',\'' + p.satuan + '\')">' +
                                     p.nama_produk + ' <span class="text-xs text-gray-400">(' + p.merek + ')</span>' +
                                     ' <span class="text-xs ' + stokClass + '">Stok: ' + p.stok + '</span>' +
                                 '</div>';

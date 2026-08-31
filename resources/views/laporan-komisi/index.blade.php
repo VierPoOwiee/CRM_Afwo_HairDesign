@@ -10,22 +10,22 @@
         </div>
     </div>
 
-    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div class="rounded-lg bg-card p-6 shadow-sm">
         <form action="{{ route('laporan-komisi.index') }}" method="GET" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Dari Tanggal</label>
                 <input type="date" name="dari" value="{{ $dari }}"
-                       class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                       class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Sampai Tanggal</label>
                 <input type="date" name="sampai" value="{{ $sampai }}"
-                       class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                       class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Staf</label>
                 <select name="id_staf"
-                        class="mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                        class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                     <option value="">Semua Staf</option>
                     @foreach ($karyawans as $k)
                         <option value="{{ $k->id }}" {{ $stafId == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
@@ -34,7 +34,7 @@
             </div>
             <div class="flex items-end">
                 <button type="submit"
-                        class="rounded-md bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
+                        class="rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
                     Filter
                 </button>
             </div>
@@ -42,11 +42,11 @@
     </div>
 
     @if ($grandTotal->isEmpty())
-        <div class="mt-6 rounded-lg border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
+        <div class="mt-6 rounded-lg border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
             <p class="text-sm font-medium text-gray-700">Belum ada data komisi untuk periode ini.</p>
         </div>
     @else
-        <div class="mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div class="mt-6 rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100">
                 <h2 class="text-base font-semibold text-gray-900">Rekap Komisi per Staf</h2>
                 <p class="mt-0.5 text-xs text-gray-500">Periode: {{ $dari }} s/d {{ $sampai }}</p>
@@ -105,7 +105,7 @@
                 @php
                     $stafKomisi = $rekap->where('id_staf', $row['id_staf']);
                 @endphp
-                <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div class="rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-semibold text-gray-900">{{ $row['nama_staf'] }}</h3>
@@ -130,7 +130,7 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-500">Hitung Ulang Komisi Harian</label>
                                     <input type="date" name="tanggal" value="{{ $sampai }}"
-                                           class="mt-1 block rounded-md border-gray-300 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                                           class="mt-1 block rounded-lg border-gray-300 bg-card text-text-primary px-3 py-1.5 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                                 </div>
                                 <button type="submit"
                                         class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700">

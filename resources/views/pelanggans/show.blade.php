@@ -13,12 +13,12 @@
 
     <div class="mt-6 space-y-6">
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Nama</p>
                 <p class="mt-1 font-medium text-gray-900">{{ $pelanggan->nama }}</p>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">No. WhatsApp</p>
                 <p class="mt-1 text-gray-900">
                     <a href="https://wa.me/{{ preg_replace('/\D/', '', $pelanggan->no_wa) }}"
@@ -29,30 +29,30 @@
                 </p>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Username Instagram</p>
                 <p class="mt-1 text-gray-900">{{ $pelanggan->username_instagram ? ltrim($pelanggan->username_instagram, '@') : '-' }}</p>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Jenis Kelamin</p>
                 <p class="mt-1 text-gray-900">
                     {{ $pelanggan->jenis_kelamin ? ($pelanggan->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : '-' }}
                 </p>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Jenis Rambut</p>
                 <p class="mt-1 text-gray-900">{{ $pelanggan->jenis_rambut ?? '-' }}</p>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Alamat</p>
                 <p class="mt-1 text-gray-900">{{ $pelanggan->alamat ?? '-' }}</p>
             </div>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
             <div class="flex items-center justify-between gap-3">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Catatan Khusus</p>
                 @if ($pelanggan->catatan_khusus)
@@ -68,11 +68,11 @@
 
         <div class="flex flex-col gap-3 sm:flex-row">
             <a href="{{ route('pelanggan.edit', $pelanggan) }}"
-               class="inline-flex justify-center rounded-md bg-violet-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700">
+               class="inline-flex justify-center rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
                 Edit Data
             </a>
             <a href="{{ route('pelanggan.index') }}"
-               class="inline-flex justify-center rounded-md bg-white px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+               class="inline-flex justify-center rounded-lg bg-card px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 Kembali
             </a>
         </div>

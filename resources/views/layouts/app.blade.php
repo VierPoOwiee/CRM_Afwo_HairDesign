@@ -8,49 +8,49 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col">
-    <header class="bg-white border-b border-gray-200">
+<body class="bg-surface text-text-primary antialiased min-h-screen flex flex-col">
+    <header class="bg-card border-b border-gray-200/80 sticky top-0 z-30">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
             <div class="flex min-w-0 items-center gap-3 sm:gap-8">
                 @if (Auth::check() && Auth::user()->isOwner())
-                    <a href="{{ route('dashboard') }}" class="shrink-0 text-lg font-bold tracking-tight">
-                        Afwo<span class="text-violet-600">.</span>
+                    <a href="{{ route('dashboard') }}" class="shrink-0 text-lg font-bold tracking-tight text-text-primary">
+                        Afwo<span class="text-accent">.</span>
                     </a>
                 @else
-                    <a href="{{ route('pelanggan.index') }}" class="shrink-0 text-lg font-bold tracking-tight">
-                        Afwo<span class="text-violet-600">.</span>
+                    <a href="{{ route('pelanggan.index') }}" class="shrink-0 text-lg font-bold tracking-tight text-text-primary">
+                        Afwo<span class="text-accent">.</span>
                     </a>
                 @endif
                 <nav class="flex items-center gap-0.5 overflow-x-auto text-sm sm:gap-1">
                     @if (Auth::check() && Auth::user()->isOwner())
                         <a href="{{ route('dashboard') }}"
-                           class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('dashboard') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                           class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('dashboard') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                             Dashboard
                         </a>
                     @endif
                     <a href="{{ route('pelanggan.index') }}"
-                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('pelanggan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('pelanggan.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                         Data Pelanggan
                     </a>
                     <a href="{{ route('karyawan.index') }}"
-                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('karyawan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('karyawan.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                         Karyawan
                     </a>
                     <a href="{{ route('layanan.index') }}"
-                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('layanan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('layanan.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                         Layanan
                     </a>
                     <a href="{{ route('produk.index') }}"
-                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('produk.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('produk.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                         Produk
                     </a>
                     <a href="{{ route('transaksi.index') }}"
-                       class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('transaksi.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                       class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('transaksi.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                         Transaksi
                     </a>
                     @if (Auth::check() && Auth::user()->isOwner())
                         <a href="{{ route('laporan.penjualan', ['preset' => 'bulan-ini']) }}"
-                           class="whitespace-nowrap rounded-md px-2 py-2 sm:px-3 {{ request()->routeIs('laporan.*') ? 'bg-violet-50 text-violet-700 font-medium' : 'text-gray-600 hover:text-gray-900' }}">
+                           class="whitespace-nowrap rounded-lg px-3 py-2 transition-colors duration-150 {{ request()->routeIs('laporan.*') ? 'bg-accent/10 text-accent-text font-medium' : 'text-text-secondary hover:text-text-primary hover:bg-gray-100/80' }}">
                             Laporan
                         </a>
                     @endif
@@ -59,55 +59,22 @@
 
             <div class="flex items-center gap-3">
                 @if (Auth::check())
-                    {{-- Contextual action button --}}
-                    @if (request()->routeIs('karyawan.*'))
-                        <a href="{{ route('karyawan.create') }}"
-                           class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
-                            <span class="text-lg leading-none">+</span>
-                            <span class="hidden sm:inline">Tambah Karyawan</span>
-                        </a>
-                    @elseif (request()->routeIs('layanan.*'))
-                        <a href="{{ route('layanan.create') }}"
-                           class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
-                            <span class="text-lg leading-none">+</span>
-                            <span class="hidden sm:inline">Tambah Layanan</span>
-                        </a>
-                    @elseif (request()->routeIs('produk.*'))
-                        <a href="{{ route('produk.create') }}"
-                           class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
-                            <span class="text-lg leading-none">+</span>
-                            <span class="hidden sm:inline">Tambah Produk</span>
-                        </a>
-                    @elseif (request()->routeIs('transaksi.*'))
-                        <a href="{{ route('transaksi.create') }}"
-                           class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
-                            <span class="text-lg leading-none">+</span>
-                            <span class="hidden sm:inline">Transaksi Baru</span>
-                        </a>
-                    @elseif (! request()->routeIs('laporan.*') && ! request()->routeIs('dashboard'))
-                        <a href="{{ route('pelanggan.create') }}"
-                           class="inline-flex shrink-0 items-center gap-2 rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 sm:px-4">
-                            <span class="text-lg leading-none">+</span>
-                            <span class="hidden sm:inline">Tambah Pelanggan</span>
-                        </a>
-                    @endif
-
                     {{-- User area --}}
                     <div class="relative flex items-center gap-2 no-print">
                         <a href="{{ route('profile.show') }}"
-                           class="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 {{ request()->routeIs('profile.*') ? 'bg-violet-50 text-violet-700' : '' }}">
-                            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
-                            <span class="max-w-[10rem] truncate">{{ Auth::user()->name }}</span>
+                           class="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-text-secondary transition-colors duration-150 hover:bg-gray-100 {{ request()->routeIs('profile.*') ? 'bg-accent/10 text-accent-text' : '' }}">
+                            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15 text-xs font-bold text-accent-text">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                            <span class="max-w-[10rem] truncate hidden sm:inline">{{ Auth::user()->name }}</span>
                         </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="rounded-md bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200">
+                            <button type="submit" class="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-text-secondary transition-colors duration-150 hover:bg-gray-200">
                                 Keluar
                             </button>
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-violet-600 hover:text-violet-700">Masuk</a>
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-accent-text hover:text-accent">Masuk</a>
                 @endif
             </div>
         </div>
@@ -115,13 +82,14 @@
 
     <main class="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6 lg:px-8 py-8">
         @if (session('success'))
-            <div class="mb-6 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+            <div class="mb-6 rounded-lg border border-success/20 bg-success-bg px-4 py-3 text-sm font-medium text-success flex items-center gap-2">
+                <span class="inline-block h-2 w-2 rounded-full bg-success"></span>
                 {{ session('success') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <div class="mb-6 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-sm text-danger">
                 <ul class="list-inside list-disc space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -133,8 +101,8 @@
         @yield('content')
     </main>
 
-    <footer class="border-t border-gray-200 bg-white no-print">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 text-center text-xs text-gray-400">
+    <footer class="border-t border-gray-200/80 bg-card no-print">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 text-center text-xs text-text-muted">
             Afwo Website
         </div>
     </footer>

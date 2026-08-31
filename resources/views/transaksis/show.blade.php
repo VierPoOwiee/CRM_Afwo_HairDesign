@@ -37,7 +37,7 @@
 
     <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-6">
-            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
                 <h2 class="mb-4 text-base font-semibold text-gray-900">Informasi Transaksi</h2>
                 <dl class="grid grid-cols-2 gap-3 text-sm">
                     <div>
@@ -59,7 +59,7 @@
                 </dl>
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div class="rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h2 class="text-base font-semibold text-gray-900">Item Transaksi</h2>
                 </div>
@@ -176,7 +176,7 @@
                     </div>
                 </div>
             @endif
-            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
                 <h2 class="mb-4 text-base font-semibold text-gray-900">Komisi per Staf</h2>
 
                 @if ($transaksi->komisiTransaksi->isEmpty())
@@ -188,7 +188,7 @@
                                 $staf = $kt->staf;
                                 $isPersen = $staf && $staf->skema_komisi === 'persen_omset_harian';
                             @endphp
-                            <div class="rounded-md border border-gray-100 p-3">
+                            <div class="rounded-lg border border-gray-100 p-3">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ $staf->nama ?? 'Staf #' . $kt->id_staf }}</p>
@@ -215,7 +215,7 @@
                                         <input type="text" name="keterangan" value="{{ $kt->keterangan }}" placeholder="Opsional"
                                                class="mt-1 block w-full rounded-md border-gray-300 px-2 py-1.5 text-sm">
                                     </div>
-                                    <button type="submit" class="mb-0.5 rounded-md bg-violet-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-violet-700">Simpan</button>
+                                    <button type="submit" class="mb-0.5 rounded-md bg-dark px-3 py-1.5 text-xs font-medium text-white hover:bg-dark-hover">Simpan</button>
                                 </form>
                             </div>
                         @endforeach
@@ -223,7 +223,7 @@
                 @endif
             </div>
 
-            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
                 <h2 class="mb-4 text-base font-semibold text-gray-900">Detail Komisi per Item</h2>
                 @php
                     $detailsWithKomisi = $transaksi->details->filter(fn ($d) => $d->komisi_nominal !== null);
@@ -255,7 +255,7 @@
                                                     <input type="hidden" name="detail_id" value="{{ $d->id }}">
                                                     <input type="text" inputmode="numeric" name="komisi_nominal" value="{{ $d->komisi_nominal }}"
                                                            class="w-24 rounded-md border-gray-300 px-2 py-1 text-xs text-right">
-                                                    <button type="submit" class="text-xs text-violet-600 hover:text-violet-800">OK</button>
+                                                    <button type="submit" class="text-xs text-accent-text hover:text-accent">OK</button>
                                                 </form>
                                             </div>
                                         </div>

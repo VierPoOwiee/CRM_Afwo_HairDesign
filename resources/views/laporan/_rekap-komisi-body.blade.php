@@ -1,9 +1,9 @@
 {{-- Body laporan utama Rekap Komisi — dipakai oleh laporan/rekap-komisi.blade.php
      dan laporan/cetak-rekap-komisi.blade.php --}}
-<div class="rounded-lg border-2 border-violet-200 bg-violet-50 p-5 shadow-sm text-center">
-    <p class="text-sm font-medium text-violet-700">Total Komisi yang Harus Dibayar</p>
-    <p class="mt-1 text-3xl font-bold text-violet-900">Rp{{ number_format($totalBayarSemuaStaf, 0, ',', '.') }}</p>
-    <p class="mt-1 text-xs text-violet-500">Periode: {{ $dari }} s/d {{ $sampai }}</p>
+<div class="rounded-lg border-2 border-accent/30 bg-accent-light p-5 shadow-sm text-center">
+    <p class="text-sm font-medium text-accent-text">Total Komisi yang Harus Dibayar</p>
+    <p class="mt-1 text-3xl font-bold text-text-primary">Rp{{ number_format($totalBayarSemuaStaf, 0, ',', '.') }}</p>
+    <p class="mt-1 text-xs text-text-muted">Periode: {{ $dari }} s/d {{ $sampai }}</p>
 </div>
 
 {{-- Section Pendapatan Karyawan (navigasi ke slip per karyawan) — SELALU tampil,
@@ -13,10 +13,10 @@
     <div class="px-6 py-4 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h2 class="text-base font-semibold text-gray-900">Pendapatan Karyawan</h2>
-            <p class="mt-0.5 text-xs text-gray-500">Gaji pokok + komisi per karyawan untuk periode yang sama. Klik salah satu staf untuk membuka slip pendapatannya, atau lihat <a href="{{ route('laporan.pendapatan-karyawan') }}" class="font-medium text-violet-600 hover:text-violet-700">ringkasan pendapatan bulanan</a>.</p>
+            <p class="mt-0.5 text-xs text-gray-500">Gaji pokok + komisi per karyawan untuk periode yang sama. Klik salah satu staf untuk membuka slip pendapatannya, atau lihat <a href="{{ route('laporan.pendapatan-karyawan') }}" class="font-medium text-accent-text hover:text-accent">ringkasan pendapatan bulanan</a>.</p>
         </div>
         <a href="{{ route('laporan.rekap-komisi.cetak', request()->query()) }}"
-           class="inline-flex shrink-0 items-center gap-2 self-start rounded-md bg-violet-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-violet-700 sm:self-auto">
+           class="inline-flex shrink-0 items-center gap-2 self-start rounded-lg bg-dark px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-dark-hover sm:self-auto">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
             Cetak Laporan + Slip Semua Karyawan
         </a>
@@ -47,10 +47,10 @@
                         </td>
                         <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format($item['gaji_pokok'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format($item['total_komisi'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right font-semibold text-violet-700">Rp{{ number_format($item['total_pendapatan'], 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right font-semibold text-accent-text">Rp{{ number_format($item['total_pendapatan'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">
                             <a href="{{ route('laporan.rekap-komisi.slip', array_merge(['karyawan' => $k->id], request()->only(['preset', 'dari', 'sampai']))) }}"
-                               class="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1.5 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-200 hover:bg-violet-50">
+                               class="inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1.5 text-xs font-medium text-accent-text ring-1 ring-inset ring-accent/30 hover:bg-accent-light">
                                 Lihat Slip
                                 <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
@@ -151,7 +151,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-gray-500">Hitung Ulang Komisi Harian</label>
                                 <input type="date" name="tanggal" value="{{ $sampai }}"
-                                       class="mt-1 block rounded-md border-gray-300 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                                       class="mt-1 block rounded-lg border-gray-300 bg-card text-text-primary px-3 py-1.5 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                             </div>
                             <button type="submit"
                                     class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700">

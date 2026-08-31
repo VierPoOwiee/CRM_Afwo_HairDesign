@@ -72,14 +72,14 @@
 
     <div class="mt-1 flex gap-2">
         <select id="{{ $name }}_country" aria-label="Kode negara"
-                class="w-[45%] max-w-[180px] shrink-0 rounded-md border-gray-300 bg-white px-2 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+                class="w-[45%] max-w-[180px] shrink-0 rounded-lg border-gray-300 bg-white text-text-primary px-2 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
             @foreach ($countries as $c)
                 <option value="{{ $c[1] }}">{{ $c[2] }} {{ $c[0] }} (+{{ $c[1] }})</option>
             @endforeach
         </select>
         <input type="text" inputmode="numeric" autocomplete="tel-national" id="{{ $name }}_number"
                placeholder="{{ $placeholder }}" @if ($required) required @endif
-               class="block w-full flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:ring-violet-500">
+               class="block w-full flex-1 rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none placeholder:text-text-muted">
     </div>
 
     <input type="hidden" name="{{ $name }}" id="{{ $name }}" value="{{ old($name, $value) }}">
