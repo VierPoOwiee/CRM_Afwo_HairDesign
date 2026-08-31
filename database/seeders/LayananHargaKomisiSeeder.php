@@ -49,17 +49,23 @@ class LayananHargaKomisiSeeder extends Seeder
         };
 
         // ===================== POTONG (excluded dari basis komisi Ari) =====================
-        $buat('Gunting Wanita', 'Potong', [
+        $buat('Potong Wanita', 'Potong', [
             ['varian' => 'default', 'harga_min' => 200000],
         ], true);
-        $buat('Gunting Pria', 'Potong', [
+        $buat('Potong Pria', 'Potong', [
             ['varian' => 'default', 'harga_min' => 150000],
         ], true);
-        $buat('Gunting Anak', 'Potong', [
+        $buat('Potong Anak', 'Potong', [
             ['varian' => 'default', 'harga_min' => 150000],
         ], true);
         $buat('Potong Poni', 'Potong', [
             ['varian' => 'default', 'harga_min' => 75000],
+        ], true);
+        $buat('Potong Wanita + Cuci + Blow', 'Potong', [
+            ['varian' => 'default', 'harga_min' => 300000],
+        ], true);
+        $buat('Potong Pria + Cuci + Blow', 'Potong', [
+            ['varian' => 'default', 'harga_min' => 150000],
         ], true);
 
         // ===================== STYLING (KOMISI DIKONFIRMASI) =====================

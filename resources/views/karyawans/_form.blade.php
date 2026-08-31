@@ -24,9 +24,8 @@
         <label for="gaji_pokok" class="block text-sm font-medium text-gray-700">Gaji Pokok (per bulan)</label>
         <div class="mt-1 flex items-center gap-2">
             <span class="text-sm text-gray-500">Rp</span>
-            <input type="number" name="gaji_pokok" id="gaji_pokok"
+            <input type="text" inputmode="numeric" name="gaji_pokok" id="gaji_pokok"
                    value="{{ old('gaji_pokok', $karyawan->gaji_pokok ?? '') }}"
-                   min="0" step="1000"
                    placeholder="3000000"
                    class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
         </div>

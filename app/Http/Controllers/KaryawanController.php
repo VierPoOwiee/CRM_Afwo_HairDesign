@@ -67,6 +67,12 @@ class KaryawanController extends Controller
 
     private function validated(Request $request, ?int $ignoreId = null): array
     {
+        $gaji = $request->input('gaji_pokok');
+        if ($gaji !== null) {
+            $s = str_replace(['.', ','], '', (string) $gaji);
+            $request->merge(['gaji_pokok' => $s === '' ? null : $s]);
+        }
+
         $rules = [
             'nama' => ['required', 'string', 'max:255'],
             'kontak' => ['nullable', 'string', 'max:255', 'regex:/^\+[1-9]\d{5,14}$/'],

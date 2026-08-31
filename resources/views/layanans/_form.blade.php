@@ -138,23 +138,23 @@
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>
-                            <input type="number" name="harga_dasar_min[]" value="{{ $row['harga_dasar_min'] }}" min="0" step="1000" required class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="harga_dasar_min[]" value="{{ $row['harga_dasar_min'] }}" required class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Max (Rp)</label>
-                            <input type="number" name="harga_dasar_max[]" value="{{ $row['harga_dasar_max'] }}" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="harga_dasar_max[]" value="{{ $row['harga_dasar_max'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                            <input type="number" name="tarif_kelebihan_per_10gr[]" value="{{ $row['tarif_kelebihan_per_10gr'] }}" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" value="{{ $row['tarif_kelebihan_per_10gr'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
-                            <input type="number" name="komisi_min[]" value="{{ $row['komisi_min'] }}" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="komisi_min[]" value="{{ $row['komisi_min'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Max (Rp)</label>
-                            <input type="number" name="komisi_max[]" value="{{ $row['komisi_max'] }}" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="komisi_max[]" value="{{ $row['komisi_max'] }}" class="{{ $inputClass }}">
                         </div>
                         <div class="flex items-end sm:justify-end">
                             <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>
@@ -168,23 +168,23 @@
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>
-                            <input type="number" name="harga_dasar_min[]" min="0" step="1000" required class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="harga_dasar_min[]" required class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Max (Rp)</label>
-                            <input type="number" name="harga_dasar_max[]" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                            <input type="number" name="tarif_kelebihan_per_10gr[]" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
-                            <input type="number" name="komisi_min[]" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="komisi_min[]" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Max (Rp)</label>
-                            <input type="number" name="komisi_max[]" min="0" step="1000" class="{{ $inputClass }}">
+                            <input type="text" inputmode="numeric" name="komisi_max[]" class="{{ $inputClass }}">
                         </div>
                         <div class="flex items-end sm:justify-end">
                             <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>
@@ -202,23 +202,23 @@
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Min (Rp)</label>
-                    <input type="number" name="harga_dasar_min[]" min="0" step="1000" required class="{{ $inputClass }}">
+                    <input type="text" inputmode="numeric" name="harga_dasar_min[]" required class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Harga Max (Rp)</label>
-                    <input type="number" name="harga_dasar_max[]" min="0" step="1000" class="{{ $inputClass }}">
+                    <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                    <input type="number" name="tarif_kelebihan_per_10gr[]" min="0" step="1000" class="{{ $inputClass }}">
+                    <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
-                    <input type="number" name="komisi_min[]" min="0" step="1000" class="{{ $inputClass }}">
+                    <input type="text" inputmode="numeric" name="komisi_min[]" class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Max (Rp)</label>
-                    <input type="number" name="komisi_max[]" min="0" step="1000" class="{{ $inputClass }}">
+                    <input type="text" inputmode="numeric" name="komisi_max[]" class="{{ $inputClass }}">
                 </div>
                 <div class="flex items-end sm:justify-end">
                     <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>

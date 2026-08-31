@@ -137,6 +137,8 @@ class LayananController extends Controller
 
     private function validatedRows(Request $request): array
     {
+        $this->normalizeRupiahFields($request);
+
         $data = $request->validate([
             'varian' => ['required', 'array', 'min:1'],
             'varian.*' => ['required', 'string', 'max:255', 'distinct'],
@@ -168,5 +170,34 @@ class LayananController extends Controller
         }
 
         return $rows;
+    }
+
+    private function normalizeRupiahFields(Request $request): void
+    {
+        foreach ([
+            'harga_dasar_min',
+            'harga_dasar_max',
+            'tarif_kelebihan_per_10gr',
+            'komisi_min',
+            'komisi_max',
+        ] as $field) {
+            $values = $request->input($field);
+
+            if (! is_array($values)) {
+                continue;
+            }
+
+            $request->merge([
+                $field => array_map(function ($v) {
+                    if ($v === null) {
+                        return null;
+                    }
+
+                    $s = str_replace(['.', ','], '', (string) $v);
+
+                    return $s === '' ? null : $s;
+                }, $values),
+            ]);
+        }
     }
 }

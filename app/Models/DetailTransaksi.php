@@ -24,6 +24,7 @@ class DetailTransaksi extends Model
         'gram_pemakaian_tambahan',
         'qty',
         'harga_saat_transaksi',
+        'diskon',
         'subtotal',
         'komisi_nominal',
         'catatan',
@@ -33,6 +34,7 @@ class DetailTransaksi extends Model
         'gram_pemakaian_tambahan' => 'decimal:2',
         'qty' => 'decimal:2',
         'harga_saat_transaksi' => 'decimal:2',
+        'diskon' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'komisi_nominal' => 'decimal:2',
     ];
@@ -64,7 +66,7 @@ class DetailTransaksi extends Model
 
     public function computeSubtotal(): float
     {
-        return (float) $this->harga_saat_transaksi * (float) $this->qty;
+        return max(0, ((float) $this->harga_saat_transaksi * (float) $this->qty) - (float) ($this->diskon ?? 0));
     }
 
     public function computeHargaSuggested(float $hargaDasarMin, ?float $tarifKelebihan): float

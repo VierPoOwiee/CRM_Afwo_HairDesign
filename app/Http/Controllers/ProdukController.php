@@ -83,6 +83,12 @@ class ProdukController extends Controller
 
     private function validated(Request $request): array
     {
+        $harga = $request->input('harga_per_satuan');
+        if ($harga !== null) {
+            $s = str_replace(['.', ','], '', (string) $harga);
+            $request->merge(['harga_per_satuan' => $s === '' ? null : $s]);
+        }
+
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
             'merek' => ['nullable', 'required_if:kategori_produk,dipakai_layanan', 'in:Alfaparf,Milbon,Keaune'],

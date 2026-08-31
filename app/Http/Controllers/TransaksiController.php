@@ -91,6 +91,7 @@ class TransaksiController extends Controller
             'items.*.gram_pemakaian_tambahan' => ['nullable', 'numeric', 'min:0'],
             'items.*.qty' => ['required', 'numeric', 'min:0.01'],
             'items.*.harga_saat_transaksi' => ['required', 'numeric', 'min:0'],
+            'items.*.diskon' => ['nullable', 'numeric', 'min:0'],
             'items.*.komisi_nominal_1' => ['nullable', 'numeric', 'min:0'],
             'items.*.komisi_nominal_2' => ['nullable', 'numeric', 'min:0'],
             'items.*.catatan' => ['nullable', 'string'],
@@ -131,7 +132,8 @@ class TransaksiController extends Controller
             foreach ($request->items as $item) {
                 $harga = (float) $item['harga_saat_transaksi'];
                 $qty = (float) $item['qty'];
-                $subtotal = $harga * $qty;
+                $diskon = ! empty($item['diskon']) ? (float) $item['diskon'] : 0;
+                $subtotal = max(0, ($harga * $qty) - $diskon);
                 $staf2 = $item['id_staf_2'] ?? null;
 
                 // Detail for staf 1 (primary — carries the subtotal)
@@ -146,6 +148,7 @@ class TransaksiController extends Controller
                     'gram_pemakaian_tambahan' => $item['gram_pemakaian_tambahan'] ?? 0,
                     'qty' => $qty,
                     'harga_saat_transaksi' => $harga,
+                    'diskon' => $diskon,
                     'subtotal' => $subtotal,
                     'komisi_nominal' => ! empty($item['komisi_nominal_1']) ? $item['komisi_nominal_1'] : null,
                     'catatan' => $item['catatan'] ?? null,

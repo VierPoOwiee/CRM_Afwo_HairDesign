@@ -55,9 +55,9 @@
 
         <div>
             <label for="harga_per_satuan" class="block text-sm font-medium text-gray-700">Harga per Satuan (Rp) <span class="text-red-500">*</span></label>
-            <input type="number" name="harga_per_satuan" id="harga_per_satuan"
+            <input type="text" inputmode="numeric" name="harga_per_satuan" id="harga_per_satuan"
                    value="{{ old('harga_per_satuan', $produk->harga_per_satuan ?? '') }}"
-                   min="0" step="1000" required
+                   required
                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
             <p class="mt-1 text-xs text-gray-500" id="harga_note"></p>
         </div>
