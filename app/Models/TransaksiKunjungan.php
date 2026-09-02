@@ -71,7 +71,8 @@ class TransaksiKunjungan extends Model
     {
         return match ($this->metode_pembayaran) {
             'cash' => 'Cash',
-            'qris' => 'QRIS',
+            'qris_bni' => 'QRIS BNI',
+            'qris_bri' => 'QRIS BRI',
             'debit' => 'Debit',
             'kartu_kredit' => 'Kartu Kredit',
             'transfer' => 'Transfer',

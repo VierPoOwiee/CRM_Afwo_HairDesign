@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use App\Models\DetailTransaksi;
 use App\Models\InsightAi;
 use App\Models\Karyawan;
@@ -214,10 +215,22 @@ class LaporanController extends Controller
             ->groupBy('id_staf')
             ->pluck('total', 'id_staf');
 
-        $baris = $karyawans->map(function ($karyawan) use ($komisiPerLayanan, $komisiHarian) {
+        $hadirPerStaf = Absensi::whereBetween('tanggal', [$dariCarbon->toDateString(), $sampaiCarbon->toDateString()])
+            ->where('hadir', true)
+            ->selectRaw('id_staf, count(*) as jumlah')
+            ->groupBy('id_staf')
+            ->pluck('jumlah', 'id_staf');
+
+        $uangMakanPerHari = AbsensiController::UANG_MAKAN_PER_HARI;
+
+        $baris = $karyawans->map(function ($karyawan) use ($komisiPerLayanan, $komisiHarian, $hadirPerStaf, $uangMakanPerHari) {
             $perLayanan = (float) ($komisiPerLayanan[$karyawan->id] ?? 0);
             $persenHarian = (float) ($komisiHarian[$karyawan->id] ?? 0);
             $gajiPokok = (float) $karyawan->gaji_pokok;
+            $jumlahHadir = (int) ($hadirPerStaf[$karyawan->id] ?? 0);
+            $uangMakan = $karyawan->skema_komisi === 'persen_omset_harian'
+                ? 0
+                : $jumlahHadir * $uangMakanPerHari;
 
             return [
                 'karyawan' => $karyawan,
@@ -225,7 +238,9 @@ class LaporanController extends Controller
                 'komisi_persen_harian' => $persenHarian,
                 'total_komisi' => $perLayanan + $persenHarian,
                 'gaji_pokok' => $gajiPokok,
-                'total_pendapatan' => $perLayanan + $persenHarian + $gajiPokok,
+                'jumlah_hadir' => $jumlahHadir,
+                'uang_makan' => $uangMakan,
+                'total_pendapatan' => $perLayanan + $persenHarian + $gajiPokok + $uangMakan,
             ];
         });
 
@@ -234,6 +249,8 @@ class LaporanController extends Controller
             'komisi_persen_harian' => $baris->sum('komisi_persen_harian'),
             'total_komisi' => $baris->sum('total_komisi'),
             'gaji_pokok' => $baris->sum('gaji_pokok'),
+            'jumlah_hadir' => $baris->sum('jumlah_hadir'),
+            'uang_makan' => $baris->sum('uang_makan'),
             'total_pendapatan' => $baris->sum('total_pendapatan'),
         ];
 
@@ -249,6 +266,7 @@ class LaporanController extends Controller
 
         return view('laporan.pendapatan-karyawan', compact(
             'baris', 'grandTotal', 'dariCarbon', 'sampaiCarbon', 'bulanInput', 'pilihanBulan',
+            'uangMakanPerHari',
         ));
     }
 
@@ -414,13 +432,23 @@ class LaporanController extends Controller
         $totalKomisi = round($harian->sum('komisi'), 2);
         $gajiPokok = (float) $staf->gaji_pokok;
 
+        $jumlahHadir = Absensi::where('id_staf', $staf->id)
+            ->whereBetween('tanggal', [$dariCarbon->toDateString(), $sampaiCarbon->toDateString()])
+            ->where('hadir', true)
+            ->count();
+        $uangMakan = $staf->skema_komisi === 'persen_omset_harian'
+            ? 0
+            : $jumlahHadir * AbsensiController::UANG_MAKAN_PER_HARI;
+
         return [
             'sumber' => $sumber,
             'harian' => $harian,
             'mingguan' => $mingguan,
             'total_komisi' => $totalKomisi,
             'gaji_pokok' => $gajiPokok,
-            'total_pendapatan' => $totalKomisi + $gajiPokok,
+            'jumlah_hadir' => $jumlahHadir,
+            'uang_makan' => $uangMakan,
+            'total_pendapatan' => $totalKomisi + $gajiPokok + $uangMakan,
         ];
     }
 

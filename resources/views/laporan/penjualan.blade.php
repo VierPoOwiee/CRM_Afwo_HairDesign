@@ -34,11 +34,11 @@
     @endif
 
     {{-- AI Insight --}}
-    <div class="mt-6 rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-white p-6 shadow-sm">
+<div class="mt-6 rounded-lg border border-accent/30 bg-gradient-to-br from-accent-light to-white p-6 shadow-sm">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100">
-                    <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100">
+                    <svg class="h-5 w-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                     </svg>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                     <button type="submit" id="btnGenerateInsight"
                         @if ($insightCooldown) disabled title="Analisa baru saja digenerate, tunggu beberapa menit" @endif
-                        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-purple-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-dark px-4 py-2.5 text-sm font-medium text-white hover:bg-dark-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
@@ -63,7 +63,7 @@
                     </button>
                     @if ($insightCooldown)
                         <span id="insightCooldownLabel" data-sisa="{{ $insightCooldownSisaDetik }}"
-                            class="inline-flex items-center justify-center gap-1.5 rounded-md bg-purple-100 px-3 py-2 text-xs font-medium text-purple-700">
+                            class="inline-flex items-center justify-center gap-1.5 rounded-md bg-amber-100 px-3 py-2 text-xs font-medium text-amber-800">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -115,11 +115,29 @@
 
         {{-- Grafik perbandingan bulan ini vs bulan lalu (dari data database) --}}
         <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2 no-print">
-            <div class="rounded-lg border border-purple-100 bg-card p-4">
+            <div class="rounded-lg border border-accent/30 bg-card p-4">
                 <h3 class="mb-3 text-sm font-semibold text-gray-900">Omset: Bulan Ini vs Bulan Lalu</h3>
-                <div class="relative h-56"><canvas id="chartPerbandinganOmset"></canvas></div>
+                @php
+                    $omsetSekarang = (float) $ringkasanData['omset_bulan_ini'];
+                    $omsetSebelumnya = (float) $ringkasanData['omset_bulan_lalu'];
+                    $omsetMaks = max($omsetSekarang, $omsetSebelumnya, 1);
+                    $omsetTinggiSekarang = 48 - (48 * ($omsetSekarang / $omsetMaks));
+                    $omsetTinggiSebelumnya = 48 - (48 * ($omsetSebelumnya / $omsetMaks));
+                @endphp
+                <div class="flex items-end gap-8 px-2 pt-2">
+                    <div class="flex-1">
+                        <p class="text-center text-xs font-medium text-gray-500">Bulan Lalu</p>
+                        <div class="mx-2 mt-2 rounded-md bg-gray-200" style="height:{{ $omsetTinggiSebelumnya }}px; min-height:8px"></div>
+                        <p class="mt-1.5 text-center text-sm font-semibold text-gray-700">Rp{{ number_format($omsetSebelumnya / 1e6, 1, ',', '.') }} jt</p>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-center text-xs font-medium text-gray-500">Bulan Ini</p>
+                        <div class="mx-2 mt-2 rounded-md bg-accent" style="height:{{ $omsetTinggiSekarang }}px; min-height:8px"></div>
+                        <p class="mt-1.5 text-center text-sm font-semibold text-gray-700">Rp{{ number_format($omsetSekarang / 1e6, 1, ',', '.') }} jt</p>
+                    </div>
+                </div>
             </div>
-            <div class="rounded-lg border border-purple-100 bg-card p-4">
+            <div class="rounded-lg border border-accent/30 bg-card p-4">
                 <h3 class="mb-3 text-sm font-semibold text-gray-900">Breakdown Kategori Layanan</h3>
                 <div class="relative h-56"><canvas id="chartBreakdownKategori"></canvas></div>
             </div>
@@ -132,7 +150,7 @@
                     @php
                         $ikon = $trendIcon[$sorotan['trend'] ?? 'neutral'];
                     @endphp
-                    <div class="flex items-start gap-2.5 rounded-lg border border-purple-100 bg-card/70 px-4 py-3">
+                    <div class="flex items-start gap-2.5 rounded-lg border border-accent/30 bg-card/70 px-4 py-3">
                         <svg class="mt-0.5 h-5 w-5 shrink-0 {{ $ikon['class'] }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $ikon['path'] }}"/>
                         </svg>
@@ -145,7 +163,7 @@
         {{-- Rekomendasi: checklist ringkas --}}
         @if ($insightValid && !empty($insightData['rekomendasi']))
             <div class="mt-4 rounded-lg bg-card/70 px-4 py-3">
-                <p class="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-purple-600">
+                <p class="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-accent-text">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                     </svg>
@@ -174,9 +192,9 @@
         @endif
 
         {{-- Divider + Tanya AI --}}
-        <div id="tanya-ai" class="mt-6 border-t-2 border-purple-200 pt-5 no-print">
+        <div id="tanya-ai" class="mt-6 border-t-2 border-accent/30 pt-5 no-print">
             <h3 class="flex items-center gap-2 text-sm font-semibold text-gray-900">
-                <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-5 w-5 text-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                 </svg>
                 Tanya AI Soal Data Bisnis Anda
@@ -351,8 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function rpShort(v) {
         if (v >= 1e9) return 'Rp' + (v / 1e9).toFixed(1).replace('.', ',') + ' M';
         if (v >= 1e6) return 'Rp' + (v / 1e6).toFixed(1).replace('.', ',') + ' jt';
-        if (v >= 1e3) return 'Rp' + Math.round(v / 1e3) + ' rb';
-        return 'Rp' + v;
+        return 'Rp' + Math.round(v);
     }
 
     // Plugin: tulis angka rupiah di atas tiap bar
@@ -376,48 +393,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     };
-
-    // Chart 1: Perbandingan omset bulan ini vs bulan lalu
-    const canvasOmset = document.getElementById('chartPerbandinganOmset');
-    if (canvasOmset) {
-        const ringkasan = @json($ringkasanData);
-        const naik = ringkasan.omset_bulan_ini >= ringkasan.omset_bulan_lalu;
-
-        new Chart(canvasOmset, {
-            type: 'bar',
-            data: {
-                labels: ['Bulan Lalu', 'Bulan Ini'],
-                datasets: [{
-                    data: [ringkasan.omset_bulan_lalu, ringkasan.omset_bulan_ini],
-                    backgroundColor: ['#9CA3AF', naik ? '#16a34a' : '#dc2626'],
-                    borderRadius: 6,
-                    maxBarThickness: 80,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: { padding: { top: 20 } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: (ctx) => rpFull(ctx.parsed.y)
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (v) => 'Rp' + (v / 1000).toFixed(0) + 'rb'
-                        }
-                    }
-                }
-            },
-            plugins: [rupiahLabelPlugin]
-        });
-    }
 
     // Chart 2: Breakdown kategori layanan (maks 5 teratas)
     const canvasKategori = document.getElementById('chartBreakdownKategori');
@@ -463,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: (v) => 'Rp' + (v / 1000).toFixed(0) + 'rb'
+                            callback: (v) => 'Rp' + (v / 1e6).toFixed(0).replace('.', ',') + ' jt'
                         }
                     }
                 }
@@ -518,8 +493,8 @@ document.addEventListener('DOMContentLoaded', function () {
             datasets: [{
                 label: 'Omset',
                 data: data,
-                backgroundColor: 'rgba(124, 58, 237, 0.7)',
-                borderColor: 'rgb(124, 58, 237)',
+backgroundColor: 'rgba(198, 161, 91, 0.7)',
+                borderColor: 'rgb(138, 106, 46)',
                 borderWidth: 1,
                 borderRadius: 4,
             }]
@@ -534,11 +509,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             },
-            scales: {
+scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: (v) => 'Rp' + (v / 1000).toFixed(0) + 'rb'
+                        callback: (v) => 'Rp' + (v / 1e6).toFixed(0).replace('.', ',') + ' jt'
                     }
                 }
             }

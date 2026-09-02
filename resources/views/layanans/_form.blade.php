@@ -19,7 +19,7 @@
                 'varian' => $hr->varian,
                 'harga_dasar_min' => $fmt($hr->harga_dasar_min),
                 'harga_dasar_max' => $fmt($hr->harga_dasar_max),
-                'tarif_kelebihan_per_10gr' => $fmt($hr->tarif_kelebihan_per_10gr),
+                'notes' => $hr->notes ?? '',
                 'komisi_min' => $fmt($hr->komisi_min),
                 'komisi_max' => $fmt($hr->komisi_max),
             ];
@@ -30,7 +30,7 @@
                 'varian' => $varian,
                 'harga_dasar_min' => old("harga_dasar_min.$i", ''),
                 'harga_dasar_max' => old("harga_dasar_max.$i", ''),
-                'tarif_kelebihan_per_10gr' => old("tarif_kelebihan_per_10gr.$i", ''),
+                'notes' => old("notes.$i", ''),
                 'komisi_min' => old("komisi_min.$i", ''),
                 'komisi_max' => old("komisi_max.$i", ''),
             ];
@@ -110,7 +110,7 @@
             <div>
                 <h2 class="text-base font-semibold text-gray-900">Varian Harga &amp; Komisi</h2>
                 <p class="mt-0.5 text-xs text-gray-500">
-                    Harga Max boleh dikosongkan (artinya harga tetap = harga min). Kelebihan per 10gr hanya untuk layanan warna berentang.
+                    Harga Max boleh dikosongkan (artinya harga tetap = harga min). Notes berisi catatan ketentuan layanan (boleh huruf/angka).
                 </p>
             </div>
             <button type="button" class="js-add-row shrink-0 rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
@@ -123,7 +123,7 @@
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Varian</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Harga Min (Rp)</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Harga Max (Rp)</div>
-                <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Kelebihan /10gr (Rp)</div>
+                <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Notes</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Komisi Min (Rp)</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Komisi Max (Rp)</div>
                 <div></div>
@@ -145,8 +145,8 @@
                             <input type="text" inputmode="numeric" name="harga_dasar_max[]" value="{{ $row['harga_dasar_max'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
-                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                            <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" value="{{ $row['tarif_kelebihan_per_10gr'] }}" class="{{ $inputClass }}">
+                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
+                            <input type="text" name="notes[]" value="{{ $row['notes'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
@@ -175,8 +175,8 @@
                             <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                         </div>
                         <div>
-                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                            <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" class="{{ $inputClass }}">
+                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
+                            <input type="text" name="notes[]" class="{{ $inputClass }}">
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
@@ -209,8 +209,8 @@
                     <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                 </div>
                 <div>
-                    <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Kelebihan /10gr (Rp)</label>
-                    <input type="text" inputmode="numeric" name="tarif_kelebihan_per_10gr[]" class="{{ $inputClass }}">
+                    <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
+                    <input type="text" name="notes[]" class="{{ $inputClass }}">
                 </div>
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
@@ -281,7 +281,7 @@
         }
 
         /* Format harga */
-        var priceNames = ['harga_dasar_min[]','harga_dasar_max[]','tarif_kelebihan_per_10gr[]','komisi_min[]','komisi_max[]'];
+        var priceNames = ['harga_dasar_min[]','harga_dasar_max[]','komisi_min[]','komisi_max[]'];
 
         function parseFormatted(str) {
             return parseInt(str.replace(/\./g, '').replace(/,/g, ''), 10) || 0;

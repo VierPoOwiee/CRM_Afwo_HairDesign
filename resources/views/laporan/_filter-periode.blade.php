@@ -79,7 +79,8 @@
                                 class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                             <option value="">Semua</option>
                             <option value="cash" {{ ($metode ?? '') === 'cash' ? 'selected' : '' }}>Cash</option>
-                            <option value="qris" {{ ($metode ?? '') === 'qris' ? 'selected' : '' }}>QRIS</option>
+                            <option value="qris_bni" {{ ($metode ?? '') === 'qris_bni' ? 'selected' : '' }}>QRIS BNI</option>
+                            <option value="qris_bri" {{ ($metode ?? '') === 'qris_bri' ? 'selected' : '' }}>QRIS BRI</option>
                             <option value="debit" {{ ($metode ?? '') === 'debit' ? 'selected' : '' }}>Debit</option>
                             <option value="kartu_kredit" {{ ($metode ?? '') === 'kartu_kredit' ? 'selected' : '' }}>Kartu Kredit</option>
                             <option value="transfer" {{ ($metode ?? '') === 'transfer' ? 'selected' : '' }}>Transfer</option>

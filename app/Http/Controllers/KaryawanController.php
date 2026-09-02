@@ -75,7 +75,7 @@ class KaryawanController extends Controller
 
         $rules = [
             'nama' => ['required', 'string', 'max:255'],
-            'kontak' => ['nullable', 'string', 'max:255', 'regex:/^\+[1-9]\d{5,14}$/'],
+            'kontak' => ['nullable', 'string', 'max:255', 'regex:/^\+[1-9]\d{4,12}$/'],
             'gaji_pokok' => ['nullable', 'numeric', 'min:0'],
             'skema_komisi' => ['required', 'in:per_layanan,persen_omset_harian'],
             'persen_komisi_harian' => [
@@ -92,6 +92,8 @@ class KaryawanController extends Controller
         ];
 
         $data = $request->validate($rules, $messages);
+
+        $data['gaji_pokok'] = $data['gaji_pokok'] ?? 0;
 
         if ($data['skema_komisi'] === 'per_layanan') {
             $data['persen_komisi_harian'] = null;

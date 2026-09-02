@@ -8,10 +8,10 @@
     ];
 @endphp
 
-<div class="no-print mb-6 flex flex-wrap items-center gap-1 border-b border-gray-200 pb-3">
+<div class="no-print mb-6 flex flex-wrap items-center gap-1 border-b border-card-warm-border pb-3">
     @foreach ($laporanTabs as $tab)
         <a href="{{ route($tab['route']) }}"
-           class="whitespace-nowrap rounded-md px-3 py-2 text-sm {{ request()->routeIs($tab['route']) ? 'bg-dark font-semibold text-white shadow-sm' : 'font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+           class="whitespace-nowrap rounded-lg px-3 py-2 text-sm {{ request()->routeIs($tab['route']) ? 'bg-accent font-semibold text-[#3A1820]' : 'font-medium text-text-secondary hover:bg-accent-light hover:text-accent-text' }}">
             {{ $tab['label'] }}
         </a>
     @endforeach

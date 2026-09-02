@@ -48,6 +48,11 @@ class Karyawan extends Model
         return $this->hasMany(KomisiHarianSpesial::class, 'id_staf');
     }
 
+    public function absensi(): HasMany
+    {
+        return $this->hasMany(Absensi::class, 'id_staf');
+    }
+
     /**
      * Get the latest komisi_harian_spesial record for this staff.
      */

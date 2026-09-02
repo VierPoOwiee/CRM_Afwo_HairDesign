@@ -78,7 +78,7 @@
             @endforeach
         </select>
         <input type="text" inputmode="numeric" autocomplete="tel-national" id="{{ $name }}_number"
-               placeholder="{{ $placeholder }}" @if ($required) required @endif
+               placeholder="{{ $placeholder }}" maxlength="13" @if ($required) required @endif
                class="block w-full flex-1 rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none placeholder:text-text-muted">
     </div>
 
@@ -104,8 +104,9 @@
 
         function sync() {
             var num = input.value.replace(/\D/g, '').replace(/^0+/, '');
-            input.value = num;
-            hidden.value = num ? '+' + sel.value + num : '';
+            var full = (sel.value + num).slice(0, 13);
+            input.value = full.slice(sel.value.length);
+            hidden.value = input.value ? '+' + full : '';
         }
 
         function init() {

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardOwnerController;
 use App\Http\Controllers\InsightController;
@@ -58,6 +60,13 @@ Route::resource('produk', ProdukController::class)->only([
 Route::resource('karyawan', KaryawanController::class)->only([
     'index', 'create', 'store', 'edit', 'update', 'destroy',
 ]);
+
+Route::resource('appointment', AppointmentController::class)->only([
+    'index', 'create', 'store', 'edit', 'update', 'destroy',
+]);
+
+Route::get('absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
 
 Route::resource('transaksi', TransaksiController::class)->only([
     'index', 'create', 'store', 'show', 'destroy',

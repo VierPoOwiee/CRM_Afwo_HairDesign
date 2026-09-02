@@ -63,7 +63,8 @@
                             class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                         <option value="">-- Pilih --</option>
                         <option value="cash" {{ old('metode_pembayaran') === 'cash' ? 'selected' : '' }}>Cash</option>
-                        <option value="qris" {{ old('metode_pembayaran') === 'qris' ? 'selected' : '' }}>QRIS</option>
+                        <option value="qris_bni" {{ old('metode_pembayaran') === 'qris_bni' ? 'selected' : '' }}>QRIS BNI</option>
+                        <option value="qris_bri" {{ old('metode_pembayaran') === 'qris_bri' ? 'selected' : '' }}>QRIS BRI</option>
                         <option value="debit" {{ old('metode_pembayaran') === 'debit' ? 'selected' : '' }}>Debit</option>
                         <option value="kartu_kredit" {{ old('metode_pembayaran') === 'kartu_kredit' ? 'selected' : '' }}>Kartu Kredit</option>
                         <option value="transfer" {{ old('metode_pembayaran') === 'transfer' ? 'selected' : '' }}>Transfer</option>
@@ -400,15 +401,10 @@
                 '<div class="produk-usage-list space-y-2"></div>' +
                 '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-accent-text hover:text-accent" onclick="addProdukUsageRow(' + idx + ')">+ Tambah Produk</button>' +
             '</div>' +
-            '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 pb-3 mb-3">' +
+            '<div class="grid grid-cols-1 gap-3 pb-3 mb-3">' +
                 '<div>' +
                     '<label class="block text-xs font-medium text-gray-500">Ketebalan Rambut</label>' +
                     '<input type="text" name="items[' + idx + '][ketebalan_rambut]" placeholder="Contoh: Tipis, Sedang, Tebal..." class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted">' +
-                '</div>' +
-                '<div class="gram-section hidden">' +
-                    '<label class="block text-xs font-medium text-gray-500">Gram Pemakaian Tambahan</label>' +
-                    '<input type="number" name="items[' + idx + '][gram_pemakaian_tambahan]" value="0" min="0" step="1" class="gram-input mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm placeholder:text-text-muted" oninput="recalcHarga(' + idx + ')">' +
-                    '<p class="mt-0.5 text-[11px] text-gray-400">Kelebihan gram dari pemakaian normal</p>' +
                 '</div>' +
             '</div>' +
             '<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">' +
@@ -513,13 +509,12 @@
                         if (parseFloat(h.harga_dasar_max) !== parseFloat(h.harga_dasar_min)) {
                             label += ' - Rp' + fmt(h.harga_dasar_max);
                         }
-                        if (h.tarif_kelebihan_per_10gr) {
-                            label += ' (+Rp' + fmt(h.tarif_kelebihan_per_10gr) + '/10gr kelebihan)';
+                        if (h.notes) {
+                            label += ' (Notes: ' + h.notes + ')';
                         }
                         opt.textContent = label;
                         opt.dataset.hargaMin = h.harga_dasar_min;
                         opt.dataset.hargaMax = h.harga_dasar_max;
-                        opt.dataset.tarif = h.tarif_kelebihan_per_10gr || 0;
                         opt.dataset.komisiMin = h.komisi_min || 0;
                         opt.dataset.komisiMax = h.komisi_max || 0;
                         varianSelect.appendChild(opt);
@@ -678,17 +673,6 @@
             row.querySelector('.varian-input').value = opt.value;
             recalcHarga(idx);
 
-            // Show/hide gram section based on tarif availability
-            var tarif = parseFloat(opt.dataset.tarif) || 0;
-            var gramSection = row.querySelector('.gram-section');
-            if (tarif > 0) {
-                gramSection.classList.remove('hidden');
-            } else {
-                gramSection.classList.add('hidden');
-                var gramInput = row.querySelector('.gram-input');
-                if (gramInput) gramInput.value = 0;
-            }
-
             // Update komisi notes
             updateKomisiNotes(idx);
         };
@@ -714,14 +698,8 @@
             if (!opt) return;
 
             var hargaMin = parseFloat(opt.dataset.hargaMin) || 0;
-            var tarif = parseFloat(opt.dataset.tarif) || 0;
-            var gram = parseFloat(row.querySelector('.gram-input')?.value) || 0;
 
             var harga = hargaMin;
-            if (gram > 0 && tarif > 0) {
-                var kelipatan = Math.ceil(gram / 10);
-                harga = hargaMin + (kelipatan * tarif);
-            }
 
             // Add product usage costs
             var usageList = row.querySelector('.produk-usage-list');
@@ -756,10 +734,6 @@
             var note = row.querySelector('.harga-saran-note');
             var parts = [];
             if (hargaMin > 0) parts.push('Dasar Rp' + fmt(hargaMin));
-            if (gram > 0 && tarif > 0) {
-                var kelipatan = Math.ceil(gram / 10);
-                parts.push('Kelebihan Rp' + fmt(kelipatan * tarif));
-            }
             if (usageList) {
                 var usageItems = usageList.querySelectorAll('.produk-usage-item');
                 usageItems.forEach(function(item) {

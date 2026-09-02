@@ -33,7 +33,7 @@ class TransaksiController extends Controller
             ->when($statusFilter !== '' && in_array($statusFilter, ['selesai', 'batal']), function ($query) use ($statusFilter) {
                 $query->where('status', $statusFilter);
             })
-            ->when($metodeFilter !== '' && in_array($metodeFilter, ['cash', 'qris', 'debit', 'kartu_kredit', 'transfer']), function ($query) use ($metodeFilter) {
+            ->when($metodeFilter !== '' && in_array($metodeFilter, ['cash', 'qris_bni', 'qris_bri', 'debit', 'kartu_kredit', 'transfer']), function ($query) use ($metodeFilter) {
                 $query->where('metode_pembayaran', $metodeFilter);
             })
             ->when($layananFilter > 0, function ($query) use ($layananFilter) {
@@ -79,7 +79,7 @@ class TransaksiController extends Controller
             'id_pelanggan' => ['required', 'exists:pelanggans,id'],
             'jenis_pengerjaan' => ['required', 'in:sendiri,berdua'],
             'waktu_kunjungan' => ['required', 'date'],
-            'metode_pembayaran' => ['required', 'in:cash,qris,debit,kartu_kredit,transfer'],
+            'metode_pembayaran' => ['required', 'in:cash,qris_bni,qris_bri,debit,kartu_kredit,transfer'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.tipe_item' => ['required', 'in:layanan,produk'],
             'items.*.id_staf_1' => ['nullable', 'exists:karyawans,id'],
@@ -330,7 +330,7 @@ class TransaksiController extends Controller
     {
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'no_wa' => ['nullable', 'string', 'max:50', 'regex:/^\+[1-9]\d{5,14}$/'],
+            'no_wa' => ['nullable', 'string', 'max:50', 'regex:/^\+[1-9]\d{4,12}$/'],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'jenis_rambut' => ['nullable', 'string', 'max:100'],
         ], [

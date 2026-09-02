@@ -27,7 +27,7 @@ class Layanan extends Model
 
     public function hargaLayanan(): HasMany
     {
-        return $this->hasMany(HargaLayanan::class, 'id_layanan');
+        return $this->hasMany(HargaLayanan::class, 'id_layanan')->orderBy('id');
     }
 
     public function produk(): BelongsToMany

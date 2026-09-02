@@ -81,7 +81,7 @@ class PelangganController extends Controller
 
         $rules = [
             'nama' => ['required', 'string', 'max:255'],
-            'no_wa' => ['required', 'string', 'max:255', $noWaUnique, 'regex:/^\+[1-9]\d{5,14}$/'],
+            'no_wa' => ['required', 'string', 'max:255', $noWaUnique, 'regex:/^\+[1-9]\d{4,12}$/'],
             'username_instagram' => ['nullable', 'string', 'max:255'],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'jenis_rambut' => ['nullable', 'string', 'max:255'],

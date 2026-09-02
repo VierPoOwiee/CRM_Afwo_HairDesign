@@ -103,7 +103,7 @@ class TransaksiDummySeeder extends Seeder
         // Tanggal sengaja tidak seragam supaya breakdown harian/mingguan bervariasi
         $offsetHari = [2, 4, 6, 9, 11, 14, 17, 21, 25, 28];
         $jam = ['10:30', '13:00', '15:45', '11:15', '16:20', '14:05', '10:00', '17:35', '12:40', '18:10'];
-        $metode = ['cash', 'qris', 'debit', 'cash', 'transfer', 'qris', 'debit', 'kartu_kredit', 'cash', 'qris'];
+        $metode = ['cash', 'qris_bni', 'debit', 'cash', 'transfer', 'qris_bri', 'debit', 'kartu_kredit', 'cash', 'qris_bni'];
 
         $tanggalDipakai = [];
 

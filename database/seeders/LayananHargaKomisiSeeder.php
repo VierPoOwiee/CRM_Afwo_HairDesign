@@ -33,13 +33,8 @@ class LayananHargaKomisiSeeder extends Seeder
                     'varian' => $v['varian'],
                     'harga_dasar_min' => $v['harga_min'],
                     'harga_dasar_max' => $v['harga_max'] ?? $v['harga_min'],
-                    // hanya diisi kalau layanan ini punya rentang harga (indikasi produknya variatif).
-                    // TODO: cek ulang -- ini asumsi tarif kelebihan produk sama rata 100rb/10gr untuk semua
-                    // layanan berentang, sesuai contoh yang kamu kasih (Alfaparf Blue Color). Kalau produk
-                    // lain beda tarif, sesuaikan per baris di bawah.
-                    'tarif_kelebihan_per_10gr' => isset($v['harga_max']) && $v['harga_max'] != $v['harga_min']
-                        ? 100000
-                        : null,
+                    // catatan ketentuan layanan (bebas, bisa huruf/angka). default kosong.
+                    'notes' => $v['notes'] ?? null,
                     'komisi_min' => $v['komisi_min'] ?? null,
                     'komisi_max' => $v['komisi_max'] ?? null,
                 ]);

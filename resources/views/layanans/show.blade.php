@@ -4,7 +4,7 @@
 
 @section('content')
     @php
-        $showTarif = $layanan->hargaLayanan->contains(fn ($h) => $h->tarif_kelebihan_per_10gr !== null);
+        $showNotes = $layanan->hargaLayanan->contains(fn ($h) => $h->notes !== null && $h->notes !== '');
     @endphp
 
     <div class="flex flex-wrap items-center gap-4">
@@ -43,7 +43,7 @@
                         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
                     @endif
                     @if ($layanan->termasuk_potong)
-                        <span class="ml-1 rounded-full bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-700">Termasuk Potong</span>
+                        <span class="ml-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">Termasuk Potong</span>
                     @endif
                 </dd>
             </div>
@@ -70,8 +70,8 @@
                 <tr class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <th class="px-4 py-3">Varian</th>
                     <th class="px-4 py-3">Harga</th>
-                    @if ($showTarif)
-                        <th class="px-4 py-3">Kelebihan /10gr</th>
+                    @if ($showNotes)
+                        <th class="px-4 py-3">Notes</th>
                     @endif
                     <th class="px-4 py-3">Komisi</th>
                 </tr>
@@ -87,12 +87,12 @@
                             <span class="text-gray-500 sm:hidden">Harga</span>
                             <span class="text-right text-gray-900 sm:text-left">{{ $h->labelHargaDasar() }}</span>
                         </td>
-                        @if ($showTarif)
+                        @if ($showNotes)
                             <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
-                                <span class="text-gray-500 sm:hidden">Kelebihan /10gr</span>
+                                <span class="text-gray-500 sm:hidden">Notes</span>
                                 <span class="text-right text-gray-900 sm:text-left">
-                                    @if ($h->tarif_kelebihan_per_10gr)
-                                        Rp{{ number_format((float) $h->tarif_kelebihan_per_10gr, 0, ',', '.') }}/10gr
+                                    @if ($h->notes)
+                                        {{ $h->notes }}
                                     @else
                                         <span class="text-gray-400">-</span>
                                     @endif
@@ -106,7 +106,7 @@
                     </tr>
                 @empty
                     <tr class="block sm:table-row">
-                        <td colspan="{{ $showTarif ? 4 : 3 }}" class="px-4 py-8 text-center text-sm text-gray-400">
+                        <td colspan="{{ $showNotes ? 4 : 3 }}" class="px-4 py-8 text-center text-sm text-gray-400">
                             Belum ada varian harga.
                         </td>
                     </tr>

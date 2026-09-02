@@ -154,6 +154,12 @@
                     <td class="py-1 text-gray-700">Gaji Pokok <span class="text-xs text-gray-400">(bulanan)</span></td>
                     <td class="py-1 text-right font-medium text-gray-900">Rp{{ number_format($slip['gaji_pokok'], 0, ',', '.') }}</td>
                 </tr>
+                @if ($slip['uang_makan'] > 0)
+                    <tr>
+                        <td class="py-1 text-gray-700">Uang Makan <span class="text-xs text-gray-400">(Rp25.000 &times; {{ $slip['jumlah_hadir'] }} hari hadir)</span></td>
+                        <td class="py-1 text-right font-medium text-gray-900">Rp{{ number_format($slip['uang_makan'], 0, ',', '.') }}</td>
+                    </tr>
+                @endif
                     <tr class="border-t-2 border-accent/30">
                         <td class="pt-3 text-base font-bold text-text-primary">TOTAL PENDAPATAN</td>
                         <td class="pt-3 text-right text-2xl font-extrabold text-text-primary">Rp{{ number_format($slip['total_pendapatan'], 0, ',', '.') }}</td>

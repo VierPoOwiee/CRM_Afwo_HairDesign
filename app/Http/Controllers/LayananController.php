@@ -144,7 +144,7 @@ class LayananController extends Controller
             'varian.*' => ['required', 'string', 'max:255', 'distinct'],
             'harga_dasar_min.*' => ['required', 'numeric', 'min:0'],
             'harga_dasar_max.*' => ['nullable', 'numeric', 'min:0', 'gte:harga_dasar_min.*'],
-            'tarif_kelebihan_per_10gr.*' => ['nullable', 'numeric', 'min:0'],
+            'notes.*' => ['nullable', 'string', 'max:255'],
             'komisi_min.*' => ['nullable', 'numeric', 'min:0'],
             'komisi_max.*' => ['nullable', 'numeric', 'min:0'],
         ]);
@@ -163,7 +163,7 @@ class LayananController extends Controller
                 'varian' => $varian,
                 'harga_dasar_min' => $min,
                 'harga_dasar_max' => $max,
-                'tarif_kelebihan_per_10gr' => $norm($data['tarif_kelebihan_per_10gr'][$i] ?? null),
+                'notes' => $norm($data['notes'][$i] ?? null),
                 'komisi_min' => $norm($data['komisi_min'][$i] ?? null),
                 'komisi_max' => $norm($data['komisi_max'][$i] ?? null),
             ];
@@ -177,7 +177,6 @@ class LayananController extends Controller
         foreach ([
             'harga_dasar_min',
             'harga_dasar_max',
-            'tarif_kelebihan_per_10gr',
             'komisi_min',
             'komisi_max',
         ] as $field) {

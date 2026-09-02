@@ -17,7 +17,7 @@ class HargaLayanan extends Model
         'varian',
         'harga_dasar_min',
         'harga_dasar_max',
-        'tarif_kelebihan_per_10gr',
+        'notes',
         'komisi_min',
         'komisi_max',
     ];
@@ -25,7 +25,6 @@ class HargaLayanan extends Model
     protected $casts = [
         'harga_dasar_min' => 'decimal:2',
         'harga_dasar_max' => 'decimal:2',
-        'tarif_kelebihan_per_10gr' => 'decimal:2',
         'komisi_min' => 'decimal:2',
         'komisi_max' => 'decimal:2',
     ];
@@ -53,8 +52,8 @@ class HargaLayanan extends Model
     {
         $label = $this->labelHargaDasar();
 
-        if ($this->tarif_kelebihan_per_10gr) {
-            $label .= ' (+Rp'.number_format((float) $this->tarif_kelebihan_per_10gr, 0, ',', '.').'/10gr kelebihan)';
+        if ($this->notes) {
+            $label .= ' (Notes: '.$this->notes.')';
         }
 
         return $label;
