@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LayananHargaKomisiSeeder::class);
         $this->call(ProdukDummySeeder::class);
         $this->call(LayananProdukSeeder::class);
+        $this->call(DefaultProdukLayananSeeder::class);
         $this->call(TransaksiDummySeeder::class);
     }
 }

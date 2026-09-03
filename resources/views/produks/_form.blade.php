@@ -1,6 +1,10 @@
 @php
-    $merekOptions = ['Alfaparf', 'Milbon', 'Keaune'];
+    use App\Models\Produk;
+    $merekOptions = ['Alfaparf', 'Milbon', 'Keaune', 'Omni', 'Matrix'];
     $kategoriVal = old('kategori_produk', $produk->kategori_produk ?? 'dipakai_layanan');
+    $kategoriOptions = ['dijual' => 'Dijual Per PCS']
+        + array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan())
+        + ['dipakai_layanan' => 'Dipakai Layanan (umum)'];
 @endphp
 
 <div class="space-y-6">
@@ -27,18 +31,14 @@
         <span class="block text-sm font-medium text-gray-700">Kategori Produk <span class="text-red-500">*</span></span>
         <p class="mt-0.5 text-xs text-gray-500">Dijual per pcs ke pelanggan, atau dipakai staf saat treatment.</p>
         <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <label class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                <input type="radio" name="kategori_produk" value="dijual"
-                       {{ $kategoriVal === 'dijual' ? 'checked' : '' }}
-                       class="h-4 w-4 border-gray-300 text-accent-text focus:ring-accent/30">
-                Dijual Per PCS
-            </label>
-            <label class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                <input type="radio" name="kategori_produk" value="dipakai_layanan"
-                       {{ $kategoriVal === 'dipakai_layanan' ? 'checked' : '' }}
-                       class="h-4 w-4 border-gray-300 text-accent-text focus:ring-accent/30">
-                Dipakai Layanan
-            </label>
+            @foreach ($kategoriOptions as $val => $label)
+                <label class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <input type="radio" name="kategori_produk" value="{{ $val }}"
+                           {{ $kategoriVal === $val ? 'checked' : '' }}
+                           class="h-4 w-4 border-gray-300 text-accent-text focus:ring-accent/30">
+                    {{ $label }}
+                </label>
+            @endforeach
         </div>
     </div>
 
@@ -114,16 +114,21 @@
                 hargaNote: 'Harga jual per 1 pcs produk.',
                 showStok: true,
                 showMerek: false
-            },
-            dipakai_layanan: {
-                satuan: '/10ml',
-                satuanLabel: '/10ml',
-                satuanNote: 'Satuan otomatis: /10ml',
-                hargaNote: 'Harga modal per 10ml bahan yang digunakan saat layanan.',
-                showStok: false,
-                showMerek: true
             }
         };
+
+        var layananCfg = {
+            satuan: '/10ml',
+            satuanLabel: '/10ml',
+            satuanNote: 'Satuan otomatis: /10ml',
+            hargaNote: 'Harga modal per 10ml bahan yang digunakan saat layanan.',
+            showStok: false,
+            showMerek: true
+        };
+
+        config['dipakai_layanan'] = layananCfg;
+        var kategoriLayanan = @json(\App\Models\Produk::kategoriLayanan());
+        kategoriLayanan.forEach(function (k) { config[k] = layananCfg; });
 
         function apply() {
             var val = document.querySelector('input[name="kategori_produk"]:checked').value;

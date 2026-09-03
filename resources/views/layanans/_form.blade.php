@@ -1,5 +1,6 @@
 @php
     $kategoriOptions = ['Potong', 'Styling', 'Treatment Rambut', 'Warna Rambut', 'Treatment'];
+    $kategoriList = \App\Models\Produk::kategoriLayanan();
 
     $fmt = function ($v) {
         if ($v === null || $v === '') {
@@ -19,20 +20,38 @@
                 'varian' => $hr->varian,
                 'harga_dasar_min' => $fmt($hr->harga_dasar_min),
                 'harga_dasar_max' => $fmt($hr->harga_dasar_max),
-                'notes' => $hr->notes ?? '',
                 'komisi_min' => $fmt($hr->komisi_min),
                 'komisi_max' => $fmt($hr->komisi_max),
+                'default_produk' => collect($hr->defaultProduk)->map(function ($d) use ($fmt) {
+                    return [
+                        'kategori_produk' => $d->kategori_produk,
+                        'default_ml' => $fmt($d->default_ml),
+                    ];
+                })->all(),
             ];
         }
     } elseif (old('varian')) {
         foreach (old('varian') as $i => $varian) {
+            $defaultList = [];
+            $katOld = old("default_produk.$i.kategori", []);
+            $mlOld = old("default_produk.$i.ml", []);
+            foreach ($katOld as $di => $kat) {
+                if ($kat === null || $kat === '') {
+                    continue;
+                }
+                $defaultList[] = [
+                    'kategori_produk' => $kat,
+                    'default_ml' => $mlOld[$di] ?? '',
+                ];
+            }
+
             $rows[] = [
                 'varian' => $varian,
                 'harga_dasar_min' => old("harga_dasar_min.$i", ''),
                 'harga_dasar_max' => old("harga_dasar_max.$i", ''),
-                'notes' => old("notes.$i", ''),
                 'komisi_min' => old("komisi_min.$i", ''),
                 'komisi_max' => old("komisi_max.$i", ''),
+                'default_produk' => $defaultList,
             ];
         }
     }
@@ -81,36 +100,11 @@
     </div>
 
     <div>
-        <label class="block text-sm font-medium text-gray-700">Produk yang Digunakan</label>
-        <p class="mt-0.5 text-xs text-gray-500">Pilih produk (merk) apa saja yang bisa dipakai untuk layanan ini.</p>
-        @php
-            $selectedProdukIds = old('produk_ids', isset($layanan) ? $layanan->produk->pluck('id')->toArray() : []);
-        @endphp
-        <div class="mt-3 space-y-2" id="produk-checkboxes">
-            <label class="flex cursor-pointer items-center gap-2.5 rounded-lg border border-gray-200 bg-card px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-card-hover has-[:checked]:border-accent/40 has-[:checked]:bg-accent-light">
-                <input type="checkbox" class="produk-select-all h-4 w-4 rounded border-gray-300 text-accent-text focus:ring-accent/30">
-                <span class="font-medium">Pilih Semua</span>
-            </label>
-            @foreach ($produkList as $p)
-                <label class="flex cursor-pointer items-center gap-2.5 rounded-lg border border-gray-200 bg-card px-3 py-2 text-sm text-text-primary transition-colors hover:bg-card-hover has-[:checked]:border-accent/40 has-[:checked]:bg-accent-light">
-                    <input type="checkbox" name="produk_ids[]" value="{{ $p->id }}" {{ in_array($p->id, $selectedProdukIds) ? 'checked' : '' }}
-                           class="produk-item h-4 w-4 rounded border-gray-300 text-accent-text focus:ring-accent/30">
-                    <span>
-                        <span class="font-medium">{{ $p->merek }}</span>
-                        <span class="text-text-muted">&mdash; {{ $p->nama_produk }}</span>
-                        <span class="text-[11px] text-text-muted">({{ $p->labelHarga() }})</span>
-                    </span>
-                </label>
-            @endforeach
-        </div>
-    </div>
-
-    <div>
         <div class="flex items-start justify-between gap-4">
             <div>
                 <h2 class="text-base font-semibold text-gray-900">Varian Harga &amp; Komisi</h2>
                 <p class="mt-0.5 text-xs text-gray-500">
-                    Harga Max boleh dikosongkan (artinya harga tetap = harga min). Notes berisi catatan ketentuan layanan (boleh huruf/angka).
+                    Harga Max boleh dikosongkan (artinya harga tetap = harga min). Isi "Default Produk Varian" hanya untuk varian berbasis produk; varian biasa kosongkan.
                 </p>
             </div>
             <button type="button" class="js-add-row shrink-0 rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
@@ -119,11 +113,10 @@
         </div>
 
         <div class="mt-4">
-            <div class="hidden sm:grid sm:grid-cols-7 sm:gap-3 sm:px-3 sm:pb-2">
+            <div class="hidden sm:grid sm:grid-cols-6 sm:gap-3 sm:px-3 sm:pb-2">
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Varian</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Harga Min (Rp)</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Harga Max (Rp)</div>
-                <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Notes</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Komisi Min (Rp)</div>
                 <div class="text-xs font-semibold uppercase tracking-wide text-gray-500">Komisi Max (Rp)</div>
                 <div></div>
@@ -131,7 +124,7 @@
 
             <div class="js-varian-rows space-y-3 sm:space-y-0">
                 @forelse ($rows as $row)
-                    <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
+                    <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-6 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
                             <input type="text" name="varian[]" value="{{ $row['varian'] }}" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
@@ -145,10 +138,6 @@
                             <input type="text" inputmode="numeric" name="harga_dasar_max[]" value="{{ $row['harga_dasar_max'] }}" class="{{ $inputClass }}">
                         </div>
                         <div>
-                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
-                            <input type="text" name="notes[]" value="{{ $row['notes'] }}" class="{{ $inputClass }}">
-                        </div>
-                        <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
                             <input type="text" inputmode="numeric" name="komisi_min[]" value="{{ $row['komisi_min'] }}" class="{{ $inputClass }}">
                         </div>
@@ -159,9 +148,15 @@
                         <div class="flex items-end sm:justify-end">
                             <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>
                         </div>
+                        @include('layanans._default_produk', [
+                            'pRowIndex' => $loop->index,
+                            'defaultRows' => $row['default_produk'] ?? [],
+                            'kategoriList' => $kategoriList,
+                            'fmtMl' => $fmt,
+                        ])
                     </div>
                 @empty
-                    <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
+                    <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-6 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                         <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
                             <input type="text" name="varian[]" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
@@ -175,10 +170,6 @@
                             <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                         </div>
                         <div>
-                            <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
-                            <input type="text" name="notes[]" class="{{ $inputClass }}">
-                        </div>
-                        <div>
                             <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
                             <input type="text" inputmode="numeric" name="komisi_min[]" class="{{ $inputClass }}">
                         </div>
@@ -189,13 +180,19 @@
                         <div class="flex items-end sm:justify-end">
                             <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>
                         </div>
+                        @include('layanans._default_produk', [
+                            'pRowIndex' => 0,
+                            'defaultRows' => [],
+                            'kategoriList' => $kategoriList,
+                            'fmtMl' => $fmt,
+                        ])
                     </div>
                 @endforelse
             </div>
         </div>
 
         <template id="js-varian-row-template">
-            <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-7 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
+            <div data-row class="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-6 sm:items-center sm:gap-3 sm:rounded-none sm:border-0 sm:border-t sm:p-3">
                 <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Varian</label>
                     <input type="text" name="varian[]" placeholder="default / S / M / L / XL" required class="{{ $inputClass }}">
@@ -209,10 +206,6 @@
                     <input type="text" inputmode="numeric" name="harga_dasar_max[]" class="{{ $inputClass }}">
                 </div>
                 <div>
-                    <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Notes</label>
-                    <input type="text" name="notes[]" class="{{ $inputClass }}">
-                </div>
-                <div>
                     <label class="mb-1 block text-xs font-medium text-gray-500 sm:hidden">Komisi Min (Rp)</label>
                     <input type="text" inputmode="numeric" name="komisi_min[]" class="{{ $inputClass }}">
                 </div>
@@ -223,6 +216,12 @@
                 <div class="flex items-end sm:justify-end">
                     <button type="button" class="js-remove-row w-full rounded-lg px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 sm:w-auto">Hapus</button>
                 </div>
+                @include('layanans._default_produk', [
+                    'pRowIndex' => '__IDX__',
+                    'defaultRows' => [],
+                    'kategoriList' => $kategoriList,
+                    'fmtMl' => $fmt,
+                ])
             </div>
         </template>
     </div>
@@ -248,11 +247,74 @@
         document.querySelectorAll('.js-add-row').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 tbody.appendChild(template.content.cloneNode(true));
+                reindexDefaults();
                 formatAllPrices();
             });
         });
 
+        var defaultKategoriOpts = @json(\App\Models\Produk::kategoriLayanan());
+
+        function renderDefaultKategoriOpts(selected) {
+            var html = '<option value="">-- Kategori --</option>';
+            defaultKategoriOpts.forEach(function (k) {
+                html += '<option value="' + k + '"' + (String(selected) === String(k) ? ' selected' : '') + '>' + k + '</option>';
+            });
+            return html;
+        }
+
+        function reindexDefaults() {
+            var rows = tbody.querySelectorAll('[data-row]');
+            rows.forEach(function (row, i) {
+                var panel = row.querySelector('.js-default-panel');
+                if (!panel) return;
+                panel.dataset.ri = i;
+                panel.querySelectorAll('.js-default-row').forEach(function (drow) {
+                    drow.querySelector('.js-default-kategori').name = 'default_produk[' + i + '][kategori][]';
+                    drow.querySelector('.js-default-ml').name = 'default_produk[' + i + '][ml][]';
+                });
+            });
+        }
+
+        function addDefaultRow(el) {
+            var panel = el.closest('.js-default-panel');
+            if (!panel) return;
+            var div = document.createElement('div');
+            div.className = 'js-default-row flex flex-wrap items-center gap-2';
+            div.innerHTML =
+                '<select class="js-default-kategori w-full rounded-md border-gray-300 px-2 py-1.5 text-sm focus:border-accent focus:ring-accent/30 sm:w-48">' + renderDefaultKategoriOpts('') + '</select>' +
+                '<div class="flex items-center gap-1.5">' +
+                    '<input type="number" min="0" step="any" inputmode="decimal" placeholder="0" class="js-default-ml w-28 rounded-md border-gray-300 px-2 py-1.5 text-right text-sm focus:border-accent focus:ring-accent/30">' +
+                    '<span class="w-4 text-[10px] font-medium text-gray-400">ml</span>' +
+                '</div>' +
+                '<button type="button" class="js-remove-default-row text-xs font-medium text-red-600 hover:text-red-800">Hapus</button>';
+            panel.querySelector('.js-default-rows').appendChild(div);
+            reindexDefaults();
+        }
+
         tbody.addEventListener('click', function (e) {
+            var toggleDefault = e.target.closest('.js-toggle-default');
+            if (toggleDefault) {
+                var defaultPanel = toggleDefault.closest('[data-row]').querySelector('.js-default-panel');
+                if (defaultPanel) defaultPanel.classList.toggle('hidden');
+                toggleDefault.querySelectorAll('.js-toggle-icon').forEach(function (i) {
+                    i.classList.toggle('rotate-45');
+                });
+                return;
+            }
+
+            var addDefault = e.target.closest('.js-add-default-row');
+            if (addDefault) {
+                addDefaultRow(addDefault);
+                return;
+            }
+
+            var removeDefault = e.target.closest('.js-remove-default-row');
+            if (removeDefault) {
+                removeDefault.closest('.js-default-row').remove();
+                reindexDefaults();
+                return;
+            }
+
             var btn = e.target.closest('.js-remove-row');
             if (!btn) return;
 
@@ -264,21 +326,8 @@
             } else {
                 btn.closest('[data-row]').remove();
             }
+            reindexDefaults();
         });
-
-        /* Select All produk */
-        var selectAll = document.querySelector('.produk-select-all');
-        var items = document.querySelectorAll('.produk-item');
-        if (selectAll) {
-            selectAll.addEventListener('change', function () {
-                items.forEach(function (cb) { cb.checked = selectAll.checked; });
-            });
-            items.forEach(function (cb) {
-                cb.addEventListener('change', function () {
-                    selectAll.checked = items.length === document.querySelectorAll('.produk-item:checked').length;
-                });
-            });
-        }
 
         /* Format harga */
         var priceNames = ['harga_dasar_min[]','harga_dasar_max[]','komisi_min[]','komisi_max[]'];
@@ -327,5 +376,6 @@
         });
 
         formatAllPrices();
+        reindexDefaults();
     })();
 </script>

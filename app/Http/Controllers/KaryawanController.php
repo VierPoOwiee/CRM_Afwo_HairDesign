@@ -58,6 +58,13 @@ class KaryawanController extends Controller
     public function destroy(Karyawan $karyawan)
     {
         $nama = $karyawan->nama;
+
+        $memilikiSetoran = \App\Models\DetailTransaksi::where('id_staf', $karyawan->id)->whereNotNull('id_staf')->exists();
+
+        if ($memilikiSetoran) {
+            return back()->withErrors(['hapus' => "Karyawan \"{$nama}\" tidak dapat dihapus karena memiliki riwayat transaksi. Nonaktifkan saja."]);
+        }
+
         $karyawan->delete();
 
         return redirect()

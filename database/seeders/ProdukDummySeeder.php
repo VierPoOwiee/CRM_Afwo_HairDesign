@@ -24,21 +24,22 @@ class ProdukDummySeeder extends Seeder
         };
 
         // ===== /10ml, dipakai_layanan (harga PER 10 GRAM / 10 ML) =====
-        $buat('Milbon Color', 'Milbon', 120000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Color', 'Alfaparf', 100000, '/10ml', 'dipakai_layanan');
-        $buat('Keaune Color', 'Keaune', 70000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Keratin', 'Alfaparf', 150000, '/10ml', 'dipakai_layanan');
-        $buat('Omni Keratin', 'Omni', 90000, '/10ml', 'dipakai_layanan');
-        $buat('Milbon Smoothing', 'Milbon', 110000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Hairtreatment Complete', 'Alfaparf', 80000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Creambath', 'Alfaparf', 60000, '/10ml', 'dipakai_layanan');
-        $buat('Matrix Creambath', 'Matrix', 50000, '/10ml', 'dipakai_layanan');
-        $buat('Milbon Bleaching', 'Milbon', 130000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Bleaching', 'Alfaparf', 110000, '/10ml', 'dipakai_layanan');
-        $buat('Keaune Bleaching', 'Keaune', 80000, '/10ml', 'dipakai_layanan');
-        $buat('Milbon Oxidant', 'Milbon', 40000, '/10ml', 'dipakai_layanan');
-        $buat('Alfaparf Oxidant', 'Alfaparf', 35000, '/10ml', 'dipakai_layanan');
-        $buat('Keaune Oxidant', 'Keaune', 25000, '/10ml', 'dipakai_layanan');
+        // kategori_produk = tipe spesifik (Color, Bleaching, Oxidant, dsb) untuk auto-fill produk default.
+        $buat('Milbon Color', 'Milbon', 100000, '/10ml', 'Color');
+        $buat('Alfaparf Color', 'Alfaparf', 100000, '/10ml', 'Color');
+        $buat('Keaune Color', 'Keaune', 100000, '/10ml', 'Color');
+        $buat('Alfaparf Keratin', 'Alfaparf', 100000, '/10ml', 'Keratin');
+        $buat('Omni Keratin', 'Omni', 100000, '/10ml', 'Keratin');
+        $buat('Milbon Smoothing', 'Milbon', 100000, '/10ml', 'Smoothing');
+        $buat('Alfaparf Hairtreatment Complete', 'Alfaparf', 100000, '/10ml', 'Hairtreatment');
+        $buat('Alfaparf Creambath', 'Alfaparf', 100000, '/10ml', 'Creambath');
+        $buat('Matrix Creambath', 'Matrix', 100000, '/10ml', 'Creambath');
+        $buat('Milbon Bleaching', 'Milbon', 100000, '/10ml', 'Bleaching');
+        $buat('Alfaparf Bleaching', 'Alfaparf', 100000, '/10ml', 'Bleaching');
+        $buat('Keaune Bleaching', 'Keaune', 100000, '/10ml', 'Bleaching');
+        $buat('Milbon Oxidant', 'Milbon', 100000, '/10ml', 'Oxidant');
+        $buat('Alfaparf Oxidant', 'Alfaparf', 100000, '/10ml', 'Oxidant');
+        $buat('Keaune Oxidant', 'Keaune', 100000, '/10ml', 'Oxidant');
 
         // ===== PCS, dijual (harga LANGSUNG PER 1 PCS, stok default lebih kecil) =====
         // Kategori "Dijual Per PCS" tidak memakai merek (merek = null).

@@ -12,7 +12,7 @@ class ProdukController extends Controller
         $q = trim((string) $request->query('q'));
         $kategoriFilter = trim((string) $request->query('kategori'));
 
-        $kategoriList = ['dijual' => 'Dijual Per PCS', 'dipakai_layanan' => 'Dipakai Layanan'];
+        $kategoriList = ['dijual' => 'Dijual Per PCS'] + array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan());
 
         $produks = Produk::query()
             ->when($q !== '', function ($query) use ($q) {
@@ -91,8 +91,8 @@ class ProdukController extends Controller
 
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
-            'merek' => ['nullable', 'required_if:kategori_produk,dipakai_layanan', 'in:Alfaparf,Milbon,Keaune'],
-            'kategori_produk' => ['required', 'in:dijual,dipakai_layanan'],
+            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'in:Alfaparf,Milbon,Keaune,Omni,Matrix'],
+            'kategori_produk' => ['required', 'in:'.implode(',', ['dijual', 'dipakai_layanan'] + Produk::kategoriLayanan())],
             'satuan' => ['required', 'in:pcs,/10ml'],
             'harga_per_satuan' => ['required', 'numeric', 'min:0'],
             'stok' => ['nullable', 'integer', 'min:0'],

@@ -179,7 +179,7 @@ class TransaksiController extends Controller
                     $produk->decrement('stok', $qty);
                 }
 
-                // Save product usage for layanan items (deduct stock + track cost)
+                // Save product usage for layanan items (deduct stock + track cost).
                 if ($item['tipe_item'] === 'layanan' && ! empty($item['produk_penggunaan'])) {
                     foreach ($item['produk_penggunaan'] as $pu) {
                         if (empty($pu['id_produk']) || empty($pu['pemakaian_ml'])) {
@@ -187,6 +187,7 @@ class TransaksiController extends Controller
                         }
                         $produk = Produk::lockForUpdate()->findOrFail($pu['id_produk']);
                         $pemakaianMl = (float) $pu['pemakaian_ml'];
+
                         $hargaPerUnit = (float) $produk->harga_per_satuan;
                         $unit = $pemakaianMl / 10;
                         $produkSubtotal = $unit * $hargaPerUnit;
@@ -350,7 +351,7 @@ class TransaksiController extends Controller
             ->where('nama_layanan', 'like', "%{$q}%")
             ->with([
                 'hargaLayanan' => function ($query) {
-                    $query->orderBy('harga_dasar_min');
+                    $query->orderBy('harga_dasar_min')->with('defaultProduk');
                 },
                 'produk' => function ($query) {
                     $query->where('aktif', true)->orderBy('merek')->orderBy('nama_produk');

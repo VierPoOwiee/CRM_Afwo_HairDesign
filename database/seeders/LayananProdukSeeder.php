@@ -14,11 +14,12 @@ class LayananProdukSeeder extends Seeder
 
         $links = [
             'Basic Color'             => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
-            'Basic Color Two Apply'   => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
+            // Color + Bleaching (default produk warna memakai bleaching)
+            'Basic Color Two Apply'   => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching'],
             'Refresh Color Treatment' => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
-            'Fashion Color'           => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
-            'Cat Akar'                => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
-            'Peek A Boo'              => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
+            'Fashion Color'           => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching'],
+            'Cat Akar'                => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching'],
+            'Peek A Boo'              => ['Milbon Color', 'Alfaparf Color', 'Keaune Color', 'Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching'],
             'Bleach Akar'             => ['Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
             'Highlight'               => ['Milbon Bleaching', 'Alfaparf Bleaching', 'Keaune Bleaching', 'Milbon Oxidant', 'Alfaparf Oxidant', 'Keaune Oxidant'],
             'Keratin Premium'         => ['Alfaparf Keratin', 'Omni Keratin'],

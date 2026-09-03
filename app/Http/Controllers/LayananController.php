@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DefaultProdukLayanan;
 use App\Models\HargaLayanan;
 use App\Models\Layanan;
 use App\Models\Produk;
@@ -36,13 +37,7 @@ class LayananController extends Controller
 
     public function create()
     {
-        $produkList = Produk::where('aktif', true)
-            ->where('kategori_produk', 'dipakai_layanan')
-            ->orderBy('merek')
-            ->orderBy('nama_produk')
-            ->get();
-
-        return view('layanans.create', compact('produkList'));
+        return view('layanans.create');
     }
 
     public function show(Layanan $layanan)
@@ -57,15 +52,18 @@ class LayananController extends Controller
         $data = $this->validatedMain($request);
         $rows = $this->validatedRows($request);
 
-        $layanan = DB::transaction(function () use ($data, $rows, $request) {
+        $layanan = DB::transaction(function () use ($data, $rows) {
             $layanan = Layanan::create($data);
 
             foreach ($rows as $row) {
-                HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
-            }
+                $defaults = $row['default_produk'] ?? [];
+                unset($row['default_produk']);
 
-            if ($request->has('produk_ids')) {
-                $layanan->produk()->sync($request->produk_ids);
+                $hgl = HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
+
+                foreach ($defaults as $default) {
+                    DefaultProdukLayanan::create($default + ['id_harga_layanan' => $hgl->id]);
+                }
             }
 
             return $layanan;
@@ -80,13 +78,7 @@ class LayananController extends Controller
     {
         $layanan->load('hargaLayanan', 'produk');
 
-        $produkList = Produk::where('aktif', true)
-            ->where('kategori_produk', 'dipakai_layanan')
-            ->orderBy('merek')
-            ->orderBy('nama_produk')
-            ->get();
-
-        return view('layanans.edit', compact('layanan', 'produkList'));
+        return view('layanans.edit', compact('layanan'));
     }
 
     public function update(Request $request, Layanan $layanan)
@@ -99,10 +91,15 @@ class LayananController extends Controller
             $layanan->hargaLayanan()->delete();
 
             foreach ($rows as $row) {
-                HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
-            }
+                $defaults = $row['default_produk'] ?? [];
+                unset($row['default_produk']);
 
-            $layanan->produk()->sync($request->produk_ids ?? []);
+                $hgl = HargaLayanan::create(['id_layanan' => $layanan->id] + $row);
+
+                foreach ($defaults as $default) {
+                    DefaultProdukLayanan::create($default + ['id_harga_layanan' => $hgl->id]);
+                }
+            }
         });
 
         return redirect()
@@ -144,12 +141,17 @@ class LayananController extends Controller
             'varian.*' => ['required', 'string', 'max:255', 'distinct'],
             'harga_dasar_min.*' => ['required', 'numeric', 'min:0'],
             'harga_dasar_max.*' => ['nullable', 'numeric', 'min:0', 'gte:harga_dasar_min.*'],
-            'notes.*' => ['nullable', 'string', 'max:255'],
             'komisi_min.*' => ['nullable', 'numeric', 'min:0'],
             'komisi_max.*' => ['nullable', 'numeric', 'min:0'],
+            'default_produk' => ['nullable', 'array'],
+            'default_produk.*.kategori' => ['nullable', 'array'],
+            'default_produk.*.kategori.*' => ['nullable', 'string', 'in:'.implode(',', Produk::kategoriLayanan())],
+            'default_produk.*.ml' => ['nullable', 'array'],
+            'default_produk.*.ml.*' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $rows = [];
+        $rawDefaults = $request->input('default_produk') ?? [];
         foreach ($data['varian'] as $i => $varian) {
             $min = (float) $data['harga_dasar_min'][$i];
             $maxRaw = $data['harga_dasar_max'][$i] ?? null;
@@ -159,13 +161,28 @@ class LayananController extends Controller
                 return ($v === null || $v === '') ? null : $v;
             };
 
+            $defaults = [];
+            $katList = is_array($rawDefaults[$i]['kategori'] ?? null) ? $rawDefaults[$i]['kategori'] : [];
+            $mlList = is_array($rawDefaults[$i]['ml'] ?? null) ? $rawDefaults[$i]['ml'] : [];
+            foreach ($katList as $di => $kategori) {
+                $ml = $mlList[$di] ?? null;
+                if (! is_string($kategori) || $kategori === '' || ! is_numeric($ml) || (float) $ml <= 0) {
+                    continue;
+                }
+
+                $defaults[] = [
+                    'kategori_produk' => $kategori,
+                    'default_ml' => (float) $ml,
+                ];
+            }
+
             $rows[] = [
                 'varian' => $varian,
                 'harga_dasar_min' => $min,
                 'harga_dasar_max' => $max,
-                'notes' => $norm($data['notes'][$i] ?? null),
                 'komisi_min' => $norm($data['komisi_min'][$i] ?? null),
                 'komisi_max' => $norm($data['komisi_max'][$i] ?? null),
+                'default_produk' => $defaults,
             ];
         }
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HargaLayanan extends Model
 {
@@ -17,7 +18,6 @@ class HargaLayanan extends Model
         'varian',
         'harga_dasar_min',
         'harga_dasar_max',
-        'notes',
         'komisi_min',
         'komisi_max',
     ];
@@ -32,6 +32,22 @@ class HargaLayanan extends Model
     public function layanan(): BelongsTo
     {
         return $this->belongsTo(Layanan::class, 'id_layanan');
+    }
+
+    /**
+     * Baris produk default (kategori + ml) untuk varian ini.
+     */
+    public function defaultProduk(): HasMany
+    {
+        return $this->hasMany(DefaultProdukLayanan::class, 'id_harga_layanan');
+    }
+
+    /**
+     * Apakah varian ini berbasis produk default (pakai harga produk, bukan harga dasar).
+     */
+    public function hasDefaultProduk(): bool
+    {
+        return $this->defaultProduk()->exists();
     }
 
     public function labelHargaDasar(): string
@@ -50,13 +66,7 @@ class HargaLayanan extends Model
 
     public function labelHarga(): string
     {
-        $label = $this->labelHargaDasar();
-
-        if ($this->notes) {
-            $label .= ' (Notes: '.$this->notes.')';
-        }
-
-        return $label;
+        return $this->labelHargaDasar();
     }
 
     public function labelKomisi(): ?string

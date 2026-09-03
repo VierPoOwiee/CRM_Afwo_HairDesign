@@ -86,9 +86,6 @@
                                 @if ($h->labelKomisi())
                                     <span class="text-xs text-text-muted">Komisi: {{ $h->labelKomisi() }}</span>
                                 @endif
-                                @if ($h->notes)
-                                    <span class="text-xs text-accent-text">Notes: {{ $h->notes }}</span>
-                                @endif
                             </li>
                         @empty
                             <li class="text-sm text-text-muted">Belum ada varian harga.</li>

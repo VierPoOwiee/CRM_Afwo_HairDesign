@@ -3,10 +3,6 @@
 @section('title', $layanan->nama_layanan)
 
 @section('content')
-    @php
-        $showNotes = $layanan->hargaLayanan->contains(fn ($h) => $h->notes !== null && $h->notes !== '');
-    @endphp
-
     <div class="flex flex-wrap items-center gap-4">
         <a href="{{ route('layanan.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
         <div>
@@ -70,9 +66,6 @@
                 <tr class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <th class="px-4 py-3">Varian</th>
                     <th class="px-4 py-3">Harga</th>
-                    @if ($showNotes)
-                        <th class="px-4 py-3">Notes</th>
-                    @endif
                     <th class="px-4 py-3">Komisi</th>
                 </tr>
             </thead>
@@ -87,18 +80,6 @@
                             <span class="text-gray-500 sm:hidden">Harga</span>
                             <span class="text-right text-gray-900 sm:text-left">{{ $h->labelHargaDasar() }}</span>
                         </td>
-                        @if ($showNotes)
-                            <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
-                                <span class="text-gray-500 sm:hidden">Notes</span>
-                                <span class="text-right text-gray-900 sm:text-left">
-                                    @if ($h->notes)
-                                        {{ $h->notes }}
-                                    @else
-                                        <span class="text-gray-400">-</span>
-                                    @endif
-                                </span>
-                            </td>
-                        @endif
                         <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
                             <span class="text-gray-500 sm:hidden">Komisi</span>
                             <span class="text-right text-gray-900 sm:text-left">{{ $h->labelKomisi() ?? '-' }}</span>
@@ -106,7 +87,7 @@
                     </tr>
                 @empty
                     <tr class="block sm:table-row">
-                        <td colspan="{{ $showNotes ? 4 : 3 }}" class="px-4 py-8 text-center text-sm text-gray-400">
+                        <td colspan="3" class="px-4 py-8 text-center text-sm text-gray-400">
                             Belum ada varian harga.
                         </td>
                     </tr>

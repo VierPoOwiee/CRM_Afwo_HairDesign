@@ -10,10 +10,6 @@
             <h1 class="text-2xl font-bold text-gray-900">Pendapatan Bulanan Karyawan</h1>
             <p class="mt-1 text-sm text-gray-500">Gaji pokok + komisi + uang makan yang diterima tiap karyawan dalam satu bulan.</p>
         </div>
-        <button onclick="window.print()" class="inline-flex shrink-0 items-center gap-2 self-start rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 no-print sm:self-auto">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            Cetak
-        </button>
     </div>
 
     {{-- Filter bulan --}}

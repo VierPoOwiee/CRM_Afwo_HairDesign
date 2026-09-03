@@ -176,6 +176,10 @@
 
         // --- Helpers ---
         function fmt(n) { return new Intl.NumberFormat('id-ID').format(Math.round(n)); }
+        function formatMl(n) {
+            n = parseFloat(n) || 0;
+            return (n % 1 === 0) ? String(n) : String(Math.round(n * 100) / 100);
+        }
         function getJenis() { return document.querySelector('input[name="jenis_pengerjaan"]:checked').value; }
         function isBerdua() { return getJenis() === 'berdua'; }
 
@@ -397,7 +401,7 @@
             '</div>' +
             '<div class="border-b border-gray-100 pb-3 mb-3 produk-section-container hidden">' +
                 '<label class="block text-xs font-semibold uppercase tracking-wide text-emerald-600 mb-1">Produk yang Digunakan</label>' +
-                '<p class="text-[11px] text-gray-400 mb-2">Pilih merk produk dan masukkan pemakaian (ml). Harga otomatis dihitung /10ml.</p>' +
+                '<p class="text-[11px] text-gray-400 mb-2">Cari &amp; pilih merk produk (semua produk tersedia), lalu isi pemakaian (ml). Pemakaian ditagih penuh per 10ml.</p>' +
                 '<div class="produk-usage-list space-y-2"></div>' +
                 '<button type="button" class="add-produk-usage mt-2 text-xs font-medium text-accent-text hover:text-accent" onclick="addProdukUsageRow(' + idx + ')">+ Tambah Produk</button>' +
             '</div>' +
@@ -410,7 +414,7 @@
             '<div class="grid grid-cols-1 gap-3 sm:grid-cols-3">' +
                 '<div>' +
                     '<label class="block text-xs font-medium text-gray-500">Harga Saat Transaksi (Rp)</label>' +
-                    '<input type="number" name="items[' + idx + '][harga_saat_transaksi]" min="0" step="1000" class="harga-display mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="syncHarga(' + idx + ')">' +
+                    '<input type="number" min="0" step="1000" class="harga-display mt-1 block w-full rounded-md border-gray-300 bg-white px-3 py-2 text-sm" onchange="syncHarga(' + idx + ')">' +
                     '<p class="mt-0.5 text-[11px] text-gray-400 harga-saran-note"></p>' +
                 '</div>' +
                 '<div>' +
@@ -509,14 +513,12 @@
                         if (parseFloat(h.harga_dasar_max) !== parseFloat(h.harga_dasar_min)) {
                             label += ' - Rp' + fmt(h.harga_dasar_max);
                         }
-                        if (h.notes) {
-                            label += ' (Notes: ' + h.notes + ')';
-                        }
                         opt.textContent = label;
                         opt.dataset.hargaMin = h.harga_dasar_min;
                         opt.dataset.hargaMax = h.harga_dasar_max;
                         opt.dataset.komisiMin = h.komisi_min || 0;
                         opt.dataset.komisiMax = h.komisi_max || 0;
+                        opt.dataset.defaultProduk = JSON.stringify(h.default_produk || []);
                         varianSelect.appendChild(opt);
                     });
 
@@ -525,56 +527,133 @@
                     // Store produk list BEFORE adding rows so dropdown gets populated
                     row.dataset.produkList = JSON.stringify(layanan.produk || []);
 
-                    // Populate produk section
+                    // Populate produk section & handle variant (default rows auto-filled)
                     var produkSection = row.querySelector('.produk-section-container');
-                    var usageList = row.querySelector('.produk-usage-list');
-                    usageList.innerHTML = '';
-
                     produkSection.classList.remove('hidden');
-                    addProdukUsageRow(idx);
-
+                    delete row.dataset.prevVarian;
                     onVarianChange(idx);
                 });
         };
 
-        window.addProdukUsageRow = function(idx) {
+        window.addProdukUsageRow = function(idx, kategori, defaultMl) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
             var usageList = row.querySelector('.produk-usage-list');
             var pIdx = usageList.children.length;
-
-            var html = '<div class="produk-usage-item grid grid-cols-1 gap-2 rounded-md bg-gray-50 p-2 sm:grid-cols-12 sm:items-end" data-pidx="' + pIdx + '">' +
-                '<div class="sm:col-span-5">' +
-                    '<label class="block whitespace-nowrap text-[11px] font-medium text-gray-500">Merk / Produk</label>' +
-                    '<div class="produk-field relative mt-1">' +
-                        '<input type="text" placeholder="Cari merk/produk..." autocomplete="off" class="produk-search block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm">' +
-                        '<div class="produk-selected hidden flex min-w-0 items-center gap-1 rounded-md border border-gray-300 bg-white pr-1">' +
-                            '<span class="produk-selected-name min-w-0 flex-1 truncate px-2 py-1.5 text-sm text-gray-900"></span>' +
-                            '<button type="button" onclick="clearProdukUsage(this)" title="Ganti pilihan" class="shrink-0 px-1 text-base font-medium text-gray-400 hover:text-accent">&times;</button>' +
+            var isDefault = kategori !== undefined && kategori !== null && kategori !== '';
+            var head = '<div class="flex items-start gap-2">' +
+                    '<div class="produk-field relative min-w-0 flex-1">' +
+                        '<label class="block whitespace-nowrap text-[11px] font-medium text-gray-500">Merk / Produk' + (isDefault ? ' <span class="text-[10px] text-gray-400">(' + kategori + ')</span>' : '') + '</label>' +
+                        '<div class="mt-1">' +
+                            '<input type="text" placeholder="Cari merk/produk..." autocomplete="off" class="produk-search block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm">' +
+                            '<div class="produk-selected hidden flex min-w-0 items-center gap-1 rounded-md border border-gray-300 bg-white pr-1">' +
+                                '<span class="produk-selected-name min-w-0 flex-1 truncate px-2 py-1.5 text-sm text-gray-900"></span>' +
+                                '<button type="button" onclick="clearProdukUsage(this)" title="Ganti pilihan" class="shrink-0 px-1 text-base font-medium text-gray-400 hover:text-accent">&times;</button>' +
+                            '</div>' +
+                            '<input type="hidden" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][id_produk]" class="produk-id-input">' +
+                            '<div class="produk-search-results absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm max-h-40 overflow-y-auto hidden"></div>' +
                         '</div>' +
-                        '<input type="hidden" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][id_produk]" class="produk-id-input">' +
-                        '<div class="produk-search-results absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm max-h-40 overflow-y-auto hidden"></div>' +
+                        '<p class="ml-usage-hint mt-1 text-[11px] text-gray-400 ' + (isDefault ? 'hidden' : '') + '">Pilih produk terlebih dahulu untuk mengisi pemakaian.</p>' +
                     '</div>' +
-                    '<p class="ml-usage-hint mt-1 text-[11px] text-gray-400">Pilih produk terlebih dahulu untuk mengisi pemakaian.</p>' +
-                '</div>' +
-                '<div class="usage-detail hidden w-full sm:col-span-2">' +
-                    '<label class="block whitespace-nowrap text-[11px] font-medium text-gray-500">Pemakaian (/10ml)</label>' +
-                    '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input mt-1 block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" oninput="recalcHarga(' + idx + ')">' +
-                '</div>' +
-                '<div class="w-full sm:col-span-2">' +
-                    '<label class="block whitespace-nowrap text-[11px] font-medium text-gray-500">Harga/10ml</label>' +
-                    '<p class="mt-1.5 whitespace-nowrap text-xs font-medium text-gray-700 produk-unit-harga">Rp0</p>' +
-                '</div>' +
-                '<div class="w-full sm:col-span-2">' +
-                    '<label class="block whitespace-nowrap text-[11px] font-medium text-gray-500">Subtotal</label>' +
-                    '<p class="mt-1.5 whitespace-nowrap text-xs font-bold text-emerald-700 produk-subtotal-display">Rp0</p>' +
-                '</div>' +
-                '<div class="flex items-center sm:col-span-1 mb-0.5">' +
-                    '<button type="button" onclick="removeProdukUsage(this, ' + idx + ')" class="text-xs font-medium text-red-500 hover:text-red-700">Hapus</button>' +
-                '</div>' +
-            '</div>';
+                    '<button type="button" onclick="removeProdukUsage(this, ' + idx + ')" class="shrink-0 mt-6 text-xs font-medium text-red-500 hover:text-red-700">Hapus</button>' +
+                '</div>';
+
+            var html;
+            if (isDefault) {
+                var mlVal = (parseFloat(defaultMl) || 0);
+                html = '<div class="produk-usage-item rounded-md bg-accent-light/40 p-2" data-pidx="' + pIdx + '" data-mode="default" data-kategori="' + String(kategori).replace(/"/g, '&quot;') + '" data-default-ml="' + mlVal + '">' +
+                    head +
+                    '<div class="usage-detail mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">' +
+                        '<div>' +
+                            '<label class="text-[11px] font-medium text-gray-500">Kategori</label>' +
+                            '<p class="kategori-display mt-1.5 text-xs font-medium text-gray-700">' + kategori + '</p>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="text-[11px] font-medium text-gray-500">Pemakaian (ml)</label>' +
+                            '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="' + mlVal + '" min="0" step="1" class="pemakaian-ml-input mt-1 block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" oninput="recalcHarga(' + idx + ')">' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="text-[11px] font-medium text-gray-500">Biaya (Rp)</label>' +
+                            '<p class="produk-subtotal-display mt-1.5 whitespace-nowrap text-xs font-bold text-emerald-700">Rp0</p>' +
+                            '<p class="produk-unit-harga mt-0.5 text-[10px] text-gray-400">Rp0 / 10ml</p>' +
+                        '</div>' +
+                    '</div>';
+            } else {
+                html = '<div class="produk-usage-item rounded-md bg-gray-50 p-2" data-pidx="' + pIdx + '">' +
+                    head +
+                    '<div class="usage-detail hidden mt-2 grid grid-cols-2 gap-2 sm:grid-cols-2">' +
+                        '<div>' +
+                            '<label class="text-[11px] font-medium text-gray-500">Pemakaian (ml)</label>' +
+                            '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input mt-1 block w-full rounded-md border-gray-300 bg-white px-2 py-1.5 text-sm" oninput="recalcHarga(' + idx + ')">' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="text-[11px] font-medium text-gray-500">Biaya (Rp)</label>' +
+                            '<p class="produk-subtotal-display mt-1.5 whitespace-nowrap text-xs font-bold text-emerald-700">Rp0</p>' +
+                            '<p class="produk-unit-harga mt-0.5 text-[10px] text-gray-400">Rp0 / 10ml</p>' +
+                        '</div>' +
+                    '</div>';
+            }
 
             usageList.insertAdjacentHTML('beforeend', html);
             initProdukUsageSearch(idx, pIdx);
+            if (isDefault && kategori) {
+                autoSelectDefaultProduk(idx, pIdx, kategori, mlVal);
+            }
+        };
+
+        window.autoSelectDefaultProduk = function(idx, pIdx, kategori, mlVal) {
+            var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
+            var item = row.querySelector('.produk-usage-item[data-pidx="' + pIdx + '"]');
+            if (!item) return;
+
+            // Prioritas: produk yang ter-link ke layanan, lalu semua produk aktif, sama-sama dicocokkan by kategori.
+            var list = [];
+            try { list = JSON.parse(row.dataset.produkList || '[]'); } catch (e) {}
+            var pool = list.length > 0 ? list : allProduks;
+
+            var match = null;
+            for (var i = 0; i < pool.length; i++) {
+                if (String(pool[i].kategori_produk) === String(kategori)) {
+                    match = pool[i];
+                    break;
+                }
+            }
+            if (!match && pool !== allProduks) {
+                for (var j = 0; j < allProduks.length; j++) {
+                    if (String(allProduks[j].kategori_produk) === String(kategori)) {
+                        match = allProduks[j];
+                        break;
+                    }
+                }
+            }
+            if (!match) {
+                item.querySelector('.produk-subtotal-display').textContent = '';
+                return;
+            }
+
+            var hargaPerUnit = parseFloat(match.harga_per_satuan) || 0;
+            item.querySelector('.produk-id-input').value = match.id;
+            var sel = item.querySelector('.produk-selected');
+            if (sel) {
+                var input = item.querySelector('.produk-search');
+                input.value = match.nama_produk;
+                input.classList.add('hidden');
+                sel.classList.remove('hidden');
+                var selName = sel.querySelector('.produk-selected-name');
+                selName.textContent = match.nama_produk;
+                selName.setAttribute('title', match.nama_produk);
+            }
+            item.dataset.harga = hargaPerUnit;
+            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(hargaPerUnit) + ' / 10ml';
+            if (mlVal > 0 && hargaPerUnit > 0) {
+                item.querySelector('.produk-subtotal-display').textContent = 'Rp' + fmt((mlVal / 10) * hargaPerUnit);
+            } else {
+                item.querySelector('.produk-subtotal-display').textContent = 'Rp0';
+            }
+            var detail = item.querySelector('.usage-detail');
+            if (detail) detail.classList.remove('hidden');
+            var hint = item.querySelector('.ml-usage-hint');
+            if (hint) hint.classList.add('hidden');
+            recalcHarga(idx);
         };
 
         function initProdukUsageSearch(idx, pIdx) {
@@ -617,14 +696,11 @@
             selName.setAttribute('title', nama);
             item.querySelector('.produk-search-results').classList.add('hidden');
             item.dataset.harga = harga;
-            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(harga);
+            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(harga) + ' / 10ml';
             var detail = item.querySelector('.usage-detail');
             if (detail) detail.classList.remove('hidden');
             var hint = item.querySelector('.ml-usage-hint');
             if (hint) hint.classList.add('hidden');
-            var ml = parseFloat(item.querySelector('.pemakaian-ml-input').value) || 0;
-            var sub = ml > 0 ? (ml / 10) * harga : 0;
-            item.querySelector('.produk-subtotal-display').textContent = 'Rp' + fmt(sub);
             recalcHarga(idx);
         };
 
@@ -642,12 +718,13 @@
             }
             item.querySelector('.produk-search-results').classList.add('hidden');
             delete item.dataset.harga;
-            item.querySelector('.produk-unit-harga').textContent = 'Rp0';
+            item.querySelector('.produk-unit-harga').textContent = 'Rp0 / 10ml';
             item.querySelector('.produk-subtotal-display').textContent = 'Rp0';
             var detail = item.querySelector('.usage-detail');
-            if (detail) detail.classList.add('hidden');
+            if (detail) detail.classList.remove('hidden');
             var hint = item.querySelector('.ml-usage-hint');
             if (hint) hint.classList.remove('hidden');
+            if (item.dataset.mode === 'default' && hint) hint.classList.add('hidden');
             var idx = item.closest('.item-row').dataset.idx;
             recalcHarga(idx);
         };
@@ -667,10 +744,43 @@
 
         window.onVarianChange = function(idx) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
-            var opt = row.querySelector('.varian-select').selectedOptions[0];
-            if (!opt) return;
+            var select = row.querySelector('.varian-select');
+            var opt = select.selectedOptions[0];
 
-            row.querySelector('.varian-input').value = opt.value;
+            var newVarian = opt ? opt.value : '';
+            var prevVarian = row.dataset.prevVarian || '';
+
+            if (!opt && !prevVarian) {
+                // Belum ada varian terpilih: sediakan satu baris produk kosong.
+                var usageList = row.querySelector('.produk-usage-list');
+                usageList.innerHTML = '';
+                addProdukUsageRow(idx);
+                recalcHarga(idx);
+                updateKomisiNotes(idx);
+                return;
+            }
+
+            row.dataset.prevVarian = newVarian;
+            row.querySelector('.varian-input').value = newVarian;
+
+            // Reset & bangun baris produk sesuai varian terpilih
+            var usageList = row.querySelector('.produk-usage-list');
+            usageList.innerHTML = '';
+
+            if (opt) {
+                var defaults = [];
+                try { defaults = JSON.parse(opt.dataset.defaultProduk || '[]'); } catch (e) {}
+                if (defaults.length > 0) {
+                    defaults.forEach(function(d) {
+                        addProdukUsageRow(idx, d.kategori_produk, parseFloat(d.default_ml) || 0);
+                    });
+                } else {
+                    addProdukUsageRow(idx);
+                }
+            } else {
+                addProdukUsageRow(idx);
+            }
+
             recalcHarga(idx);
 
             // Update komisi notes
@@ -698,57 +808,52 @@
             if (!opt) return;
 
             var hargaMin = parseFloat(opt.dataset.hargaMin) || 0;
+            var hargaMax = parseFloat(opt.dataset.hargaMax) || hargaMin;
 
-            var harga = hargaMin;
-
-            // Add product usage costs
             var usageList = row.querySelector('.produk-usage-list');
-            if (usageList) {
-                var usageItems = usageList.querySelectorAll('.produk-usage-item');
-                usageItems.forEach(function(item) {
-                    var idInput = item.querySelector('.produk-id-input');
-                    var mlInput = item.querySelector('.pemakaian-ml-input');
-                    var subtotalEl = item.querySelector('.produk-subtotal-display');
-                    if (idInput && mlInput) {
-                        if (idInput.value) {
-                            var hargaPerUnit = parseFloat(item.dataset.harga) || 0;
-                            var ml = parseFloat(mlInput.value) || 0;
-                            if (ml > 0 && hargaPerUnit > 0) {
-                                var unit = ml / 10;
-                                var lineCost = unit * hargaPerUnit;
-                                harga += lineCost;
-                                if (subtotalEl) subtotalEl.textContent = 'Rp' + fmt(lineCost);
-                            } else {
-                                if (subtotalEl) subtotalEl.textContent = 'Rp0';
-                            }
-                        } else {
-                            if (subtotalEl) subtotalEl.textContent = 'Rp0';
-                        }
+            var usageItems = usageList ? usageList.querySelectorAll('.produk-usage-item') : [];
+            var harga = 0;
+            var productCosts = [];
+
+            usageItems.forEach(function(item) {
+                var idInput = item.querySelector('.produk-id-input');
+                var mlInput = item.querySelector('.pemakaian-ml-input');
+                var subtotalEl = item.querySelector('.produk-subtotal-display');
+                var unitEl = item.querySelector('.produk-unit-harga');
+                var hargaPerUnit = item.dataset.harga ? (parseFloat(item.dataset.harga) || 0) : 0;
+                var ml = mlInput ? (parseFloat(mlInput.value) || 0) : 0;
+
+                if (idInput && mlInput && idInput.value) {
+                    if (unitEl) unitEl.textContent = 'Rp' + fmt(hargaPerUnit) + ' / 10ml';
+                    var cost = 0;
+                    var nameEl = item.querySelector('.produk-search');
+                    var prodName = nameEl && nameEl.value ? nameEl.value : (item.dataset.kategori || 'Produk');
+
+                    if (ml > 0 && hargaPerUnit > 0) {
+                        cost = (ml / 10) * hargaPerUnit;
+                        productCosts.push(prodName + ' ' + formatMl(ml) + 'ml Rp' + fmt(cost));
                     }
-                });
-            }
+
+                    harga += cost;
+                    if (subtotalEl) subtotalEl.textContent = cost > 0 ? 'Rp' + fmt(cost) : 'Rp0';
+                } else {
+                    if (item.dataset.mode !== 'default') {
+                        if (unitEl) unitEl.textContent = 'Rp0 / 10ml';
+                    }
+                    if (subtotalEl) subtotalEl.textContent = 'Rp0';
+                }
+            });
 
             row.querySelector('.harga-display').value = Math.round(harga);
             row.querySelector('.harga-input').value = Math.round(harga);
 
             var note = row.querySelector('.harga-saran-note');
-            var parts = [];
-            if (hargaMin > 0) parts.push('Dasar Rp' + fmt(hargaMin));
-            if (usageList) {
-                var usageItems = usageList.querySelectorAll('.produk-usage-item');
-                usageItems.forEach(function(item) {
-                    var idInput = item.querySelector('.produk-id-input');
-                    var mlInput = item.querySelector('.pemakaian-ml-input');
-                    if (idInput && mlInput && idInput.value) {
-                        var hargaPerUnit = parseFloat(item.dataset.harga) || 0;
-                        var ml = parseFloat(mlInput.value) || 0;
-                        if (ml > 0 && hargaPerUnit > 0) {
-                            var unit = ml / 10;
-                            var cost = unit * hargaPerUnit;
-                            parts.push(item.querySelector('.produk-search').value + ' ' + ml + 'ml Rp' + fmt(cost));
-                        }
-                    }
-                });
+            var parts = productCosts.slice();
+            if (productCosts.length > 0) {
+                var range = hargaMin !== hargaMax ? ' (' + fmt(hargaMin) + ' - Rp' + fmt(hargaMax) + ')' : '';
+                if ((hargaMin > 0 && harga < hargaMin * 0.8) || (hargaMax > 0 && harga > hargaMax * 1.2)) {
+                    parts.push('Perkiraan ' + fmt(hargaMin) + ' - Rp' + fmt(hargaMax) + ', periksa pemakaian');
+                }
             }
             note.textContent = parts.length > 0 ? parts.join(' + ') : '';
 

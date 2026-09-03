@@ -33,8 +33,6 @@ class LayananHargaKomisiSeeder extends Seeder
                     'varian' => $v['varian'],
                     'harga_dasar_min' => $v['harga_min'],
                     'harga_dasar_max' => $v['harga_max'] ?? $v['harga_min'],
-                    // catatan ketentuan layanan (bebas, bisa huruf/angka). default kosong.
-                    'notes' => $v['notes'] ?? null,
                     'komisi_min' => $v['komisi_min'] ?? null,
                     'komisi_max' => $v['komisi_max'] ?? null,
                 ]);

@@ -15,11 +15,6 @@
             <h2 class="text-base font-semibold text-gray-900">Pendapatan Karyawan</h2>
             <p class="mt-0.5 text-xs text-gray-500">Gaji pokok + komisi per karyawan untuk periode yang sama. Klik salah satu staf untuk membuka slip pendapatannya, atau lihat <a href="{{ route('laporan.pendapatan-karyawan') }}" class="font-medium text-accent-text hover:text-accent">ringkasan pendapatan bulanan</a>.</p>
         </div>
-        <a href="{{ route('laporan.rekap-komisi.cetak', request()->query()) }}"
-           class="inline-flex shrink-0 items-center gap-2 self-start rounded-lg bg-dark px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-dark-hover sm:self-auto">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            Cetak Laporan + Slip Semua Karyawan
-        </a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-sm">

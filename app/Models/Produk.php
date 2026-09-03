@@ -12,6 +12,23 @@ class Produk extends Model
 
     public const STOK_MENIPIS = 10;
 
+    /** Tipe produk yang dipakai staf saat layanan (bukan dijual per pcs). */
+    public const KATEGORI_LAYANAN = [
+        'Color',
+        'Bleaching',
+        'Oxidant',
+        'Keratin',
+        'Smoothing',
+        'Hairtreatment',
+        'Creambath',
+    ];
+
+    /** Daftar tipe produk yang bisa dipakai saat layanan. */
+    public static function kategoriLayanan(): array
+    {
+        return self::KATEGORI_LAYANAN;
+    }
+
     protected $table = 'produk';
 
     protected $fillable = [
@@ -37,9 +54,15 @@ class Produk extends Model
 
     public function labelKategori(): string
     {
-        return $this->kategori_produk === 'dijual'
-            ? 'Dijual Per PCS'
-            : 'Dipakai Layanan';
+        if ($this->kategori_produk === 'dijual') {
+            return 'Dijual Per PCS';
+        }
+
+        if (in_array($this->kategori_produk, self::KATEGORI_LAYANAN, true)) {
+            return $this->kategori_produk;
+        }
+
+        return 'Dipakai Layanan';
     }
 
     public function labelHarga(): string
