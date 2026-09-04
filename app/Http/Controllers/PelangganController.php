@@ -85,6 +85,7 @@ class PelangganController extends Controller
             'username_instagram' => ['nullable', 'string', 'max:255'],
             'jenis_kelamin' => ['nullable', 'in:L,P'],
             'jenis_rambut' => ['nullable', 'string', 'max:255'],
+            'kondisi_rambut' => ['nullable', 'string', 'max:255'],
             'alamat' => ['nullable', 'string', 'max:255'],
             'catatan_khusus' => ['nullable', 'string'],
         ];

@@ -7,7 +7,7 @@
     <p class="mt-1 text-sm text-gray-500">Catat janji temu baru untuk pelanggan.</p>
 
     <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('appointment.store') }}" method="POST">
+        <form action="{{ route('appointment.store') }}" method="POST" data-appointment-id="{{ $appointment->id ?? '' }}">
             @csrf
             @include('appointments._form', ['submitLabel' => 'Simpan Appointment'])
         </form>

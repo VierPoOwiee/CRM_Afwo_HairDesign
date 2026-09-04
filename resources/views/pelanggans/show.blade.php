@@ -47,6 +47,11 @@
             </div>
 
             <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Kondisi Rambut</p>
+                <p class="mt-1 text-gray-900">{{ $pelanggan->kondisi_rambut ?? '-' }}</p>
+            </div>
+
+            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Alamat</p>
                 <p class="mt-1 text-gray-900">{{ $pelanggan->alamat ?? '-' }}</p>
             </div>

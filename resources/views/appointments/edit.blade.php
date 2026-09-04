@@ -12,7 +12,7 @@
     </div>
 
     <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('appointment.update', $appointment) }}" method="POST">
+        <form action="{{ route('appointment.update', $appointment) }}" method="POST" data-appointment-id="{{ $appointment->id ?? '' }}">
             @csrf
             @method('PUT')
             @include('appointments._form', ['submitLabel' => 'Simpan Perubahan'])

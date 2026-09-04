@@ -19,6 +19,7 @@ class Pelanggan extends Model
         'username_instagram',
         'catatan_khusus',
         'jenis_rambut',
+        'kondisi_rambut',
         'alamat',
     ];
 

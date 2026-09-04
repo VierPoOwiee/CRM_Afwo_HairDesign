@@ -1,5 +1,6 @@
 @php
     $jenisRambut = ['Lurus', 'Ikal', 'Bergelombang', 'Keriting'];
+    $kondisiRambut = ['Normal', 'Kering', 'Rusak (Pecah-pecah)', 'Diwarnai / Chemically Treated', 'Mengembang / Frizz / Sulit Diatur'];
 @endphp
 
 <div class="space-y-6">
@@ -41,6 +42,19 @@
                 <option value="" {{ old('jenis_rambut', $pelanggan->jenis_rambut ?? '') === '' ? 'selected' : '' }}>-- Pilih --</option>
                 @foreach ($jenisRambut as $r)
                     <option value="{{ $r }}" {{ old('jenis_rambut', $pelanggan->jenis_rambut ?? '') === $r ? 'selected' : '' }}>
+                        {{ $r }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
+            <label for="kondisi_rambut" class="block text-sm font-medium text-gray-700">Kondisi Rambut</label>
+            <select name="kondisi_rambut" id="kondisi_rambut"
+                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
+                <option value="" {{ old('kondisi_rambut', $pelanggan->kondisi_rambut ?? '') === '' ? 'selected' : '' }}>-- Pilih --</option>
+                @foreach ($kondisiRambut as $r)
+                    <option value="{{ $r }}" {{ old('kondisi_rambut', $pelanggan->kondisi_rambut ?? '') === $r ? 'selected' : '' }}>
                         {{ $r }}
                     </option>
                 @endforeach

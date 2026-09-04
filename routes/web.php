@@ -87,6 +87,10 @@ Route::post('api/pelanggan', [TransaksiController::class, 'storePelanggan'])
     ->name('api.pelanggan.store');
 Route::get('api/layanan/search', [TransaksiController::class, 'searchLayanan'])
     ->name('api.layanan.search');
+Route::get('api/appointment/kuota', [AppointmentController::class, 'kuota'])
+    ->name('api.appointment.kuota');
+Route::get('api/appointment/slot-kuota', [AppointmentController::class, 'slotKuota'])
+    ->name('api.appointment.slot-kuota');
 Route::get('api/produk/search', [TransaksiController::class, 'searchProduk'])
     ->name('api.produk.search');
 

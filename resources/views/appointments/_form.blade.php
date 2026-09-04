@@ -7,9 +7,12 @@
         </div>
 
         <div>
-            <label for="waktu" class="block text-sm font-medium text-gray-700">Waktu <span class="text-red-500">*</span></label>
-            <input type="time" name="waktu" id="waktu" value="{{ old('waktu', $appointment->waktu ?? '') }}" required
-                   class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
+            <label for="waktu" class="block text-sm font-medium text-gray-700">Waktu (WITA) <span class="text-red-500">*</span></label>
+            <select name="waktu" id="waktu" required
+                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
+                <option value="">-- Pilih Waktu (WITA) --</option>
+            </select>
+            <p id="kuota_info" class="mt-1 text-xs font-medium text-text-muted"></p>
         </div>
 
         <div>
@@ -34,9 +37,11 @@
                        value="{{ old('service', $appointment->service ?? '') }}"
                        class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
                 <input type="hidden" name="service" id="service_hidden" value="{{ old('service', $appointment->service ?? '') }}" required>
+                <input type="hidden" name="kategori" id="kategori_hidden" value="{{ old('kategori', $appointment->kategori ?? '') }}">
                 <div id="service_results" class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-card shadow-sm max-h-48 overflow-y-auto hidden"></div>
             </div>
             <p class="mt-1 text-xs text-gray-500">Ketik minimal 2 huruf untuk memilih dari daftar layanan.</p>
+            <p id="kategori_msg" class="mt-1 text-xs font-medium text-danger hidden"></p>
         </div>
 
         <div>
@@ -120,7 +125,8 @@
         '{{ route("api.layanan.search") }}?q=',
         function(l) {
             var s = l.nama_layanan.replace(/'/g, "\\'");
-            return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-accent-light" data-nama="' + s + '">' + l.nama_layanan + ' <span class="text-xs text-text-muted">(' + l.kategori + ')</span></div>';
+            var k = (l.kategori || '').replace(/'/g, "\\'");
+            return '<div class="cursor-pointer px-3 py-2 text-sm hover:bg-accent-light" data-nama="' + s + '" data-kategori="' + k + '">' + l.nama_layanan + ' <span class="text-xs text-text-muted">(' + l.kategori + ')</span></div>';
         }, 2);
 
     svcRes.addEventListener('click', function(e) {
@@ -128,7 +134,118 @@
         if (!el) return;
         svcInput.value = el.dataset.nama;
         svcHid.value = el.dataset.nama;
+        document.getElementById('kategori_hidden').value = el.dataset.kategori || '';
         svcRes.classList.add('hidden');
     });
+
+    var tanggInput = document.getElementById('tanggal');
+    var waktuInput = document.getElementById('waktu');
+    var kuotaInfo = document.getElementById('kuota_info');
+    var formEl = document.querySelector('form[data-appointment-id]');
+    var kategoriHid = document.getElementById('kategori_hidden');
+    var kategoriMsg = document.getElementById('kategori_msg');
+    var currentWaktu = '{{ old("waktu", $appointment->waktu ?? "") }}';
+    if (currentWaktu && currentWaktu.indexOf(':') !== -1) {
+        currentWaktu = currentWaktu.split(':').slice(0, 2).join(':');
+    }
+    var maksGlobal = 0;
+
+    function setKuotaClass(cls) {
+        kuotaInfo.className = 'mt-1 text-xs font-medium ' + cls;
+    }
+
+    function updateKuotaInfo(waktu, sisa, maks) {
+        kuotaInfo.textContent = 'Kuota jam ' + waktu + ' WITA: sisa ' + sisa + ' dari ' + maks;
+        var persen = maks > 0 ? sisa / maks : 0;
+        if (persen > 0.5) {
+            setKuotaClass('text-success');
+        } else if (persen > 0.2) {
+            setKuotaClass('text-success opacity-60');
+        } else {
+            setKuotaClass('text-danger');
+        }
+    }
+
+    function clearKuotaInfo() {
+        kuotaInfo.textContent = '';
+        setKuotaClass('text-text-muted');
+    }
+
+    function renderSlotKuota(data) {
+        var slots = data.slots || {};
+        var maks = 0;
+        for (var w in slots) { if (slots[w] > maks) maks = slots[w]; }
+        maksGlobal = maks;
+
+        waktuInput.innerHTML = '<option value="">-- Pilih Waktu (WITA) --</option>';
+        for (var w in slots) {
+            var sisa = slots[w];
+            var opt = document.createElement('option');
+            opt.value = w;
+            opt.setAttribute('data-sisa', sisa);
+            opt.textContent = (sisa <= 0) ? w + ' WITA (habis)' : w + ' WITA';
+            if (sisa <= 0 && w !== currentWaktu) {
+                opt.disabled = true;
+            }
+            waktuInput.appendChild(opt);
+        }
+
+        if (currentWaktu) {
+            var hi = false;
+            for (var i = 0; i < waktuInput.options.length; i++) {
+                if (waktuInput.options[i].value === currentWaktu) { hi = true; break; }
+            }
+            if (hi) { waktuInput.value = currentWaktu; }
+        }
+
+        var sel = waktuInput.value;
+        if (sel && slots[sel] !== undefined) {
+            updateKuotaInfo(sel, slots[sel], maks);
+        } else {
+            clearKuotaInfo();
+        }
+    }
+
+    function loadSlotKuota() {
+        var tanggal = tanggInput.value;
+        if (!tanggal) {
+            waktuInput.innerHTML = '<option value="">-- Pilih Waktu (WITA) --</option>';
+            clearKuotaInfo();
+            return;
+        }
+        var excludeId = formEl ? formEl.getAttribute('data-appointment-id') : '';
+        var url = '{{ route("api.appointment.slot-kuota") }}?tanggal=' + encodeURIComponent(tanggal)
+            + '&exclude_id=' + encodeURIComponent(excludeId);
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(renderSlotKuota);
+    }
+
+    waktuInput.addEventListener('change', function() {
+        var sel = this.value;
+        var opt = this.options[this.selectedIndex];
+        var sisa = opt ? parseInt(opt.getAttribute('data-sisa') || '', 10) : null;
+        if (sel && !isNaN(sisa)) {
+            updateKuotaInfo(sel, sisa, maksGlobal);
+        } else {
+            clearKuotaInfo();
+        }
+    });
+
+    tanggInput.addEventListener('change', loadSlotKuota);
+    loadSlotKuota();
+
+    if (formEl) {
+        formEl.addEventListener('submit', function(e) {
+            if (!kategoriHid.value) {
+                e.preventDefault();
+                kategoriMsg.textContent = 'Pilih layanan dari daftar yang muncul, supaya kategori & kuota bisa dihitung otomatis';
+                kategoriMsg.classList.remove('hidden');
+                svcInput.focus();
+                return;
+            }
+            kategoriMsg.classList.add('hidden');
+        });
+    }
 })();
 </script>

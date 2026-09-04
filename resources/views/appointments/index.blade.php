@@ -112,4 +112,56 @@
             </div>
         @endif
     @endif
+
+    @php
+        $ringkasanHari = \Carbon\Carbon::parse($tglRingkasan);
+        $hariNama = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $ringkasanJudul = $hariNama[$ringkasanHari->dayOfWeek] . ', ' . $ringkasanHari->format('d M Y');
+    @endphp
+
+    <div class="mt-6 rounded-lg border border-gray-200 bg-card shadow-sm">
+        <div class="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
+            <div>
+                <h2 class="text-base font-semibold text-text-primary">Jadwal {{ $ringkasanJudul }}</h2>
+                <p class="mt-0.5 text-sm text-text-muted">Ringkasan layanan yang akan dilayani hari ini.</p>
+            </div>
+            <span class="shrink-0 rounded-full bg-accent-light px-2.5 py-1 text-xs font-medium text-accent-text">
+                {{ $ringkasanHarian->count() }} janji temu
+            </span>
+        </div>
+
+        @if ($ringkasanHarian->isEmpty())
+            <div class="px-5 py-10 text-center">
+                <p class="text-sm font-medium text-text-secondary">Tidak ada jadwal pada tanggal ini.</p>
+                <p class="mt-1 text-sm text-text-muted">Semua slot waktu kosong.</p>
+            </div>
+        @else
+            <div class="divide-y divide-gray-100">
+                @foreach ($ringkasanHarian->groupBy('waktu') as $waktu => $jadwal)
+                    <div class="flex flex-col gap-1 px-5 py-3 sm:flex-row sm:items-center sm:gap-4">
+                        <div class="flex w-32 shrink-0 items-center gap-3">
+                            <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-accent-light text-sm font-semibold text-accent-text">
+                                {{ substr($waktu, 0, 2) }}
+                            </span>
+                            <span class="text-sm font-semibold text-text-primary">
+                                {{ substr($waktu, 0, 5) }} <span class="font-normal text-text-muted">WITA</span>
+                            </span>
+                        </div>
+                        <div class="flex flex-1 flex-col gap-1">
+                            @foreach ($jadwal as $j)
+                                <p class="text-sm text-gray-700">
+                                    <span class="font-medium text-text-primary">{{ $j->nama }}</span>
+                                    <span class="text-text-muted">—</span>
+                                    <span class="text-gray-700">{{ $j->service }}</span>
+                                    @if ($j->kategori)
+                                        <span class="text-xs text-text-muted">({{ $j->kategori }})</span>
+                                    @endif
+                                </p>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
 @endsection
