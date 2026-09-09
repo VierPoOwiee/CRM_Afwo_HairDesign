@@ -31,7 +31,7 @@ class TransaksiKunjungan extends Model
 
     public function pelanggan(): BelongsTo
     {
-        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan')->withTrashed();
     }
 
     public function details(): HasMany

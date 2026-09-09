@@ -11,6 +11,7 @@ use App\Models\KomisiTransaksi;
 use App\Models\Pelanggan;
 use App\Models\PertanyaanAi;
 use App\Models\TransaksiKunjungan;
+use App\Services\GeminiQuota;
 use App\Services\LaporanAiInsightService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -88,6 +89,7 @@ class LaporanController extends Controller
 
         $service = new LaporanAiInsightService;
         $ringkasanData = $service->agregasiData(Carbon::parse($insightPeriode));
+        $kuotaAi = (new GeminiQuota)->detail();
         $tanyaRiwayat = PertanyaanAi::where('periode', $insightPeriode)
             ->orderBy('dibuat_pada')
             ->orderBy('id')
@@ -98,7 +100,7 @@ class LaporanController extends Controller
             'jumlahTransaksi', 'rataRata', 'trenHarian', 'breakdownKategori',
             'karyawans', 'jenisPengerjaan', 'stafId', 'metode',
             'insight', 'insightPeriode', 'insightCooldown', 'insightCooldownSisaDetik',
-            'ringkasanData', 'tanyaRiwayat',
+            'ringkasanData', 'kuotaAi', 'tanyaRiwayat',
         ));
     }
 
@@ -132,8 +134,10 @@ class LaporanController extends Controller
         return view('laporan.pelanggan-aktif', compact('pelanggans', 'dari', 'sampai', 'preset'));
     }
 
-    public function pelangganRiwayat(Pelanggan $pelanggan)
+    public function pelangganRiwayat(int $pelanggan)
     {
+        $pelanggan = Pelanggan::withTrashed()->findOrFail($pelanggan);
+
         $transaksis = TransaksiKunjungan::where('id_pelanggan', $pelanggan->id)
             ->where('status', 'selesai')
             ->with('details.staf', 'details.layanan', 'details.produk')
@@ -155,8 +159,10 @@ class LaporanController extends Controller
      * Slip pendapatan satu karyawan (1 halaman per karyawan).
      * Periode mengikuti filter yang sama dengan laporan utama.
      */
-    public function slipPendapatan(Request $request, Karyawan $karyawan)
+    public function slipPendapatan(Request $request, int $karyawan)
     {
+        $karyawan = Karyawan::withTrashed()->findOrFail($karyawan);
+
         $preset = $request->input('preset', 'bulan-ini');
         [$dari, $sampai] = $this->resolvePeriode($preset, $request->input('dari'), $request->input('sampai'));
 

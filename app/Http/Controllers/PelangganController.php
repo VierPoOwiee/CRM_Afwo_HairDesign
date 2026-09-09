@@ -69,7 +69,36 @@ class PelangganController extends Controller
 
         return redirect()
             ->route('pelanggan.index')
-            ->with('success', 'Pelanggan "'.$nama.'" berhasil dihapus.');
+            ->with('success', 'Pelanggan "'.$nama.'" berhasil dihapus (diarsipkan).');
+    }
+
+    public function arsip(Request $request)
+    {
+        $q = trim((string) $request->query('q'));
+
+        $pelanggans = Pelanggan::onlyTrashed()
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('nama', 'like', "%{$q}%")
+                    ->orWhere('no_wa', 'like', "%{$q}%")
+                    ->orWhere('username_instagram', 'like', "%{$q}%")
+                    ->orWhere('alamat', 'like', "%{$q}%");
+            })
+            ->orderByDesc('deleted_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('pelanggans.arsip', compact('pelanggans', 'q'));
+    }
+
+    public function restore(int $pelanggan)
+    {
+        $p = Pelanggan::onlyTrashed()->findOrFail($pelanggan);
+        $nama = $p->nama;
+        $p->restore();
+
+        return redirect()
+            ->route('pelanggan.arsip')
+            ->with('success', 'Pelanggan "'.$nama.'" berhasil dipulihkan.');
     }
 
     private function validated(Request $request, ?int $ignoreId = null): array

@@ -21,6 +21,10 @@
                     Cari
                 </button>
             </form>
+            <a href="{{ route('pelanggan.arsip') }}"
+               class="inline-flex shrink-0 items-center rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
+                Arsip
+            </a>
             <a href="{{ route('pelanggan.create') }}"
                class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
                 <span class="text-lg leading-none">+</span>

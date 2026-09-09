@@ -42,6 +42,17 @@
                     @if ($insight)
                         <p class="text-xs text-gray-400">Terakhir digenerate: {{ $insight->dibuat_pada->format('d M Y H:i') }}</p>
                     @endif
+                    <p class="mt-1 text-xs {{ $kuotaAi['habis'] ? 'font-medium text-red-600' : ($kuotaAi['hampir_habis'] ? 'font-medium text-amber-700' : 'text-gray-400') }}">
+                        Kuota AI hari ini:
+                        <span class="font-semibold">{{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}</span>
+                        @if ($kuotaAi['habis'])
+                            &mdash; habis, reset {{ $kuotaAi['label_reset'] }}
+                        @elseif ($kuotaAi['hampir_habis'])
+                            &mdash; sisa {{ $kuotaAi['sisa'] }}, reset {{ $kuotaAi['label_reset'] }}
+                        @else
+                            &middot; reset {{ $kuotaAi['label_reset'] }}
+                        @endif
+                    </p>
                 </div>
             </div>
             <form method="POST" action="{{ route('laporan.insight.generate') }}" class="shrink-0 no-print">
@@ -49,7 +60,10 @@
                 <input type="hidden" name="periode" value="{{ $insightPeriode }}">
                 <div class="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                     <button type="submit" id="btnGenerateInsight"
-                        @if ($insightCooldown) disabled title="Analisa baru saja digenerate, tunggu beberapa menit" @endif
+                        @if ($insightCooldown || $kuotaAi['habis'])
+                            disabled
+                            title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, reset '.$kuotaAi['label_reset'] : 'Analisa baru saja digenerate, tunggu beberapa menit' }}"
+                        @endif
                         class="inline-flex w-full items-center justify-center gap-2 rounded-md bg-dark px-4 py-2.5 text-sm font-medium text-white hover:bg-dark-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -111,26 +125,75 @@
         {{-- Grafik perbandingan bulan ini vs bulan lalu (dari data database) --}}
         <div class="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2 no-print">
             <div class="rounded-lg border border-accent/30 bg-card p-4">
-                <h3 class="mb-3 text-sm font-semibold text-gray-900">Omset: Bulan Ini vs Bulan Lalu</h3>
                 @php
                     $omsetSekarang = (float) $ringkasanData['omset_bulan_ini'];
                     $omsetSebelumnya = (float) $ringkasanData['omset_bulan_lalu'];
-                    $omsetMaks = max($omsetSekarang, $omsetSebelumnya, 1);
-                    $omsetTinggiSekarang = 48 - (48 * ($omsetSekarang / $omsetMaks));
-                    $omsetTinggiSebelumnya = 48 - (48 * ($omsetSebelumnya / $omsetMaks));
+                    $omsetMaks = max($omsetSekarang, $omsetSebelumnya, 0);
+                    $perubahan = 0;
+                    if ($omsetSebelumnya > 0) {
+                        $perubahan = (($omsetSekarang - $omsetSebelumnya) / $omsetSebelumnya) * 100;
+                    } elseif ($omsetSekarang > 0) {
+                        $perubahan = 100;
+                    }
+                    $periodeBulanIni = \Carbon\Carbon::parse($insightPeriode);
+                    $isBulanBerjalan = $periodeBulanIni->isCurrentMonth();
+                    $bulanLaluRange = $periodeBulanIni->copy()->subMonth()->startOfMonth()->format('d M Y')
+                        .' s.d. '.$periodeBulanIni->copy()->subMonth()->endOfMonth()->format('d M Y');
+                    $bulanIniRange = ($isBulanBerjalan
+                        ? $periodeBulanIni->copy()->startOfMonth()->format('d M Y')
+                            .' s.d. '.now()->format('d M Y').' (MTD)'
+                        : $periodeBulanIni->copy()->startOfMonth()->format('d M Y')
+                            .' s.d. '.$periodeBulanIni->copy()->endOfMonth()->format('d M Y'));
+                    $omsetChart = [
+                        'lalu' => $omsetSebelumnya,
+                        'ini' => $omsetSekarang,
+                        'rangeLalu' => $bulanLaluRange,
+                        'rangeIni' => $bulanIniRange,
+                        'mtd' => $isBulanBerjalan,
+                    ];
                 @endphp
-                <div class="flex items-end gap-8 px-2 pt-2">
-                    <div class="flex-1">
-                        <p class="text-center text-xs font-medium text-gray-500">Bulan Lalu</p>
-                        <div class="mx-2 mt-2 rounded-md bg-gray-200" style="height:{{ $omsetTinggiSebelumnya }}px; min-height:8px"></div>
-                        <p class="mt-1.5 text-center text-sm font-semibold text-gray-700">Rp{{ number_format($omsetSebelumnya / 1e6, 1, ',', '.') }} jt</p>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-center text-xs font-medium text-gray-500">Bulan Ini</p>
-                        <div class="mx-2 mt-2 rounded-md bg-accent" style="height:{{ $omsetTinggiSekarang }}px; min-height:8px"></div>
-                        <p class="mt-1.5 text-center text-sm font-semibold text-gray-700">Rp{{ number_format($omsetSekarang / 1e6, 1, ',', '.') }} jt</p>
-                    </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-sm font-semibold text-gray-900">Omset: Bulan Ini vs Bulan Lalu</h3>
+                    @if ($omsetMaks > 0)
+                        <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $perubahan >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }}">
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                @if ($perubahan >= 0)
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                                @else
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5l15 15m0 0H8.25m11.25 0v-11.25"/>
+                                @endif
+                            </svg>
+                            {{ abs(round($perubahan)) }}%
+                        </span>
+                    @endif
                 </div>
+
+                @if ($omsetMaks <= 0)
+                    <div class="flex h-48 flex-col items-center justify-center gap-2 text-center">
+                        <svg class="h-8 w-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5A2.25 2.25 0 0022.5 18.75v-9a2.25 2.25 0 00-.659-1.591l-5.25-5.25A2.25 2.25 0 0015 2.25H6a2.25 2.25 0 00-2.25 2.25v14.25A2.25 2.25 0 006 21h4.5"/>
+                        </svg>
+                        <p class="text-sm text-gray-400">Belum ada transaksi bulan ini.</p>
+                        <p class="text-xs text-gray-400">Chart akan muncul otomatis setelah ada transaksi.</p>
+                    </div>
+                @else
+                    <div class="relative mt-3 h-48">
+                        <canvas id="chartOmsetBulan"></canvas>
+                    </div>
+                    <p class="mt-2 text-[10px] leading-relaxed text-gray-400">
+                        @if ($isBulanBerjalan)
+                            <span class="font-medium text-gray-500">Bulan Ini</span> = omset month-to-date sampai
+                            {{ now()->format('d M Y') }} (belum final sampai akhir bulan).
+                            <span class="font-medium text-gray-500">Bulan Lalu</span> = omset penuh sebulan.
+                        @else
+                            <span class="font-medium text-gray-500">Bulan Ini</span> &amp;
+                            <span class="font-medium text-gray-500">Bulan Lalu</span> adalah omset aktual penuh tiap bulan
+                            ({{ $periodeBulanIni->format('M Y') }} vs
+                            {{ $periodeBulanIni->copy()->subMonth()->format('M Y') }}).
+                        @endif
+                    </p>
+                @endif
             </div>
             <div class="rounded-lg border border-accent/30 bg-card p-4">
                 <h3 class="mb-3 text-sm font-semibold text-gray-900">Breakdown Kategori Layanan</h3>
@@ -208,11 +271,18 @@
                 <div class="mt-2 flex items-center justify-end gap-3">
                     <span class="text-[10px] text-gray-400">Maksimal 500 karakter</span>
                     <button type="submit"
+                        @if ($kuotaAi['habis']) disabled title="Kuota AI hari ini habis, reset {{ $kuotaAi['label_reset'] }}" @endif
                         class="inline-flex items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-medium text-white hover:bg-dark-hover disabled:cursor-not-allowed disabled:opacity-50">
                         Kirim
                     </button>
                 </div>
             </form>
+
+            @if ($kuotaAi['habis'])
+                <p class="mt-2 text-xs text-red-600">
+                    Kuota AI hari ini habis ({{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}). Lanjut besok &mdash; reset {{ $kuotaAi['label_reset'] }}.
+                </p>
+            @endif
 
             @if ($tanyaRiwayat->isNotEmpty())
                 <div id="riwayatChat" class="no-print mt-5 max-h-[24rem] space-y-4 overflow-y-auto rounded-xl border border-gray-200 bg-surface/60 p-4">
@@ -379,6 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (meta.hidden) return;
                 meta.data.forEach((bar, j) => {
                     const raw = dataset.data[j];
+                    if (raw <= 0) return;
                     ctx.save();
                     ctx.fillStyle = '#374151';
                     ctx.font = '600 11px sans-serif';
@@ -437,6 +508,60 @@ document.addEventListener('DOMContentLoaded', function () {
                         ticks: {
                             callback: (v) => 'Rp' + (v / 1e6).toFixed(0).replace('.', ',') + ' jt'
                         }
+                    }
+                }
+            },
+            plugins: [rupiahLabelPlugin]
+        });
+    }
+
+    // Chart 1: Perbandingan omset bulan ini (MTD) vs bulan lalu penuh
+    const canvasOmset = document.getElementById('chartOmsetBulan');
+    if (canvasOmset) {
+        const omset = @json($omsetChart);
+
+        new Chart(canvasOmset, {
+            type: 'bar',
+            data: {
+                labels: ['Bulan Lalu', 'Bulan Ini' + (omset.mtd ? ' (MTD)' : '')],
+                datasets: [{
+                    label: 'Omset',
+                    data: [omset.lalu, omset.ini],
+                    backgroundColor: ['#5C4033', '#C6A15B'],
+                    borderColor: ['#3D2A1C', '#8A6A2E'],
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    maxBarThickness: 90,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 24 } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: () => 'Perbandingan Omset',
+                            label: (ctx) => {
+                                const nama = ctx.dataIndex === 0 ? 'Bulan Lalu' : 'Bulan Ini' + (omset.mtd ? ' (MTD)' : '');
+                                return nama + ': ' + rpFull(ctx.parsed.y);
+                            },
+                            footer: (items) => 'Periode: ' + (items[0].dataIndex === 0 ? omset.rangeLalu : omset.rangeIni),
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: { size: 10 },
+                            callback: (v) => 'Rp' + (v / 1e6).toFixed(0).replace('.', ',') + ' jt'
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
                     }
                 }
             },

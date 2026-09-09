@@ -25,6 +25,6 @@ class Absensi extends Model
 
     public function staf(): BelongsTo
     {
-        return $this->belongsTo(Karyawan::class, 'id_staf');
+        return $this->belongsTo(Karyawan::class, 'id_staf')->withTrashed();
     }
 }

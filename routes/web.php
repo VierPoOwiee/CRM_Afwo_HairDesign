@@ -47,6 +47,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/laporan/insight/tanya', [InsightController::class, 'tanya'])->name('laporan.insight.tanya');
     });
 
+    Route::get('pelanggan/arsip', [PelangganController::class, 'arsip'])->name('pelanggan.arsip');
+    Route::post('pelanggan/{pelanggan}/restore', [PelangganController::class, 'restore'])->name('pelanggan.restore');
+
     Route::resource('pelanggan', PelangganController::class)->only([
         'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
     ]);
@@ -58,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('produk', ProdukController::class)->only([
         'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
     ]);
+
+    Route::get('karyawan/arsip', [KaryawanController::class, 'arsip'])->name('karyawan.arsip');
+    Route::post('karyawan/{karyawan}/restore', [KaryawanController::class, 'restore'])->name('karyawan.restore');
 
     Route::resource('karyawan', KaryawanController::class)->only([
         'index', 'create', 'store', 'edit', 'update', 'destroy',

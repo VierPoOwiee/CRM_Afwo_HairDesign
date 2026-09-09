@@ -65,6 +65,13 @@ class LaporanAiInsightService
             'stok_menipis' => $this->hitungStokMenipis(),
             'appointment' => $this->hitungAppointment($bulanIni),
             'karyawan' => $this->hitungDataKaryawan($bulanIni),
+            'karyawan_lalu' => $this->hitungDataKaryawan($bulanLalu),
+            'rincian_komisi_ini' => $this->hitungRincianKomisi($bulanIni),
+            'rincian_komisi_lalu' => $this->hitungRincianKomisi($bulanLalu),
+            'rincian_per_hari_ini' => $this->hitungRincianHarian($bulanIni),
+            'rincian_per_hari_lalu' => $this->hitungRincianHarian($bulanLalu),
+            'rincian_layanan_ini' => $this->hitungRincianLayanan($bulanIni),
+            'rincian_layanan_lalu' => $this->hitungRincianLayanan($bulanLalu),
             'pelanggan_teratas' => $this->hitungPelangganTeratas($bulanIni),
         ];
     }
@@ -338,6 +345,90 @@ class LaporanAiInsightService
             ->toArray();
     }
 
+    private function hitungRincianKomisi(Carbon $bulan): array
+    {
+        $awal = $bulan->copy()->startOfMonth();
+        $akhir = $bulan->copy()->endOfMonth();
+
+        $rincian = collect();
+
+        KomisiTransaksi::whereHas('transaksi', function ($q) use ($awal, $akhir) {
+            $q->where('waktu_kunjungan', '>=', $awal)
+                ->where('waktu_kunjungan', '<=', $akhir)
+                ->where('status', 'selesai');
+        })
+            ->with('staf', 'transaksi')
+            ->orderBy('id_transaksi')
+            ->get()
+            ->each(function ($kt) use ($rincian) {
+                $transaksi = $kt->transaksi;
+
+                $rincian->push([
+                    'staf' => $kt->staf->nama ?? 'Staf #'.$kt->id_staf,
+                    'tanggal' => $transaksi ? $transaksi->waktu_kunjungan->toDateString() : '',
+                    'sumber' => 'komisi_per_layanan',
+                    'no_struk' => (string) ($transaksi->no_struk ?? ''),
+                    'jumlah_komisi' => (int) round((float) $kt->jumlah_komisi),
+                    'keterangan' => (string) ($kt->keterangan ?? ''),
+                ]);
+            });
+
+        KomisiHarianSpesial::whereBetween('tanggal', [$awal->toDateString(), $akhir->toDateString()])
+            ->with('staf')
+            ->orderBy('tanggal')
+            ->get()
+            ->each(function ($row) use ($rincian) {
+                $rincian->push([
+                    'staf' => $row->staf->nama ?? 'Staf #'.$row->id_staf,
+                    'tanggal' => $row->tanggal->toDateString(),
+                    'sumber' => 'komisi_persen_harian',
+                    'jumlah_komisi' => (int) round((float) $row->jumlah_komisi),
+                    'omset_dasar' => (int) round((float) $row->total_omset_dasar),
+                    'persen' => (float) $row->persen,
+                ]);
+            });
+
+        return $rincian
+            ->sortBy('tanggal')
+            ->values()
+            ->toArray();
+    }
+
+    private function hitungRincianHarian(Carbon $bulan): array
+    {
+        return $this->transaksiSelesaiPada($bulan)
+            ->selectRaw('DATE(waktu_kunjungan) as tanggal, count(*) as jumlah, sum(total_bayar) as total')
+            ->groupBy('tanggal')
+            ->orderBy('tanggal')
+            ->get()
+            ->map(fn ($r) => [
+                'tanggal' => (string) $r->tanggal,
+                'jumlah_transaksi' => (int) $r->jumlah,
+                'omset' => (int) round((float) $r->total),
+            ])
+            ->values()
+            ->toArray();
+    }
+
+    private function hitungRincianLayanan(Carbon $bulan): array
+    {
+        return DetailTransaksi::where('tipe_item', 'layanan')
+            ->whereHas('transaksi', fn (Builder $q) => $this->scopeSelesaiBulan($q, $bulan))
+            ->join('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
+            ->selectRaw('layanan.nama_layanan, layanan.kategori, count(*) as jumlah, sum(detail_transaksi.subtotal) as total')
+            ->groupBy('layanan.id', 'layanan.nama_layanan', 'layanan.kategori')
+            ->orderByDesc('total')
+            ->get()
+            ->map(fn ($r) => [
+                'layanan' => (string) $r->nama_layanan,
+                'kategori' => (string) $r->kategori,
+                'jumlah' => (int) $r->jumlah,
+                'total' => (int) round((float) $r->total),
+            ])
+            ->values()
+            ->toArray();
+    }
+
     private function hitungPelangganTeratas(Carbon $bulan): array
     {
         $rows = $this->transaksiSelesaiPada($bulan)
@@ -362,7 +453,10 @@ class LaporanAiInsightService
         $systemPrompt = 'Kamu adalah analis bisnis senior untuk salon kecantikan "Afwo Hair Design". '
             .'Kamu diberi data ringkasan bisnis periode ini dibanding periode sebelumnya: omset, jumlah transaksi, '
             .'pelanggan baru, rata-rata transaksi, pendapatan per kategori layanan, layanan terlaris, produk '
-            .'terjual/dipakai, stok menipis, metode pembayaran, appointment, dan kinerja tiap karyawan. '
+            .'terjual/dipakai, stok menipis, metode pembayaran, appointment, dan kinerja tiap karyawan '
+            .'(kinerja per karyawan periode ini ada di kunci "karyawan", sedangkan periode sebelumnya di kunci '
+            .'"karyawan_lalu" — dua-duanya memuat gaji_pokok, omset_dikerjakan, komisi_per_layanan, '
+            .'komisi_persen_harian, total_komisi, dan total_pendapatan). '
             .'Tugasmu: buat analisa ringkas, tajam, dan berbobot dalam Bahasa Indonesia. '
             .'ATURAN TAMPILAN: '
             .'- Tulis angka dengan format Rupiah Indonesia tanpa desimal, contoh: Rp4.000.000. '
@@ -397,33 +491,72 @@ class LaporanAiInsightService
 
         $systemPromptTanyaJawab = 'Kamu adalah analis bisnis senior salon kecantikan "Afwo Hair Design" yang '
             .'memahami seluruh data bisnisnya. Owner akan bertanya apa saja terkait data bisnis. '
-            .'Berikut data ringkasan lengkap periode ini vs periode sebelumnya (omset, jumlah transaksi, pelanggan '
-            .'baru, rata-rata transaksi, pendapatan per kategori layanan, layanan & produk terlaris, stok produk, '
-            .'metode pembayaran, appointment, dan kinerja per karyawan): '
-            .json_encode($dataRingkasan, JSON_UNESCAPED_UNICODE).'. '
+            .'Kamu akan menerima data ringkasan bisnis lengkap dalam bentuk JSON di pesan user (mencakup periode '
+            .'berjalan, periode sebelumnya, serta rincian komisi/harian/layanan untuk dua periode). '
+            .'Data kinerja per karyawan tersedia untuk DUA periode: kunci "karyawan" (periode berjalan) dan '
+            .'kunci "karyawan_lalu" (periode sebelumnya) — keduanya memuat gaji_pokok, jumlah_transaksi, '
+            .'omset_dikerjakan, komisi_per_layanan, komisi_persen_harian, total_komisi, dan total_pendapatan '
+            .'tiap staf. Owner boleh bertanya komisi/pendapatan karyawan untuk periode berjalan maupun periode '
+            .'sebelumnya. '
+            .'PENCOCOKAN NAMA STAF: nama yang tersimpan memakai nama lengkap (contoh: "Agus Pratama"). '
+            .'Jika owner menyebut nama sebagian, panggilan, atau tanpa gelar/spasi (contoh: "Agus", "agus", '
+            .'"budi santoso"), padankan secara fleksibel ke nama lengkap yang ada (mengandung nama itu, case '
+            .'insensitive) LALU gunakan data staf tsb dan jawab dengan nama lengkapnya — jangan menganggap data '
+            .'tidak ada hanya karena namanya tidak cocok persis. Jika nama yang dimaksud benar-benar absen dari '
+            .'semua nama lengkap yang tersedia, baru katakan tidak ada. '
             .'CARA MENJAWAB: '
-            .'- Jawab LANGSUNG pertanyaan owner dalam Bahasa Indonesia, padat, tajam, dan informatif (3-6 kalimat '
-            .'atau beberapa poin singkat). Jangan basa-basi pembuka seperti "Berdasarkan data yang diberikan...". '
+            .'- Jawab LANGSUNG pertanyaan owner dalam Bahasa Indonesia, tanpa basa-basi pembuka seperti '
+            .'"Berdasarkan data yang diberikan...". Untuk pertanyaan umum, cukup jawab padat (3-6 kalimat atau '
+            .'beberapa poin singkat). Untuk pertanyaan yang meminta rincian/detail, jawab rinci dan berstruktur '
+            .'(lihat aturan RINCIAN di bawah). '
             .'- Gunakan poin (diawali "-") bila jawaban memuat lebih dari satu hal. '
             .'- TANDA BINTIK (**) DAN TANDA BINTANG LAINNYA DILARANG. Angka ditulis tanpa desimal, format Rupiah '
             .'Indonesia, contoh Rp1.500.000. '
+            .'RINCIAN: data juga memuat data granular sebagai berikut: '
+            .'"rincian_komisi_ini" dan "rincian_komisi_lalu" (baris per staf per tanggal: sumber '
+            .'komisi_per_layanan dengan no_struknya, atau komisi_persen_harian dengan omset_dasar dan persen), '
+            .'"rincian_per_hari_ini" dan "rincian_per_hari_lalu" (omset & jumlah transaksi tiap tanggal), '
+            .'"rincian_layanan_ini" dan "rincian_layanan_lalu" (semua layanan: nama, jumlah pemakaian, total). '
+            .'Saat owner meminta rincian/detail/breakdown/per tanggal/per layanan atau per staf, jawab berpoin '
+            .'satu baris per item dan urutkan per tanggal, contoh: '
+            .'"- 06 Ags 2026 - Agus Pratama: Rp480.000 (komisi persen harian dari omset Rp1.600.000, persen 30%)" '
+            .'atau "- 12 Ags 2026 - Rina Kartika: Rp125.000 (komisi per layanan, TRX-20260812-000045)". '
+            .'Jangan ragu mengutip nomor struk, tanggal, dan angka persen yang memang tersedia di rincian. '
             .'- Hanya gunakan angka yang benar-benar ada di data. Jika data yang diminta tidak tersedia, katakan '
             .'terus terang "Data ... tidak tersedia pada ringkasan ini" dan tawarkan menanyakan hal lain yang tersedia. '
             .'JANGAN PERNAH mengarang angka, nama, atau asumsi sendiri. '
             .'- Jika pertanyaan meminta opini atau strategi, jawab singkat berbasis angka yang ada, jangan bertele-tele.';
 
+        $namaStaf = collect(array_merge($dataRingkasan['karyawan'] ?? [], $dataRingkasan['karyawan_lalu'] ?? []))
+            ->pluck('nama')
+            ->unique()
+            ->sort()
+            ->values()
+            ->join(', ');
+
         $userMessage = 'Periode: '.($dataRingkasan['periode_label'] ?? '').'. '
-            .'Pertanyaan owner: '.$pertanyaan;
+            .'Nama staf yang tersedia pada data (nama lengkap): '.$namaStaf.'. '
+            ."Berikut data ringkasan lengkap dalam JSON:\n"
+            .json_encode($dataRingkasan, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+            ."\nPertanyaan owner: ".$pertanyaan;
 
         return $this->bersihkanMarkdown($this->postKeGemini($systemPromptTanyaJawab, $userMessage));
     }
 
     private function postKeGemini(string $systemPrompt, string $userMessage): string
     {
+        $apiKey = config('services.gemini.key');
+
+        if (empty($apiKey)) {
+            throw new \RuntimeException(
+                'GEMINI_API_KEY belum diisi. Tambahkan API key Gemini (dari Google AI Studio) pada file .env: GEMINI_API_KEY=...'
+            );
+        }
+
         $response = Http::timeout(30)->post(
             'https://generativelanguage.googleapis.com/v1beta/models/'
                 .config('services.gemini.model', 'gemini-3.6-flash')
-                .':generateContent?key='.config('services.gemini.key'),
+                .':generateContent?key='.$apiKey,
             [
                 'systemInstruction' => [
                     'parts' => [['text' => $systemPrompt]],
@@ -440,12 +573,23 @@ class LaporanAiInsightService
         );
 
         if ($response->failed()) {
+            $status = $response->status();
+            $body = $response->body();
+
             Log::error('Gemini API gagal', [
-                'status' => $response->status(),
-                'body' => $response->body(),
+                'status' => $status,
+                'body' => $body,
             ]);
 
-            throw new \RuntimeException('Gemini API gagal merespons (status: '.$response->status().')');
+            $pesan = 'Gemini API gagal merespons (status: '.$status.')';
+
+            if ($status === 403) {
+                $pesan .= '. Periksa API key di .env (GEMINI_API_KEY) serta pastikan API "Generative Language" aktif dan kuota tersedia.';
+            } elseif ($status === 400 || $status === 404) {
+                $pesan .= '. Periksa nilai GEMINI_MODEL di .env (saat ini: '.config('services.gemini.model', 'gemini-3.6-flash').').';
+            }
+
+            throw new \RuntimeException($pesan.' Detail: '.$body);
         }
 
         $konten = $response->json('candidates.0.content.parts.0.text');
