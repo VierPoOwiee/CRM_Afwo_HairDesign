@@ -3,7 +3,6 @@
 @section('title', 'Laporan Penjualan')
 
 @section('content')
-    @include('laporan._nav')
 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Laporan Penjualan</h1>
@@ -216,8 +215,10 @@
             </form>
 
             @if ($tanyaRiwayat->isNotEmpty())
-                <div class="mt-5 space-y-4">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Riwayat Pertanyaan</p>
+                <div id="riwayatChat" class="no-print mt-5 max-h-[24rem] space-y-4 overflow-y-auto rounded-xl border border-gray-200 bg-surface/60 p-4">
+                    @if ($tanyaRiwayat->isNotEmpty())
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Riwayat Pertanyaan</p>
+                    @endif
                     @foreach ($tanyaRiwayat as $item)
                         <div>
                             <div class="flex justify-end">
@@ -452,6 +453,12 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.disabled = true;
             setTimeout(() => { btn.disabled = false; }, 3000);
         });
+    }
+
+    // Scroll chat ke pesan terbaru (paling bawah) seperti WA/IG
+    const riwayatChat = document.getElementById('riwayatChat');
+    if (riwayatChat) {
+        riwayatChat.scrollTop = riwayatChat.scrollHeight;
     }
 
     // Countdown cooldown Generate Ulang: aktifkan tombol otomatis saat habis

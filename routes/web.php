@@ -26,79 +26,82 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
-Route::redirect('/', '/pelanggan');
+// Semua halaman harus login dulu
+Route::middleware('auth')->group(function () {
 
-// Owner-only routes
-Route::middleware(['auth', 'role:owner'])->group(function () {
-    Route::get('/dashboard', [DashboardOwnerController::class, 'index'])->name('dashboard');
+    Route::redirect('/', '/pelanggan');
 
-    Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
-    Route::get('/laporan/pelanggan-aktif', [LaporanController::class, 'pelangganAktif'])->name('laporan.pelanggan-aktif');
-    Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
-    Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
-    Route::get('/laporan/pendapatan-karyawan', [LaporanController::class, 'pendapatanKaryawan'])->name('laporan.pendapatan-karyawan');
-    Route::get('/laporan/rekap-komisi/cetak', [LaporanController::class, 'cetakRekapKomisi'])->name('laporan.rekap-komisi.cetak');
-    Route::get('/laporan/rekap-komisi/staf/{karyawan}', [LaporanController::class, 'slipPendapatan'])->name('laporan.rekap-komisi.slip');
-    Route::post('/laporan/rekap-komisi/hitung-ulang', [LaporanController::class, 'hitungUlang'])->name('laporan.rekap-komisi.hitung-ulang');
-    Route::post('/laporan/insight/generate', [InsightController::class, 'generate'])->name('laporan.insight.generate');
-    Route::post('/laporan/insight/tanya', [InsightController::class, 'tanya'])->name('laporan.insight.tanya');
+    // Owner-only routes
+    Route::middleware('role:owner')->group(function () {
+        Route::get('/dashboard', [DashboardOwnerController::class, 'index'])->name('dashboard');
+
+        Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
+        Route::get('/laporan/pelanggan-aktif', [LaporanController::class, 'pelangganAktif'])->name('laporan.pelanggan-aktif');
+        Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
+        Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
+        Route::get('/laporan/pendapatan-karyawan', [LaporanController::class, 'pendapatanKaryawan'])->name('laporan.pendapatan-karyawan');
+        Route::get('/laporan/rekap-komisi/cetak', [LaporanController::class, 'cetakRekapKomisi'])->name('laporan.rekap-komisi.cetak');
+        Route::get('/laporan/rekap-komisi/staf/{karyawan}', [LaporanController::class, 'slipPendapatan'])->name('laporan.rekap-komisi.slip');
+        Route::post('/laporan/rekap-komisi/hitung-ulang', [LaporanController::class, 'hitungUlang'])->name('laporan.rekap-komisi.hitung-ulang');
+        Route::post('/laporan/insight/generate', [InsightController::class, 'generate'])->name('laporan.insight.generate');
+        Route::post('/laporan/insight/tanya', [InsightController::class, 'tanya'])->name('laporan.insight.tanya');
+    });
+
+    Route::resource('pelanggan', PelangganController::class)->only([
+        'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
+    ]);
+
+    Route::resource('layanan', LayananController::class)->only([
+        'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
+    ]);
+
+    Route::resource('produk', ProdukController::class)->only([
+        'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
+    ]);
+
+    Route::resource('karyawan', KaryawanController::class)->only([
+        'index', 'create', 'store', 'edit', 'update', 'destroy',
+    ]);
+
+    Route::resource('appointment', AppointmentController::class)->only([
+        'index', 'create', 'store', 'edit', 'update', 'destroy',
+    ]);
+
+    Route::get('absensi', [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
+
+    Route::resource('transaksi', TransaksiController::class)->only([
+        'index', 'create', 'store', 'show', 'destroy',
+    ]);
+
+    Route::put('transaksi/{transaksi}/batal', [TransaksiController::class, 'cancel'])
+        ->name('transaksi.cancel');
+
+    Route::put('transaksi/{transaksi}/komisi', [TransaksiController::class, 'updateKomisi'])
+        ->name('transaksi.komisi.update');
+
+    Route::put('transaksi/{transaksi}/komisi-staf', [TransaksiController::class, 'updateKomisiStaf'])
+        ->name('transaksi.komisi-staf.update');
+
+    Route::get('api/pelanggan/search', [TransaksiController::class, 'searchPelanggan'])
+        ->name('api.pelanggan.search');
+    Route::post('api/pelanggan', [TransaksiController::class, 'storePelanggan'])
+        ->name('api.pelanggan.store');
+    Route::get('api/layanan/search', [TransaksiController::class, 'searchLayanan'])
+        ->name('api.layanan.search');
+    Route::get('api/appointment/kuota', [AppointmentController::class, 'kuota'])
+        ->name('api.appointment.kuota');
+    Route::get('api/appointment/slot-kuota', [AppointmentController::class, 'slotKuota'])
+        ->name('api.appointment.slot-kuota');
+    Route::get('api/produk/search', [TransaksiController::class, 'searchProduk'])
+        ->name('api.produk.search');
+
+    // Old laporan komisi route → redirect to new location
+    Route::get('laporan/komisi', function () {
+        return redirect()->route('laporan.rekap-komisi', request()->query());
+    })->name('laporan-komisi.index');
+
+    Route::post('laporan/komisi/hitung-ulang', function () {
+        return redirect()->route('laporan.rekap-komisi.hitung-ulang', request()->query());
+    })->name('laporan-komisi.hitung-ulang');
 });
-
-// Existing routes (accessible to all for now)
-Route::resource('pelanggan', PelangganController::class)->only([
-    'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
-]);
-
-Route::resource('layanan', LayananController::class)->only([
-    'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
-]);
-
-Route::resource('produk', ProdukController::class)->only([
-    'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
-]);
-
-Route::resource('karyawan', KaryawanController::class)->only([
-    'index', 'create', 'store', 'edit', 'update', 'destroy',
-]);
-
-Route::resource('appointment', AppointmentController::class)->only([
-    'index', 'create', 'store', 'edit', 'update', 'destroy',
-]);
-
-Route::get('absensi', [AbsensiController::class, 'index'])->name('absensi.index');
-Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
-
-Route::resource('transaksi', TransaksiController::class)->only([
-    'index', 'create', 'store', 'show', 'destroy',
-]);
-
-Route::put('transaksi/{transaksi}/batal', [TransaksiController::class, 'cancel'])
-    ->name('transaksi.cancel');
-
-Route::put('transaksi/{transaksi}/komisi', [TransaksiController::class, 'updateKomisi'])
-    ->name('transaksi.komisi.update');
-
-Route::put('transaksi/{transaksi}/komisi-staf', [TransaksiController::class, 'updateKomisiStaf'])
-    ->name('transaksi.komisi-staf.update');
-
-Route::get('api/pelanggan/search', [TransaksiController::class, 'searchPelanggan'])
-    ->name('api.pelanggan.search');
-Route::post('api/pelanggan', [TransaksiController::class, 'storePelanggan'])
-    ->name('api.pelanggan.store');
-Route::get('api/layanan/search', [TransaksiController::class, 'searchLayanan'])
-    ->name('api.layanan.search');
-Route::get('api/appointment/kuota', [AppointmentController::class, 'kuota'])
-    ->name('api.appointment.kuota');
-Route::get('api/appointment/slot-kuota', [AppointmentController::class, 'slotKuota'])
-    ->name('api.appointment.slot-kuota');
-Route::get('api/produk/search', [TransaksiController::class, 'searchProduk'])
-    ->name('api.produk.search');
-
-// Old laporan komisi route → redirect to new location
-Route::get('laporan/komisi', function () {
-    return redirect()->route('laporan.rekap-komisi', request()->query());
-})->name('laporan-komisi.index');
-
-Route::post('laporan/komisi/hitung-ulang', function () {
-    return redirect()->route('laporan.rekap-komisi.hitung-ulang', request()->query());
-})->name('laporan-komisi.hitung-ulang');

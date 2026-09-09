@@ -89,8 +89,8 @@ class LaporanController extends Controller
         $service = new LaporanAiInsightService;
         $ringkasanData = $service->agregasiData(Carbon::parse($insightPeriode));
         $tanyaRiwayat = PertanyaanAi::where('periode', $insightPeriode)
-            ->orderByDesc('dibuat_pada')
-            ->orderByDesc('id')
+            ->orderBy('dibuat_pada')
+            ->orderBy('id')
             ->get();
 
         return view('laporan.penjualan', compact(

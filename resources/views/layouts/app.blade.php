@@ -123,11 +123,7 @@
                 </nav>
             </div>
 
-            <div class="m-4 rounded-xl bg-sidebar-active border border-sidebar-divider p-4">
-                <p class="text-sm font-medium text-text-primary">Butuh bantuan?</p>
-                <p class="mt-1 text-xs text-text-muted leading-relaxed">Hubungi admin sistem untuk kendala aplikasi.</p>
-                <a href="{{ route('profile.show') }}" class="mt-3 inline-block text-xs font-medium text-accent-text">Hubungi admin →</a>
-            </div>
+
         </aside>
 
         {{-- MAIN --}}
