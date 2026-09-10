@@ -36,7 +36,35 @@ class Appointment extends Model
 
     protected $casts = [
         'tanggal' => 'date',
+        'service' => 'array',
+        'kategori' => 'array',
     ];
+
+    /**
+     * Daftar layanan yang dipesan, digabung jadi satu string.
+     */
+    public function labelService(): string
+    {
+        return implode(', ', array_filter((array) $this->service));
+    }
+
+    /**
+     * Daftar kategori dari layanan yang dipesan, digabung jadi satu string.
+     */
+    public function labelKategori(): string
+    {
+        return implode(', ', array_filter((array) $this->kategori));
+    }
+
+    /**
+     * Total bobot kuota dari beberapa kategori layanan.
+     */
+    public static function bobotTotal(array $kategoris): int
+    {
+        return (int) collect($kategoris)->reduce(function ($total, $k) {
+            return $total + self::bobot($k);
+        }, 0);
+    }
 
     /**
      * Nama hari dalam Bahasa Indonesia (Minggu..Sabtu).
@@ -51,8 +79,6 @@ class Appointment extends Model
     /**
      * Total bobot kuota yang terpakai pada slot tanggal + waktu tertentu.
      *
-     * @param  string  $tanggal
-     * @param  string  $waktu
      * @param  int|null  $excludeId  id appointment yang dikecualikan (saat edit)
      */
     public static function kuotaTerpakai(string $tanggal, string $waktu, ?int $excludeId = null): int
@@ -68,9 +94,11 @@ class Appointment extends Model
         $bobot = self::BOBOT_KATEGORI;
 
         return (int) $query->get()->sum(function ($appointment) use ($bobot) {
-            $kategori = $appointment->kategori;
+            $kategoris = (array) $appointment->kategori;
 
-            return $bobot[$kategori] ?? 1;
+            return collect($kategoris)->sum(function ($kategori) use ($bobot) {
+                return $bobot[$kategori] ?? 1;
+            });
         });
     }
 
@@ -92,9 +120,6 @@ class Appointment extends Model
      * Sisa kuota untuk setiap slot waktu pada tanggal tertentu.
      *
      * Mengembalikan array berbentuk ['HH:MM' => sisa, ...].
-     *
-     * @param  string  $tanggal
-     * @param  int|null  $excludeId
      */
     public static function slotKuota(string $tanggal, ?int $excludeId = null): array
     {
@@ -109,8 +134,6 @@ class Appointment extends Model
 
     /**
      * Bobot kuota untuk sebuah kategori.
-     *
-     * @param  string|null  $kategori
      */
     public static function bobot(?string $kategori): int
     {

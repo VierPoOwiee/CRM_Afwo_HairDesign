@@ -72,7 +72,7 @@
                                 <td class="px-4 py-3 text-gray-700">{{ $a->hari() }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $a->tanggal->format('d M Y') }}</td>
                                 <td class="px-4 py-3 font-medium text-gray-900">{{ $a->nama }}</td>
-                                <td class="px-4 py-3 text-gray-700">{{ $a->service }}</td>
+                                <td class="px-4 py-3 text-gray-700">{{ $a->labelService() }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ $a->waktu }}</td>
                                 <td class="px-4 py-3">
                                     @if ($a->no_wa)
@@ -152,9 +152,9 @@
                                 <p class="text-sm text-gray-700">
                                     <span class="font-medium text-text-primary">{{ $j->nama }}</span>
                                     <span class="text-text-muted">—</span>
-                                    <span class="text-gray-700">{{ $j->service }}</span>
-                                    @if ($j->kategori)
-                                        <span class="text-xs text-text-muted">({{ $j->kategori }})</span>
+                                    <span class="text-gray-700">{{ $j->labelService() }}</span>
+                                    @if ($j->labelKategori())
+                                        <span class="text-xs text-text-muted">({{ $j->labelKategori() }})</span>
                                     @endif
                                 </p>
                             @endforeach

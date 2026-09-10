@@ -329,6 +329,8 @@ class TransaksiController extends Controller
      */
     public function storePelanggan(Request $request)
     {
+        $request->merge(['no_wa' => $request->input('no_wa') ?: null]);
+
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
             'no_wa' => ['nullable', 'string', 'max:50', 'regex:/^\+[1-9]\d{4,12}$/'],
@@ -378,20 +380,7 @@ class TransaksiController extends Controller
     public function destroy(TransaksiKunjungan $transaksi)
     {
         DB::transaction(function () use ($transaksi) {
-            foreach ($transaksi->details()->with('produkPenggunaan')->get() as $detail) {
-                if ($detail->tipe_item === 'produk' && $detail->id_produk) {
-                    $produk = Produk::find($detail->id_produk);
-                    if ($produk) {
-                        $produk->increment('stok', $detail->qty);
-                    }
-                }
-                foreach ($detail->produkPenggunaan as $pu) {
-                    $produk = Produk::find($pu->id_produk);
-                    if ($produk) {
-                        $produk->increment('stok', $pu->pemakaian_ml);
-                    }
-                }
-            }
+            $transaksi->restoreStock();
             $transaksi->delete();
         });
 

@@ -115,7 +115,7 @@
                         </a>
                         <form action="{{ route('produk.destroy', $p) }}" method="POST"
                               class="ml-auto"
-                              onsubmit="return confirm('Hapus produk &quot;{{ addslashes($p->nama_produk) }}&quot;?')">
+                              onsubmit="return confirm('Hapus produk &quot;{{ addslashes($p->nama_produk) }}&quot; beserta SELURUH transaksi yang pernah memakai produk ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="font-medium text-red-600 hover:text-red-800">

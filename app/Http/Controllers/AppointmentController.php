@@ -129,28 +129,37 @@ class AppointmentController extends Controller
             : (string) $data['tanggal'];
 
         $terpakai = Appointment::kuotaTerpakai($tanggal, $waktu, $excludeId);
-        $bobot = Appointment::bobot($data['kategori'] ?? null);
+        $bobot = Appointment::bobotTotal($data['kategori'] ?? []);
         $sisa = Appointment::KUOTA_MAKSIMAL - $terpakai;
 
         if ($bobot > $sisa) {
+            $labelKategori = implode(', ', $data['kategori'] ?? []);
+
             throw ValidationException::withMessages([
-                'waktu' => 'Kuota jam '.$waktu.' sudah tidak cukup untuk layanan ini (sisa '.
-                    max(0, $sisa).' dari '.Appointment::KUOTA_MAKSIMAL.'). Pilih jam lain yang tersedia.',
+                'waktu' => 'Kuota jam '.$waktu.' sudah tidak cukup untuk layanan '.$labelKategori.' (butuh '.$bobot.
+                    ', sisa '.max(0, $sisa).' dari '.Appointment::KUOTA_MAKSIMAL.'). Pilih jam lain yang tersedia.',
             ]);
         }
     }
 
     private function validated(Request $request): array
     {
+        $request->merge(['no_wa' => $request->input('no_wa') ?: null]);
+
         return $request->validate([
             'tanggal' => ['required', 'date'],
             'waktu' => ['required', 'date_format:H:i'],
             'nama' => ['required', 'string', 'max:255'],
-            'service' => ['required', 'string', 'max:255'],
-            'kategori' => ['required', 'string', 'in:'.implode(',', array_keys(Appointment::BOBOT_KATEGORI))],
+            'service' => ['required', 'array', 'min:1'],
+            'service.*' => ['required', 'string', 'max:255'],
+            'kategori' => ['required', 'array', 'min:1'],
+            'kategori.*' => ['required', 'string', 'in:'.implode(',', array_keys(Appointment::BOBOT_KATEGORI))],
             'no_wa' => ['nullable', 'string', 'max:255', 'regex:/^\+[1-9]\d{4,12}$/'],
         ], [
             'kategori.required' => 'Pilih layanan dari daftar yang muncul, supaya kategori & kuota bisa dihitung otomatis.',
+            'kategori.min' => 'Pilih minimal satu layanan.',
+            'service.required' => 'Pilih minimal satu layanan.',
+            'service.min' => 'Pilih minimal satu layanan.',
             'no_wa.regex' => 'No. WhatsApp maksimal 13 digit dan harus diawali kode negara, contoh: +6281234567890.',
         ]);
     }

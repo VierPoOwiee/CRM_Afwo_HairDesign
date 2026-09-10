@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\DefaultProdukLayanan;
+use App\Models\DetailTransaksi;
 use App\Models\HargaLayanan;
 use App\Models\Layanan;
 use App\Models\Produk;
+use App\Models\TransaksiKunjungan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -110,11 +112,25 @@ class LayananController extends Controller
     public function destroy(Layanan $layanan)
     {
         $nama = $layanan->nama_layanan;
-        $layanan->delete();
+        $jumlahTransaksi = 0;
+
+        DB::transaction(function () use ($layanan, &$jumlahTransaksi) {
+            $idTransaksis = DetailTransaksi::where('id_layanan', $layanan->id)
+                ->distinct()
+                ->pluck('id_transaksi');
+
+            foreach (TransaksiKunjungan::whereIn('id', $idTransaksis)->get() as $transaksi) {
+                $transaksi->restoreStock();
+                $transaksi->delete();
+                $jumlahTransaksi++;
+            }
+
+            $layanan->delete();
+        });
 
         return redirect()
             ->route('layanan.index')
-            ->with('success', 'Layanan "'.$nama.'" berhasil dihapus.');
+            ->with('success', 'Layanan "'.$nama.'" dan '.$jumlahTransaksi.' transaksi terkait berhasil dihapus.');
     }
 
     private function validatedMain(Request $request): array

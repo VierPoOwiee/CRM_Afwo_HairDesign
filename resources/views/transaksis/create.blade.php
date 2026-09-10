@@ -127,7 +127,7 @@
             <div class="space-y-3">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Nama <span class="text-red-500">*</span></label>
-                    <input type="text" id="new_pelanggan_nama" required
+                    <input type="text" id="new_pelanggan_nama"
                            class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
                 </div>
                 <div>
@@ -231,6 +231,10 @@
                         resultsDiv.classList.remove('hidden');
                     });
             }, 300);
+        });
+
+        resultsDiv.addEventListener('mousedown', function(e) {
+            if (e.target.closest('[onclick]')) { e.preventDefault(); }
         });
 
         window.selectPelanggan = function(id, nama) {
@@ -781,6 +785,12 @@
                 addProdukUsageRow(idx);
             }
 
+            // Auto-fill harga dengan harga_dasar_min varian yang dipilih
+            delete row.dataset.manualHarga;
+            var hargaMin = parseFloat(opt.dataset.hargaMin) || 0;
+            row.querySelector('.harga-display').value = hargaMin;
+            row.querySelector('.harga-input').value = hargaMin;
+
             recalcHarga(idx);
 
             // Update komisi notes
@@ -812,7 +822,7 @@
 
             var usageList = row.querySelector('.produk-usage-list');
             var usageItems = usageList ? usageList.querySelectorAll('.produk-usage-item') : [];
-            var harga = 0;
+            var extraCost = 0;
             var productCosts = [];
 
             usageItems.forEach(function(item) {
@@ -822,6 +832,8 @@
                 var unitEl = item.querySelector('.produk-unit-harga');
                 var hargaPerUnit = item.dataset.harga ? (parseFloat(item.dataset.harga) || 0) : 0;
                 var ml = mlInput ? (parseFloat(mlInput.value) || 0) : 0;
+                var isDefault = item.dataset.mode === 'default';
+                var defaultMl = isDefault ? (parseFloat(item.dataset.defaultMl) || 0) : 0;
 
                 if (idInput && mlInput && idInput.value) {
                     if (unitEl) unitEl.textContent = 'Rp' + fmt(hargaPerUnit) + ' / 10ml';
@@ -829,33 +841,41 @@
                     var nameEl = item.querySelector('.produk-search');
                     var prodName = nameEl && nameEl.value ? nameEl.value : (item.dataset.kategori || 'Produk');
 
-                    if (ml > 0 && hargaPerUnit > 0) {
-                        cost = (ml / 10) * hargaPerUnit;
-                        productCosts.push(prodName + ' ' + formatMl(ml) + 'ml Rp' + fmt(cost));
+                    if (isDefault) {
+                        var extraMl = Math.max(0, ml - defaultMl);
+                        if (extraMl > 0 && hargaPerUnit > 0) {
+                            cost = (extraMl / 10) * hargaPerUnit;
+                            productCosts.push(prodName + ' + Rp' + fmt(cost) + ' (' + formatMl(extraMl) + 'ml tambahan)');
+                        }
+                    } else {
+                        if (ml > 0 && hargaPerUnit > 0) {
+                            cost = (ml / 10) * hargaPerUnit;
+                            productCosts.push(prodName + ' ' + formatMl(ml) + 'ml Rp' + fmt(cost));
+                        }
                     }
 
-                    harga += cost;
+                    extraCost += cost;
                     if (subtotalEl) subtotalEl.textContent = cost > 0 ? 'Rp' + fmt(cost) : 'Rp0';
                 } else {
-                    if (item.dataset.mode !== 'default') {
+                    if (!isDefault) {
                         if (unitEl) unitEl.textContent = 'Rp0 / 10ml';
                     }
                     if (subtotalEl) subtotalEl.textContent = 'Rp0';
                 }
             });
 
-            row.querySelector('.harga-display').value = Math.round(harga);
-            row.querySelector('.harga-input').value = Math.round(harga);
+            if (!row.dataset.manualHarga) {
+                var finalHarga = hargaMin + extraCost;
+                row.querySelector('.harga-display').value = Math.round(finalHarga);
+                row.querySelector('.harga-input').value = Math.round(finalHarga);
+            }
 
             var note = row.querySelector('.harga-saran-note');
-            var parts = productCosts.slice();
+            var parts = ['Dasar Rp' + fmt(hargaMin)];
             if (productCosts.length > 0) {
-                var range = hargaMin !== hargaMax ? ' (' + fmt(hargaMin) + ' - Rp' + fmt(hargaMax) + ')' : '';
-                if ((hargaMin > 0 && harga < hargaMin * 0.8) || (hargaMax > 0 && harga > hargaMax * 1.2)) {
-                    parts.push('Perkiraan ' + fmt(hargaMin) + ' - Rp' + fmt(hargaMax) + ', periksa pemakaian');
-                }
+                parts = parts.concat(productCosts);
             }
-            note.textContent = parts.length > 0 ? parts.join(' + ') : '';
+            note.textContent = parts.join(' + ');
 
             updateKomisiNotes(idx);
             recalcTotal();
@@ -865,6 +885,7 @@
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
             var val = row.querySelector('.harga-display').value || 0;
             row.querySelector('.harga-input').value = val;
+            row.dataset.manualHarga = 'true';
             updateKomisiNotes(idx);
             recalcTotal();
         };

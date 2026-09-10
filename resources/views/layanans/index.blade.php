@@ -101,7 +101,7 @@
                         </a>
                         <form action="{{ route('layanan.destroy', $l) }}" method="POST"
                               class="ml-auto"
-                              onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($l->nama_layanan) }}&quot; beserta semua varian harganya?')">
+                              onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($l->nama_layanan) }}&quot; beserta semua varian harga dan SELURUH transaksi yang pernah memakai layanan ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="font-medium text-red-600 hover:text-red-800">

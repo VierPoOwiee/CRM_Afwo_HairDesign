@@ -67,6 +67,29 @@ class TransaksiKunjungan extends Model
         $this->save();
     }
 
+    /**
+     * Kembalikan stok produk yang terpakai/dijual di transaksi ini
+     * agar stok tetap konsisten saat transaksi dihapus.
+     */
+    public function restoreStock(): void
+    {
+        foreach ($this->details()->with('produkPenggunaan')->get() as $detail) {
+            if ($detail->tipe_item === 'produk' && $detail->id_produk) {
+                $produk = Produk::lockForUpdate()->find($detail->id_produk);
+                if ($produk) {
+                    $produk->increment('stok', $detail->qty);
+                }
+            }
+
+            foreach ($detail->produkPenggunaan as $pu) {
+                $produk = Produk::lockForUpdate()->find($pu->id_produk);
+                if ($produk) {
+                    $produk->increment('stok', $pu->pemakaian_ml);
+                }
+            }
+        }
+    }
+
     public function labelMetode(): string
     {
         return match ($this->metode_pembayaran) {
