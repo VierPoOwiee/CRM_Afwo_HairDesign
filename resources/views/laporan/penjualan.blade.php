@@ -257,7 +257,7 @@
                 </svg>
                 Tanya AI Soal Data Bisnis Anda
             </h3>
-            <p class="mt-1 text-xs text-gray-500">Ajukan pertanyaan bebas tentang data bisnis bulan ini. AI menjawab langsung dari ringkasan data periode aktif.</p>
+            <p class="mt-1 text-xs text-gray-500">Ajukan pertanyaan bebas tentang data bisnis bulan ini. AI menjawab langsung dari ringkasan data periode aktif. Riwayat chat otomatis ter-reset setiap hari.</p>
 
             <form method="POST" action="{{ route('laporan.insight.tanya') }}" id="formTanyaAi" class="mt-3">
                 @csrf
@@ -287,7 +287,7 @@
             @if ($tanyaRiwayat->isNotEmpty())
                 <div id="riwayatChat" class="no-print mt-5 max-h-[24rem] space-y-4 overflow-y-auto rounded-xl border border-gray-200 bg-surface/60 p-4">
                     @if ($tanyaRiwayat->isNotEmpty())
-                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Riwayat Pertanyaan</p>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">Riwayat Pertanyaan Hari Ini</p>
                     @endif
                     @foreach ($tanyaRiwayat as $item)
                         <div>

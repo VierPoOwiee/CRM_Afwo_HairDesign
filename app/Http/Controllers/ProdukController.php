@@ -119,9 +119,14 @@ class ProdukController extends Controller
             $request->merge(['harga_per_satuan' => $s === '' ? null : $s]);
         }
 
+        $modeMerek = $request->input('mode_merek', 'pilih');
+        if ($modeMerek === 'baru') {
+            $request->merge(['merek' => trim((string) $request->input('merek_baru'))]);
+        }
+
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
-            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'in:Alfaparf,Milbon,Keaune,Omni,Matrix'],
+            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'string', 'max:255'],
             'kategori_produk' => ['required', 'in:'.implode(',', ['dijual', 'dipakai_layanan'] + Produk::kategoriLayanan())],
             'satuan' => ['required', 'in:pcs,/10ml'],
             'harga_per_satuan' => ['required', 'numeric', 'min:0'],

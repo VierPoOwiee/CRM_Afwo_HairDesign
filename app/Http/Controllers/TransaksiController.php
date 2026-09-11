@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailTransaksi;
 use App\Models\DetailTransaksiProduk;
 use App\Models\Karyawan;
+use App\Models\KomisiHarianSpesial;
 use App\Models\KomisiTransaksi;
 use App\Models\Layanan;
 use App\Models\Pelanggan;
@@ -212,6 +213,9 @@ class TransaksiController extends Controller
             // Sync komisi_transaksi for each unique staff
             KomisiTransaksi::syncForTransaksi($transaksi);
 
+            // Recalculate daily omset commission for persen_omset_harian staff
+            $this->syncKomisiHarianUntuk($transaksi->waktu_kunjungan);
+
             return $transaksi;
         });
 
@@ -271,6 +275,9 @@ class TransaksiController extends Controller
 
             // Update status
             $transaksi->update(['status' => 'batal']);
+
+            // Recalculate daily omset commission for persen_omset_harian staff
+            $this->syncKomisiHarianUntuk($transaksi->waktu_kunjungan);
         });
 
         return back()->with('success', 'Transaksi dibatalkan. Stok produk telah dikembalikan.');
@@ -382,10 +389,38 @@ class TransaksiController extends Controller
         DB::transaction(function () use ($transaksi) {
             $transaksi->restoreStock();
             $transaksi->delete();
+
+            // Recalculate daily omset commission for persen_omset_harian staff
+            $this->syncKomisiHarianUntuk($transaksi->waktu_kunjungan);
         });
 
         return redirect()
             ->route('transaksi.index')
             ->with('success', 'Transaksi berhasil dihapus.');
+    }
+
+    /**
+     * Recalculate daily omset commission (komisi_harian_spesial) for all
+     * persen_omset_harian staff who served transactions on the given date.
+     */
+    private function syncKomisiHarianUntuk($waktuKunjungan): void
+    {
+        $tanggal = \Carbon\Carbon::parse($waktuKunjungan)->toDateString();
+
+        $idStafAktif = DetailTransaksi::whereHas('transaksi', function ($q) use ($tanggal) {
+            $q->whereDate('waktu_kunjungan', $tanggal)
+                ->where('status', 'selesai');
+        })
+            ->whereNotNull('id_staf')
+            ->distinct()
+            ->pluck('id_staf');
+
+        Karyawan::whereIn('id', $idStafAktif)
+            ->where('skema_komisi', 'persen_omset_harian')
+            ->where('persen_komisi_harian', '>', 0)
+            ->get()
+            ->each(function (Karyawan $staf) use ($tanggal) {
+                KomisiHarianSpesial::calculateForDate($staf, $tanggal);
+            });
     }
 }

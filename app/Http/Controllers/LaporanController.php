@@ -90,7 +90,7 @@ class LaporanController extends Controller
         $service = new LaporanAiInsightService;
         $ringkasanData = $service->agregasiData(Carbon::parse($insightPeriode));
         $kuotaAi = (new GeminiQuota)->detail();
-        $tanyaRiwayat = PertanyaanAi::where('periode', $insightPeriode)
+        $tanyaRiwayat = PertanyaanAi::whereDate('dibuat_pada', Carbon::today())
             ->orderBy('dibuat_pada')
             ->orderBy('id')
             ->get();

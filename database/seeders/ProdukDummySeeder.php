@@ -41,6 +41,14 @@ class ProdukDummySeeder extends Seeder
         $buat('Alfaparf Oxidant', 'Alfaparf', 100000, '/10ml', 'Oxidant');
         $buat('Keaune Oxidant', 'Keaune', 100000, '/10ml', 'Oxidant');
 
+        // ===== Kategori baru (Serum, Repair, Keriting, Masker) =====
+        $buat('Alfaparf Serum Blue', 'Alfaparf', 100000, '/10ml', 'Serum');
+        $buat('Alfaparf Cream Nytriv Repair', 'Alfaparf', 100000, '/10ml', 'Repair');
+        $buat('Keaune Keriting', 'Keaune', 100000, '/10ml', 'Keriting');
+        $buat('Smoothing NR', 'NR', 100000, '/10ml', 'Smoothing');
+        $buat('Keratin Pharmavita', 'Pharmavita', 100000, '/10ml', 'Keratin');
+        $buat('Cream Masker', '', 100000, '/10ml', 'Masker');
+
         // ===== PCS, dijual (harga LANGSUNG PER 1 PCS, stok default lebih kecil) =====
         // Kategori "Dijual Per PCS" tidak memakai merek (merek = null).
         $buatPcs = function (string $nama, float $harga, int $stok = 30) {

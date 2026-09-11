@@ -21,6 +21,10 @@ class Produk extends Model
         'Smoothing',
         'Hairtreatment',
         'Creambath',
+        'Serum',
+        'Repair',
+        'Keriting',
+        'Masker',
     ];
 
     /** Daftar tipe produk yang bisa dipakai saat layanan. */

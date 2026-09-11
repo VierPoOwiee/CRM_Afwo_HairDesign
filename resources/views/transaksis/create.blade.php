@@ -1002,12 +1002,14 @@
 
             if (staf && staf.skema_komisi === 'persen_omset_harian') {
                 var input = row.querySelector(inputClass);
-                if (input) { input.value = ''; input.closest('div').style.display = 'none'; }
+                if (input) { input.value = ''; input.disabled = true; input.placeholder = 'Otomatis'; input.classList.add('opacity-60'); }
                 var note = row.querySelector(noteClass);
-                if (note) note.textContent = 'Komisi staf ini dihitung otomatis dari omset harian.';
+                if (note) { note.textContent = 'Komisi staf ini dihitung otomatis dari omset harian.'; note.classList.add('text-amber-600'); }
             } else {
                 var input = row.querySelector(inputClass);
-                if (input) input.closest('div').style.display = '';
+                if (input) { input.disabled = false; input.placeholder = ''; input.classList.remove('opacity-60'); }
+                var note = row.querySelector(noteClass);
+                if (note) note.classList.remove('text-amber-600');
                 updateKomisiNotes(idx);
             }
         };

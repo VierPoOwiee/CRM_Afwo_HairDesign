@@ -268,7 +268,8 @@ class LaporanAiInsightService
         $awal = $bulan->copy()->startOfMonth()->toDateString();
         $akhir = $bulan->copy()->endOfMonth()->toDateString();
 
-        $perKategori = Appointment::whereBetween('tanggal', [$awal, $akhir])
+        $perKategori = \Illuminate\Support\Facades\DB::table('appointments')
+            ->whereBetween('tanggal', [$awal, $akhir])
             ->selectRaw('kategori, count(*) as jumlah')
             ->groupBy('kategori')
             ->orderByDesc('jumlah')
