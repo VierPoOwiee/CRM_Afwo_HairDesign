@@ -63,9 +63,16 @@ Route::middleware('auth')->group(function () {
         'index', 'create', 'store', 'edit', 'update', 'destroy',
     ]);
 
-    Route::resource('appointment', AppointmentController::class)->only([
-        'index', 'create', 'store', 'edit', 'update', 'destroy',
-    ]);
+    // Appointment (kalender booking) — dapat diakses semua role (owner & kasir)
+    Route::get('appointment', [AppointmentController::class, 'index'])->name('appointment.index');
+    Route::get('appointment/hari/{tanggal}', [AppointmentController::class, 'hari'])->name('appointment.hari');
+    Route::get('appointment/create', [AppointmentController::class, 'create'])->name('appointment.create');
+    Route::post('appointment', [AppointmentController::class, 'store'])->name('appointment.store');
+    Route::get('appointment/{appointment}', [AppointmentController::class, 'show'])->name('appointment.show');
+    Route::get('appointment/{appointment}/edit', [AppointmentController::class, 'edit'])->name('appointment.edit');
+    Route::put('appointment/{appointment}', [AppointmentController::class, 'update'])->name('appointment.update');
+    Route::put('appointment/{appointment}/selesai', [AppointmentController::class, 'markSelesai'])->name('appointment.selesai');
+    Route::delete('appointment/{appointment}', [AppointmentController::class, 'destroy'])->name('appointment.destroy');
 
     Route::get('absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
@@ -87,12 +94,12 @@ Route::middleware('auth')->group(function () {
         ->name('api.pelanggan.search');
     Route::post('api/pelanggan', [TransaksiController::class, 'storePelanggan'])
         ->name('api.pelanggan.store');
+    Route::get('api/appointment/layanan/search', [AppointmentController::class, 'searchLayanan'])
+        ->name('api.appointment.layanan.search');
+    Route::get('api/appointment/karyawan/search', [AppointmentController::class, 'searchKaryawan'])
+        ->name('api.appointment.karyawan.search');
     Route::get('api/layanan/search', [TransaksiController::class, 'searchLayanan'])
         ->name('api.layanan.search');
-    Route::get('api/appointment/kuota', [AppointmentController::class, 'kuota'])
-        ->name('api.appointment.kuota');
-    Route::get('api/appointment/slot-kuota', [AppointmentController::class, 'slotKuota'])
-        ->name('api.appointment.slot-kuota');
     Route::get('api/produk/search', [TransaksiController::class, 'searchProduk'])
         ->name('api.produk.search');
 

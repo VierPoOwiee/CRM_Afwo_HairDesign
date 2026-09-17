@@ -261,14 +261,15 @@ class LaporanAiInsightService
         $awal = $bulan->copy()->startOfMonth()->toDateString();
         $akhir = $bulan->copy()->endOfMonth()->toDateString();
 
-        $perKategori = Appointment::whereBetween('tanggal', [$awal, $akhir])
-            ->selectRaw('kategori, count(*) as jumlah')
-            ->groupBy('kategori')
-            ->orderByDesc('jumlah')
+        $perKategori = Appointment::with('layanans')
+            ->whereBetween('tanggal', [$awal, $akhir])
             ->get()
-            ->map(fn ($r) => [
-                'kategori' => (string) ($r->kategori ?? 'Umum'),
-                'jumlah' => (int) $r->jumlah,
+            ->flatMap(fn ($a) => $a->layanans->pluck('nama_layanan'))
+            ->countBy()
+            ->sortDesc()
+            ->map(fn ($jumlah, $nama) => [
+                'kategori' => (string) $nama,
+                'jumlah' => (int) $jumlah,
             ]);
 
         return [

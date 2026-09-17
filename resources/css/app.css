@@ -27,6 +27,10 @@
     --color-accent-light: #F7F0E1;
     --color-accent-ring: #C6A15B66;
 
+    /* --- Afwo aliases (kalender appointment) --- */
+    --color-afwo-gold: #C6A15B;
+    --color-afwo-pill: #F7F0E1;
+
     /* --- Success --- */
     --color-success: #16A34A;
     --color-success-bg: #E9F7EE;

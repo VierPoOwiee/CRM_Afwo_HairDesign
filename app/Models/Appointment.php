@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Appointment extends Model
 {
@@ -11,109 +13,67 @@ class Appointment extends Model
 
     protected $table = 'appointments';
 
-    public const KUOTA_MAKSIMAL = 10;
-
+    /**
+     * Jam operasional salon (default 09:00 - 20:00).
+     */
     public const JAM_BUKA = 9;
 
-    public const JAM_TUTUP = 18;
-
-    public const BOBOT_KATEGORI = [
-        'Potong' => 1,
-        'Styling' => 1,
-        'Treatment Rambut' => 2,
-        'Treatment' => 2,
-        'Warna Rambut' => 3,
-    ];
+    public const JAM_TUTUP = 20;
 
     protected $fillable = [
+        'id_pelanggan',
+        'id_karyawan',
         'tanggal',
-        'waktu',
-        'nama',
-        'service',
-        'kategori',
-        'no_wa',
+        'jam_mulai',
+        'durasi_menit',
+        'preferensi',
+        'status',
     ];
 
     protected $casts = [
         'tanggal' => 'date',
+        'jam_mulai' => 'datetime',
+        'durasi_menit' => 'integer',
+        'status' => 'string',
     ];
 
-    /**
-     * Nama hari dalam Bahasa Indonesia (Minggu..Sabtu).
-     */
-    public function hari(): string
+    public function pelanggan(): BelongsTo
     {
-        $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+    }
 
-        return $hari[$this->tanggal->dayOfWeek];
+    public function karyawan(): BelongsTo
+    {
+        return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
 
     /**
-     * Total bobot kuota yang terpakai pada slot tanggal + waktu tertentu.
-     *
-     * @param  string  $tanggal
-     * @param  string  $waktu
-     * @param  int|null  $excludeId  id appointment yang dikecualikan (saat edit)
+     * Layanan yang dipesan pada appointment ini (bisa lebih dari satu).
      */
-    public static function kuotaTerpakai(string $tanggal, string $waktu, ?int $excludeId = null): int
+    public function layanans(): BelongsToMany
     {
-        $query = static::query()
-            ->whereDate('tanggal', $tanggal)
-            ->where('waktu', $waktu);
+        return $this->belongsToMany(Layanan::class, 'appointment_layanan')
+            ->withTimestamps();
+    }
 
-        if ($excludeId) {
-            $query->where('id', '!=', $excludeId);
+    /**
+     * Jam selesai berdasarkan jam_mulai + durasi_menit.
+     */
+    public function jamSelesai(): ?\Illuminate\Support\Carbon
+    {
+        if (! $this->jam_mulai) {
+            return null;
         }
 
-        $bobot = self::BOBOT_KATEGORI;
-
-        return (int) $query->get()->sum(function ($appointment) use ($bobot) {
-            $kategori = $appointment->kategori;
-
-            return $bobot[$kategori] ?? 1;
-        });
+        return $this->jam_mulai->copy()->addMinutes((int) $this->durasi_menit);
     }
 
     /**
-     * Daftar slot waktu WITA (jam buka s/d tutup, tiap 30 menit), format "HH:MM".
+     * Nama semua layanan pada appointment ini, dipisah koma (untuk pesan
+     * flash / pencarian), memanfaatkan relasi $this->layanans.
      */
-    public static function slotWaktu(): array
+    public function layananNama(): string
     {
-        $slot = [];
-
-        for ($menit = self::JAM_BUKA * 60; $menit <= self::JAM_TUTUP * 60; $menit += 30) {
-            $slot[] = sprintf('%02d:%02d', intdiv($menit, 60), $menit % 60);
-        }
-
-        return $slot;
-    }
-
-    /**
-     * Sisa kuota untuk setiap slot waktu pada tanggal tertentu.
-     *
-     * Mengembalikan array berbentuk ['HH:MM' => sisa, ...].
-     *
-     * @param  string  $tanggal
-     * @param  int|null  $excludeId
-     */
-    public static function slotKuota(string $tanggal, ?int $excludeId = null): array
-    {
-        $result = [];
-
-        foreach (self::slotWaktu() as $waktu) {
-            $result[$waktu] = max(0, self::KUOTA_MAKSIMAL - self::kuotaTerpakai($tanggal, $waktu, $excludeId));
-        }
-
-        return $result;
-    }
-
-    /**
-     * Bobot kuota untuk sebuah kategori.
-     *
-     * @param  string|null  $kategori
-     */
-    public static function bobot(?string $kategori): int
-    {
-        return self::BOBOT_KATEGORI[$kategori ?? ''] ?? 1;
+        return $this->layanans->pluck('nama_layanan')->implode(', ');
     }
 }
