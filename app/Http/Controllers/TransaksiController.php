@@ -10,7 +10,9 @@ use App\Models\KomisiTransaksi;
 use App\Models\Layanan;
 use App\Models\Pelanggan;
 use App\Models\Produk;
+use App\Models\RiwayatStokProduk;
 use App\Models\TransaksiKunjungan;
+use App\Services\ProdukModalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -137,6 +139,27 @@ class TransaksiController extends Controller
                 $subtotal = max(0, ($harga * $qty) - $diskon);
                 $staf2 = $item['id_staf_2'] ?? null;
 
+                // Snapshot modal untuk penjualan produk retail (sebelum stok dikurangi).
+                // Lock produk terlebih dahulu agar nilai modal konsisten.
+                $hargaModalSatuan = null;
+                $keuntungan = null;
+                if ($item['tipe_item'] === 'produk' && ! empty($item['id_produk'])) {
+                    $produk = Produk::query()->lockForUpdate()->findOrFail($item['id_produk']);
+                    $hargaModalSatuan = round((float) $produk->harga_modal_rata_rata, 2);
+                    $keuntungan = round($subtotal - ($hargaModalSatuan * $qty), 2);
+
+                    $produk->decrement('stok', $qty);
+                    $produk->refresh();
+                    ProdukModalService::catat(
+                        $produk,
+                        RiwayatStokProduk::JENIS_PENJUALAN,
+                        -$qty,
+                        $produk->stok,
+                        'Penjualan retail '.$qty.' '.($produk->satuan ?? '').' '.$produk->nama_produk,
+                        auth()->id()
+                    );
+                }
+
                 // Detail for staf 1 (primary — carries the subtotal)
                 $detail1 = DetailTransaksi::create([
                     'id_transaksi' => $transaksi->id,
@@ -149,6 +172,8 @@ class TransaksiController extends Controller
                     'gram_pemakaian_tambahan' => $item['gram_pemakaian_tambahan'] ?? 0,
                     'qty' => $qty,
                     'harga_saat_transaksi' => $harga,
+                    'harga_modal_satuan' => $hargaModalSatuan,
+                    'keuntungan' => $keuntungan,
                     'diskon' => $diskon,
                     'subtotal' => $subtotal,
                     'komisi_nominal' => ! empty($item['komisi_nominal_1']) ? $item['komisi_nominal_1'] : null,
@@ -174,35 +199,40 @@ class TransaksiController extends Controller
                     ]);
                 }
 
-                // Deduct stock for standalone produk sales
-                if ($item['tipe_item'] === 'produk' && ! empty($item['id_produk'])) {
-                    $produk = Produk::lockForUpdate()->findOrFail($item['id_produk']);
-                    $produk->decrement('stok', $qty);
-                }
-
                 // Save product usage for layanan items (deduct stock + track cost).
                 if ($item['tipe_item'] === 'layanan' && ! empty($item['produk_penggunaan'])) {
                     foreach ($item['produk_penggunaan'] as $pu) {
                         if (empty($pu['id_produk']) || empty($pu['pemakaian_ml'])) {
                             continue;
                         }
-                        $produk = Produk::lockForUpdate()->findOrFail($pu['id_produk']);
+                        $produk = Produk::query()->lockForUpdate()->findOrFail($pu['id_produk']);
                         $pemakaianMl = (float) $pu['pemakaian_ml'];
 
                         $hargaPerUnit = (float) $produk->harga_per_satuan;
                         $unit = $pemakaianMl / 10;
                         $produkSubtotal = $unit * $hargaPerUnit;
+                        $hargaModalTerpakai = round((float) $produk->harga_modal_rata_rata * $unit, 2);
 
                         DetailTransaksiProduk::create([
                             'id_detail_transaksi' => $detail1->id,
                             'id_produk' => $pu['id_produk'],
                             'pemakaian_ml' => $pemakaianMl,
                             'harga_per_unit' => $hargaPerUnit,
+                            'harga_modal_terpakai' => $hargaModalTerpakai,
                             'subtotal' => round($produkSubtotal),
                         ]);
 
                         // Deduct stock for product used in layanan
                         $produk->decrement('stok', $pemakaianMl);
+                        $produk->refresh();
+                        ProdukModalService::catat(
+                            $produk,
+                            RiwayatStokProduk::JENIS_PEMAKAIAN_LAYANAN,
+                            -$pemakaianMl,
+                            $produk->stok,
+                            'Pemakaian layanan '.$pemakaianMl.' ml '.$produk->nama_produk,
+                            auth()->id()
+                        );
                     }
                 }
             }
@@ -253,22 +283,8 @@ class TransaksiController extends Controller
         }
 
         DB::transaction(function () use ($transaksi) {
-            // Restore stock for standalone produk and layanan product usage
-            foreach ($transaksi->details()->with('produkPenggunaan')->get() as $detail) {
-                if ($detail->tipe_item === 'produk' && $detail->id_produk) {
-                    $produk = Produk::lockForUpdate()->find($detail->id_produk);
-                    if ($produk) {
-                        $produk->increment('stok', $detail->qty);
-                    }
-                }
-                // Restore stock for products used in layanan
-                foreach ($detail->produkPenggunaan as $pu) {
-                    $produk = Produk::lockForUpdate()->find($pu->id_produk);
-                    if ($produk) {
-                        $produk->increment('stok', $pu->pemakaian_ml);
-                    }
-                }
-            }
+            // Restore stock (produk retail + pemakaian layanan) beserta riwayat stok
+            $transaksi->restoreStock('Restore stok, transaksi '.$transaksi->no_struk.' dibatalkan');
 
             // Delete komisi_transaksi
             $transaksi->komisiTransaksi()->delete();
@@ -387,7 +403,7 @@ class TransaksiController extends Controller
     public function destroy(TransaksiKunjungan $transaksi)
     {
         DB::transaction(function () use ($transaksi) {
-            $transaksi->restoreStock();
+            $transaksi->restoreStock('Stok dikembalikan, transaksi '.$transaksi->no_struk.' dihapus');
             $transaksi->delete();
 
             // Recalculate daily omset commission for persen_omset_harian staff

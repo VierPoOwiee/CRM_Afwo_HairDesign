@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
         Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
         Route::get('/laporan/pendapatan-karyawan', [LaporanController::class, 'pendapatanKaryawan'])->name('laporan.pendapatan-karyawan');
+        Route::get('/laporan/keuntungan-produk', [LaporanController::class, 'keuntunganProduk'])->name('laporan.keuntungan-produk');
         Route::get('/laporan/rekap-komisi/cetak', [LaporanController::class, 'cetakRekapKomisi'])->name('laporan.rekap-komisi.cetak');
         Route::get('/laporan/rekap-komisi/staf/{karyawan}', [LaporanController::class, 'slipPendapatan'])->name('laporan.rekap-komisi.slip');
         Route::post('/laporan/rekap-komisi/hitung-ulang', [LaporanController::class, 'hitungUlang'])->name('laporan.rekap-komisi.hitung-ulang');
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('produk', ProdukController::class)->only([
         'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
     ]);
+
+    Route::get('produk/{produk}/restock', [ProdukController::class, 'restockForm'])->name('produk.restock-form');
+    Route::post('produk/{produk}/restock', [ProdukController::class, 'restock'])->name('produk.restock');
 
     Route::get('karyawan/arsip', [KaryawanController::class, 'arsip'])->name('karyawan.arsip');
     Route::post('karyawan/{karyawan}/restore', [KaryawanController::class, 'restore'])->name('karyawan.restore');

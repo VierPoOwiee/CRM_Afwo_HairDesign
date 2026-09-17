@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use App\Models\DetailTransaksi;
+use App\Models\DetailTransaksiProduk;
 use App\Models\InsightAi;
 use App\Models\Karyawan;
 use App\Models\KomisiHarianSpesial;
@@ -101,6 +102,166 @@ class LaporanController extends Controller
             'karyawans', 'jenisPengerjaan', 'stafId', 'metode',
             'insight', 'insightPeriode', 'insightCooldown', 'insightCooldownSisaDetik',
             'ringkasanData', 'kuotaAi', 'tanyaRiwayat',
+        ));
+    }
+
+    /**
+     * Keuntungan produk:
+     *  - Mode Retail   : penjualan produk per pcs (detail_transaksi tipe_item='produk').
+     *  - Mode Treatment: pemakaian bahan produk saat layanan (detail_transaksi_produk).
+     * Seluruh angka memakai snapshot modal yang tersimpan saat transaksi dibuat.
+     */
+    public function keuntunganProduk(Request $request)
+    {
+        $preset = $request->input('preset', 'bulan-ini');
+        [$dari, $sampai] = $this->resolvePeriode($preset, $request->input('dari'), $request->input('sampai'));
+
+        $dariCarbon = Carbon::parse($dari)->startOfDay();
+        $sampaiCarbon = Carbon::parse($sampai)->endOfDay();
+        $kategoriFilter = trim((string) $request->input('kategori_produk'));
+        $kategoriList = ['dijual' => 'Dijual Per PCS'] + array_combine(\App\Models\Produk::kategoriLayanan(), \App\Models\Produk::kategoriLayanan());
+
+        $periodeTransaksi = function ($q) use ($dariCarbon, $sampaiCarbon) {
+            $q->where('waktu_kunjungan', '>=', $dariCarbon)
+                ->where('waktu_kunjungan', '<=', $sampaiCarbon)
+                ->where('status', 'selesai');
+        };
+
+        // --- Mode 1: Retail (penjualan produk per pcs) ---
+        $retailBase = DetailTransaksi::where('tipe_item', 'produk')
+            ->where('subtotal', '>', 0)
+            ->whereHas('transaksi', $periodeTransaksi);
+
+        if ($kategoriFilter !== '') {
+            $retailBase->whereHas('produk', fn ($q) => $q->where('kategori_produk', $kategoriFilter));
+        }
+
+        $retailRows = $retailBase->clone()
+            ->join('produk', 'detail_transaksi.id_produk', '=', 'produk.id')
+            ->selectRaw(
+                'detail_transaksi.id_produk,
+                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan,
+                 count(*) as jumlah,
+                 sum(detail_transaksi.qty) as qty,
+                 sum(detail_transaksi.subtotal) as omset,
+                 coalesce(sum(detail_transaksi.harga_modal_satuan * detail_transaksi.qty), 0) as modal,
+                 coalesce(sum(detail_transaksi.keuntungan), 0) as keuntungan'
+            )
+            ->groupBy('detail_transaksi.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan')
+            ->orderByDesc('keuntungan')
+            ->get()
+            ->map(fn ($r) => [
+                'id_produk' => $r->id_produk,
+                'nama_produk' => $r->nama_produk,
+                'merek' => $r->merek,
+                'kategori' => $r->kategori_produk,
+                'satuan' => $r->satuan,
+                'jumlah' => (int) $r->jumlah,
+                'qty' => (float) $r->qty,
+                'omset' => (float) $r->omset,
+                'modal' => (float) $r->modal,
+                'keuntungan' => (float) $r->keuntungan,
+            ]);
+
+        $retailTotals = [
+            'jumlah' => $retailRows->sum('jumlah'),
+            'qty' => $retailRows->sum('qty'),
+            'omset' => round($retailRows->sum('omset'), 2),
+            'modal' => round($retailRows->sum('modal'), 2),
+            'keuntungan' => round($retailRows->sum('keuntungan'), 2),
+        ];
+        $retailTotals['margin'] = $retailTotals['omset'] > 0 ? round(($retailTotals['keuntungan'] / $retailTotals['omset']) * 100, 1) : 0;
+
+        // --- Mode 2: Treatment (pemakaian produk pada layanan) ---
+        $omsetLayanan = DetailTransaksi::where('tipe_item', 'layanan')
+            ->where('subtotal', '>', 0)
+            ->whereHas('transaksi', $periodeTransaksi)
+            ->join('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
+            ->selectRaw(
+                'layanan.id as id_layanan, layanan.nama_layanan, layanan.kategori,
+                 count(*) as jumlah, sum(detail_transaksi.subtotal) as omset'
+            )
+            ->groupBy('layanan.id', 'layanan.nama_layanan', 'layanan.kategori')
+            ->get()
+            ->keyBy('id_layanan');
+
+        $modalBahan = DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($periodeTransaksi) {
+            $q->where('tipe_item', 'layanan')
+                ->where('subtotal', '>', 0)
+                ->whereHas('transaksi', $periodeTransaksi);
+        })
+            ->when($kategoriFilter !== '', function ($q) use ($kategoriFilter) {
+                $q->whereHas('produk', fn ($qq) => $qq->where('kategori_produk', $kategoriFilter));
+            })
+            ->join('detail_transaksi', 'detail_transaksi_produk.id_detail_transaksi', '=', 'detail_transaksi.id')
+            ->selectRaw('detail_transaksi.id_layanan, coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as modal')
+            ->groupBy('detail_transaksi.id_layanan')
+            ->pluck('modal', 'id_layanan');
+
+        $layananRows = $omsetLayanan->map(function ($r) use ($modalBahan) {
+            $modal = (float) ($modalBahan[$r->id_layanan] ?? 0);
+            $omset = (float) $r->omset;
+
+            return [
+                'id_layanan' => (int) $r->id_layanan,
+                'nama_layanan' => $r->nama_layanan,
+                'kategori' => $r->kategori,
+                'jumlah' => (int) $r->jumlah,
+                'omset' => $omset,
+                'modal' => round($modal, 2),
+                'keuntungan' => round($omset - $modal, 2),
+            ];
+        })
+            ->sortByDesc(fn ($r) => $r['keuntungan'])
+            ->values();
+
+        $layananTotals = [
+            'jumlah' => $layananRows->sum('jumlah'),
+            'omset' => round($layananRows->sum('omset'), 2),
+            'modal' => round($layananRows->sum('modal'), 2),
+            'keuntungan' => round($layananRows->sum('keuntungan'), 2),
+        ];
+        $layananTotals['margin'] = $layananTotals['omset'] > 0 ? round(($layananTotals['keuntungan'] / $layananTotals['omset']) * 100, 1) : 0;
+
+        // --- Tren keuntungan produk 6 bulan terakhir (retail + treatment) ---
+        $trenBulanan = collect();
+        for ($i = 5; $i >= 0; $i--) {
+            $bulan = now()->subMonths($i);
+            $bDari = $bulan->copy()->startOfMonth();
+            $bSampai = $bulan->copy()->endOfMonth();
+
+            $retail = (float) DetailTransaksi::where('tipe_item', 'produk')
+                ->where('subtotal', '>', 0)
+                ->whereHas('transaksi', function ($q) use ($bDari, $bSampai) {
+                    $q->whereBetween('waktu_kunjungan', [$bDari, $bSampai])->where('status', 'selesai');
+                })
+                ->sum('keuntungan');
+
+            $omsetLayananBulan = (float) DetailTransaksi::where('tipe_item', 'layanan')
+                ->where('subtotal', '>', 0)
+                ->whereHas('transaksi', function ($q) use ($bDari, $bSampai) {
+                    $q->whereBetween('waktu_kunjungan', [$bDari, $bSampai])->where('status', 'selesai');
+                })
+                ->sum('subtotal');
+
+            $modalBahanBulan = (float) DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($bDari, $bSampai) {
+                $q->where('tipe_item', 'layanan')
+                    ->where('subtotal', '>', 0)
+                    ->whereHas('transaksi', function ($qq) use ($bDari, $bSampai) {
+                        $qq->whereBetween('waktu_kunjungan', [$bDari, $bSampai])->where('status', 'selesai');
+                    });
+            })
+                ->sum('harga_modal_terpakai');
+
+            $trenBulanan->push([
+                'label' => $this->namaBulan((int) $bulan->format('n')).' '.$bulan->format('y'),
+                'keuntungan' => round($retail + $omsetLayananBulan - $modalBahanBulan, 2),
+            ]);
+        }
+
+        return view('laporan.keuntungan-produk', compact(
+            'dari', 'sampai', 'preset', 'kategoriFilter', 'kategoriList',
+            'retailRows', 'retailTotals', 'layananRows', 'layananTotals', 'trenBulanan',
         ));
     }
 

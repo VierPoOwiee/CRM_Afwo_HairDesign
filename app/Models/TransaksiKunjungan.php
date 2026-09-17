@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\KomisiTransaksi;
+use App\Services\ProdukModalService;
 
 class TransaksiKunjungan extends Model
 {
@@ -71,13 +72,23 @@ class TransaksiKunjungan extends Model
      * Kembalikan stok produk yang terpakai/dijual di transaksi ini
      * agar stok tetap konsisten saat transaksi dihapus.
      */
-    public function restoreStock(): void
+    public function restoreStock(string $keterangan = 'Stok dikembalikan'): void
     {
+        $dicatatOleh = auth()->check() ? auth()->id() : null;
+
         foreach ($this->details()->with('produkPenggunaan')->get() as $detail) {
             if ($detail->tipe_item === 'produk' && $detail->id_produk) {
                 $produk = Produk::lockForUpdate()->find($detail->id_produk);
                 if ($produk) {
                     $produk->increment('stok', $detail->qty);
+                    ProdukModalService::catat(
+                        $produk,
+                        RiwayatStokProduk::JENIS_BATAL,
+                        $detail->qty,
+                        $produk->stok,
+                        $keterangan,
+                        $dicatatOleh
+                    );
                 }
             }
 
@@ -85,6 +96,14 @@ class TransaksiKunjungan extends Model
                 $produk = Produk::lockForUpdate()->find($pu->id_produk);
                 if ($produk) {
                     $produk->increment('stok', $pu->pemakaian_ml);
+                    ProdukModalService::catat(
+                        $produk,
+                        RiwayatStokProduk::JENIS_BATAL,
+                        $pu->pemakaian_ml,
+                        $produk->stok,
+                        $keterangan,
+                        $dicatatOleh
+                    );
                 }
             }
         }

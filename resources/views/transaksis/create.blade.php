@@ -15,6 +15,32 @@
         @csrf
 
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-base font-semibold text-gray-900">Isi dari Appointment</h2>
+                    <p class="mt-0.5 text-xs text-gray-500">Pilih tanggal, lalu klik "Isikan" agar form transaksi terisi pelanggan, jam, dan layanan secara otomatis.</p>
+                </div>
+                <button type="button" id="appt_toggle" class="shrink-0 rounded-lg bg-card px-3 py-2 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Sembunyikan</button>
+            </div>
+            <div id="appt_picker_body" class="mt-4">
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="appt_date" class="block text-xs font-medium text-gray-500">Tanggal</label>
+                        <input type="date" id="appt_date" value="{{ date('Y-m-d') }}"
+                               class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+                    </div>
+                    <button type="button" id="appt_load_btn"
+                            class="rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
+                        Muat Jadwal
+                    </button>
+                    <p class="text-xs text-gray-400">Atau ganti tanggal di atas &mdash; jadwal otomatis dimuat.</p>
+                </div>
+                <div id="appt_list" class="mt-4 space-y-2"></div>
+                <p id="appt_empty" class="mt-4 hidden text-sm text-gray-400">Tidak ada appointment pada tanggal ini.</p>
+            </div>
+        </div>
+
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <h2 class="mb-4 text-base font-semibold text-gray-900">Data Pelanggan</h2>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
@@ -493,12 +519,12 @@
             });
         }
 
-        window.selectLayanan = function(idx, layananId) {
+        window.selectLayanan = function(idx, layananId, idStaf) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
             row.querySelector('.id-layanan-input').value = layananId;
             row.querySelector('.search-layanan-results').classList.add('hidden');
 
-            fetch('{{ route("api.layanan.search") }}?q=' + encodeURIComponent(row.querySelector('.search-layanan').value))
+            return fetch('{{ route("api.layanan.search") }}?q=' + encodeURIComponent(row.querySelector('.search-layanan').value))
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     var layanan = data.find(function(l) { return l.id === layananId; });
@@ -536,6 +562,11 @@
                     produkSection.classList.remove('hidden');
                     delete row.dataset.prevVarian;
                     onVarianChange(idx);
+
+                    if (idStaf) {
+                        var stafSel = row.querySelector('.staf1-select');
+                        if (stafSel) { stafSel.value = '' + idStaf; onStafChange(idx, 1); }
+                    }
                 });
         };
 
@@ -1082,6 +1113,77 @@
             if (!e.target.closest('#pelanggan_results') && !e.target.closest('#pelanggan_search')) {
                 document.getElementById('pelanggan_results').classList.add('hidden');
             }
+        });
+
+        // --- Appointment picker ---
+        var apptCache = {};
+        var apptApi = '{{ route("appointment.hari", "TGL") }}';
+
+        function loadAppointments() {
+            var d = document.getElementById('appt_date').value;
+            if (!d) return;
+            fetch(apptApi.replace('TGL', d))
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    apptCache = {};
+                    var list = document.getElementById('appt_list');
+                    var empty = document.getElementById('appt_empty');
+                    list.innerHTML = '';
+                    empty.classList.add('hidden');
+                    (res.appointments || []).forEach(function(a) {
+                        apptCache[a.id] = a;
+                        var isBatal = a.status === 'batal';
+                        var el = document.createElement('div');
+                        el.className = 'flex flex-wrap items-center gap-2 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-sm';
+                        el.innerHTML =
+                            '<span class="font-semibold text-gray-900">' + a.jam_mulai + '</span>' +
+                            '<span class="min-w-0 truncate text-gray-700">' + (a.pelanggan || 'Tanpa pelanggan') + '</span>' +
+                            '<span class="min-w-0 truncate text-xs text-gray-400">' + (a.layanan || '') + '</span>' +
+                            '<span class="ml-auto shrink-0 text-xs text-gray-400">' + a.status + '</span>' +
+                            '<button type="button" onclick="applyAppointment(' + a.id + ')"' + (isBatal ? ' disabled' : '') + ' class="shrink-0 rounded bg-dark px-2.5 py-1 text-xs font-semibold text-white hover:bg-dark-hover disabled:opacity-40">Isikan</button>';
+                        list.appendChild(el);
+                    });
+                    if ((res.appointments || []).length === 0) empty.classList.remove('hidden');
+                })
+                .catch(function() { alert('Gagal memuat jadwal appointment.'); });
+        }
+
+        window.applyAppointment = function(id) {
+            var a = apptCache[id];
+            if (!a) return;
+            if (!a.id_pelanggan) { alert('Appointment ini belum punya pelanggan.'); return; }
+            if (!a.id_karyawan) { alert('Appointment ini belum punya stylist.'); return; }
+            if (a.status === 'batal') { alert('Appointment berstatus batal.'); return; }
+            if (!a.id_layanan || a.id_layanan.length === 0) { alert('Appointment ini belum punya layanan.'); return; }
+
+            document.querySelectorAll('.item-row').forEach(function(row) { row.remove(); });
+            selectPelanggan(a.id_pelanggan, a.pelanggan);
+
+            document.querySelector('input[name="waktu_kunjungan"]').value = a.tanggal + 'T' + a.jam_mulai;
+            var jp = document.querySelector('input[name="jenis_pengerjaan"][value="sendiri"]');
+            if (jp) { jp.checked = true; }
+            onJenisChange();
+
+            a.id_layanan.forEach(function(lid, i) {
+                addItem();
+                var idx = itemIndex - 1;
+                var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
+                var nama = (a.layanans && a.layanans[i]) ? a.layanans[i] : '';
+                row.querySelector('.search-layanan').value = nama;
+                selectLayanan(idx, lid, a.id_karyawan);
+            });
+
+            recalcTotal();
+            validateForm();
+        };
+
+        document.getElementById('appt_load_btn').addEventListener('click', loadAppointments);
+        document.getElementById('appt_date').addEventListener('change', loadAppointments);
+        loadAppointments();
+        document.getElementById('appt_toggle').addEventListener('click', function() {
+            var body = document.getElementById('appt_picker_body');
+            var hidden = body.classList.toggle('hidden');
+            this.textContent = hidden ? 'Tampilkan' : 'Sembunyikan';
         });
 
         // Pre-add one item row

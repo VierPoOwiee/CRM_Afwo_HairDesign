@@ -272,6 +272,7 @@ class AppointmentController extends Controller
             'pelanggan' => $a->pelanggan?->nama,
             'no_wa' => $a->pelanggan?->no_wa,
             'karyawan' => $a->karyawan?->nama,
+            'id_layanan' => $a->layanans->pluck('id')->values()->toArray(),
             'layanans' => $namaLayanan->values()->toArray(),
             'layanan' => $namaLayanan->implode(', '),
             'jumlah_layanan' => $a->layanans->count(),

@@ -93,6 +93,10 @@
                             <dt class="text-text-muted">Harga</dt>
                             <dd class="text-right font-medium text-text-primary">{{ $p->labelHarga() }}</dd>
                         </div>
+                        <div class="flex justify-between gap-4">
+                            <dt class="text-text-muted">Modal</dt>
+                            <dd class="text-right text-text-primary">{{ $p->labelModalPerSatuan() }}</dd>
+                        </div>
                         @if ($p->kategori_produk === 'dijual')
                         <div class="flex justify-between gap-4">
                             <dt class="text-text-muted">Stok</dt>
@@ -112,6 +116,9 @@
                         </a>
                         <a href="{{ route('produk.edit', $p) }}" class="font-medium text-accent-text hover:text-accent">
                             Edit
+                        </a>
+                        <a href="{{ route('produk.restock-form', $p) }}" class="font-medium text-emerald-600 hover:text-emerald-800">
+                            Restock
                         </a>
                         <form action="{{ route('produk.destroy', $p) }}" method="POST"
                               class="ml-auto"

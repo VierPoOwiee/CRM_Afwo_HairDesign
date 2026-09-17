@@ -132,7 +132,7 @@
         <div class="space-y-3">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Nama <span class="text-red-500">*</span></label>
-                <input type="text" id="new_pelanggan_nama" required
+                <input type="text" id="new_pelanggan_nama"
                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
             </div>
             <div>

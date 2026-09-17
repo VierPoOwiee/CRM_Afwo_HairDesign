@@ -17,12 +17,14 @@ class DetailTransaksiProduk extends Model
         'id_produk',
         'pemakaian_ml',
         'harga_per_unit',
+        'harga_modal_terpakai',
         'subtotal',
     ];
 
     protected $casts = [
         'pemakaian_ml' => 'decimal:2',
         'harga_per_unit' => 'decimal:2',
+        'harga_modal_terpakai' => 'decimal:2',
         'subtotal' => 'decimal:2',
     ];
 

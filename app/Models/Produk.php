@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Produk extends Model
 {
@@ -41,12 +42,14 @@ class Produk extends Model
         'kategori_produk',
         'satuan',
         'harga_per_satuan',
+        'harga_modal_rata_rata',
         'stok',
         'aktif',
     ];
 
     protected $casts = [
         'harga_per_satuan' => 'decimal:2',
+        'harga_modal_rata_rata' => 'decimal:2',
         'stok' => 'integer',
         'aktif' => 'boolean',
     ];
@@ -54,6 +57,16 @@ class Produk extends Model
     public function layanan(): BelongsToMany
     {
         return $this->belongsToMany(Layanan::class, 'layanan_produk', 'id_produk', 'id_layanan');
+    }
+
+    public function pembelianProduk(): HasMany
+    {
+        return $this->hasMany(PembelianProduk::class, 'produk_id');
+    }
+
+    public function riwayatStok(): HasMany
+    {
+        return $this->hasMany(RiwayatStokProduk::class, 'produk_id');
     }
 
     public function labelKategori(): string
@@ -83,5 +96,24 @@ class Produk extends Model
     public function stokMenipis(): bool
     {
         return $this->stok <= self::STOK_MENIPIS;
+    }
+
+    public function labelModal(): string
+    {
+        return 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.');
+    }
+
+    /**
+     * Label modal per satuan, mis. "Rp50.000/pcs" atau "Rp25.000/10ml".
+     */
+    public function labelModalPerSatuan(): string
+    {
+        $harga = 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.');
+
+        if (str_starts_with($this->satuan, '/')) {
+            return $harga.$this->satuan;
+        }
+
+        return $harga.'/'.$this->satuan;
     }
 }

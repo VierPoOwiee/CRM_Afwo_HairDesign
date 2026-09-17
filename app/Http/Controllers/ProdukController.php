@@ -6,6 +6,7 @@ use App\Models\DetailTransaksi;
 use App\Models\DetailTransaksiProduk;
 use App\Models\Produk;
 use App\Models\TransaksiKunjungan;
+use App\Services\ProdukModalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -62,6 +63,63 @@ class ProdukController extends Controller
     public function edit(Produk $produk)
     {
         return view('produks.edit', compact('produk'));
+    }
+
+    /**
+     * Form restock (pembelian stok) satu produk beserta riwayat pembelian.
+     */
+    public function restockForm(Produk $produk)
+    {
+        $riwayat = $produk->pembelianProduk()
+            ->with('dicatatOleh')
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id')
+            ->limit(30)
+            ->get();
+
+        return view('produks.restock', compact('produk', 'riwayat'));
+    }
+
+    /**
+     * Simpan restock: update stok + harga_modal_rata_rata, catat pembelian & riwayat stok.
+     */
+    public function restock(Request $request, Produk $produk)
+    {
+        $harga = $request->input('harga_beli');
+        if ($harga !== null) {
+            $s = str_replace(['.', ','], '', (string) $harga);
+            $request->merge(['harga_beli' => $s === '' ? null : $s]);
+        }
+
+        $data = $request->validate([
+            'qty' => ['required', 'numeric', 'min:0.01'],
+            'harga_beli' => ['required', 'numeric', 'min:0'],
+            'tanggal' => ['required', 'date', 'before_or_equal:today'],
+            'keterangan' => ['nullable', 'string', 'max:255'],
+        ], [
+            'qty.required' => 'Jumlah wajib diisi.',
+            'qty.numeric' => 'Jumlah harus berupa angka.',
+            'qty.min' => 'Jumlah harus lebih dari 0.',
+            'harga_beli.required' => 'Harga beli wajib diisi.',
+            'harga_beli.numeric' => 'Harga beli harus berupa angka.',
+            'harga_beli.min' => 'Harga beli tidak boleh kurang dari 0.',
+            'tanggal.required' => 'Tanggal wajib diisi.',
+            'tanggal.before_or_equal' => 'Tanggal tidak boleh di masa depan.',
+            'keterangan.max' => 'Keterangan maksimal 255 karakter.',
+        ]);
+
+        ProdukModalService::restock(
+            $produk,
+            (float) $data['qty'],
+            (float) $data['harga_beli'],
+            $data['keterangan'] ?? null,
+            $data['tanggal'],
+            auth()->id()
+        );
+
+        return redirect()
+            ->route('produk.show', $produk)
+            ->with('success', 'Restock "'.$produk->nama_produk.'" sebanyak '.rtrim(rtrim($data['qty'], '0'), '.').' '.$produk->satuan.' berhasil disimpan.');
     }
 
     public function update(Request $request, Produk $produk)

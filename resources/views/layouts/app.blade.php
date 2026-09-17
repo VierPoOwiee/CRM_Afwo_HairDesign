@@ -94,10 +94,15 @@
                                     <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5.5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                                     Rekap Komisi &amp; Slip
                                 </a>
-                                <a href="{{ route('laporan.pendapatan-karyawan') }}"
-                                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('laporan.pendapatan-karyawan') ? 'bg-sidebar-active text-text-primary border-l-2 border-accent' : 'text-text-secondary hover:bg-sidebar-active' }}">
+<a href="{{ route('laporan.pendapatan-karyawan') }}"
+                                       class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('laporan.pendapatan-karyawan') ? 'bg-sidebar-active text-text-primary border-l-2 border-accent' : 'text-text-secondary hover:bg-sidebar-active' }}">
                                     <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
                                     Pendapatan Karyawan
+                                </a>
+                                <a href="{{ route('laporan.keuntungan-produk', ['preset' => 'bulan-ini']) }}"
+                                   class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('laporan.keuntungan-produk') ? 'bg-sidebar-active text-text-primary border-l-2 border-accent' : 'text-text-secondary hover:bg-sidebar-active' }}">
+                                    <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 4v4m0 4v4m6-12v4m-12-4v4"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="10" r="2"/><circle cx="6" cy="10" r="2"/><circle cx="12" cy="14" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="6" cy="18" r="2"/></svg>
+                                    Keuntungan Produk
                                 </a>
                             </div>
                         </div>

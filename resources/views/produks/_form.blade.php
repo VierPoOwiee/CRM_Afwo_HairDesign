@@ -90,6 +90,16 @@
         <p class="mt-1 text-xs text-gray-500">Stok &le; {{ \App\Models\Produk::STOK_MENIPIS }} ditandai menipis.</p>
     </div>
 
+    @if (!empty($produk->id) && $produk->exists)
+    <div class="rounded-md bg-gray-50 px-4 py-3 text-sm">
+        <div class="flex justify-between gap-4">
+            <span class="text-gray-500">Modal rata-rata saat ini (read-only)</span>
+            <span class="font-semibold text-gray-900">{{ $produk->labelModalPerSatuan() }}</span>
+        </div>
+        <p class="mt-1 text-xs text-gray-400">Modal tidak diedit manual &mdash; otomatis dihitung ulang setiap kali <a href="{{ route('produk.restock-form', $produk) }}" class="text-emerald-600 hover:text-emerald-800 font-medium">Restock</a> produk ini.</p>
+    </div>
+    @endif
+
     <label class="flex items-center gap-2 text-sm text-gray-700">
         <input type="hidden" name="aktif" value="0">
         <input type="checkbox" name="aktif" value="1"

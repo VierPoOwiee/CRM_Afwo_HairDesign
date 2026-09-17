@@ -10,6 +10,9 @@
             <p class="mt-1 text-sm text-gray-500">Detail informasi produk.</p>
         </div>
         <div class="ml-auto flex items-center gap-4 text-sm">
+            <a href="{{ route('produk.restock-form', $produk) }}" class="font-medium text-emerald-600 hover:text-emerald-800">
+                Restock
+            </a>
             <a href="{{ route('produk.edit', $produk) }}" class="font-medium text-accent-text hover:text-accent">
                 Edit
             </a>
@@ -45,6 +48,10 @@
             <div class="flex justify-between gap-4">
                 <dt class="text-gray-500">Harga</dt>
                 <dd class="text-right font-medium text-gray-900">{{ $produk->labelHarga() }}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+                <dt class="text-gray-500">Modal Rata-Rata</dt>
+                <dd class="text-right font-medium text-gray-900">{{ $produk->labelModalPerSatuan() }}</dd>
             </div>
             @if ($produk->kategori_produk === 'dijual')
             <div class="flex justify-between gap-4">
