@@ -31,7 +31,7 @@ class TransaksiKunjungan extends Model
 
     public function pelanggan(): BelongsTo
     {
-        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan')->withTrashed();
     }
 
     public function details(): HasMany
@@ -65,6 +65,29 @@ class TransaksiKunjungan extends Model
     {
         $this->total_bayar = $this->details()->sum('subtotal');
         $this->save();
+    }
+
+    /**
+     * Kembalikan stok produk yang terpakai/dijual di transaksi ini
+     * agar stok tetap konsisten saat transaksi dihapus.
+     */
+    public function restoreStock(): void
+    {
+        foreach ($this->details()->with('produkPenggunaan')->get() as $detail) {
+            if ($detail->tipe_item === 'produk' && $detail->id_produk) {
+                $produk = Produk::lockForUpdate()->find($detail->id_produk);
+                if ($produk) {
+                    $produk->increment('stok', $detail->qty);
+                }
+            }
+
+            foreach ($detail->produkPenggunaan as $pu) {
+                $produk = Produk::lockForUpdate()->find($pu->id_produk);
+                if ($produk) {
+                    $produk->increment('stok', $pu->pemakaian_ml);
+                }
+            }
+        }
     }
 
     public function labelMetode(): string

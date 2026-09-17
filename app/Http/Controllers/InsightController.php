@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\InsightAi;
 use App\Models\PertanyaanAi;
+use App\Services\GeminiQuota;
 use App\Services\LaporanAiInsightService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,9 +23,15 @@ class InsightController extends Controller
             return back()->with('insight_info', 'Analisa untuk bulan ini baru saja digenerate. Coba lagi dalam beberapa menit.');
         }
 
+        $kuota = new GeminiQuota;
+        if ($kuota->habis()) {
+            return back()->with('error', 'Kuota AI hari ini sudah habis ('.$kuota->terpakaiHariIni().'/'.$kuota->batas().'). Analisa bisa digenerate lagi besok, reset '.$kuota->detail()['label_reset'].'.');
+        }
+
         try {
             $service = new LaporanAiInsightService;
             $service->generateUntukBulan($bulan);
+            $kuota->catatPenggunaan();
 
             return back()->with('success', 'Analisa AI berhasil digenerate.');
         } catch (\Exception $e) {
@@ -42,9 +49,18 @@ class InsightController extends Controller
         $bulan = Carbon::parse($validated['periode'])->startOfMonth();
         $pertanyaan = trim($validated['pertanyaan']);
 
+        $kuota = new GeminiQuota;
+        if ($kuota->habis()) {
+            return back()
+                ->withFragment('tanya-ai')
+                ->withInput()
+                ->with('error', 'Kuota AI hari ini sudah habis ('.$kuota->terpakaiHariIni().'/'.$kuota->batas().'). Bisa tanya lagi besok, reset '.$kuota->detail()['label_reset'].'.');
+        }
+
         try {
             $service = new LaporanAiInsightService;
             $jawaban = $service->tanyaJawab($bulan, $pertanyaan);
+            $kuota->catatPenggunaan();
         } catch (\Exception $e) {
             return back()
                 ->withInput()

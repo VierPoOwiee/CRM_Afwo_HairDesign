@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailTransaksi;
+use App\Models\DetailTransaksiProduk;
 use App\Models\Produk;
+use App\Models\TransaksiKunjungan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProdukController extends Controller
 {
@@ -74,11 +78,37 @@ class ProdukController extends Controller
     public function destroy(Produk $produk)
     {
         $nama = $produk->nama_produk;
-        $produk->delete();
+        $jumlahTransaksi = 0;
+
+        DB::transaction(function () use ($produk, &$jumlahTransaksi) {
+            $idTransaksis = DetailTransaksi::where('id_produk', $produk->id)
+                ->distinct()
+                ->pluck('id_transaksi');
+
+            $idDetailPemakaian = DetailTransaksiProduk::where('id_produk', $produk->id)
+                ->distinct()
+                ->pluck('id_detail_transaksi');
+
+            $idTransaksis = $idTransaksis
+                ->merge(
+                    DetailTransaksi::whereIn('id', $idDetailPemakaian)
+                        ->distinct()
+                        ->pluck('id_transaksi')
+                )
+                ->unique();
+
+            foreach (TransaksiKunjungan::whereIn('id', $idTransaksis)->get() as $transaksi) {
+                $transaksi->restoreStock();
+                $transaksi->delete();
+                $jumlahTransaksi++;
+            }
+
+            $produk->delete();
+        });
 
         return redirect()
             ->route('produk.index')
-            ->with('success', 'Produk "'.$nama.'" berhasil dihapus.');
+            ->with('success', 'Produk "'.$nama.'" dan '.$jumlahTransaksi.' transaksi terkait berhasil dihapus.');
     }
 
     private function validated(Request $request): array
@@ -89,9 +119,14 @@ class ProdukController extends Controller
             $request->merge(['harga_per_satuan' => $s === '' ? null : $s]);
         }
 
+        $modeMerek = $request->input('mode_merek', 'pilih');
+        if ($modeMerek === 'baru') {
+            $request->merge(['merek' => trim((string) $request->input('merek_baru'))]);
+        }
+
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
-            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'in:Alfaparf,Milbon,Keaune,Omni,Matrix'],
+            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'string', 'max:255'],
             'kategori_produk' => ['required', 'in:'.implode(',', ['dijual', 'dipakai_layanan'] + Produk::kategoriLayanan())],
             'satuan' => ['required', 'in:pcs,/10ml'],
             'harga_per_satuan' => ['required', 'numeric', 'min:0'],

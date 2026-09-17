@@ -58,18 +58,38 @@ class KaryawanController extends Controller
     public function destroy(Karyawan $karyawan)
     {
         $nama = $karyawan->nama;
-
-        $memilikiSetoran = \App\Models\DetailTransaksi::where('id_staf', $karyawan->id)->whereNotNull('id_staf')->exists();
-
-        if ($memilikiSetoran) {
-            return back()->withErrors(['hapus' => "Karyawan \"{$nama}\" tidak dapat dihapus karena memiliki riwayat transaksi. Nonaktifkan saja."]);
-        }
-
         $karyawan->delete();
 
         return redirect()
             ->route('karyawan.index')
-            ->with('success', 'Karyawan "'.$nama.'" berhasil dihapus.');
+            ->with('success', 'Karyawan "'.$nama.'" berhasil dihapus (diarsipkan).');
+    }
+
+    public function arsip(Request $request)
+    {
+        $q = trim((string) $request->query('q'));
+
+        $karyawans = Karyawan::onlyTrashed()
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('nama', 'like', "%{$q}%")
+                    ->orWhere('kontak', 'like', "%{$q}%");
+            })
+            ->orderByDesc('deleted_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('karyawans.arsip', compact('karyawans', 'q'));
+    }
+
+    public function restore(int $karyawan)
+    {
+        $k = Karyawan::onlyTrashed()->findOrFail($karyawan);
+        $nama = $k->nama;
+        $k->restore();
+
+        return redirect()
+            ->route('karyawan.arsip')
+            ->with('success', 'Karyawan "'.$nama.'" berhasil dipulihkan.');
     }
 
     private function validated(Request $request, ?int $ignoreId = null): array

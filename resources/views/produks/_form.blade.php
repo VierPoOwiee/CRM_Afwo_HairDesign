@@ -1,6 +1,13 @@
 @php
     use App\Models\Produk;
-    $merekOptions = ['Alfaparf', 'Milbon', 'Keaune', 'Omni', 'Matrix'];
+    $merekExisting = Produk::whereNotNull('merek')
+        ->where('merek', '!=', '')
+        ->distinct()
+        ->orderBy('merek')
+        ->pluck('merek')
+        ->toArray();
+    $merekDefaults = ['Alfaparf', 'Milbon', 'Keaune', 'Omni', 'Matrix'];
+    $merekOptions = array_values(array_unique(array_merge($merekExisting, $merekDefaults)));
     $kategoriVal = old('kategori_produk', $produk->kategori_produk ?? 'dipakai_layanan');
     $kategoriOptions = ['dijual' => 'Dijual Per PCS']
         + array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan())
@@ -17,13 +24,24 @@
 
         <div id="merek_wrapper">
             <label for="merek" class="block text-sm font-medium text-gray-700">Merek <span class="text-red-500">*</span></label>
-            <select name="merek" id="merek"
-                    class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-                <option value="" {{ old('merek', $produk->merek ?? '') === '' ? 'selected' : '' }}>-- Pilih Merek --</option>
-                @foreach ($merekOptions as $m)
-                    <option value="{{ $m }}" {{ old('merek', $produk->merek ?? '') === $m ? 'selected' : '' }}>{{ $m }}</option>
-                @endforeach
-            </select>
+            <div class="mt-1 flex items-start gap-2">
+                <select name="merek" id="merek"
+                        class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
+                    <option value="" {{ old('merek', $produk->merek ?? '') === '' ? 'selected' : '' }}>-- Pilih Merek --</option>
+                    @foreach ($merekOptions as $m)
+                        <option value="{{ $m }}" {{ old('merek', $produk->merek ?? '') === $m ? 'selected' : '' }}>{{ $m }}</option>
+                    @endforeach
+                </select>
+                <button type="button" id="btnTambahMerek"
+                        class="shrink-0 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-accent-text">
+                    + Baru
+                </button>
+            </div>
+            <input type="hidden" name="mode_merek" id="mode_merek" value="{{ old('mode_merek', 'pilih') }}">
+            <input type="text" name="merek_baru" id="merek_baru" maxlength="255" autocomplete="off"
+                   placeholder="Ketik merek baru..." value="{{ old('merek_baru') }}"
+                   class="mt-1 hidden w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
+            <p class="mt-1 text-xs text-gray-500">Butuh merek baru? Klik "+ Baru" lalu ketik namanya.</p>
         </div>
     </div>
 
@@ -104,7 +122,11 @@
         var merekGrid = document.getElementById('merek_grid');
         var merekWrapper = document.getElementById('merek_wrapper');
         var merekSelect = document.getElementById('merek');
+        var btnTambahMerek = document.getElementById('btnTambahMerek');
+        var merekBaru = document.getElementById('merek_baru');
+        var modeMerek = document.getElementById('mode_merek');
         var hargaInput = document.getElementById('harga_per_satuan');
+        var merekOptions = @json($merekOptions);
 
         var config = {
             dijual: {
@@ -156,6 +178,13 @@
                 merekWrapper.style.display = 'none';
                 merekSelect.removeAttribute('required');
                 merekSelect.value = '';
+                modeMerek.value = 'pilih';
+                merekSelect.classList.remove('hidden');
+                btnTambahMerek.classList.remove('hidden');
+                merekBaru.classList.add('hidden');
+                merekBaru.value = '';
+                merekBaru.removeAttribute('required');
+                merekSelect.removeAttribute('disabled');
                 merekGrid.classList.remove('sm:grid-cols-2');
                 merekGrid.classList.add('sm:grid-cols-1');
             }
@@ -165,7 +194,36 @@
             r.addEventListener('change', apply);
         });
 
+        function setMerekMode(mode) {
+            modeMerek.value = mode;
+            if (mode === 'pilih') {
+                merekSelect.classList.remove('hidden');
+                btnTambahMerek.classList.remove('hidden');
+                merekBaru.classList.add('hidden');
+                merekBaru.value = '';
+                merekSelect.removeAttribute('disabled');
+                merekBaru.removeAttribute('required');
+                if (merekSelect.value === '') merekSelect.value = merekOptions[0] || '';
+            } else {
+                merekSelect.classList.add('hidden');
+                btnTambahMerek.classList.add('hidden');
+                merekBaru.classList.remove('hidden');
+                merekSelect.setAttribute('disabled', 'disabled');
+                merekBaru.setAttribute('required', 'required');
+                merekBaru.focus();
+            }
+        }
+
+        btnTambahMerek.addEventListener('click', function () {
+            setMerekMode('baru');
+        });
+
         apply();
+
+        if (modeMerek.value === 'baru') {
+            setMerekMode('baru');
+            merekBaru.value = @json(old('merek_baru', ''));
+        }
 
         /* Format harga */
         function parseFormatted(str) {

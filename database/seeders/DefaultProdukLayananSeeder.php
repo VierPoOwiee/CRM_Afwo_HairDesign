@@ -20,26 +20,34 @@ class DefaultProdukLayananSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            'Fashion Color' => [
-                'S'  => [['Color', 80], ['Bleaching', 100]],
-                'M'  => [['Color', 100], ['Bleaching', 140]],
-                'L'  => [['Color', 120], ['Bleaching', 160]],
-                'XL' => [['Color', 150], ['Bleaching', 200]],
-            ],
-            'Highlight' => [
-                'S'  => [['Bleaching', 60], ['Color', 40]],
-                'M'  => [['Bleaching', 80], ['Color', 60]],
-                'L'  => [['Bleaching', 100], ['Color', 80]],
-                'XL' => [['Bleaching', 120], ['Color', 100]],
+            // ===== Layanan warna =====
+            // Sesuai permintaan: warna selalu pakai Oxidant + Color.
+            'Basic Color' => [
+                'S'  => [['Color', 60], ['Oxidant', 60]],
+                'M'  => [['Color', 80], ['Oxidant', 80]],
+                'L'  => [['Color', 100], ['Oxidant', 100]],
+                'XL' => [['Color', 120], ['Oxidant', 120]],
             ],
             'Basic Color Two Apply' => [
-                'default' => [['Color', 150], ['Bleaching', 100]],
-            ],
-            'Peek A Boo' => [
-                'default' => [['Color', 80], ['Bleaching', 80]],
+                'default' => [['Color', 150], ['Oxidant', 80]],
             ],
             'Cat Akar' => [
-                'default' => [['Color', 60], ['Bleaching', 20]],
+                'default' => [['Color', 80], ['Oxidant', 40]],
+            ],
+            'Refresh Color Treatment' => [
+                'S'  => [['Color', 40], ['Oxidant', 40]],
+                'M'  => [['Color', 60], ['Oxidant', 60]],
+                'L'  => [['Color', 80], ['Oxidant', 80]],
+                'XL' => [['Color', 100], ['Oxidant', 100]],
+            ],
+            'Peek A Boo' => [
+                'default' => [['Bleaching', 80], ['Color', 80], ['Oxidant', 60]],
+            ],
+            'Fashion Color' => [
+                'S'  => [['Bleaching', 80], ['Color', 60], ['Oxidant', 60]],
+                'M'  => [['Bleaching', 100], ['Color', 80], ['Oxidant', 80]],
+                'L'  => [['Bleaching', 120], ['Color', 100], ['Oxidant', 100]],
+                'XL' => [['Bleaching', 150], ['Color', 120], ['Oxidant', 120]],
             ],
             'Bleach Akar' => [
                 'default' => [['Bleaching', 80]],
@@ -68,9 +76,15 @@ class DefaultProdukLayananSeeder extends Seeder
             ],
             'Treatment Komplit' => [
                 'default' => [
-                    ['Hairtreatment', 80],
-                    ['Creambath', 60],
+                    ['Serum', 30],
+                    ['Repair', 30],
                 ],
+            ],
+            'Cold Perm' => [
+                'default' => [['Keriting', 100]],
+            ],
+            'Perm Akar' => [
+                'default' => [['Keriting', 60]],
             ],
             'Hair Detox' => [
                 'default' => [['Hairtreatment', 60]],
