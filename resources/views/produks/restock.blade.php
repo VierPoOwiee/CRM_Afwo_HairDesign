@@ -57,7 +57,7 @@
                             </span>
                             <span class="text-red-500">*</span>
                         </label>
-                        <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="0.01" step="{{ $produk->kategori_produk === 'dijual' ? '1' : '0.5' }}" required
+                        <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="1" step="1" required
                                class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
                         @error('qty') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>

@@ -702,7 +702,7 @@
                 var q = this.value.trim();
                 if (q.length < 2) { results.classList.add('hidden'); return; }
                 timer = setTimeout(function() {
-                    fetch('{{ route("api.produk.search") }}?q=' + encodeURIComponent(q))
+                    fetch('{{ route("api.produk.search") }}?mode=pakai&q=' + encodeURIComponent(q))
                         .then(function(r) { return r.json(); })
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="px-3 py-2 text-sm text-gray-400">Tidak ditemukan</div>'; results.classList.remove('hidden'); return; }
@@ -933,7 +933,7 @@
                 var q = this.value.trim();
                 if (q.length < 2) { results.classList.add('hidden'); return; }
                 timer = setTimeout(function() {
-                    fetch('{{ route("api.produk.search") }}?q=' + encodeURIComponent(q))
+                    fetch('{{ route("api.produk.search") }}?mode=dijual&q=' + encodeURIComponent(q))
                         .then(function(r) { return r.json(); })
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="px-3 py-2 text-sm text-gray-400">Tidak ditemukan</div>'; results.classList.remove('hidden'); return; }

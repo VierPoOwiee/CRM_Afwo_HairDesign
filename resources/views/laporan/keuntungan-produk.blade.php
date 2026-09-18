@@ -40,7 +40,7 @@
         <button type="button" data-tab="retail" onclick="switchTab('retail')"
                 class="tab-btn tab-btn-retail rounded-t-lg px-4 py-2 text-sm font-medium border border-b-0">Mode 1 &middot; Retail (Dijual Per PCS)</button>
         <button type="button" data-tab="treatment" onclick="switchTab('treatment')"
-                class="tab-btn tab-btn-treatment rounded-t-lg px-4 py-2 text-sm font-medium border border-b-0">Mode 2 &middot; Treatment (Pemakaian Layanan)</button>
+                class="tab-btn tab-btn-treatment rounded-t-lg px-4 py-2 text-sm font-medium border border-b-0">Mode 2 &middot; Treatment (Dijual per Layanan)</button>
     </div>
 
     @php
@@ -118,7 +118,7 @@
     <div id="tab-panel-treatment" class="tab-panel mt-6 space-y-6 hidden">
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Omset Layanan</p>
+                <p class="text-xs font-medium text-gray-500">Omset Produk Terpakai</p>
                 <p class="mt-1 text-lg font-bold text-gray-900">{{ $rp($layananTotals['omset']) }}</p>
             </div>
             <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
@@ -137,22 +137,22 @@
 
         <div class="rounded-lg border border-gray-200 bg-card shadow-sm">
             <div class="border-b border-gray-100 px-4 py-3">
-                <h2 class="text-sm font-semibold text-gray-900">Keuntungan per Layanan (Treatment)</h2>
-                <p class="text-xs text-gray-400">Modal bahan = harga modal rata-rata produk &times; pemakaian (per 10ml) yang tercatat pada layanan.
+                <h2 class="text-sm font-semibold text-gray-900">Keuntungan per Produk (Treatment)</h2>
+                <p class="text-xs text-gray-400">Dihitung dari total ml produk yang terpakai pada layanan: nilai jual produk (omset) dikurangi modal bahan.
                 {{ $kategoriFilter !== '' ? 'Diffilter kategori produk: '.$kategoriList[$kategoriFilter].'.' : 'Semua kategori produk.' }}</p>
             </div>
             @if ($layananRows->isEmpty())
                 <div class="px-6 py-12 text-center">
-                    <p class="text-sm font-medium text-text-secondary">Belum ada layanan yang memakai produk di periode ini.</p>
+                    <p class="text-sm font-medium text-text-secondary">Belum ada pemakaian produk pada layanan di periode ini.</p>
                 </div>
             @else
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
-                                <th class="px-4 py-2.5 font-medium">Layanan</th>
+                                <th class="px-4 py-2.5 font-medium">Produk</th>
                                 <th class="py-2.5 pr-4 font-medium">Kategori</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Jumlah</th>
+                                <th class="py-2.5 pr-4 font-medium text-right">Total Pemakaian (ml)</th>
                                 <th class="py-2.5 pr-4 font-medium text-right">Omset</th>
                                 <th class="py-2.5 pr-4 font-medium text-right">Modal Bahan</th>
                                 <th class="py-2.5 pr-4 font-medium text-right">Keuntungan</th>
@@ -162,9 +162,12 @@
                         <tbody class="divide-y divide-gray-100">
                             @foreach ($layananRows as $r)
                                 <tr>
-                                    <td class="px-4 py-2.5 font-medium text-gray-900">{{ $r['nama_layanan'] }}</td>
+                                    <td class="px-4 py-2.5 text-gray-900">
+                                        <span class="font-medium">{{ $r['nama_produk'] }}</span>
+                                        @if ($r['merek']) <span class="text-xs text-gray-400">({{ $r['merek'] }})</span> @endif
+                                    </td>
                                     <td class="py-2.5 pr-4 text-gray-500">{{ $r['kategori'] }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ $r['jumlah'] }}</td>
+                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ number_format((float) $r['total_ml'], 0, ',', '.') }} ml</td>
                                     <td class="py-2.5 pr-4 text-right text-gray-900">{{ $rp($r['omset']) }}</td>
                                     <td class="py-2.5 pr-4 text-right text-gray-500">{{ $rp($r['modal']) }}</td>
                                     <td class="py-2.5 pr-4 text-right font-medium {{ $r['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $rp($r['keuntungan']) }}</td>
@@ -181,7 +184,7 @@
     {{-- Grafik tren 6 bulan --}}
     <div class="mt-6 rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
         <h2 class="text-sm font-semibold text-gray-900">Tren Keuntungan Produk 6 Bulan Terakhir</h2>
-        <p class="mt-0.5 text-xs text-gray-400">Retail + treatment (omset layanan dikurangi modal bahan).</p>
+        <p class="mt-0.5 text-xs text-gray-400">Retail + treatment (nilai jual produk terpakai dikurangi modal bahan).</p>
         <div class="relative h-64 mt-4">
             <canvas id="chartKeuntunganProduk"></canvas>
         </div>

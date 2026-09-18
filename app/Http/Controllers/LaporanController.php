@@ -119,7 +119,7 @@ class LaporanController extends Controller
         $dariCarbon = Carbon::parse($dari)->startOfDay();
         $sampaiCarbon = Carbon::parse($sampai)->endOfDay();
         $kategoriFilter = trim((string) $request->input('kategori_produk'));
-        $kategoriList = ['dijual' => 'Dijual Per PCS'] + array_combine(\App\Models\Produk::kategoriLayanan(), \App\Models\Produk::kategoriLayanan());
+        $kategoriList = array_combine(\App\Models\Produk::kategoriLayanan(), \App\Models\Produk::kategoriLayanan());
 
         $periodeTransaksi = function ($q) use ($dariCarbon, $sampaiCarbon) {
             $q->where('waktu_kunjungan', '>=', $dariCarbon)
@@ -172,20 +172,10 @@ class LaporanController extends Controller
         ];
         $retailTotals['margin'] = $retailTotals['omset'] > 0 ? round(($retailTotals['keuntungan'] / $retailTotals['omset']) * 100, 1) : 0;
 
-        // --- Mode 2: Treatment (pemakaian produk pada layanan) ---
-        $omsetLayanan = DetailTransaksi::where('tipe_item', 'layanan')
-            ->where('subtotal', '>', 0)
-            ->whereHas('transaksi', $periodeTransaksi)
-            ->join('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
-            ->selectRaw(
-                'layanan.id as id_layanan, layanan.nama_layanan, layanan.kategori,
-                 count(*) as jumlah, sum(detail_transaksi.subtotal) as omset'
-            )
-            ->groupBy('layanan.id', 'layanan.nama_layanan', 'layanan.kategori')
-            ->get()
-            ->keyBy('id_layanan');
-
-        $modalBahan = DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($periodeTransaksi) {
+        // --- Mode 2: Treatment (dijual per layanan / pemakaian produk) ---
+        // Keuntungan dihitung dari total ml yang terpakai:
+        // omset = nilai jual produk terpakai (subtotal), modal = modal bahan terpakai.
+        $layananRows = DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($periodeTransaksi) {
             $q->where('tipe_item', 'layanan')
                 ->where('subtotal', '>', 0)
                 ->whereHas('transaksi', $periodeTransaksi);
@@ -193,30 +183,32 @@ class LaporanController extends Controller
             ->when($kategoriFilter !== '', function ($q) use ($kategoriFilter) {
                 $q->whereHas('produk', fn ($qq) => $qq->where('kategori_produk', $kategoriFilter));
             })
-            ->join('detail_transaksi', 'detail_transaksi_produk.id_detail_transaksi', '=', 'detail_transaksi.id')
-            ->selectRaw('detail_transaksi.id_layanan, coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as modal')
-            ->groupBy('detail_transaksi.id_layanan')
-            ->pluck('modal', 'id_layanan');
-
-        $layananRows = $omsetLayanan->map(function ($r) use ($modalBahan) {
-            $modal = (float) ($modalBahan[$r->id_layanan] ?? 0);
-            $omset = (float) $r->omset;
-
-            return [
-                'id_layanan' => (int) $r->id_layanan,
-                'nama_layanan' => $r->nama_layanan,
-                'kategori' => $r->kategori,
-                'jumlah' => (int) $r->jumlah,
-                'omset' => $omset,
-                'modal' => round($modal, 2),
-                'keuntungan' => round($omset - $modal, 2),
-            ];
-        })
-            ->sortByDesc(fn ($r) => $r['keuntungan'])
-            ->values();
+            ->join('produk', 'detail_transaksi_produk.id_produk', '=', 'produk.id')
+            ->selectRaw(
+                'detail_transaksi_produk.id_produk,
+                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan,
+                 coalesce(sum(detail_transaksi_produk.pemakaian_ml), 0) as total_ml,
+                 coalesce(sum(detail_transaksi_produk.subtotal), 0) as omset,
+                 coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as modal,
+                 coalesce(sum(detail_transaksi_produk.subtotal), 0) - coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as keuntungan'
+            )
+            ->groupBy('detail_transaksi_produk.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan')
+            ->orderByDesc('keuntungan')
+            ->get()
+            ->map(fn ($r) => [
+                'id_produk' => $r->id_produk,
+                'nama_produk' => $r->nama_produk,
+                'merek' => $r->merek,
+                'kategori' => $r->kategori_produk,
+                'satuan' => $r->satuan,
+                'total_ml' => (float) $r->total_ml,
+                'omset' => (float) $r->omset,
+                'modal' => (float) $r->modal,
+                'keuntungan' => (float) $r->keuntungan,
+            ]);
 
         $layananTotals = [
-            'jumlah' => $layananRows->sum('jumlah'),
+            'total_ml' => round($layananRows->sum('total_ml'), 2),
             'omset' => round($layananRows->sum('omset'), 2),
             'modal' => round($layananRows->sum('modal'), 2),
             'keuntungan' => round($layananRows->sum('keuntungan'), 2),
@@ -237,11 +229,13 @@ class LaporanController extends Controller
                 })
                 ->sum('keuntungan');
 
-            $omsetLayananBulan = (float) DetailTransaksi::where('tipe_item', 'layanan')
-                ->where('subtotal', '>', 0)
-                ->whereHas('transaksi', function ($q) use ($bDari, $bSampai) {
-                    $q->whereBetween('waktu_kunjungan', [$bDari, $bSampai])->where('status', 'selesai');
-                })
+            $omsetBahanBulan = (float) DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($bDari, $bSampai) {
+                $q->where('tipe_item', 'layanan')
+                    ->where('subtotal', '>', 0)
+                    ->whereHas('transaksi', function ($qq) use ($bDari, $bSampai) {
+                        $qq->whereBetween('waktu_kunjungan', [$bDari, $bSampai])->where('status', 'selesai');
+                    });
+            })
                 ->sum('subtotal');
 
             $modalBahanBulan = (float) DetailTransaksiProduk::whereHas('detailTransaksi', function ($q) use ($bDari, $bSampai) {
@@ -255,7 +249,7 @@ class LaporanController extends Controller
 
             $trenBulanan->push([
                 'label' => $this->namaBulan((int) $bulan->format('n')).' '.$bulan->format('y'),
-                'keuntungan' => round($retail + $omsetLayananBulan - $modalBahanBulan, 2),
+                'keuntungan' => round($retail + $omsetBahanBulan - $modalBahanBulan, 2),
             ]);
         }
 

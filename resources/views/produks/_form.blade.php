@@ -72,7 +72,7 @@
         </div>
 
         <div>
-            <label for="harga_per_satuan" class="block text-sm font-medium text-gray-700">Harga per Satuan (Rp) <span class="text-red-500">*</span></label>
+            <label for="harga_per_satuan" class="block text-sm font-medium text-gray-700"><span id="harga_label_text">Harga Jual</span> (Rp) <span class="text-red-500">*</span></label>
             <input type="text" inputmode="numeric" name="harga_per_satuan" id="harga_per_satuan"
                    value="{{ old('harga_per_satuan', $produk->harga_per_satuan ?? '') }}"
                    required
@@ -126,6 +126,7 @@
         var satuanHidden = document.getElementById('satuan_hidden');
         var satuanDisplay = document.getElementById('satuan_display');
         var satuanNote = document.getElementById('satuan_note');
+        var hargaLabelEl = document.getElementById('harga_label_text');
         var hargaNote = document.getElementById('harga_note');
         var stokWrapper = document.getElementById('stok_wrapper');
         var stokInput = document.getElementById('stok');
@@ -143,6 +144,7 @@
                 satuan: 'pcs',
                 satuanLabel: 'pcs',
                 satuanNote: 'Satuan otomatis: pcs',
+                hargaLabel: 'Harga Jual per 1 Pcs',
                 hargaNote: 'Harga jual per 1 pcs produk.',
                 showStok: true,
                 showMerek: false
@@ -153,7 +155,8 @@
             satuan: '/10ml',
             satuanLabel: '/10ml',
             satuanNote: 'Satuan otomatis: /10ml',
-            hargaNote: 'Harga modal per 10ml bahan yang digunakan saat layanan.',
+            hargaLabel: 'Harga Jual /10ml',
+            hargaNote: 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.',
             showStok: false,
             showMerek: true
         };
@@ -168,6 +171,7 @@
             satuanHidden.value = cfg.satuan;
             satuanDisplay.value = cfg.satuanLabel;
             satuanNote.textContent = cfg.satuanNote;
+            hargaLabelEl.textContent = cfg.hargaLabel;
             hargaNote.textContent = cfg.hargaNote;
 
             if (cfg.showStok) {

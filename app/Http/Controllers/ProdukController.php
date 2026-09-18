@@ -15,18 +15,37 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
+        $mode = (string) $request->query('mode', 'layanan');
+        if (! in_array($mode, ['layanan', 'pcs'], true)) {
+            $mode = 'layanan';
+        }
         $kategoriFilter = trim((string) $request->query('kategori'));
-
-        $kategoriList = ['dijual' => 'Dijual Per PCS'] + array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan());
 
         $produks = Produk::query()
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('nama_produk', 'like', "%{$q}%")
-                    ->orWhere('merek', 'like', "%{$q}%");
-            })
-            ->when($kategoriFilter !== '' && array_key_exists($kategoriFilter, $kategoriList), function ($query) use ($kategoriFilter) {
-                $query->where('kategori_produk', $kategoriFilter);
-            })
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama_produk', 'like', "%{$q}%")
+                        ->orWhere('merek', 'like', "%{$q}%");
+                });
+            });
+
+        if ($mode === 'pcs') {
+            $produks->where('kategori_produk', 'dijual');
+        } else {
+            $produks->where('kategori_produk', '!=', 'dijual');
+        }
+
+        $kategoriList = [];
+        if ($mode === 'layanan') {
+            $kategoriList = array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan());
+            if ($kategoriFilter !== '' && array_key_exists($kategoriFilter, $kategoriList)) {
+                $produks->where('kategori_produk', $kategoriFilter);
+            } else {
+                $kategoriFilter = '';
+            }
+        }
+
+        $produks = $produks
             ->orderBy('nama_produk')
             ->paginate(10)
             ->withQueryString();
@@ -36,7 +55,7 @@ class ProdukController extends Controller
             ->where('stok', '<=', Produk::STOK_MENIPIS)
             ->count();
 
-        return view('produks.index', compact('produks', 'q', 'kategoriFilter', 'kategoriList', 'stokMenipis'));
+        return view('produks.index', compact('produks', 'q', 'mode', 'kategoriFilter', 'kategoriList', 'stokMenipis'));
     }
 
     public function create()
@@ -92,14 +111,14 @@ class ProdukController extends Controller
         }
 
         $data = $request->validate([
-            'qty' => ['required', 'numeric', 'min:0.01'],
+            'qty' => ['required', 'integer', 'min:1'],
             'harga_beli' => ['required', 'numeric', 'min:0'],
             'tanggal' => ['required', 'date', 'before_or_equal:today'],
             'keterangan' => ['nullable', 'string', 'max:255'],
         ], [
             'qty.required' => 'Jumlah wajib diisi.',
-            'qty.numeric' => 'Jumlah harus berupa angka.',
-            'qty.min' => 'Jumlah harus lebih dari 0.',
+            'qty.integer' => 'Jumlah harus bilangan bulat.',
+            'qty.min' => 'Jumlah minimal 1.',
             'harga_beli.required' => 'Harga beli wajib diisi.',
             'harga_beli.numeric' => 'Harga beli harus berupa angka.',
             'harga_beli.min' => 'Harga beli tidak boleh kurang dari 0.',

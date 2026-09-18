@@ -61,7 +61,11 @@ class TransaksiController extends Controller
     {
         $pelanggans = Pelanggan::orderBy('nama')->get();
         $karyawans = Karyawan::orderBy('nama')->get();
-        $produks = Produk::where('aktif', true)->orderBy('merek')->orderBy('nama_produk')->get();
+        $produks = Produk::where('aktif', true)
+            ->where('kategori_produk', '!=', 'dijual')
+            ->orderBy('merek')
+            ->orderBy('nama_produk')
+            ->get();
 
         return view('transaksis.create', compact('pelanggans', 'karyawans', 'produks'));
     }
@@ -391,8 +395,11 @@ class TransaksiController extends Controller
     public function searchProduk(Request $request)
     {
         $q = $request->input('q', '');
+        $mode = $request->input('mode', '');
 
         $produks = Produk::where('aktif', true)
+            ->when($mode === 'dijual', fn ($query) => $query->where('kategori_produk', 'dijual'))
+            ->when($mode === 'pakai', fn ($query) => $query->where('kategori_produk', '!=', 'dijual'))
             ->where('nama_produk', 'like', "%{$q}%")
             ->limit(10)
             ->get();

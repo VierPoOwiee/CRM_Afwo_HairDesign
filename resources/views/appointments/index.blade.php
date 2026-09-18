@@ -180,9 +180,9 @@
                         $tanggalSel = $hari['tanggal']->format('Y-m-d');
                         $daftarHari = $perTanggal->get($tanggalSel, collect());
                     @endphp
-                    <button type="button"
+                    <div
                             data-tanggal="{{ $tanggalSel }}"
-                            class="js-buka-hari min-h-[110px] rounded-lg border p-2 text-left align-top
+                            class="js-buka-hari cursor-pointer min-h-[110px] rounded-lg border p-2 text-left align-top
                             {{ $hari['dalamBulanIni'] ? 'border-gray-100 bg-white' : 'border-transparent bg-gray-50 text-gray-300' }}
                             {{ $hari['isHariIni'] ? 'ring-2 ring-afwo-gold' : '' }}">
                         <span class="text-sm font-medium {{ $hari['dalamBulanIni'] ? 'text-gray-900' : 'text-gray-300' }}">
@@ -220,7 +220,7 @@
                                 </button>
                             @endif
                         </div>
-                    </button>
+                    </div>
                 @endforeach
             </div>
         </div>

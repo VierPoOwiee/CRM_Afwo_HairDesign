@@ -7,7 +7,7 @@
         <div>
             <h1 class="text-2xl font-bold text-text-primary">Data Produk</h1>
             <p class="mt-1 text-sm text-text-muted">
-                {{ $produks->total() }} produk terdaftar.
+                {{ $produks->total() }} produk {{ $mode === 'pcs' ? 'dijual per pcs' : 'untuk layanan' }} terdaftar.
             </p>
         </div>
 
@@ -16,6 +16,7 @@
                 <input type="text" name="q" value="{{ $q }}"
                        placeholder="Cari nama produk, merek..."
                        class="block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
+                <input type="hidden" name="mode" value="{{ $mode }}">
                 @if ($kategoriFilter !== '')
                     <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
                 @endif
@@ -32,20 +33,35 @@
         </div>
     </div>
 
-    <div class="mb-4 flex flex-wrap items-center gap-2">
-        <a href="{{ route('produk.index', array_merge(request()->except('kategori', 'page'), $q !== '' ? ['q' => $q] : [])) }}"
-           class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-            Semua
+    {{-- Pilih jenis produk dulu: layanan atau jual per pcs --}}
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+        <a href="{{ route('produk.index', array_merge(request()->except(['mode', 'kategori', 'page']), ['mode' => 'layanan'])) }}"
+           class="rounded-lg px-4 py-2 text-sm font-medium {{ $mode === 'layanan' ? 'bg-dark text-white' : 'bg-card text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover' }}">
+            Dijual untuk Layanan
         </a>
-        @foreach ($kategoriList as $key => $label)
-            <a href="{{ route('produk.index', array_merge(request()->except('kategori', 'page'), ['kategori' => $key])) }}"
-               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $key ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                {{ $label }}
-            </a>
-        @endforeach
+        <a href="{{ route('produk.index', array_merge(request()->except(['mode', 'kategori', 'page']), ['mode' => 'pcs'])) }}"
+           class="rounded-lg px-4 py-2 text-sm font-medium {{ $mode === 'pcs' ? 'bg-dark text-white' : 'bg-card text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover' }}">
+            Dijual Per PCS
+        </a>
     </div>
 
-    @if ($stokMenipis > 0)
+    {{-- Pilihan kategori baru muncul setelah mode dipilih (khusus layanan) --}}
+    @if ($mode === 'layanan')
+        <div class="mb-4 flex flex-wrap items-center gap-2">
+            <a href="{{ route('produk.index', array_merge(request()->except(['kategori', 'page']))) }}"
+               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
+                Semua
+            </a>
+            @foreach ($kategoriList as $key => $label)
+                <a href="{{ route('produk.index', array_merge(request()->except(['kategori', 'page']), ['kategori' => $key])) }}"
+                   class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $key ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
+    @endif
+
+    @if ($stokMenipis > 0 && $mode === 'pcs')
         <div class="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
             <span class="font-semibold">{{ $stokMenipis }} produk stok menipis</span> (stok &le; {{ \App\Models\Produk::STOK_MENIPIS }}).
         </div>
