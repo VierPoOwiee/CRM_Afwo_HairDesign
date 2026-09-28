@@ -1,21 +1,29 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Pelanggan')
+@section('nav-active', 'customers')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/edit-pelanggan.css') }}">
+@endpush
 
 @section('content')
-    <div class="flex items-center gap-4">
-        <a href="{{ route('pelanggan.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Edit Pelanggan</h1>
-            <p class="mt-1 text-sm text-gray-500">Perbarui data {{ $pelanggan->nama }}.</p>
+    <div class="edit-header-wrapper">
+        <a href="{{ route('pelanggan.index') }}" class="back-arrow-link" aria-label="Kembali ke Data Pelanggan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </a>
+        <div class="edit-title-group">
+            <h1 class="edit-page-title">Edit Pelanggan</h1>
+            <p class="edit-page-subtitle">Perbarui data {{ $pelanggan->nama }}.</p>
         </div>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('pelanggan.update', $pelanggan) }}" method="POST">
-            @csrf
-            @method('PUT')
-            @include('pelanggans._form', ['submitLabel' => 'Simpan Perubahan'])
-        </form>
-    </div>
+    <form id="form-edit-client" method="POST" action="{{ route('pelanggan.update', $pelanggan) }}" class="card edit-form-card">
+        @csrf
+        @method('PUT')
+        @include('pelanggans._form', ['submitLabel' => 'Simpan Perubahan'])
+    </form>
 @endsection

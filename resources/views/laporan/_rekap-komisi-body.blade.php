@@ -1,116 +1,136 @@
 {{-- Body laporan utama Rekap Komisi — dipakai oleh laporan/rekap-komisi.blade.php
      dan laporan/cetak-rekap-komisi.blade.php --}}
-<div class="rounded-lg border-2 border-accent/30 bg-accent-light p-5 shadow-sm text-center">
-    <p class="text-sm font-medium text-accent-text">Total Komisi yang Harus Dibayar</p>
-    <p class="mt-1 text-3xl font-bold text-text-primary">Rp{{ number_format($totalBayarSemuaStaf, 0, ',', '.') }}</p>
-    <p class="mt-1 text-xs text-text-muted">Periode: {{ $dari }} s/d {{ $sampai }}</p>
+@php
+    $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $tglIndo = function ($dt, $denganJam = false) use ($bulanIndo) {
+        if (!$dt) return '-';
+        $c = \Carbon\Carbon::parse($dt);
+        $tgl = $c->format('d') . ' ' . $bulanIndo[$c->format('n') - 1] . ' ' . $c->format('Y');
+        return $denganJam ? $tgl . ' &middot; ' . $c->format('H:i') : $tgl;
+    };
+@endphp
+
+<div class="rekap-summary-banner">
+    <span class="summary-banner-label">Total Komisi yang Harus Dibayar</span>
+    <span class="summary-banner-amount">{{ $fmt($totalBayarSemuaStaf) }}</span>
+    <span class="summary-banner-period">Periode: {{ $dari }} s/d {{ $sampai }}</span>
 </div>
 
 {{-- Section Pendapatan Karyawan (navigasi ke slip per karyawan) — SELALU tampil,
      apa pun isi datanya. Tidak ikut tercetak, karena slip aslinya menyusul
      sebagai halaman tersendiri saat cetak gabungan --}}
-<section class="no-print mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h2 class="text-base font-semibold text-gray-900">Pendapatan Karyawan</h2>
-            <p class="mt-0.5 text-xs text-gray-500">Gaji pokok + komisi per karyawan untuk periode yang sama. Klik salah satu staf untuk membuka slip pendapatannya, atau lihat <a href="{{ route('laporan.pendapatan-karyawan') }}" class="font-medium text-accent-text hover:text-accent">ringkasan pendapatan bulanan</a>.</p>
+<div class="rekap-table-card no-print">
+    <div class="rekap-card-header">
+        <h2 class="rekap-card-title">Pendapatan Karyawan</h2>
+        <p class="rekap-card-desc">
+            Gaji pokok + komisi per karyawan untuk periode yang sama. Klik salah satu staf untuk membuka slip pendapatannya,
+            atau lihat <a href="{{ route('laporan.pendapatan-karyawan') }}" class="inline-link-gold">ringkasan pendapatan bulanan</a>.
+        </p>
+    </div>
+    @if ($pendapatanStaf->isEmpty())
+        <div class="rekap-empty-card">
+            <p class="rekap-empty-text">Belum ada data karyawan.</p>
         </div>
-    </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                <tr>
-                    <th class="px-4 py-3">Karyawan</th>
-                    <th class="px-4 py-3">Skema</th>
-                    <th class="px-4 py-3 text-right">Gaji Pokok (bulanan)</th>
-                    <th class="px-4 py-3 text-right">Total Komisi</th>
-                    <th class="px-4 py-3 text-right">Total Pendapatan</th>
-                    <th class="px-4 py-3"></th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse ($pendapatanStaf as $item)
-                    @php $k = $item['karyawan']; @endphp
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-3 font-medium text-gray-900">{{ $k->nama }}</td>
-                        <td class="px-4 py-3">
-                            @if ($k->skema_komisi === 'persen_omset_harian')
-                                <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">% Omset Harian ({{ $k->persen_komisi_harian }}%)</span>
-                            @else
-                                <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Per Layanan</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format($item['gaji_pokok'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right text-gray-900">Rp{{ number_format($item['total_komisi'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right font-semibold text-accent-text">Rp{{ number_format($item['total_pendapatan'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right">
-                            <a href="{{ route('laporan.rekap-komisi.slip', array_merge(['karyawan' => $k->id], request()->only(['preset', 'dari', 'sampai']))) }}"
-                               class="inline-flex items-center gap-1 rounded-md bg-card px-2.5 py-1.5 text-xs font-medium text-accent-text ring-1 ring-inset ring-accent/30 hover:bg-accent-light">
-                                Lihat Slip
-                                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </a>
-                        </td>
-                    </tr>
-                @empty
+    @else
+        <div class="table-responsive-wrapper">
+            <table class="rekap-commission-table">
+                <thead>
                     <tr>
-                        <td colspan="6" class="px-4 py-6 text-center text-sm text-gray-400">Belum ada data karyawan.</td>
+                        <th>Karyawan</th>
+                        <th>Skema</th>
+                        <th style="text-align: right;">Gaji Pokok (bulanan)</th>
+                        <th style="text-align: right;">Total Komisi</th>
+                        <th style="text-align: right;">Total Pendapatan</th>
+                        <th style="text-align: right;"></th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</section>
+                </thead>
+                <tbody>
+                    @foreach ($pendapatanStaf as $item)
+                        @php $k = $item['karyawan']; @endphp
+                        <tr>
+                            <td style="font-weight: 700;">{{ $k->nama }}</td>
+                            <td>
+                                @if ($k->skema_komisi === 'persen_omset_harian')
+                                    <span class="scheme-badge-daily">% Omset Harian ({{ $k->persen_komisi_harian }}%)</span>
+                                @else
+                                    <span class="scheme-badge-service">Per Layanan</span>
+                                @endif
+                            </td>
+                            <td style="text-align: right;">{{ $fmt($item['gaji_pokok']) }}</td>
+                            <td style="text-align: right;">{{ $fmt($item['total_komisi']) }}</td>
+                            <td style="text-align: right; font-weight: 800; color: #B45309;">{{ $fmt($item['total_pendapatan']) }}</td>
+                            <td style="text-align: right;">
+                                <a href="{{ route('laporan.rekap-komisi.slip', array_merge(['karyawan' => $k->id], request()->only(['preset', 'dari', 'sampai']))) }}"
+                                   class="btn-view-slip">
+                                    Lihat Slip
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+</div>
 
 @if ($grandTotal->isEmpty())
-    <div class="mt-6 rounded-lg border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
-        <p class="text-sm font-medium text-gray-700">Belum ada data komisi untuk periode ini.</p>
+    <div class="rekap-table-card">
+        <div class="rekap-empty-card">
+            <p class="rekap-empty-text">Belum ada data komisi untuk periode ini.</p>
+        </div>
     </div>
 @else
     {{-- Rekap Tabel --}}
-    <div class="mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="text-base font-semibold text-gray-900">Rekap per Staf</h2>
+    <div class="rekap-table-card">
+        <div class="rekap-card-header">
+            <h2 class="rekap-card-title">Rekap per Staf</h2>
+            <p class="rekap-card-desc">Klik baris untuk melihat rincian komisi per tanggal / per transaksi.</p>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <div class="table-responsive-wrapper">
+            <table class="rekap-commission-table">
+                <thead>
                     <tr>
-                        <th class="px-4 py-3">Staf</th>
-                        <th class="px-4 py-3">Skema</th>
-                        <th class="px-4 py-3 text-right">Komisi per Layanan</th>
-                        <th class="px-4 py-3 text-right">Komisi Harian (%)</th>
-                        <th class="px-4 py-3 text-right">Total Komisi</th>
-                        <th class="px-4 py-3"></th>
+                        <th>Staf</th>
+                        <th>Skema</th>
+                        <th style="text-align: right;">Komisi per Layanan</th>
+                        <th style="text-align: right;">Komisi Harian (%)</th>
+                        <th style="text-align: right;">Total Komisi</th>
+                        <th style="text-align: right;"></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody id="rekap-staf-tbody">
                     @foreach ($grandTotal as $row)
-                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="document.getElementById('detail-{{ $row['id_staf'] }}').classList.toggle('hidden')">
-                            <td class="px-4 py-3 font-medium text-gray-900">{{ $row['nama_staf'] }}</td>
-                            <td class="px-4 py-3">
+                        <tr class="rekap-staf-row" data-target="detail-{{ $row['id_staf'] }}"
+                            style="cursor: pointer;">
+                            <td style="font-weight: 700;">{{ $row['nama_staf'] }}</td>
+                            <td>
                                 @if ($row['skema'] === 'persen_omset_harian')
-                                    <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">% Omset Harian</span>
+                                    <span class="scheme-badge-daily">% Omset Harian</span>
                                 @else
-                                    <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Per Layanan</span>
+                                    <span class="scheme-badge-service">Per Layanan</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-right text-gray-900">
+                            <td style="text-align: right;">
                                 @if ($row['total_per_layanan'] > 0)
-                                    Rp{{ number_format($row['total_per_layanan'], 0, ',', '.') }}
+                                    {{ $fmt($row['total_per_layanan']) }}
                                 @else
-                                    <span class="text-gray-400">-</span>
+                                    <span style="color: var(--text-muted);">—</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-right text-gray-900">
+                            <td style="text-align: right;">
                                 @if ($row['total_persen_harian'] > 0)
-                                    Rp{{ number_format($row['total_persen_harian'], 0, ',', '.') }}
+                                    {{ $fmt($row['total_persen_harian']) }}
                                 @else
-                                    <span class="text-gray-400">-</span>
+                                    <span style="color: var(--text-muted);">—</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-right font-semibold text-gray-900">Rp{{ number_format($row['total_keseluruhan'], 0, ',', '.') }}</td>
-                            <td class="px-4 py-3 text-right text-gray-400">
-                                <svg class="h-4 w-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <td style="text-align: right; font-weight: 800;">{{ $fmt($row['total_keseluruhan']) }}</td>
+                            <td style="text-align: right;">
+                                <span class="rekap-chevron">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"/></svg>
+                                </span>
                             </td>
                         </tr>
                     @endforeach
@@ -120,38 +140,35 @@
     </div>
 
     {{-- Detail per Staf (expandable) --}}
-    <div class="mt-6 space-y-6">
+    <div style="margin: -6px 0 18px;">
         @foreach ($grandTotal as $row)
-            <div id="detail-{{ $row['id_staf'] }}" class="hidden rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div id="detail-{{ $row['id_staf'] }}" class="rekap-detail-card hidden" style="display: none;">
+                <div class="rekap-detail-header">
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900">{{ $row['nama_staf'] }}</h3>
-                        <p class="text-xs text-gray-500">
+                        <div class="rekap-detail-title">{{ $row['nama_staf'] }}</div>
+                        <div class="rekap-detail-sub">
+                            Skema:
                             @if ($row['skema'] === 'persen_omset_harian')
-                                Skema: Persen Omset Harian
+                                Persen Omset Harian
                             @else
-                                Skema: Per Layanan
+                                Per Layanan
                             @endif
-                        </p>
+                        </div>
                     </div>
-                    <p class="text-sm font-bold text-gray-900">Total: Rp{{ number_format($row['total_keseluruhan'], 0, ',', '.') }}</p>
+                    <div class="rekap-detail-total">Total: {{ $fmt($row['total_keseluruhan']) }}</div>
                 </div>
 
                 @if ($row['skema'] === 'persen_omset_harian' && $row['id_staf'])
-                    <div class="px-6 py-3 bg-gray-50 border-b border-gray-100 no-print">
-                        <form action="{{ route('laporan.rekap-komisi.hitung-ulang') }}" method="POST" class="flex items-end gap-3">
+                    <div class="rekap-hitung-ulang no-print">
+                        <form action="{{ route('laporan.rekap-komisi.hitung-ulang') }}" method="POST">
                             @csrf
                             <input type="hidden" name="id_staf" value="{{ $row['id_staf'] }}">
                             <input type="hidden" name="preset" value="{{ $preset }}">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500">Hitung Ulang Komisi Harian</label>
-                                <input type="date" name="tanggal" value="{{ $sampai }}"
-                                       class="mt-1 block rounded-lg border-gray-300 bg-card text-text-primary px-3 py-1.5 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+                                <label>Hitung Ulang Komisi Harian</label>
+                                <input type="date" name="tanggal" value="{{ $sampai }}" class="rekap-hitung-input">
                             </div>
-                            <button type="submit"
-                                    class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700">
-                                Hitung Ulang
-                            </button>
+                            <button type="submit" class="btn-hitung-ulang">Hitung Ulang</button>
                         </form>
                     </div>
                 @endif
@@ -159,56 +176,60 @@
                 @if ($row['skema'] === 'persen_omset_harian')
                     @php $harianItems = $komisiHarian->get($row['id_staf'], collect()); @endphp
                     @if ($harianItems->isNotEmpty())
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                <tr>
-                                    <th class="px-4 py-2">Tanggal</th>
-                                    <th class="px-4 py-2 text-right">Omset Dasar</th>
-                                    <th class="px-4 py-2 text-right">Persen</th>
-                                    <th class="px-4 py-2 text-right">Komisi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                @foreach ($harianItems as $h)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2 text-gray-700">{{ $h->tanggal->format('d M Y') }}</td>
-                                        <td class="px-4 py-2 text-right text-gray-900">Rp{{ number_format($h->total_omset_dasar, 0, ',', '.') }}</td>
-                                        <td class="px-4 py-2 text-right text-gray-700">{{ $h->persen }}%</td>
-                                        <td class="px-4 py-2 text-right font-medium text-gray-900">Rp{{ number_format($h->jumlah_komisi, 0, ',', '.') }}</td>
+                        <div class="table-responsive-wrapper">
+                            <table class="rekap-commission-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th style="text-align: right;">Omset Dasar</th>
+                                        <th style="text-align: right;">Persen</th>
+                                        <th style="text-align: right;">Komisi</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($harianItems as $h)
+                                        <tr>
+                                            <td>{{ $tglIndo($h->tanggal) }}</td>
+                                            <td style="text-align: right;">{{ $fmt($h->total_omset_dasar) }}</td>
+                                            <td style="text-align: right;">{{ $h->persen }}%</td>
+                                            <td style="text-align: right; font-weight: 700;">{{ $fmt($h->jumlah_komisi) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @else
-                        <p class="px-6 py-4 text-sm text-gray-400">Tidak ada data komisi harian untuk periode ini.</p>
+                        <p class="rekap-detail-empty">Tidak ada data komisi harian untuk periode ini.</p>
                     @endif
                 @else
                     @php $layananItems = $komisiPerLayanan->get($row['id_staf'], collect()); @endphp
                     @if ($layananItems->isNotEmpty())
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                <tr>
-                                    <th class="px-4 py-2">No Struk</th>
-                                    <th class="px-4 py-2">Tanggal</th>
-                                    <th class="px-4 py-2 text-right">Komisi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                @foreach ($layananItems as $kt)
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-2">
-                                            <a href="{{ route('transaksi.show', $kt->transaksi) }}" class="font-medium text-blue-600 hover:text-blue-800">
-                                                {{ $kt->transaksi->no_struk ?? '-' }}
-                                            </a>
-                                        </td>
-                                        <td class="px-4 py-2 text-gray-700">{{ $kt->transaksi->waktu_kunjungan->format('d M Y H:i') ?? '-' }}</td>
-                                        <td class="px-4 py-2 text-right font-medium text-gray-900">Rp{{ number_format($kt->jumlah_komisi, 0, ',', '.') }}</td>
+                        <div class="table-responsive-wrapper">
+                            <table class="rekap-commission-table">
+                                <thead>
+                                    <tr>
+                                        <th>No Struk</th>
+                                        <th>Tanggal</th>
+                                        <th style="text-align: right;">Komisi</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($layananItems as $kt)
+                                        <tr>
+                                            <td>
+                                                <a href="{{ route('transaksi.show', $kt->transaksi) }}" style="font-weight: 700; color: #B45309; text-decoration: none;">
+                                                    {{ $kt->transaksi->no_struk ?? '-' }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $tglIndo($kt->transaksi->waktu_kunjungan ?? null, true) }}</td>
+                                            <td style="text-align: right; font-weight: 700;">{{ $fmt($kt->jumlah_komisi) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @else
-                        <p class="px-6 py-4 text-sm text-gray-400">Tidak ada data komisi per layanan untuk periode ini.</p>
+                        <p class="rekap-detail-empty">Tidak ada data komisi per layanan untuk periode ini.</p>
                     @endif
                 @endif
             </div>
@@ -216,3 +237,16 @@
     </div>
 @endif
 
+<script>
+(function () {
+    document.querySelectorAll('.rekap-staf-row').forEach(function (row) {
+        row.addEventListener('click', function () {
+            var target = document.getElementById(row.dataset.target);
+            if (!target) return;
+            var open = target.style.display !== 'none';
+            target.style.display = open ? 'none' : 'block';
+            row.classList.toggle('rekap-detail-open', !open);
+        });
+    });
+})();
+</script>

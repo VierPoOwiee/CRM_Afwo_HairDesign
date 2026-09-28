@@ -1,57 +1,97 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login — Afwo</title>
-    <link rel="preconnect" href="https://api.fontshare.com">
-    <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk ke Akun Anda - AFWO Hair Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
 </head>
-<body class="bg-surface text-text-primary antialiased min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-sm px-4">
-        <div class="mb-8 text-center">
-            <a href="/" class="text-3xl font-bold tracking-tight text-text-primary">
-                Afwo<span class="text-accent">.</span>
-            </a>
-            <p class="mt-2 text-sm text-text-muted">Masuk ke akun Anda</p>
+<body class="login-page-body">
+
+    <div class="login-screen-container">
+
+        {{-- Brand Header --}}
+        <div class="login-brand-header">
+            <h1 class="login-brand-title">Afwo<span class="login-brand-dot">.</span></h1>
+            <p class="login-brand-subtitle">Masuk ke akun Anda</p>
         </div>
 
-        <div class="rounded-xl border border-gray-200 bg-card p-6 shadow-sm">
+        {{-- Login Card --}}
+        <div class="login-card">
             @if ($errors->any())
-                <div class="mb-4 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-sm text-danger">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
+                <div id="login-alert" class="login-alert is-error" role="alert">
+                    {{ $errors->first() }}
                 </div>
+            @else
+                <div id="login-alert" class="login-alert" role="alert"></div>
             @endif
 
-            <form method="POST" action="{{ route('login.post') }}" class="space-y-4">
+            <form id="form-login" class="login-form-stack" method="POST" action="{{ route('login.post') }}" autocomplete="on">
                 @csrf
-                <div>
-                    <label for="email" class="block text-sm font-medium text-text-secondary">Email</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                           class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none transition-colors duration-150">
+
+                {{-- Email Input Group --}}
+                <div class="login-form-group">
+                    <label for="login-email" class="login-form-label">Email</label>
+                    <div class="login-input-wrapper">
+                        <input
+                            type="email"
+                            id="login-email"
+                            name="email"
+                            class="login-input-control"
+                            data-field="email"
+                            placeholder="nama@afwo.com"
+                            value="{{ old('email') ?: 'owner@afwo.com' }}"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-text-secondary">Password</label>
-                    <input type="password" id="password" name="password" required
-                           class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none transition-colors duration-150">
+                {{-- Password Input Group --}}
+                <div class="login-form-group">
+                    <label for="login-password" class="login-form-label">Password</label>
+                    <div class="login-input-wrapper">
+                        <input
+                            type="password"
+                            id="login-password"
+                            name="password"
+                            class="login-input-control with-toggle"
+                            data-field="password"
+                            placeholder="••••••••"
+                            value="12345678"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="btn-toggle-password" id="btn-toggle-password" aria-label="Tampilkan / Sembunyikan Password">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember" name="remember"
-                           class="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent/30">
-                    <label for="remember" class="ml-2 text-sm text-text-secondary">Ingat saya</label>
+                {{-- Ingat Saya Checkbox --}}
+                <div class="login-options-row">
+                    <label class="login-checkbox-label">
+                        <input type="checkbox" id="login-remember" data-field="remember" name="remember" class="login-checkbox-input" checked>
+                        <span>Ingat saya</span>
+                    </label>
                 </div>
 
-                <button type="submit"
-                        class="w-full rounded-lg bg-dark px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
+                {{-- Submit Button --}}
+                <button type="submit" class="btn-login-submit" id="btn-login-submit">
                     Masuk
                 </button>
             </form>
         </div>
+
     </div>
+
+    <script src="{{ asset('js/login.js') }}"></script>
 </body>
 </html>

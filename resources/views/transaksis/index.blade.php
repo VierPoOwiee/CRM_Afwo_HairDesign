@@ -1,159 +1,426 @@
 @extends('layouts.app')
 
-@section('title', 'Data Transaksi')
+@section('title', 'Riwayat Transaksi')
+
+@section('nav-active', 'history')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}">
+@endpush
+
+@php
+    $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    $today = \Illuminate\Support\Carbon::today();
+    $yesterday = (new \Illuminate\Support\Carbon($today))->subDay();
+
+    $grouped = collect($transaksis->items())->groupBy(fn ($t) => $t->waktu_kunjungan ? $t->waktu_kunjungan->toDateString() : '');
+
+    $statusMap = [
+        'selesai' => ['pill' => 'status-paid', 'label' => 'Selesai (Paid)'],
+        'batal' => ['pill' => 'status-cancelled', 'label' => 'Dibatalkan'],
+    ];
+    $metodeMap = [
+        'cash' => ['badge' => 'badge-cash', 'label' => 'Tunai'],
+        'qris_bni' => ['badge' => 'badge-qris', 'label' => 'QRIS'],
+        'qris_bri' => ['badge' => 'badge-qris', 'label' => 'QRIS'],
+        'transfer' => ['badge' => 'badge-transfer', 'label' => 'Transfer'],
+        'debit' => ['badge' => 'badge-transfer', 'label' => 'Debit'],
+        'kartu_kredit' => ['badge' => 'badge-qris', 'label' => 'Kartu Kredit'],
+    ];
+@endphp
 
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-text-primary">Data Transaksi</h1>
-            <p class="mt-1 text-sm text-text-muted">
-                {{ $transaksis->total() }} transaksi terdaftar.
-            </p>
+    <!-- Header Row with "+ Tambah Transaksi" Action -->
+    <div class="trans-page-header-row">
+        <div class="trans-header-title-group">
+            <h1 class="trans-page-title">Daftar Transaksi</h1>
+            <p class="trans-page-subtitle">Kelola dan tinjau seluruh riwayat penjualan salon per hari.</p>
         </div>
 
-        <a href="{{ route('transaksi.create') }}"
-           class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-            <span class="text-lg leading-none">+</span>
-            <span>Transaksi Baru</span>
+        <a href="{{ route('transaksi.create') }}" class="btn-primary-gold btn-create-order" id="btn-add-transaction">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Tambah Transaksi</span>
         </a>
     </div>
 
-    <div class="rounded-xl border border-gray-200 bg-card p-4 shadow-sm">
-        <form action="{{ route('transaksi.index') }}" method="GET" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
-            <div>
-                <label class="block text-xs font-medium text-text-muted">Cari</label>
-                <input type="text" name="q" value="{{ $q }}"
-                       placeholder="No struk, nama pelanggan..."
-                       class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
+    <!-- Mini KPI Sparkline Cards -->
+    <div class="trans-kpi-summary-grid">
+        <div class="trans-kpi-card">
+            <div class="trans-kpi-info">
+                <span class="trans-kpi-label">Total Transaksi</span>
+                <span class="trans-kpi-num">{{ $kpi['total'] }}</span>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-text-muted">Layanan</label>
-                <select name="layanan"
-                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                    <option value="">Semua Layanan</option>
-                    @foreach ($layanans as $l)
-                        <option value="{{ $l->id }}" {{ $layananFilter == $l->id ? 'selected' : '' }}>{{ $l->nama_layanan }}</option>
-                    @endforeach
-                </select>
+            <div class="trans-kpi-chart">
+                <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-blue">
+                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14" fill="none" stroke="#3B82F6" stroke-width="2.4"/>
+                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14 L 80 32 L 0 32 Z" fill="rgba(59, 130, 246, 0.12)"/>
+                </svg>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-text-muted">Dari Tanggal</label>
-                <input type="date" name="dari" value="{{ $dari ?? '' }}"
-                       class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
+        </div>
+
+        <div class="trans-kpi-card">
+            <div class="trans-kpi-info">
+                <span class="trans-kpi-label">Selesai (Paid)</span>
+                <span class="trans-kpi-num">{{ $kpi['selesai'] }}</span>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-text-muted">Sampai Tanggal</label>
-                <input type="date" name="sampai" value="{{ $sampai ?? '' }}"
-                       class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
+            <div class="trans-kpi-chart">
+                <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-green">
+                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6" fill="none" stroke="#10B981" stroke-width="2.4"/>
+                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6 L 80 32 L 0 32 Z" fill="rgba(16, 185, 129, 0.12)"/>
+                </svg>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-text-muted">Status</label>
-                <select name="status"
-                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                    <option value="">Semua</option>
-                    <option value="selesai" {{ $statusFilter === 'selesai' ? 'selected' : '' }}>Selesai</option>
-                    <option value="batal" {{ $statusFilter === 'batal' ? 'selected' : '' }}>Batal</option>
-                </select>
+        </div>
+
+        <div class="trans-kpi-card">
+            <div class="trans-kpi-info">
+                <span class="trans-kpi-label">Dibatalkan</span>
+                <span class="trans-kpi-num">{{ $kpi['batal'] }}</span>
             </div>
-            <div class="flex items-end gap-2">
-                <button type="submit"
-                        class="rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-                    Filter
-                </button>
-                @if ($q !== '' || $statusFilter !== '' || $layananFilter > 0 || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
-                    <a href="{{ route('transaksi.index') }}"
-                       class="rounded-lg bg-card px-3 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                        Reset
-                    </a>
-                @endif
+            <div class="trans-kpi-chart">
+                <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-orange">
+                    <path d="M0 16 Q 25 24, 50 12 T 80 20" fill="none" stroke="#F59E0B" stroke-width="2.4"/>
+                    <path d="M0 16 Q 25 24, 50 12 T 80 20 L 80 32 L 0 32 Z" fill="rgba(245, 158, 11, 0.12)"/>
+                </svg>
             </div>
-        </form>
+        </div>
+
+        <div class="trans-kpi-card featured-revenue-card">
+            <div class="trans-kpi-info">
+                <span class="trans-kpi-label">Total Pemasukan</span>
+                <span class="trans-kpi-num">{{ $fmt($kpi['pemasukan']) }}</span>
+            </div>
+            <div class="trans-kpi-chart">
+                <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-gold">
+                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4" fill="none" stroke="#E5A93C" stroke-width="2.4"/>
+                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4 L 80 32 L 0 32 Z" fill="rgba(229, 169, 60, 0.18)"/>
+                </svg>
+            </div>
+        </div>
     </div>
 
-    @if ($transaksis->isEmpty())
-        <div class="mt-6 rounded-xl border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
-            <p class="text-sm font-medium text-text-secondary">Belum ada data transaksi.</p>
-            @if ($q !== '' || $statusFilter !== '' || $layananFilter > 0 || ($dari ?? '') !== '' || ($sampai ?? '') !== '')
-                <p class="mt-1 text-sm text-text-muted">Tidak ditemukan hasil untuk filter yang dipilih.</p>
-                <a href="{{ route('transaksi.index') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Tampilkan semua
-                </a>
-            @else
-                <a href="{{ route('transaksi.create') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    Buat transaksi pertama &rarr;
-                </a>
-            @endif
-        </div>
-    @else
-        {{-- Desktop table --}}
-        <div class="mt-6 hidden overflow-hidden rounded-xl border border-gray-200 bg-card shadow-sm md:block">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50/80 text-left text-xs font-semibold uppercase tracking-wide text-text-muted">
-                    <tr>
-                        <th class="px-4 py-3">No Struk</th>
-                        <th class="px-4 py-3">Pelanggan</th>
-                        <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3">Total</th>
-                        <th class="px-4 py-3">Metode</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3"></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach ($transaksis as $t)
-                        <tr class="transition-colors duration-150 hover:bg-card-hover">
-                            <td class="px-4 py-3 font-medium text-text-primary">{{ $t->no_struk }}</td>
-                            <td class="px-4 py-3 text-text-secondary">{{ $t->pelanggan->nama ?? '-' }}</td>
-                            <td class="px-4 py-3 text-text-secondary">{{ $t->waktu_kunjungan->format('d M Y H:i') }}</td>
-                            <td class="px-4 py-3 font-medium text-text-primary">Rp{{ number_format((float) $t->total_bayar, 0, ',', '.') }}</td>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex items-center rounded-full bg-badge-neutral-bg px-2.5 py-0.5 text-xs font-medium text-badge-neutral-text">{{ $t->labelMetode() }}</span>
-                            </td>
-                            <td class="px-4 py-3">
-                                @if ($t->status === 'selesai')
-                                    <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Selesai</span>
-                                @else
-                                    <span class="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">Batal</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{{ route('transaksi.show', $t) }}" class="font-medium text-blue-600 hover:text-blue-800">Detail</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        {{-- Mobile cards --}}
-        <div class="mt-6 space-y-3 md:hidden">
-            @foreach ($transaksis as $t)
-                <a href="{{ route('transaksi.show', $t) }}" class="block rounded-xl border border-gray-200 bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold text-text-primary truncate">{{ $t->no_struk }}</p>
-                            <p class="mt-0.5 text-xs text-text-muted">{{ $t->pelanggan->nama ?? '-' }}</p>
-                        </div>
-                        <span class="shrink-0 text-sm font-bold text-text-primary">Rp{{ number_format((float) $t->total_bayar, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="mt-2 flex items-center gap-2 text-xs text-text-muted">
-                        <span>{{ $t->waktu_kunjungan->format('d M Y H:i') }}</span>
-                        <span>&middot;</span>
-                        <span class="inline-flex items-center rounded-full bg-badge-neutral-bg px-2 py-0.5 font-medium text-badge-neutral-text">{{ $t->labelMetode() }}</span>
-                        @if ($t->status === 'selesai')
-                            <span class="rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700">Selesai</span>
-                        @else
-                            <span class="rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-700">Batal</span>
-                        @endif
-                    </div>
+    <!-- Filter & Search Toolbar -->
+    <div class="trans-toolbar-card">
+        <div class="trans-tabs-row">
+            @php
+                $baseQuery = collect(request()->query())->except(['status', 'page'])->all();
+                $tabDefs = [
+                    'all' => 'Semua Transaksi',
+                    'selesai' => 'Selesai',
+                    'batal' => 'Dibatalkan',
+                ];
+            @endphp
+            @foreach ($tabDefs as $tabVal => $tabLabel)
+                <a href="{{ route('transaksi.index', array_merge($baseQuery, $tabVal === 'all' ? [] : ['status' => $tabVal])) }}"
+                   class="trans-filter-tab {{ $statusFilter === $tabVal || ($statusFilter === '' && $tabVal === 'all') ? 'active' : '' }}"
+                   data-status="{{ $tabVal }}"
+                   aria-pressed="{{ ($statusFilter === $tabVal || ($statusFilter === '' && $tabVal === 'all')) ? 'true' : 'false' }}">
+                    {{ $tabLabel }}
                 </a>
             @endforeach
         </div>
 
-        @if ($transaksis->hasPages())
-            <div class="mt-4">
-                {{ $transaksis->links() }}
+        <form method="GET" action="{{ route('transaksi.index') }}" class="trans-search-filter-controls js-toolbar-form">
+            <input type="hidden" name="status" value="{{ $statusFilter }}">
+            @if ($layananFilter > 0)
+                <input type="hidden" name="layanan" value="{{ $layananFilter }}">
+            @endif
+            @if ($metodeFilter !== '')
+                <input type="hidden" name="metode" value="{{ $metodeFilter }}">
+            @endif
+
+            <div class="trans-search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="transaction-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari ID, nama pelanggan, layanan...">
             </div>
-        @endif
+
+            <div class="trans-date-filter-group">
+                <input type="date" id="filter-date-from" name="dari" value="{{ $dari ?? '' }}" class="date-input-inline js-auto-submit" title="Dari Tanggal">
+                <span class="date-separator">-</span>
+                <input type="date" id="filter-date-to" name="sampai" value="{{ $sampai ?? '' }}" class="date-input-inline js-auto-submit" title="Sampai Tanggal">
+                <button type="button" class="btn-date-reset" id="btn-reset-dates" title="Reset Filter Tanggal">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grouped Transaction Container per Day -->
+    <div class="trans-daily-groups-container" id="transaction-history-list" data-field="transaction-history-list">
+        @forelse ($grouped as $tanggal => $dayTrxs)
+            @php
+                $dateObj = \Illuminate\Support\Carbon::parse($tanggal);
+                $dayName = $namaHari[$dateObj->dayOfWeek];
+                $dateLabel = $dayName.', '.$dateObj->day.' '.$namaBulan[$dateObj->month - 1].' '.$dateObj->year;
+                if ($dateObj->isSameDay($today)) {
+                    $heading = 'Hari Ini — '.$dateLabel;
+                } elseif ($dateObj->isSameDay($yesterday)) {
+                    $heading = 'Kemarin — '.$dateLabel;
+                } else {
+                    $heading = $dateLabel;
+                }
+                $dayTotal = $dayTrxs->sum(fn ($t) => $t->status === 'selesai' ? (float) $t->total_bayar : 0);
+            @endphp
+
+            <div class="daily-group-card">
+                <div class="daily-group-header">
+                    <div class="daily-group-title">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>{{ $heading }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="daily-group-badge">{{ $dayTrxs->count() }} Transaksi</span>
+                        <span style="font-size: 0.82rem; font-weight: 800; color: #B45309;">{{ $fmt($dayTotal) }}</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive-wrapper">
+                    <table class="daily-trans-table">
+                        <thead>
+                            <tr>
+                                <th>ID / Waktu</th>
+                                <th>Pelanggan</th>
+                                <th>Layanan &amp; Stylist</th>
+                                <th>Total Biaya</th>
+                                <th>Metode Bayar</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($dayTrxs as $t)
+                                @php
+                                    $detailRows = $t->details->where('subtotal', '>', 0);
+                                    $namaBarang = $detailRows->map(function ($d) {
+                                        if ($d->tipe_item === 'layanan' && $d->layanan) {
+                                            return $d->layanan->nama_layanan.($d->varian_dipilih ? ' ('.ucfirst($d->varian_dipilih).')' : '');
+                                        }
+                                        if ($d->tipe_item === 'produk' && $d->produk) {
+                                            return $d->produk->nama_produk;
+                                        }
+                                        return '(Item)';
+                                    })->unique()->take(2)->values();
+                                    $stafNames = $t->details->pluck('staf.nama')->filter()->unique()->take(2)->values();
+                                    $iniNama = collect(preg_split('/\s+/', trim((string) ($t->pelanggan->nama ?? ''))))->take(2)->map(fn ($w) => mb_substr($w, 0, 1))->implode('');
+                                    $methodInfo = $metodeMap[$t->metode_pembayaran] ?? ['badge' => '', 'label' => $t->labelMetode()];
+                                    $statusInfo = $statusMap[$t->status] ?? ['pill' => '', 'label' => ucfirst($t->status ?? '')];
+                                @endphp
+
+                                <tr data-trx-id="{{ $t->id }}">
+                                    <td style="width: 110px;">
+                                        <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link js-open-receipt" data-trx-id="{{ $t->id }}">{{ $t->no_struk }}</a>
+                                        <div style="font-size: 0.72rem; color: var(--text-muted);">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('H:i') : '--:--' }} WIB</div>
+                                    </td>
+                                    <td>
+                                        <div class="trans-client-meta">
+                                            <span class="trans-client-avatar">{{ $iniNama }}</span>
+                                            <div>
+                                                <div class="trans-client-name">{{ $t->pelanggan->nama ?? '-' }}</div>
+                                                <div class="trans-client-phone">{{ $t->pelanggan->no_wa ?? 'No. WA belum diisi' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="trans-service-title">{{ $namaBarang->join(', ') }}</div>
+                                        <div class="trans-worker-tag">Stylist: <strong>{{ $stafNames->join(', ') ?: '-' }}</strong></div>
+                                    </td>
+                                    <td>
+                                        <div class="trans-amount-cell">{{ $fmt($t->total_bayar) }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="payment-method-badge {{ $methodInfo['badge'] }}">{{ $methodInfo['label'] }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-pill {{ $statusInfo['pill'] }}">{{ $statusInfo['label'] }}</span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <button type="button" class="btn-detail-receipt js-open-receipt" data-trx-id="{{ $t->id }}">Detail Struk</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @empty
+            <div class="empty-state-card">
+                <div class="empty-state-content">
+                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    @if ($q !== '' || ($dari ?? '') !== '' || ($sampai ?? '') !== '' || $statusFilter !== '' || $layananFilter > 0)
+                        <p class="empty-state-text">Tidak ada transaksi yang cocok dengan filter yang dipilih.</p>
+                    @else
+                        <p class="empty-state-text">Belum ada transaksi. Klik "Tambah Transaksi" untuk membuat transaksi pertama.</p>
+                    @endif
+                </div>
+            </div>
+        @endforelse
+    </div>
+
+    @if ($transaksis->hasPages())
+        <div class="mt-4 mb-6">
+            @include('partials.pagination', ['paginator' => $transaksis])
+        </div>
     @endif
+
+    <!-- Receipt Templates (server-rendered, dipakai modal) -->
+    @foreach (collect($transaksis->items()) as $t)
+        <template id="tpl-receipt-{{ $t->id }}">
+            @php
+                $detailRows = $t->details->where('subtotal', '>', 0);
+            @endphp
+            <div style="text-align: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                <h2 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: var(--text-primary);">Afwo. Hair Design</h2>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Official Salon Payment Receipt</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 8px;">
+                <span style="color: var(--text-muted);">No. Transaksi:</span>
+                <strong style="font-family: monospace;">{{ $t->no_struk }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 8px;">
+                <span style="color: var(--text-muted);">Waktu:</span>
+                <strong>{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('d M Y - H:i') : '-' }} WIB</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 8px;">
+                <span style="color: var(--text-muted);">Pelanggan:</span>
+                <strong>{{ $t->pelanggan->nama ?? '-' }}{{ $t->pelanggan && $t->pelanggan->no_wa ? ' ('.$t->pelanggan->no_wa.')' : '' }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 12px;">
+                <span style="color: var(--text-muted);">Stylist:</span>
+                <strong>{{ $detailRows->pluck('staf.nama')->filter()->unique()->join(', ') ?: '-' }}</strong>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-color); border-bottom: 1px dashed var(--border-color); padding: 10px 0; margin-bottom: 12px;">
+                @forelse ($detailRows as $d)
+                    @php
+                        if ($d->tipe_item === 'layanan' && $d->layanan) {
+                            $dNama = $d->layanan->nama_layanan.($d->varian_dipilih ? ' ('.ucfirst($d->varian_dipilih).')' : '');
+                        } elseif ($d->tipe_item === 'produk' && $d->produk) {
+                            $dNama = $d->produk->nama_produk;
+                        } else {
+                            $dNama = '(Item)';
+                        }
+                    @endphp
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.88rem; margin-bottom: 4px;">
+                        <span>{{ $dNama }}{{ (float) $d->qty != 1 ? ' × '.rtrim(rtrim((string) $d->qty, '0'), '.') : '' }}</span>
+                        <span>{{ $fmt($d->subtotal) }}</span>
+                    </div>
+                    @forelse ($d->produkPenggunaan as $pu)
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 2px 12px;">
+                            <span>├ Pemakaian: {{ $pu->produk->nama_produk ?? 'Produk' }} ({{ rtrim(rtrim((string) $pu->pemakaian_ml, '0'), '.') }} ml)</span>
+                            <span>-</span>
+                        </div>
+                    @empty
+                    @endforelse
+                @empty
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Tidak ada item.</div>
+                @endforelse
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: #B45309; margin-bottom: 8px;">
+                <span>TOTAL:</span>
+                <span>{{ $fmt($t->total_bayar) }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);">
+                <span>Metode Pembayaran:</span>
+                <span style="font-weight: 700; color: var(--text-primary);">{{ $t->labelMetode() }}</span>
+            </div>
+        </template>
+    @endforeach
+
+    <!-- Detail Transaksi Modal Dialog -->
+    <div id="trans-detail-modal" class="modal-backdrop" aria-hidden="true">
+        <div class="modal-dialog-card">
+            <div class="modal-header-row">
+                <h3 class="modal-header-title">Detail Struk Transaksi</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-modal">✕</button>
+            </div>
+            <div class="modal-body-content" id="modal-receipt-body"></div>
+            <div class="modal-footer-row">
+                <button type="button" class="btn-print-receipt" id="btn-print-receipt">Cetak Struk</button>
+                <button type="button" class="btn-modal-close-action" id="btn-modal-close-action">Tutup</button>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toolbar = document.querySelector('.js-toolbar-form');
+
+            function submitToolbar() {
+                if (toolbar) toolbar.submit();
+            }
+
+            var debounceTimer = null;
+            var searchInput = document.getElementById('transaction-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(submitToolbar, 600);
+                });
+            }
+
+            toolbar.querySelectorAll('.js-auto-submit').forEach(function (el) {
+                el.addEventListener('change', submitToolbar);
+            });
+
+            var btnResetDates = document.getElementById('btn-reset-dates');
+            if (btnResetDates) {
+                btnResetDates.addEventListener('click', function () {
+                    var from = document.getElementById('filter-date-from');
+                    var to = document.getElementById('filter-date-to');
+                    if (from) from.value = '';
+                    if (to) to.value = '';
+                    submitToolbar();
+                });
+            }
+
+            var modal = document.getElementById('trans-detail-modal');
+            var modalBody = document.getElementById('modal-receipt-body');
+
+            document.querySelectorAll('.js-open-receipt').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var id = btn.getAttribute('data-trx-id');
+                    var tpl = document.getElementById('tpl-receipt-' + id);
+                    if (!tpl || !modalBody || !modal) return;
+                    modalBody.innerHTML = '';
+                    modalBody.appendChild(tpl.content.cloneNode(true));
+                    modal.classList.add('show');
+                });
+            });
+
+            var closes = [
+                document.getElementById('btn-close-modal'),
+                document.getElementById('btn-modal-close-action')
+            ];
+            closes.forEach(function (btn) {
+                if (btn) btn.addEventListener('click', function () {
+                    if (modal) modal.classList.remove('show');
+                });
+            });
+
+            var btnPrint = document.getElementById('btn-print-receipt');
+            if (btnPrint) btnPrint.addEventListener('click', function () {
+                window.print();
+            });
+        });
+    </script>
+@endpush

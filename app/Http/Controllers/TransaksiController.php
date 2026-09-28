@@ -28,10 +28,12 @@ class TransaksiController extends Controller
         $sampai = $request->query('sampai');
 
         $transaksis = TransaksiKunjungan::query()
-            ->with('pelanggan')
+            ->with(['pelanggan', 'details.staf', 'details.layanan', 'details.produk'])
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('no_struk', 'like', "%{$q}%")
-                    ->orWhereHas('pelanggan', fn ($qr) => $qr->where('nama', 'like', "%{$q}%"));
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('no_struk', 'like', "%{$q}%")
+                        ->orWhereHas('pelanggan', fn ($qr) => $qr->where('nama', 'like', "%{$q}%"));
+                });
             })
             ->when($statusFilter !== '' && in_array($statusFilter, ['selesai', 'batal']), function ($query) use ($statusFilter) {
                 $query->where('status', $statusFilter);
@@ -52,9 +54,16 @@ class TransaksiController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        $kpi = [
+            'total' => TransaksiKunjungan::count(),
+            'selesai' => TransaksiKunjungan::where('status', 'selesai')->count(),
+            'batal' => TransaksiKunjungan::where('status', 'batal')->count(),
+            'pemasukan' => (float) TransaksiKunjungan::where('status', 'selesai')->sum('total_bayar'),
+        ];
+
         $layanans = Layanan::where('aktif', true)->orderBy('nama_layanan')->get();
 
-        return view('transaksis.index', compact('transaksis', 'q', 'statusFilter', 'metodeFilter', 'layananFilter', 'layanans', 'dari', 'sampai'));
+        return view('transaksis.index', compact('transaksis', 'q', 'statusFilter', 'metodeFilter', 'layananFilter', 'layanans', 'dari', 'sampai', 'kpi'));
     }
 
     public function create()

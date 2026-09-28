@@ -1,0 +1,367 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - VERTICAL ADMIN SIDEBAR & RESPONSIVE NAV STYLES
+   ========================================================================== */
+
+/* Dark Backdrop Overlay (Mobile Drawer) */
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.nav-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Layout Wrapper */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--bg-main);
+  box-sizing: border-box;
+}
+
+/* Vertical Admin Sidebar */
+.admin-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: var(--sidebar-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 60;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Sidebar Brand Header */
+.sidebar-brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px 18px 8px;
+  border-bottom: 1px solid var(--sidebar-divider);
+  margin-bottom: 16px;
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-brand-title {
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.sidebar-brand-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+
+.nav-close-btn {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 6px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.nav-close-btn:hover {
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Vertical Navigation Menu */
+.sidebar-nav-container {
+  flex: 1;
+}
+
+.sidebar-section-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+  padding: 12px 14px 4px 14px;
+}
+
+.sidebar-menu-list,
+ul.sidebar-menu-list {
+  list-style: none !important;
+  list-style-type: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.sidebar-nav-item,
+li.sidebar-nav-item {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--sidebar-text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.sidebar-nav-link:hover {
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Active Item State */
+.sidebar-nav-link.active,
+a.sidebar-nav-link.active {
+  background-color: #282A30 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-nav-link.active::before,
+a.sidebar-nav-link.active::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 6px !important;
+  bottom: 6px !important;
+  width: 3.5px !important;
+  background-color: var(--accent-gold) !important;
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.sidebar-nav-link.active .nav-icon,
+a.sidebar-nav-link.active .nav-icon {
+  color: var(--accent-gold) !important;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--sidebar-text-muted);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.sidebar-nav-link:hover .nav-icon {
+  color: #FFFFFF;
+}
+
+/* Sidebar User Footer */
+.sidebar-user-footer {
+  padding-top: 14px;
+  border-top: 1px solid var(--sidebar-divider);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.sidebar-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--accent-gold);
+  color: #111827;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidebar-user-meta .user-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.sidebar-user-meta .user-role {
+  font-size: 0.72rem;
+  color: var(--sidebar-text-muted);
+}
+
+.sidebar-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #EF4444;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease;
+}
+
+.sidebar-logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.12);
+}
+
+/* Main Content Area */
+.app-main-content {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-main);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Centered Content Column (default 1280px, override per page) */
+.app-content {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Halaman laporan & kalender appointment boleh melebar sampai 1440px */
+.app-content.app-content-wide {
+  max-width: 1440px;
+}
+
+.mobile-top-header {
+  display: none;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (DESKTOP VS MOBILE/TABLET)
+   ========================================================================== */
+
+/* Desktop (> 1024px) */
+@media (min-width: 1025px) {
+  .admin-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .mobile-only {
+    display: none !important;
+  }
+  .mobile-top-header {
+    display: none !important;
+  }
+  .app-main {
+    padding: 24px 36px 80px 36px;
+    max-width: none;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Mobile & Tablet (<= 1024px) */
+@media (max-width: 1024px) {
+  .app-layout {
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 82vw;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .admin-sidebar.is-active {
+    transform: translateX(0);
+  }
+
+  .nav-close-btn.mobile-only {
+    display: flex !important;
+  }
+
+  .mobile-top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background-color: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .app-main {
+    padding: 14px 16px 80px 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+}

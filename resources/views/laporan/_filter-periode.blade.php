@@ -2,81 +2,75 @@
     $currentPreset = $preset ?? 'bulan-ini';
 @endphp
 
-<div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-    <form action="{{ $action ?? '#' }}" method="GET" class="space-y-4">
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+<div class="report-filter-card" data-field="report-filters">
+    <form action="{{ $action ?? '#' }}" method="GET">
+        <div class="report-filter-grid">
+
             {{-- Preset Periode --}}
-            <div>
-                <label class="block text-xs font-medium text-gray-500">Periode Cepat</label>
-                <select name="preset" id="preset-select"
-                        class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
-                    <option value="harian" {{ $currentPreset === 'harian' ? 'selected' : '' }}>Harian</option>
-                    <option value="mingguan" {{ $currentPreset === 'mingguan' ? 'selected' : '' }}>Mingguan (Sen–Min)</option>
-                    <option value="bulan-ini" {{ $currentPreset === 'bulan-ini' ? 'selected' : '' }}>Bulan Ini</option>
-                    <option value="bulan-lalu" {{ $currentPreset === 'bulan-lalu' ? 'selected' : '' }}>Bulan Lalu</option>
-                    <option value="custom" {{ $currentPreset === 'custom' ? 'selected' : '' }}>Custom</option>
-                </select>
+            <div class="form-group-item">
+                <label class="form-label" for="preset-select">Periode</label>
+                <div class="form-input-box">
+                    <select name="preset" id="preset-select" class="form-select-control">
+                        <option value="harian" {{ $currentPreset === 'harian' ? 'selected' : '' }}>Harian</option>
+                        <option value="mingguan" {{ $currentPreset === 'mingguan' ? 'selected' : '' }}>Mingguan (Sen–Min)</option>
+                        <option value="bulan-ini" {{ $currentPreset === 'bulan-ini' ? 'selected' : '' }}>Bulan Ini</option>
+                        <option value="bulan-lalu" {{ $currentPreset === 'bulan-lalu' ? 'selected' : '' }}>Bulan Lalu</option>
+                        <option value="custom" {{ $currentPreset === 'custom' ? 'selected' : '' }}>Custom</option>
+                    </select>
+                </div>
             </div>
 
             {{-- Dari Tanggal --}}
-            <div>
-                <label class="block text-xs font-medium text-gray-500">Dari Tanggal</label>
-                <input type="date" name="dari" id="filter-dari" value="{{ $dari ?? '' }}"
-                       class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+            <div class="form-group-item">
+                <label class="form-label" for="filter-dari">Dari Tanggal</label>
+                <div class="form-input-box">
+                    <input type="date" name="dari" id="filter-dari" value="{{ $dari ?? '' }}" class="form-input-control">
+                </div>
             </div>
 
             {{-- Sampai Tanggal --}}
-            <div>
-                <label class="block text-xs font-medium text-gray-500">Sampai Tanggal</label>
-                <input type="date" name="sampai" id="filter-sampai" value="{{ $sampai ?? '' }}"
-                       class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+            <div class="form-group-item">
+                <label class="form-label" for="filter-sampai">Sampai Tanggal</label>
+                <div class="form-input-box">
+                    <input type="date" name="sampai" id="filter-sampai" value="{{ $sampai ?? '' }}" class="form-input-control">
+                </div>
             </div>
 
-            <div class="flex items-end gap-2">
-                <button type="submit"
-                        class="rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
-                    Filter
-                </button>
-                <a href="{{ $resetUrl ?? '#' }}"
-                   class="rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    Reset
-                </a>
-            </div>
-        </div>
-
-        {{-- Filter Tambahan --}}
-        @if (isset($showExtraFilters) && $showExtraFilters)
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 border-t border-gray-100 pt-4">
-                @if (isset($showJenisPengerjaan) && $showJenisPengerjaan)
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500">Jenis Pengerjaan</label>
-                        <select name="jenis_pengerjaan"
-                                class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+            {{-- Jenis Pengerjaan (opsional) --}}
+            @if (isset($showJenisPengerjaan) && $showJenisPengerjaan)
+                <div class="form-group-item">
+                    <label class="form-label" for="filter-jenis">Jenis Pengerjaan</label>
+                    <div class="form-input-box">
+                        <select name="jenis_pengerjaan" id="filter-jenis" class="form-select-control">
                             <option value="">Semua</option>
                             <option value="sendiri" {{ ($jenisPengerjaan ?? '') === 'sendiri' ? 'selected' : '' }}>Sendiri</option>
                             <option value="berdua" {{ ($jenisPengerjaan ?? '') === 'berdua' ? 'selected' : '' }}>Berdua</option>
                         </select>
                     </div>
-                @endif
+                </div>
+            @endif
 
-                @if (isset($karyawans))
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500">Staf</label>
-                        <select name="id_staf"
-                                class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+            {{-- Staf (jika ada daftar karyawan) --}}
+            @if (isset($karyawans))
+                <div class="form-group-item">
+                    <label class="form-label" for="filter-staf">Staf</label>
+                    <div class="form-input-box">
+                        <select name="id_staf" id="filter-staf" class="form-select-control">
                             <option value="">Semua Staf</option>
                             @foreach ($karyawans as $k)
                                 <option value="{{ $k->id }}" {{ ($stafId ?? '') == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
                             @endforeach
                         </select>
                     </div>
-                @endif
+                </div>
+            @endif
 
-                @if (isset($showMetode) && $showMetode)
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500">Metode Pembayaran</label>
-                        <select name="metode_pembayaran"
-                                class="mt-1 block w-full rounded-lg border-gray-300 bg-card text-text-primary px-3 py-2 text-sm shadow-sm placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-accent/30">
+            {{-- Metode Pembayaran (opsional) --}}
+            @if (isset($showMetode) && $showMetode)
+                <div class="form-group-item">
+                    <label class="form-label" for="filter-metode">Metode Pembayaran</label>
+                    <div class="form-input-box">
+                        <select name="metode_pembayaran" id="filter-metode" class="form-select-control">
                             <option value="">Semua</option>
                             <option value="cash" {{ ($metode ?? '') === 'cash' ? 'selected' : '' }}>Cash</option>
                             <option value="qris_bni" {{ ($metode ?? '') === 'qris_bni' ? 'selected' : '' }}>QRIS BNI</option>
@@ -86,9 +80,20 @@
                             <option value="transfer" {{ ($metode ?? '') === 'transfer' ? 'selected' : '' }}>Transfer</option>
                         </select>
                     </div>
-                @endif
-            </div>
-        @endif
+                </div>
+            @endif
+
+        </div>
+
+        <div class="report-filter-actions">
+            <button type="submit" class="btn-filter-apply">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Terapkan Filter
+            </button>
+            <a href="{{ $resetUrl ?? '#' }}" class="btn-filter-reset">Reset</a>
+        </div>
     </form>
 </div>
 

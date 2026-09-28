@@ -1,117 +1,183 @@
 @extends('layouts.app')
 
 @section('title', 'Data Pelanggan')
+@section('nav-active', 'customers')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/clients.css') }}">
+@endpush
 
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-text-primary">Data Pelanggan</h1>
-            <p class="mt-1 text-sm text-text-muted">
-                {{ $pelanggans->total() }} pelanggan terdaftar.
-            </p>
+    <div class="clients-page-stack">
+
+        <div class="clients-header-row">
+            <div class="clients-title-group">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <h1 class="clients-title">Data Pelanggan</h1>
+                    <span class="clients-count-badge">{{ $pelanggans->total() }} Pelanggan</span>
+                </div>
+                <p class="clients-subtitle">Database riwayat profil, jenis &amp; kondisi rambut, preferensi formula, dan alamat pelanggan.</p>
+            </div>
+
+            <a href="{{ route('pelanggan.create') }}" class="btn-primary-gold btn-add-client-gold" id="btn-add-client">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Tambah Pelanggan</span>
+            </a>
         </div>
 
-        <div class="flex items-center gap-2">
-            <form action="{{ route('pelanggan.index') }}" method="GET" class="flex w-full max-w-sm items-center gap-2">
-                <input type="text" name="q" value="{{ $q }}"
-                       placeholder="Cari nama, no. WA, IG, alamat..."
-                       class="block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                <button type="submit"
-                        class="rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                    Cari
-                </button>
+        <div class="clients-toolbar-card">
+            <div class="clients-tabs-row">
+                @php
+                    $tabs = [
+                        'all' => 'Semua Pelanggan',
+                        'sehat' => 'Rambut Sehat',
+                        'agak-rusak' => 'Agak Rusak',
+                        'rusak' => 'Rusak',
+                    ];
+                @endphp
+                @foreach ($tabs as $slug => $label)
+                    @php
+                        $tabUrl = route('pelanggan.index', array_filter([
+                            'q' => $q,
+                            'sort' => $sort,
+                            'kondisi' => $slug === 'all' ? null : $slug,
+                        ], fn ($v) => $v !== '' && $v !== null));
+                    @endphp
+                    <a href="{{ $tabUrl }}" class="client-filter-tab {{ $kondisi === $slug ? 'active' : '' }}" data-filter="{{ $slug }}">{{ $label }}</a>
+                @endforeach
+            </div>
+
+            <form method="GET" action="{{ route('pelanggan.index') }}" class="clients-controls-right js-toolbar-form">
+                <div class="client-search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="client-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari nama, WhatsApp, IG, alamat...">
+                </div>
+
+                <div class="client-sort-box">
+                    <span class="sort-prefix-label">Urutkan:</span>
+                    <select id="client-sort-select" name="sort" class="sort-select-control js-auto-submit">
+                        <option value="name-asc" @selected($sort === 'name-asc')>Nama (A - Z)</option>
+                        <option value="name-desc" @selected($sort === 'name-desc')>Nama (Z - A)</option>
+                        <option value="hair-type" @selected($sort === 'hair-type')>Jenis Rambut</option>
+                        <option value="condition" @selected($sort === 'condition')>Kondisi Rambut</option>
+                    </select>
+                </div>
+
+                <div class="mobile-filter-dropdown-wrap">
+                    <select id="client-mobile-condition-select" name="kondisi" class="sort-select-control js-auto-submit" aria-label="Filter Kondisi Rambut">
+                        <option value="all" @selected($kondisi === 'all')>Semua Kondisi</option>
+                        <option value="sehat" @selected($kondisi === 'sehat')>Rambut Sehat</option>
+                        <option value="agak-rusak" @selected($kondisi === 'agak-rusak')>Agak Rusak</option>
+                        <option value="rusak" @selected($kondisi === 'rusak')>Rusak</option>
+                    </select>
+                    <select id="client-mobile-sort-select" name="sort" class="sort-select-control js-auto-submit" aria-label="Urutkan Pelanggan">
+                        <option value="name-asc" @selected($sort === 'name-asc')>Nama (A - Z)</option>
+                        <option value="name-desc" @selected($sort === 'name-desc')>Nama (Z - A)</option>
+                        <option value="hair-type" @selected($sort === 'hair-type')>Jenis Rambut</option>
+                        <option value="condition" @selected($sort === 'condition')>Kondisi Rambut</option>
+                    </select>
+                </div>
             </form>
-            <a href="{{ route('pelanggan.arsip') }}"
-               class="inline-flex shrink-0 items-center rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                Arsip
-            </a>
-            <a href="{{ route('pelanggan.create') }}"
-               class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-                <span class="text-lg leading-none">+</span>
-                <span class="hidden sm:inline">Tambah</span>
-            </a>
         </div>
-    </div>
 
-    @if ($pelanggans->isEmpty())
-        <div class="rounded-xl border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
-            <p class="text-sm font-medium text-text-secondary">Belum ada data pelanggan.</p>
-            @if ($q !== '')
-                <p class="mt-1 text-sm text-text-muted">Tidak ditemukan hasil untuk "<span class="font-medium">{{ $q }}</span>".</p>
-                <a href="{{ route('pelanggan.index') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Tampilkan semua
-                </a>
-            @else
-                <a href="{{ route('pelanggan.create') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    Tambah pelanggan pertama &rarr;
-                </a>
-            @endif
-        </div>
-    @else
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach ($pelanggans as $p)
-                <div class="flex flex-col rounded-xl border border-gray-200 bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                    <p class="font-medium text-text-primary">{{ $p->nama }}</p>
-
-                    @if ($p->catatan_khusus)
-                        <a href="{{ route('pelanggan.show', $p) }}"
-                           class="mt-1.5 block line-clamp-2 rounded-md bg-amber-50 px-2.5 py-1.5 text-xs text-amber-800 hover:bg-amber-100">
-                            <span class="font-semibold">Catatan:</span> {{ $p->catatan_khusus }}
-                        </a>
-                    @endif
-
-                    <dl class="mt-2 flex-1 space-y-1 text-sm">
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">WhatsApp</dt>
-                            <dd class="text-right text-text-primary">
-                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $p->no_wa) }}" target="_blank" class="text-success hover:underline">
-                                    {{ $p->no_wa }}
-                                </a>
-                            </dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Instagram</dt>
-                            <dd class="text-right text-text-primary">{{ $p->username_instagram ? ltrim($p->username_instagram, '@') : '-' }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Jenis Kelamin</dt>
-                            <dd class="text-right text-text-primary">{{ $p->jenis_kelamin ? ($p->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan') : '-' }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Jenis Rambut</dt>
-                            <dd class="text-right text-text-primary">{{ $p->jenis_rambut ?? '-' }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Alamat</dt>
-                            <dd class="max-w-[60%] break-words text-right text-text-primary">{{ $p->alamat ?? '-' }}</dd>
-                        </div>
-                    </dl>
-
-                    <div class="mt-3 flex items-center gap-4 border-t border-gray-100 pt-3 text-sm">
-                        <a href="{{ route('pelanggan.show', $p) }}" class="font-medium text-blue-600 hover:text-blue-800">
-                            Detail
-                        </a>
-                        <a href="{{ route('pelanggan.edit', $p) }}" class="font-medium text-accent-text hover:text-accent">
-                            Edit
-                        </a>
-                        <form action="{{ route('pelanggan.destroy', $p) }}" method="POST"
-                              class="ml-auto"
-                              onsubmit="return confirm('Hapus pelanggan &quot;{{ addslashes($p->nama) }}&quot;?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                                Hapus
-                            </button>
-                        </form>
+        @if ($pelanggans->isEmpty())
+            <div class="clients-directory-card">
+                <div class="empty-state-card">
+                    <div class="empty-state-content">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        @if ($q !== '' || $kondisi !== 'all')
+                            <p class="empty-state-text">Tidak ada data pelanggan yang cocok dengan pencarian.</p>
+                            <a href="{{ route('pelanggan.index') }}" class="btn-client-action btn-client-edit" style="border-radius: var(--radius-md); padding: 8px 16px;">Tampilkan Semua</a>
+                        @else
+                            <p class="empty-state-text">Belum ada data pelanggan. Tambahkan pelanggan pertama untuk memulai.</p>
+                            <a href="{{ route('pelanggan.create') }}" class="btn-primary-gold btn-add-client-gold" style="width: auto;">Tambah Pelanggan</a>
+                        @endif
                     </div>
                 </div>
-            @endforeach
-        </div>
-
-        @if ($pelanggans->hasPages())
-            <div class="mt-4">
-                {{ $pelanggans->links() }}
             </div>
+        @else
+            <div class="clients-directory-card">
+                <div class="table-responsive-wrapper">
+                    <table class="clients-detail-table" id="clients-table">
+                        <thead>
+                            <tr>
+                                <th>NAMA PELANGGAN</th>
+                                <th class="col-phone">NO. WHATSAPP</th>
+                                <th class="col-gender">JENIS KELAMIN</th>
+                                <th class="col-hair-type">JENIS RAMBUT</th>
+                                <th class="col-condition">KONDISI RAMBUT</th>
+                                <th class="col-notes">CATATAN</th>
+                                <th style="text-align: right; width: 140px;">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="client-table-body">
+                            @foreach ($pelanggans as $p)
+                                @php
+                                    $gender = $p->jenis_kelamin === 'L' ? 'Laki-laki' : ($p->jenis_kelamin === 'P' ? 'Perempuan' : '-');
+                                    $kondisiBadge = match ($p->kondisi_rambut) {
+                                        'Rusak' => 'condition-rusak',
+                                        'Agak Rusak' => 'condition-agak-rusak',
+                                        default => 'condition-sehat',
+                                    };
+                                    $kondisiDisplay = $p->kondisi_rambut ?? 'Sehat';
+                                @endphp
+                                <tr data-client-id="{{ $p->id }}" class="js-client-row"
+                                    data-name="{{ $p->nama }}"
+                                    data-phone="{{ $p->no_wa }}"
+                                    data-instagram="{{ $p->username_instagram ?: '-' }}"
+                                    data-gender="{{ $gender }}"
+                                    data-hair-type="{{ $p->jenis_rambut ?: '-' }}"
+                                    data-hair-condition="{{ $kondisiDisplay }}"
+                                    data-domicile="{{ $p->alamat ?: '-' }}"
+                                    data-notes="{{ $p->catatan_khusus ?: 'Tidak ada catatan khusus.' }}"
+                                    data-edit-url="{{ route('pelanggan.edit', $p) }}"
+                                    data-appointment-url="{{ route('appointment.create', ['pelanggan' => $p->id]) }}">
+                                    <td>
+                                        <a href="{{ route('pelanggan.show', $p) }}" class="client-name-title">{{ $p->nama }}</a>
+                                    </td>
+                                    <td class="col-phone">
+                                        <span class="client-phone-num">{{ $p->no_wa }}</span>
+                                    </td>
+                                    <td class="col-gender">
+                                        <span class="gender-tag">{{ $gender }}</span>
+                                    </td>
+                                    <td class="col-hair-type">
+                                        <span class="hair-type-badge">{{ $p->jenis_rambut ?: '-' }}</span>
+                                    </td>
+                                    <td class="col-condition">
+                                        <span class="condition-badge {{ $kondisiBadge }}">{{ $kondisiDisplay }}</span>
+                                    </td>
+                                    <td class="col-notes">
+                                        <span class="client-notes-ellipsis" title="{{ $p->catatan_khusus ?: '-' }}">{{ $p->catatan_khusus ?: '-' }}</span>
+                                    </td>
+                                    <td style="text-align: right;" onclick="event.stopPropagation();">
+                                        <div class="client-actions-cell">
+                                            <a href="{{ route('pelanggan.edit', $p) }}" class="btn-client-action btn-client-edit">Edit</a>
+                                            <a href="{{ route('appointment.create', ['pelanggan' => $p->id]) }}" class="btn-client-action btn-client-schedule">+ Janji</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @include('partials.pagination', ['paginator' => $pelanggans])
         @endif
-    @endif
+    </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/clients.js') }}"></script>
+@endpush

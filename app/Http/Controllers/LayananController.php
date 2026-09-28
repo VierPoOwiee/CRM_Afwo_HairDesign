@@ -16,25 +16,53 @@ class LayananController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
-        $kategoriFilter = trim((string) $request->query('kategori'));
+        $kategoriSlug = trim((string) $request->query('kategori', 'all'));
+
+        if ($kategoriSlug === '') {
+            $kategoriSlug = 'all';
+        }
 
         $kategoriList = ['Potong', 'Styling', 'Treatment Rambut', 'Warna Rambut', 'Treatment'];
+
+        $slugMap = [
+            'all' => null,
+            'potong' => 'Potong',
+            'styling' => 'Styling',
+            'warna' => 'Warna Rambut',
+            'spa' => ['Treatment', 'Treatment Rambut'],
+        ];
 
         $layanans = Layanan::query()
             ->with('hargaLayanan')
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('nama_layanan', 'like', "%{$q}%")
-                    ->orWhere('kategori', 'like', "%{$q}%");
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama_layanan', 'like', "%{$q}%")
+                        ->orWhere('kategori', 'like', "%{$q}%");
+                });
             })
-            ->when($kategoriFilter !== '', function ($query) use ($kategoriFilter) {
-                $query->where('kategori', $kategoriFilter);
+            ->when(isset($slugMap[$kategoriSlug]), function ($query) use ($slugMap, $kategoriSlug) {
+                $kategori = $slugMap[$kategoriSlug];
+
+                if ($kategori === null) {
+                    return;
+                }
+
+                if (is_array($kategori)) {
+                    $query->whereIn('kategori', $kategori);
+                } else {
+                    $query->where('kategori', $kategori);
+                }
+            }, function ($query) use ($kategoriSlug) {
+                if ($kategoriSlug !== 'all') {
+                    $query->where('kategori', $kategoriSlug);
+                }
             })
             ->orderBy('kategori')
             ->orderBy('nama_layanan')
             ->paginate(10)
             ->withQueryString();
 
-        return view('layanans.index', compact('layanans', 'q', 'kategoriFilter', 'kategoriList'));
+        return view('layanans.index', compact('layanans', 'q', 'kategoriSlug', 'kategoriList'));
     }
 
     public function create()

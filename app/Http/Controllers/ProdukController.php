@@ -15,9 +15,9 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
-        $mode = (string) $request->query('mode', 'layanan');
-        if (! in_array($mode, ['layanan', 'pcs'], true)) {
-            $mode = 'layanan';
+        $mode = (string) $request->query('mode', 'all');
+        if (! in_array($mode, ['all', 'layanan', 'pcs'], true)) {
+            $mode = 'all';
         }
         $kategoriFilter = trim((string) $request->query('kategori'));
 
@@ -27,13 +27,13 @@ class ProdukController extends Controller
                     $sub->where('nama_produk', 'like', "%{$q}%")
                         ->orWhere('merek', 'like', "%{$q}%");
                 });
+            })
+            ->when($mode === 'pcs', function ($query) {
+                $query->where('kategori_produk', 'dijual');
+            })
+            ->when($mode === 'layanan', function ($query) {
+                $query->where('kategori_produk', '!=', 'dijual');
             });
-
-        if ($mode === 'pcs') {
-            $produks->where('kategori_produk', 'dijual');
-        } else {
-            $produks->where('kategori_produk', '!=', 'dijual');
-        }
 
         $kategoriList = [];
         if ($mode === 'layanan') {
@@ -43,6 +43,8 @@ class ProdukController extends Controller
             } else {
                 $kategoriFilter = '';
             }
+        } else {
+            $kategoriFilter = '';
         }
 
         $produks = $produks

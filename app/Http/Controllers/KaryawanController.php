@@ -10,17 +10,28 @@ class KaryawanController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
+        $skema = (string) $request->query('skema', 'all');
+        $sort = (string) $request->query('sort', 'name-asc');
 
         $karyawans = Karyawan::query()
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('nama', 'like', "%{$q}%")
-                    ->orWhere('kontak', 'like', "%{$q}%");
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama', 'like', "%{$q}%")
+                        ->orWhere('kontak', 'like', "%{$q}%");
+                });
             })
-            ->orderBy('nama')
+            ->when(in_array($skema, ['per_layanan', 'persen_omset_harian'], true), function ($query) use ($skema) {
+                $query->where('skema_komisi', $skema);
+            })
+            ->when($sort === 'name-desc', fn ($query) => $query->orderByDesc('nama'))
+            ->when($sort === 'salary-desc', fn ($query) => $query->orderByDesc('gaji_pokok'))
+            ->when($sort === 'salary-asc', fn ($query) => $query->orderBy('gaji_pokok'))
+            ->when($sort === 'scheme', fn ($query) => $query->orderBy('skema_komisi')->orderBy('nama'))
+            ->when(! in_array($sort, ['name-desc', 'salary-desc', 'salary-asc', 'scheme'], true), fn ($query) => $query->orderBy('nama'))
             ->paginate(10)
             ->withQueryString();
 
-        return view('karyawans.index', compact('karyawans', 'q'));
+        return view('karyawans.index', compact('karyawans', 'q', 'skema', 'sort'));
     }
 
     public function create()

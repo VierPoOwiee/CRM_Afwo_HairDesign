@@ -1,0 +1,331 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - ADD / EDIT APPOINTMENT FORM STYLES (MATCHING DESIGN THEME)
+   ========================================================================== */
+
+.label-with-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.form-inline-action-link {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #B45309;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.form-inline-action-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* Quick Time Slot Picker */
+.time-slot-quick-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: -4px;
+}
+
+.quick-slot-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slot-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.slot-pill-btn {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.slot-pill-btn:hover {
+  border-color: #CBD5E1;
+  color: var(--text-primary);
+}
+
+.slot-pill-btn.active {
+  background-color: var(--dark-solid);
+  border-color: var(--dark-solid);
+  color: #FFFFFF;
+}
+
+.input-suffix-text {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* Error messages hidden by default */
+.field-error-msg {
+  font-size: 0.78rem;
+  color: #DC2626;
+  font-weight: 600;
+  margin-top: 4px;
+  display: none;
+}
+
+/* ==========================================================================
+   MODAL TAMBAH PELANGGAN BARU (di dalam form appointment)
+   ========================================================================== */
+
+.modal-backdrop-plain {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop-plain.show {
+  display: flex;
+}
+
+.modal-card-plain {
+  background-color: #FFFFFF;
+  border-radius: var(--radius-lg);
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-card-plain .form-label {
+  font-size: 0.74rem;
+}
+
+.modal-error-plain {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #B91C1C;
+}
+
+.modal-actions-plain {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.modal-header-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.btn-close-modal:hover {
+  color: var(--text-primary);
+}
+
+.modal-card-plain .text-input-field,
+.modal-card-plain .select-dropdown-field {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.modal-card-plain .text-input-field:focus,
+.modal-card-plain .select-dropdown-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.06);
+}
+
+#new_pelanggan_wa_wrapper label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+#new_pelanggan_wa_wrapper > div {
+  display: flex;
+  gap: 8px;
+  margin-top: 0;
+}
+
+#new_pelanggan_wa_wrapper select,
+#new_pelanggan_wa_wrapper input[type="text"] {
+  border: 1px solid var(--border-color);
+  background-color: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  outline: none;
+}
+
+#new_pelanggan_wa_wrapper select {
+  width: 45%;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+#new_pelanggan_wa_wrapper input[type="text"] {
+  width: 100%;
+  flex: 1;
+}
+
+#new_pelanggan_wa_wrapper select:focus,
+#new_pelanggan_wa_wrapper input[type="text"]:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.06);
+}
+
+/* Kombobox / chip defined by the appointment form */
+.appt-combobox-wrap {
+  position: relative;
+}
+
+.appt-combobox-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 500;
+  outline: none;
+}
+
+.appt-combobox-input::placeholder {
+  color: var(--text-muted);
+}
+
+.appt-combobox-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  max-height: 190px;
+  overflow-y: auto;
+  display: none;
+}
+
+.appt-combobox-results.open {
+  display: block;
+}
+
+.appt-combobox-option {
+  padding: 9px 14px;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.appt-combobox-option:hover {
+  background-color: #FEF3C7;
+}
+
+.appt-combobox-option .sub {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.appt-combobox-empty {
+  padding: 9px 14px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.appt-picked-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #FEF3C7;
+  border: 1px solid #FCD34D;
+  color: #92400E;
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.appt-picked-chip .remove {
+  background: none;
+  border: none;
+  color: #B45309;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.appt-picked-chip .remove:hover {
+  color: var(--text-primary);
+}
+
+.appt-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.appt-duration-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.appt-form-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}

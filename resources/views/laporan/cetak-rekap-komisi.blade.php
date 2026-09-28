@@ -2,23 +2,27 @@
 
 @section('title', 'Cetak Laporan + Slip Pendapatan')
 
+@section('nav-active', 'reports-commission')
+
+@section('container_width', 'app-content-wide')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/rekap-komisi.css') }}">
+@endpush
+
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between no-print">
+
+    <div class="report-intro-section report-toolbar no-print">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Cetak Laporan + Slip Pendapatan</h1>
-            <p class="mt-1 text-sm text-gray-500">
+            <h1 class="report-title">Cetak Laporan + Slip Pendapatan</h1>
+            <p class="report-subtitle">
                 Halaman 1 dst: Laporan Penjualan &amp; Rekap Komisi utama. Setelah itu: Slip Pendapatan, 1 halaman per karyawan.
             </p>
         </div>
-        <div class="flex shrink-0 items-center gap-2">
-            <a href="{{ route('laporan.rekap-komisi', request()->only(['preset', 'dari', 'sampai'])) }}"
-               class="inline-flex items-center gap-2 rounded-lg bg-card px-3 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                Kembali
-            </a>
-            <button onclick="window.print()" class="inline-flex items-center gap-2 rounded-lg bg-dark px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                Cetak Semua
-            </button>
+        <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+            <a href="{{ route('laporan.rekap-komisi', request()->only(['preset', 'dari', 'sampai'])) }}" class="btn-view-slip" style="text-decoration:none;">Kembali</a>
+            <button onclick="window.print()" class="btn-filter-dark">Cetak Semua</button>
         </div>
     </div>
 
@@ -27,7 +31,7 @@
 
     {{-- ===== Bagian 2: slip pendapatan, 1 halaman per karyawan (page-break sebelum tiap slip) ===== --}}
     @foreach ($slips as $item)
-        <div class="page-break mt-10">
+        <div class="page-break">
             @include('laporan._slip-pendapatan', [
                 'karyawan' => $item['karyawan'],
                 'slip' => $item['slip'],
@@ -36,4 +40,5 @@
             ])
         </div>
     @endforeach
+
 @endsection

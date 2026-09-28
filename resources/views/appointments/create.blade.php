@@ -1,20 +1,30 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Appointment')
+@section('title', 'Jadwalkan Kedatangan Klien')
+
+@section('nav-active', 'appointment')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/edit-pelanggan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/add-appointment.css') }}">
+@endpush
 
 @section('content')
-    <div class="flex items-center gap-4">
-        <a href="{{ route('appointment.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tambah Appointment</h1>
-            <p class="mt-1 text-sm text-gray-500">Catat janji temu baru untuk pelanggan.</p>
+        <div class="edit-header-wrapper">
+            <a href="{{ route('appointment.index') }}" id="btn-back-nav" class="back-arrow-link" aria-label="Kembali ke Kalender">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+            <div class="edit-title-group">
+                <h1 class="edit-page-title" id="appointment-form-title">Jadwalkan Kedatangan Klien</h1>
+                <p class="edit-page-subtitle" id="appointment-form-subtitle">Atur jadwal temu, layanan, stylist yang dikerahkan, serta waktu kedatangan.</p>
+            </div>
         </div>
-    </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('appointment.store') }}" method="POST" id="appointmentForm">
+        <form action="{{ route('appointment.store') }}" method="POST" id="appointmentForm" class="card edit-form-card" novalidate>
             @csrf
-            @include('appointments._form', ['submitLabel' => 'Simpan Appointment'])
+            @include('appointments._form', ['submitLabel' => 'Simpan Jadwal Temu'])
         </form>
-    </div>
 @endsection

@@ -1,0 +1,1160 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - ADD TRANSACTION / RESERVATION STYLES (RESPONSIVE)
+   ========================================================================== */
+
+/* Consistent Header (Back Arrow + Title/Subtitle Left, Hamburger Right) */
+.add-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background-color: var(--bg-main);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.header-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Form Stack */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+/* Customer Searchable Combobox Card */
+.customer-combobox-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.combobox-group-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unique-key-hint {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.combobox-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.combobox-input-box {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  gap: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.combobox-input-box:focus-within {
+  border-color: var(--dark-solid);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.combobox-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.combobox-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.combobox-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+
+.combobox-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.combobox-toggle-btn.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.combobox-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  max-height: 230px;
+  overflow-y: auto;
+  z-index: 50;
+  display: none;
+}
+
+.combobox-dropdown.show {
+  display: block;
+}
+
+.combobox-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #F3F4F6;
+  transition: background-color 0.15s ease;
+  gap: 10px;
+}
+
+.combobox-option:last-child {
+  border-bottom: none;
+}
+
+.combobox-option:hover,
+.combobox-option.highlighted {
+  background-color: #F8F9FA;
+}
+
+.combobox-option-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.combobox-option-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.combobox-option-avatar.phone-icon-avatar {
+  background-color: #EFF6FF;
+  color: #2563EB;
+}
+
+.combobox-option-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.combobox-option-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.combobox-option-phone {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.combobox-badge-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  background-color: #F3F4F6;
+  color: #374151;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  border: 1px solid #E5E7EB;
+}
+
+.combobox-no-results {
+  padding: 14px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Native Date & Time Pickers */
+.date-time-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .date-time-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+.native-picker-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Service Item Card */
+.service-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.service-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.service-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2px;
+}
+
+.btn-delete-service {
+  background: none;
+  border: none;
+  color: #EF4444;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-delete-service:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+.select-dropdown-field {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Sub-row additions (Worker & Product) */
+.sub-row-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.sub-row-item .input-container-icon {
+  flex: 1;
+}
+
+.btn-remove-row {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-remove-row:hover {
+  color: #EF4444;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+/* Dashed mini action buttons */
+.btn-dashed-mini {
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-dashed-mini:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Segmented Pill Radio Group (Hair Length & Thickness) */
+.segmented-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.segmented-pill-label {
+  flex: 1;
+  min-width: 60px;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-color);
+  background-color: #FFFFFF;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.segmented-pill-label:hover {
+  border-color: #9CA3AF;
+}
+
+.segmented-pill-label.active,
+.segmented-pill-label:has(input[type="radio"]:checked) {
+  background-color: var(--dark-solid);
+  border-color: var(--dark-solid);
+  color: #FFFFFF;
+}
+
+.segmented-pill-label input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Dosage Stepper (ml) */
+.product-row-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dosage-stepper {
+  display: inline-flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 4px 8px;
+  gap: 6px;
+}
+
+.btn-step {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background-color: #F1F3F5;
+  border: none;
+  color: var(--text-primary);
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.btn-step:hover {
+  background-color: #E2E8F0;
+}
+
+.stepper-input {
+  width: 44px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.unit-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Commission Field & Subtle Hint */
+.commission-hint {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  opacity: 0.58;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Full Width ADD SERVICE button */
+.btn-add-service-full {
+  background: transparent;
+  border: 1.5px dashed #CBD5E1;
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-add-service-full:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Special Notes Editable Textarea */
+.notes-textarea {
+  width: 100%;
+  min-height: 70px;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+}
+
+/* Service Summary Card */
+.card-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.card-section-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.92rem;
+}
+
+.summary-row-subtle {
+  color: var(--text-secondary);
+}
+
+.summary-val {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.summary-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 6px 0;
+  border: none;
+}
+
+.summary-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summary-total-label {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.summary-total-val {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* Payment Method Card */
+.payment-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background-color: #FFFFFF;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  user-select: none;
+}
+
+.payment-option-item:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.payment-option-item.active,
+.payment-option-item:has(input[type="radio"]:checked) {
+  border-color: #111827;
+  background-color: #FFFFFF;
+}
+
+.payment-option-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background-color: #F1F3F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1F2024;
+  flex-shrink: 0;
+}
+
+.payment-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.payment-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.radio-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #D1D5DB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease;
+}
+
+.payment-option-item.active .radio-indicator,
+.payment-option-item:has(input[type="radio"]:checked) .radio-indicator {
+  border-color: #111827;
+}
+
+.radio-indicator-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.payment-option-item.active .radio-indicator-dot,
+.payment-option-item:has(input[type="radio"]:checked) .radio-indicator-dot {
+  background-color: #111827;
+}
+
+.payment-option-item input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Dual Bottom Buttons: DISCARD & SAVE CHANGES */
+.dual-actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .dual-actions-container {
+    flex-direction: row-reverse;
+  }
+}
+
+/* ==========================================================================
+   LARAVEL INTEGRATION OVERRIDES (item dinamis + elemen pendukung)
+   ========================================================================== */
+
+/* Page heading block */
+.form-page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.form-page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-back-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-back-ghost:hover {
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+}
+
+.form-page-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.form-page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+/* Item type toggle (Layanan / Produk) + small grids */
+.item-type-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.item-type-toggle .segmented-pill-label {
+  margin: 0;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .form-grid-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Search dropdown results inside item cards */
+.search-results-dropdown {
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-results-dropdown.show {
+  display: block;
+}
+
+.search-results-dropdown .search-result-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 0.86rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.search-results-dropdown .search-result-option:last-child {
+  border-bottom: none;
+}
+
+.search-results-dropdown .search-result-option:hover {
+  background-color: #FFF7ED;
+}
+
+.search-results-dropdown .search-result-muted {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.search-results-dropdown .search-result-noresult {
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+/* Relative wrapper for dropdown positioning */
+.has-dropdown {
+  position: relative;
+}
+
+/* Selected client chip after combobox pick */
+.selected-client-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FEF3C7;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.selected-client-chip .chip-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+
+.selected-client-chip .chip-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #92400E;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.selected-client-chip .chip-addmore {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #92400E;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Summary detail lines injected by JS */
+.summary-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-item-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #374151;
+}
+
+.summary-item-line .summary-line-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.summary-item-line .summary-line-note {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  padding-left: 14px;
+}
+
+.summary-item-line .summary-line-note.is-discount {
+  color: #DC2626;
+}
+
+.summary-row.summary-subtle .summary-val.is-minus {
+  color: #DC2626;
+}
+
+/* Staf 2 section (jenis berdua) */
+.staf2-section {
+  margin-top: 14px;
+}
+
+/* Pills in type toggle / thickness */
+.segmented-pill-group.is-static {
+  flex-wrap: wrap;
+}
+
+/* Komisi hint text */
+.commission-suggestion {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.commission-suggestion.is-auto {
+  color: #B45309;
+  font-weight: 600;
+}
+
+/* Produk pemakaian extra rows + info */
+.sub-row-item {
+  margin-top: 8px;
+}
+
+.usage-cost-line {
+  font-size: 0.74rem;
+  color: #047857;
+  font-weight: 700;
+}
+
+.stok-warning-inline {
+  font-size: 0.74rem;
+  color: #B45309;
+  font-weight: 700;
+}
+
+/* New-pelanggan modal (add-transaction page tidak load riwayat.css) */
+.modal-backdrop-plain {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop-plain.show {
+  display: flex;
+}
+
+.modal-card-plain {
+  background-color: #FFFFFF;
+  border-radius: var(--radius-lg);
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-card-plain .form-label {
+  font-size: 0.74rem;
+}
+
+.modal-error-plain {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #B91C1C;
+}
+
+/* Modal footer actions */
+.modal-actions-plain {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Appoointment picker card summary rows */
+.appt-picker-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.appt-picker-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.appt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appt-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  background-color: #F9FAFB;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.86rem;
+}
+
+.appt-item-time {
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.appt-item-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.appt-item-service {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.appt-item-apply {
+  margin-left: auto;
+  background-color: var(--dark-solid);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 5px 12px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.appt-item-apply:hover {
+  opacity: 0.9;
+}
+
+.appt-item-apply:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.appt-empty-text {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+/* Modal header (dipakai halaman create; identik dengan riwayat.css) */
+.modal-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.modal-header-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.btn-close-modal:hover {
+  color: var(--text-primary);
+}
+
+/* Field standalone di dalam modal pelanggan baru */
+.modal-card-plain .text-input-field,
+.modal-card-plain .select-dropdown-field {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 11px 14px;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.modal-card-plain .text-input-field:focus,
+.modal-card-plain .select-dropdown-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.06);
+}
+
+/* Komponen phone-input (x-phone-input) di dalam modal */
+#new_pelanggan_wa_wrapper label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+#new_pelanggan_wa_wrapper > div {
+  display: flex;
+  gap: 8px;
+  margin-top: 0;
+}
+
+#new_pelanggan_wa_wrapper select,
+#new_pelanggan_wa_wrapper input[type="text"] {
+  border: 1px solid var(--border-color);
+  background-color: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 11px 12px;
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  outline: none;
+}
+
+#new_pelanggan_wa_wrapper select {
+  width: 45%;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+#new_pelanggan_wa_wrapper input[type="text"] {
+  width: 100%;
+  flex: 1;
+}
+
+#new_pelanggan_wa_wrapper select:focus,
+#new_pelanggan_wa_wrapper input[type="text"]:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.06);
+}

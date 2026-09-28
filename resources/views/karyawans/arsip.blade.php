@@ -2,90 +2,87 @@
 
 @section('title', 'Arsip Karyawan')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/profil-pelanggan.css') }}">
+@endpush
+
+@php
+    $bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $fmtTgl = function ($dt) use ($bulanIndo) {
+        $c = \Carbon\Carbon::parse($dt);
+        return $c->format('d') . ' ' . $bulanIndo[$c->format('n') - 1] . ' ' . $c->format('Y');
+    };
+@endphp
+
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-text-primary">Arsip Karyawan</h1>
-            <p class="mt-1 text-sm text-text-muted">
+
+    <div class="arsip-header-row">
+        <div class="arsip-header-group">
+            <h1 class="arsip-page-title">Arsip Karyawan</h1>
+            <p class="arsip-page-subtitle">
                 {{ $karyawans->total() }} karyawan diarsipkan. Data transaksi &amp; komisi tetap utuh.
             </p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <form action="{{ route('karyawan.arsip') }}" method="GET" class="flex w-full max-w-sm items-center gap-2">
-                <input type="text" name="q" value="{{ $q }}"
-                       placeholder="Cari nama, kontak..."
-                       class="block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                <button type="submit"
-                        class="rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                    Cari
-                </button>
+        <div class="arsip-toolbar">
+            <form action="{{ route('karyawan.arsip') }}" method="GET" class="arsip-search-form">
+                <input type="text" name="q" value="{{ $q }}" class="arsip-search-input"
+                       placeholder="Cari nama, kontak...">
+                <button type="submit" class="btn-search-dark">Cari</button>
             </form>
-            <a href="{{ route('karyawan.index') }}"
-               class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-                <span class="text-lg leading-none">+</span>
-                <span class="hidden sm:inline">Kembali</span>
-            </a>
+            <a href="{{ route('karyawan.index') }}" class="btn-back-gold">Kembali</a>
         </div>
     </div>
 
     @if ($karyawans->isEmpty())
-        <div class="rounded-xl border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
-            <p class="text-sm font-medium text-text-secondary">Tidak ada karyawan yang diarsipkan.</p>
+        <div class="arsip-empty-box">
+            <p class="arsip-empty-text">Tidak ada karyawan yang diarsipkan.</p>
             @if ($q !== '')
-                <p class="mt-1 text-sm text-text-muted">Tidak ditemukan hasil untuk "<span class="font-medium">{{ $q }}</span>".</p>
-                <a href="{{ route('karyawan.arsip') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Tampilkan semua
-                </a>
+                <p style="font-size:.84rem; color: var(--text-muted); margin-top: 4px;">Hasil untuk “{{ $q }}” tidak ditemukan.</p>
+                <a href="{{ route('karyawan.arsip') }}" class="arsip-empty-link">&larr; Tampilkan semua</a>
             @else
-                <a href="{{ route('karyawan.index') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Kembali ke data karyawan
-                </a>
+                <a href="{{ route('karyawan.index') }}" class="arsip-empty-link">&larr; Kembali ke data karyawan</a>
             @endif
         </div>
     @else
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div class="arsip-grid">
             @foreach ($karyawans as $k)
-                <div class="flex flex-col rounded-xl border border-gray-200 bg-card p-4 shadow-sm">
-                    <div class="flex items-center justify-between gap-2">
-                        <p class="font-medium text-text-primary">{{ $k->nama }}</p>
-                        <span class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-text-muted">
-                            Diarsipkan {{ $k->deleted_at->format('d M Y') }}
-                        </span>
+                <div class="arsip-card">
+                    <div class="arsip-card-top">
+                        <span class="arsip-card-name">{{ $k->nama }}</span>
+                        <span class="arsip-trashed-badge">Diarsipkan {{ $fmtTgl($k->deleted_at) }}</span>
                     </div>
 
-                    <dl class="mt-2 flex-1 space-y-1 text-sm">
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Kontak</dt>
-                            <dd class="text-right text-text-primary">
+                    <div class="arsip-meta-list">
+                        <div class="arsip-meta-row">
+                            <span class="arsip-meta-label">Kontak</span>
+                            <span class="arsip-meta-value">
                                 @if ($k->kontak)
-                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $k->kontak) }}" target="_blank" class="text-success hover:underline">
+                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $k->kontak) }}" target="_blank" style="color: #047857;">
                                         {{ $k->kontak }}
                                     </a>
                                 @else
                                     -
                                 @endif
-                            </dd>
+                            </span>
                         </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Skema Komisi</dt>
-                            <dd class="text-right text-text-primary">
+                        <div class="arsip-meta-row">
+                            <span class="arsip-meta-label">Skema Komisi</span>
+                            <span class="arsip-meta-value">
                                 @if ($k->skema_komisi === 'persen_omset_harian')
                                     Persen omset ({{ $k->persen_komisi_harian }}%)
                                 @else
                                     Per layanan
                                 @endif
-                            </dd>
+                            </span>
                         </div>
-                    </dl>
+                    </div>
 
-                    <div class="mt-3 flex items-center gap-4 border-t border-gray-100 pt-3 text-sm">
-                        <form action="{{ route('karyawan.restore', $k->id) }}" method="POST" class="ml-auto"
+                    <div class="arsip-card-footer">
+                        <form action="{{ route('karyawan.restore', $k->id) }}" method="POST"
                               onsubmit="return confirm('Pulihkan karyawan &quot;{{ addslashes($k->nama) }}&quot;?')">
                             @csrf
-                            <button type="submit" class="font-medium text-green-600 hover:text-green-800">
-                                Pulihkan
-                            </button>
+                            <button type="submit" class="btn-restore">Pulihkan</button>
                         </form>
                     </div>
                 </div>
@@ -93,9 +90,10 @@
         </div>
 
         @if ($karyawans->hasPages())
-            <div class="mt-4">
+            <div style="margin-top: 6px;">
                 {{ $karyawans->links() }}
             </div>
         @endif
     @endif
+
 @endsection

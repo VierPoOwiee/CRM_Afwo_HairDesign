@@ -9,148 +9,215 @@
     $merekDefaults = ['Alfaparf', 'Milbon', 'Keaune', 'Omni', 'Matrix'];
     $merekOptions = array_values(array_unique(array_merge($merekExisting, $merekDefaults)));
     $kategoriVal = old('kategori_produk', $produk->kategori_produk ?? 'dipakai_layanan');
-    $kategoriOptions = ['dijual' => 'Dijual Per PCS']
-        + array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan())
-        + ['dipakai_layanan' => 'Dipakai Layanan (umum)'];
+    $satuanVal = old('satuan', $produk->satuan ?? '');
+
+    $kategoriLayanan = Produk::kategoriLayanan();
+    $radioLeft = array_merge(['dijual'], array_values(array_intersect(['Bleaching', 'Keratin', 'Hairtreatment', 'Serum', 'Keriting'], $kategoriLayanan)), ['dipakai_layanan']);
+    $radioRight = array_values(array_intersect(['Color', 'Oxidant', 'Smoothing', 'Creambath', 'Repair', 'Masker'], $kategoriLayanan));
+
+    $radioHelp = [
+        'dijual' => ['/pcs', 'Harga jual per 1 pcs produk.'],
+        'dipakai_layanan' => ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'],
+    ];
+
+    $formAction = isset($produk) && $produk->exists
+        ? route('produk.update', $produk)
+        : route('produk.store');
+    $formMethod = isset($produk) && $produk->exists ? 'PUT' : '';
 @endphp
 
-<div class="space-y-6">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2" id="merek_grid">
-        <div>
-            <label for="nama_produk" class="block text-sm font-medium text-gray-700">Nama Produk <span class="text-red-500">*</span></label>
-            <input type="text" name="nama_produk" id="nama_produk" value="{{ old('nama_produk', $produk->nama_produk ?? '') }}" required
-                   class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-        </div>
-
-        <div id="merek_wrapper">
-            <label for="merek" class="block text-sm font-medium text-gray-700">Merek <span class="text-red-500">*</span></label>
-            <div class="mt-1 flex items-start gap-2">
-                <select name="merek" id="merek"
-                        class="block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-                    <option value="" {{ old('merek', $produk->merek ?? '') === '' ? 'selected' : '' }}>-- Pilih Merek --</option>
-                    @foreach ($merekOptions as $m)
-                        <option value="{{ $m }}" {{ old('merek', $produk->merek ?? '') === $m ? 'selected' : '' }}>{{ $m }}</option>
-                    @endforeach
-                </select>
-                <button type="button" id="btnTambahMerek"
-                        class="shrink-0 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-accent-text">
-                    + Baru
-                </button>
-            </div>
-            <input type="hidden" name="mode_merek" id="mode_merek" value="{{ old('mode_merek', 'pilih') }}">
-            <input type="text" name="merek_baru" id="merek_baru" maxlength="255" autocomplete="off"
-                   placeholder="Ketik merek baru..." value="{{ old('merek_baru') }}"
-                   class="mt-1 hidden w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-            <p class="mt-1 text-xs text-gray-500">Butuh merek baru? Klik "+ Baru" lalu ketik namanya.</p>
-        </div>
-    </div>
-
-    <div>
-        <span class="block text-sm font-medium text-gray-700">Kategori Produk <span class="text-red-500">*</span></span>
-        <p class="mt-0.5 text-xs text-gray-500">Dijual per pcs ke pelanggan, atau dipakai staf saat treatment.</p>
-        <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            @foreach ($kategoriOptions as $val => $label)
-                <label class="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                    <input type="radio" name="kategori_produk" value="{{ $val }}"
-                           {{ $kategoriVal === $val ? 'checked' : '' }}
-                           class="h-4 w-4 border-gray-300 text-accent-text focus:ring-accent/30">
-                    {{ $label }}
-                </label>
-            @endforeach
-        </div>
-    </div>
-
-    {{-- Satuan: otomatis berdasarkan kategori --}}
-    <input type="hidden" name="satuan" id="satuan_hidden" value="{{ old('satuan', $produk->satuan ?? '') }}">
-
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Satuan <span class="text-red-500">*</span></label>
-            <input type="text" id="satuan_display" readonly required
-                   class="mt-1 block w-full rounded-lg border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm cursor-not-allowed">
-            <p class="mt-1 text-xs text-gray-500" id="satuan_note"></p>
-        </div>
-
-        <div>
-            <label for="harga_per_satuan" class="block text-sm font-medium text-gray-700"><span id="harga_label_text">Harga Jual</span> (Rp) <span class="text-red-500">*</span></label>
-            <input type="text" inputmode="numeric" name="harga_per_satuan" id="harga_per_satuan"
-                   value="{{ old('harga_per_satuan', $produk->harga_per_satuan ?? '') }}"
-                   required
-                   class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-            <p class="mt-1 text-xs text-gray-500" id="harga_note"></p>
-        </div>
-    </div>
-
-    <div id="stok_wrapper">
-        <label for="stok" class="block text-sm font-medium text-gray-700">Stok <span class="text-red-500">*</span></label>
-        <input type="number" name="stok" id="stok"
-               value="{{ old('stok', $produk->stok ?? 0) }}"
-               min="0" step="1"
-               class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-        <p class="mt-1 text-xs text-gray-500">Stok &le; {{ \App\Models\Produk::STOK_MENIPIS }} ditandai menipis.</p>
-    </div>
-
-    @if (!empty($produk->id) && $produk->exists)
-    <div class="rounded-md bg-gray-50 px-4 py-3 text-sm">
-        <div class="flex justify-between gap-4">
-            <span class="text-gray-500">Modal rata-rata saat ini (read-only)</span>
-            <span class="font-semibold text-gray-900">{{ $produk->labelModalPerSatuan() }}</span>
-        </div>
-        <p class="mt-1 text-xs text-gray-400">Modal tidak diedit manual &mdash; otomatis dihitung ulang setiap kali <a href="{{ route('produk.restock-form', $produk) }}" class="text-emerald-600 hover:text-emerald-800 font-medium">Restock</a> produk ini.</p>
-    </div>
+<form id="form-edit-produk" class="edit-produk-stack" action="{{ $formAction }}" method="POST">
+    @csrf
+    @if ($formMethod !== '')
+        @method($formMethod)
     @endif
 
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input type="hidden" name="aktif" value="0">
-        <input type="checkbox" name="aktif" value="1"
-               @checked(old('aktif', $produk->aktif ?? true))
-               class="h-4 w-4 rounded border-gray-300 text-accent-text focus:ring-accent/30">
-        Aktif
-    </label>
+    <article class="card form-section-card" data-field="product-form-card">
 
-    <div class="flex items-center gap-3">
-        <button type="submit"
-                class="rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
-            {{ $submitLabel }}
-        </button>
-        <a href="{{ route('produk.index') }}"
-           class="rounded-lg bg-card px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-            Batal
-        </a>
-    </div>
-</div>
+        <!-- Baris 1: Nama Produk & Merek -->
+        <div class="form-row-2col">
+            <div class="form-group-item">
+                <label class="form-label" for="input-product-name">Nama Produk <span class="required-star">*</span></label>
+                <div class="form-input-box">
+                    <input type="text" id="input-product-name" name="nama_produk" data-field="product-name"
+                           class="form-input-control" placeholder="Nama produk..." required
+                           value="{{ old('nama_produk', $produk->nama_produk ?? '') }}">
+                </div>
+                @error('nama_produk')
+                    <span class="field-error">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group-item" id="merek_wrapper">
+                <label class="form-label" for="select-product-brand">Merek <span class="required-star">*</span></label>
+                <div class="brand-input-row">
+                    <div class="form-input-box brand-select-box">
+                        <select id="select-product-brand" name="merek" data-field="brand" class="form-select-control">
+                            <option value="">-- Pilih Merek --</option>
+                            @foreach ($merekOptions as $m)
+                                <option value="{{ $m }}" {{ old('merek', $produk->merek ?? '') === $m ? 'selected' : '' }}>{{ $m }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="button" class="btn-add-brand-gold" id="btn-add-brand">+ Baru</button>
+                </div>
+                <span class="field-help-text">Butuh merek baru? Klik "+ Baru" lalu ketik namanya.</span>
+                @error('merek')
+                    <span class="field-error">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
+        <input type="hidden" name="mode_merek" id="mode_merek" value="{{ old('mode_merek', 'pilih') }}">
+
+        <div class="brand-input-row hidden" id="merek_baru_row">
+            <div class="form-input-box brand-select-box">
+                <input type="text" name="merek_baru" maxlength="255" autocomplete="off"
+                       placeholder="Ketik merek baru..." value="{{ old('merek_baru') }}"
+                       class="form-input-control">
+            </div>
+            <button type="button" class="btn-add-brand-gold" id="btn-ganti-merek-mode">Pilih Merek</button>
+        </div>
+
+        <!-- Baris 2: Kategori Produk (Radio Grid 2 Kolom) -->
+        <div class="form-group-item">
+            <label class="form-label">Kategori Produk <span class="required-star">*</span></label>
+            <span class="field-help-text" style="margin-top: -2px; margin-bottom: 6px;">Dijual per pcs ke pelanggan, atau dipakai staf saat treatment.</span>
+
+            <div class="product-category-radio-grid">
+                <div class="radio-col">
+                    @foreach ($radioLeft as $val)
+                        @php
+                            [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
+                        @endphp
+                        <label class="category-radio-card {{ $kategoriVal === $val ? 'active' : '' }}">
+                            <input type="radio" name="kategori_produk" value="{{ $val }}"
+                                   data-unit="{{ $unit }}" data-help="{{ $help }}"
+                                   {{ $kategoriVal === $val ? 'checked' : '' }}>
+                            <span class="radio-custom-dot"></span>
+                            <span class="radio-card-label">{{ $val === 'dijual' ? 'Dijual Per PCS' : ($val === 'dipakai_layanan' ? 'Dipakai Layanan (umum)' : $val) }}</span>
+                        </label>
+                    @endforeach
+                </div>
+
+                <div class="radio-col">
+                    @foreach ($radioRight as $val)
+                        @php
+                            [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
+                        @endphp
+                        <label class="category-radio-card {{ $kategoriVal === $val ? 'active' : '' }}">
+                            <input type="radio" name="kategori_produk" value="{{ $val }}"
+                                   data-unit="{{ $unit }}" data-help="{{ $help }}"
+                                   {{ $kategoriVal === $val ? 'checked' : '' }}>
+                            <span class="radio-custom-dot"></span>
+                            <span class="radio-card-label">{{ $val }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+            @error('kategori_produk')
+                <span class="field-error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <!-- Baris 3: Satuan & Harga per Satuan (Rp) -->
+        <div class="form-row-2col">
+            <div class="form-group-item">
+                <label class="form-label" for="input-unit">Satuan <span class="required-star">*</span></label>
+                <div class="form-input-box disabled-like">
+                    <input type="text" id="input-unit" class="form-input-control" data-field="unit"
+                           value="{{ $satuanVal }}" placeholder="/10ml" readonly>
+                </div>
+                <input type="hidden" name="satuan" id="satuan_hidden" value="{{ $satuanVal }}">
+                <span class="field-help-text" id="unit-help-text">Satuan otomatis mengikuti kategori.</span>
+                @error('satuan')
+                    <span class="field-error">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="form-group-item">
+                <label class="form-label" for="input-price"><span id="harga-label-text">Harga per Satuan</span> (Rp) <span class="required-star">*</span></label>
+                <div class="form-input-box">
+                    <input type="text" inputmode="numeric" id="input-price" name="harga_per_satuan" data-field="price"
+                           class="form-input-control" placeholder="15.000" required
+                           value="{{ old('harga_per_satuan', $produk->harga_per_satuan ?? '') }}">
+                </div>
+                <span class="field-help-text" id="price-help-text">Harga jual per satuan produk.</span>
+                @error('harga_per_satuan')
+                    <span class="field-error">{{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
+        <!-- Stok (khusus dijual per pcs) -->
+        <div class="form-group-item" id="stok_wrapper" style="display: none;">
+            <label class="form-label" for="input-stok">Stok <span class="required-star">*</span></label>
+            <div class="form-input-box">
+                <input type="number" id="input-stok" name="stok" value="{{ old('stok', $produk->stok ?? 0) }}"
+                       min="0" step="1" class="form-input-control">
+            </div>
+            <span class="field-help-text">Stok &le; {{ \App\Models\Produk::STOK_MENIPIS }} ditandai menipis.</span>
+            @error('stok')
+                <span class="field-error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        @if (isset($produk) && $produk->exists)
+            <div class="form-group-item">
+                <label class="form-label">Modal rata-rata saat ini</label>
+                <div class="modal-note-box">
+                    <span class="modal-note-value">{{ $produk->labelModalPerSatuan() }}</span>
+                    <span class="field-help-text">Modal tidak diedit manual &mdash; otomatis dihitung ulang setiap kali <a href="{{ route('produk.restock-form', $produk) }}" class="modal-note-link">Restock</a> produk ini.</span>
+                </div>
+            </div>
+        @endif
+
+        <!-- Baris 4: Checkbox Aktif -->
+        <div class="form-group-item checkbox-row">
+            <label class="checkbox-custom-label">
+                <input type="hidden" name="aktif" value="0">
+                <input type="checkbox" id="checkbox-active" name="aktif" value="1"
+                       @checked(old('aktif', $produk->aktif ?? true))>
+                <span class="checkbox-text">Aktif</span>
+            </label>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="form-bottom-actions">
+            <button type="submit" class="btn-dark-solid" id="btn-save-produk" data-field="btn-save-produk">{{ $submitLabel }}</button>
+            <a href="{{ route('produk.index') }}" class="btn-light-outline" id="btn-cancel-produk" data-field="btn-cancel">Batal</a>
+        </div>
+
+    </article>
+</form>
 
 <script>
     (function () {
         var radios = document.querySelectorAll('input[name="kategori_produk"]');
         var satuanHidden = document.getElementById('satuan_hidden');
-        var satuanDisplay = document.getElementById('satuan_display');
-        var satuanNote = document.getElementById('satuan_note');
-        var hargaLabelEl = document.getElementById('harga_label_text');
-        var hargaNote = document.getElementById('harga_note');
+        var satuanDisplay = document.getElementById('input-unit');
+        var satuanNote = document.getElementById('unit-help-text');
+        var hargaLabelEl = document.getElementById('harga-label-text');
+        var hargaNote = document.getElementById('price-help-text');
         var stokWrapper = document.getElementById('stok_wrapper');
-        var stokInput = document.getElementById('stok');
-        var merekGrid = document.getElementById('merek_grid');
+        var stokInput = document.getElementById('input-stok');
         var merekWrapper = document.getElementById('merek_wrapper');
-        var merekSelect = document.getElementById('merek');
-        var btnTambahMerek = document.getElementById('btnTambahMerek');
-        var merekBaru = document.getElementById('merek_baru');
+        var merekSelect = document.getElementById('select-product-brand');
+        var btnAddBrand = document.getElementById('btn-add-brand');
+        var merekBaruRow = document.getElementById('merek_baru_row');
+        var btnGantiMerek = document.getElementById('btn-ganti-merek-mode');
         var modeMerek = document.getElementById('mode_merek');
-        var hargaInput = document.getElementById('harga_per_satuan');
-        var merekOptions = @json($merekOptions);
+        var hargaInput = document.getElementById('input-price');
 
-        var config = {
-            dijual: {
-                satuan: 'pcs',
-                satuanLabel: 'pcs',
-                satuanNote: 'Satuan otomatis: pcs',
-                hargaLabel: 'Harga Jual per 1 Pcs',
-                hargaNote: 'Harga jual per 1 pcs produk.',
-                showStok: true,
-                showMerek: false
-            }
+        var dijualCfg = {
+            satuan: 'pcs',
+            satuanLabel: 'pcs',
+            satuanNote: 'Satuan otomatis: pcs',
+            hargaLabel: 'Harga Jual per 1 Pcs',
+            hargaNote: 'Harga jual per 1 pcs produk.',
+            showStok: true,
+            showMerek: false
         };
-
         var layananCfg = {
             satuan: '/10ml',
             satuanLabel: '/10ml',
@@ -160,14 +227,24 @@
             showStok: false,
             showMerek: true
         };
+        var kategoriLayanan = @json($kategoriLayanan);
 
-        config['dipakai_layanan'] = layananCfg;
-        var kategoriLayanan = @json(\App\Models\Produk::kategoriLayanan());
-        kategoriLayanan.forEach(function (k) { config[k] = layananCfg; });
+        function cfgFor(val) {
+            if (val === 'dijual') return dijualCfg;
+            return layananCfg;
+        }
 
-        function apply() {
-            var val = document.querySelector('input[name="kategori_produk"]:checked').value;
-            var cfg = config[val];
+        function updateRadioState() {
+            radios.forEach(function (radio) {
+                var card = radio.closest('.category-radio-card');
+                if (!card) return;
+                if (radio.checked) card.classList.add('active');
+                else card.classList.remove('active');
+            });
+            var checked = document.querySelector('input[name="kategori_produk"]:checked');
+            if (!checked) return;
+            var cfg = cfgFor(checked.value);
+
             satuanHidden.value = cfg.satuan;
             satuanDisplay.value = cfg.satuanLabel;
             satuanNote.textContent = cfg.satuanNote;
@@ -184,75 +261,51 @@
             }
 
             if (cfg.showMerek) {
-                merekWrapper.style.display = '';
+                merekWrapper.classList.remove('hidden');
                 merekSelect.setAttribute('required', 'required');
-                merekGrid.classList.add('sm:grid-cols-2');
-                merekGrid.classList.remove('sm:grid-cols-1');
             } else {
-                merekWrapper.style.display = 'none';
+                merekWrapper.classList.add('hidden');
                 merekSelect.removeAttribute('required');
                 merekSelect.value = '';
-                modeMerek.value = 'pilih';
-                merekSelect.classList.remove('hidden');
-                btnTambahMerek.classList.remove('hidden');
-                merekBaru.classList.add('hidden');
-                merekBaru.value = '';
-                merekBaru.removeAttribute('required');
-                merekSelect.removeAttribute('disabled');
-                merekGrid.classList.remove('sm:grid-cols-2');
-                merekGrid.classList.add('sm:grid-cols-1');
+                setMerekMode('pilih');
             }
         }
 
         radios.forEach(function (r) {
-            r.addEventListener('change', apply);
+            r.addEventListener('change', updateRadioState);
         });
 
         function setMerekMode(mode) {
             modeMerek.value = mode;
             if (mode === 'pilih') {
+                merekBaruRow.classList.add('hidden');
                 merekSelect.classList.remove('hidden');
-                btnTambahMerek.classList.remove('hidden');
-                merekBaru.classList.add('hidden');
-                merekBaru.value = '';
+                btnAddBrand.classList.remove('hidden');
                 merekSelect.removeAttribute('disabled');
-                merekBaru.removeAttribute('required');
-                if (merekSelect.value === '') merekSelect.value = merekOptions[0] || '';
             } else {
+                merekBaruRow.classList.remove('hidden');
                 merekSelect.classList.add('hidden');
-                btnTambahMerek.classList.add('hidden');
-                merekBaru.classList.remove('hidden');
+                btnAddBrand.classList.add('hidden');
                 merekSelect.setAttribute('disabled', 'disabled');
-                merekBaru.setAttribute('required', 'required');
-                merekBaru.focus();
+                var input = merekBaruRow.querySelector('input[name="merek_baru"]');
+                if (input) input.focus();
             }
         }
 
-        btnTambahMerek.addEventListener('click', function () {
-            setMerekMode('baru');
-        });
-
-        apply();
-
-        if (modeMerek.value === 'baru') {
-            setMerekMode('baru');
-            merekBaru.value = @json(old('merek_baru', ''));
-        }
+        btnAddBrand.addEventListener('click', function () { setMerekMode('baru'); });
+        btnGantiMerek.addEventListener('click', function () { setMerekMode('pilih'); });
 
         /* Format harga */
         function parseFormatted(str) {
             return parseInt(str.replace(/\./g, '').replace(/,/g, ''), 10) || 0;
         }
-
         function formatNumber(n) {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
-
         function formatHarga(el) {
             var raw = parseFormatted(el.value);
             el.value = raw ? formatNumber(raw) : '';
         }
-
         function unformatHarga(el) {
             el.value = el.value.replace(/\./g, '');
         }
@@ -262,9 +315,17 @@
             hargaInput.addEventListener('blur', function () { formatHarga(this); });
         }
 
-        document.querySelector('form').addEventListener('submit', function () {
+        document.querySelector('#form-edit-produk').addEventListener('submit', function () {
             if (hargaInput) unformatHarga(hargaInput);
         });
+
+        updateRadioState();
+
+        if (modeMerek.value === 'baru') {
+            setMerekMode('baru');
+            var inputBaru = merekBaruRow.querySelector('input[name="merek_baru"]');
+            if (inputBaru) inputBaru.value = @json(old('merek_baru', ''));
+        }
 
         if (hargaInput && hargaInput.value) formatHarga(hargaInput);
     })();

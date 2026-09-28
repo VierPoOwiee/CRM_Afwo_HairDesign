@@ -1,0 +1,411 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - DATA PELANGGAN AKTIF STYLES
+   ========================================================================== */
+
+/* Sub-Navigation Bar (Top Tabs matching reference) */
+.report-subnav-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.report-subnav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text-secondary);
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.report-subnav-link:hover {
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+  border-color: #CBD5E1;
+}
+
+.report-subnav-link.active {
+  background-color: #B45309;
+  background: linear-gradient(135deg, #B45309 0%, #92400E 100%);
+  color: #FFFFFF;
+  border-color: #92400E;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.25);
+}
+
+/* Header Section */
+.active-clients-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.active-clients-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.active-clients-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+/* Filter Card */
+.active-clients-filter-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.active-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+@media (min-width: 768px) {
+  .active-filter-grid {
+    grid-template-columns: 1.2fr 1fr 1fr auto;
+    gap: 16px;
+  }
+}
+
+.filter-item-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-field-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.filter-input-box {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  transition: all 0.15s ease;
+}
+
+.filter-input-box:focus-within {
+  border-color: var(--dark-solid);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.filter-select-control,
+.filter-input-control {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-filter-dark {
+  background-color: var(--dark-solid);
+  color: #FFFFFF;
+  border: none;
+  padding: 9px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-filter-dark:hover {
+  background-color: #2D3139;
+  transform: translateY(-1px);
+}
+
+.btn-reset-light {
+  background-color: #FFFFFF;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-reset-light:hover {
+  background-color: #F3F4F6;
+  border-color: #CBD5E1;
+}
+
+/* KPI Mini Grid */
+.active-clients-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 1024px) {
+  .active-clients-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+.kpi-mini-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-mini-card.featured-gold-kpi {
+  border-color: #FDE68A;
+  background: linear-gradient(180deg, #FFFDF8 0%, #FFFFFF 100%);
+}
+
+.kpi-mini-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi-mini-value {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.kpi-mini-card.featured-gold-kpi .kpi-mini-value {
+  color: #B45309;
+}
+
+.kpi-mini-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Results Card */
+.active-clients-results-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+}
+
+.results-toolbar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.sort-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Table Styles */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.active-clients-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.active-clients-table th {
+  padding: 12px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border-color);
+  background-color: #F9FAFB;
+}
+
+.active-clients-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.active-clients-table tr:hover td {
+  background-color: #F8FAFC;
+}
+
+.client-meta-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.client-avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #FEF3C7;
+  color: #B45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.client-name-link {
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.client-name-link:hover {
+  color: #B45309;
+  text-decoration: underline;
+}
+
+.client-segment-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  margin-top: 2px;
+}
+
+.badge-vip {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.badge-loyal {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.badge-reguler {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.visit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.spend-amount-highlight {
+  font-weight: 800;
+  color: #B45309;
+}
+
+.action-buttons-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.btn-table-action {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-view-profile {
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-view-profile:hover {
+  background-color: #E5E7EB;
+}
+
+/* Empty State Card (Exact match to Reference Screenshot) */
+.empty-state-card {
+  padding: 50px 20px;
+  text-align: center;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: #FAFAFA;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.empty-state-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}

@@ -1,0 +1,261 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - SERVICE MANAGEMENT STYLES (RESPONSIVE)
+   ========================================================================== */
+
+/* Header & Intro */
+.services-intro-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.services-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.services-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Add New Service Button */
+.btn-add-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--dark-solid);
+  color: #FFFFFF;
+  padding: 13px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+  margin-bottom: 18px;
+}
+
+.btn-add-full:hover {
+  background-color: var(--dark-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-add-full:active {
+  transform: scale(0.98);
+}
+
+/* Horizontal Pill Filter Tabs */
+.pill-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.pill-filter-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.pill-tab-btn {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.pill-tab-btn:hover {
+  border-color: #9CA3AF;
+  color: var(--text-primary);
+}
+
+.pill-tab-btn.active {
+  background-color: var(--dark-solid);
+  border-color: var(--dark-solid);
+  color: #FFFFFF;
+}
+
+/* Services List Stack */
+.services-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.service-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.category-tag.potong,
+.category-tag.hair {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.category-tag.styling {
+  background-color: #E0E7FF;
+  color: #3730A3;
+}
+
+.category-tag.warna {
+  background-color: #FCE7F3;
+  color: #9D174D;
+}
+
+.category-tag.spa {
+  background-color: #FEF2F2;
+  color: #991B1B;
+}
+
+.btn-edit-icon {
+  color: #6B7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-edit-icon:hover {
+  color: var(--text-primary);
+  transform: scale(1.15);
+}
+
+.service-card-name {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.service-card-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.service-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F3F4F6;
+}
+
+.service-duration-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.service-price-val {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* Empty State */
+.empty-filter-state {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+
+.empty-filter-state.show {
+  display: block;
+}
+
+/* Tablet & Desktop Optimizations */
+@media (min-width: 640px) {
+  .services-title {
+    font-size: 1.95rem;
+  }
+  .services-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+/* Status Pill (adaptasi Laravel) */
+.service-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.service-status-pill.status-active {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.service-status-pill.status-inactive {
+  background-color: #F3F4F6;
+  color: #6B7280;
+}

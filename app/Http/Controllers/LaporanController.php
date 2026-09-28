@@ -47,7 +47,7 @@ class LaporanController extends Controller
             $baseQuery->where('metode_pembayaran', $metode);
         }
 
-        $transaksis = $baseQuery->clone()->with(['pelanggan', 'komisiTransaksi.staf'])->orderBy('waktu_kunjungan', 'desc')->get();
+        $transaksis = $baseQuery->clone()->with(['pelanggan', 'komisiTransaksi.staf', 'details.staf', 'details.layanan', 'details.produk'])->orderBy('waktu_kunjungan', 'desc')->get();
 
         $totalOmset = $transaksis->sum('total_bayar');
         $jumlahTransaksi = $transaksis->count();

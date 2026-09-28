@@ -1,0 +1,140 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - EDIT / TAMBAH PELANGGAN STYLES (RESPONSIVE)
+   ========================================================================== */
+
+/* Page Header Title with Back Arrow */
+.edit-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+}
+
+.back-arrow-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-arrow-link:hover {
+  background-color: #F3F4F6;
+  border-color: #CBD5E1;
+  transform: translateX(-2px);
+}
+
+.edit-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.edit-page-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.edit-page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+/* Edit Card */
+.edit-form-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+}
+
+.form-fields-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-input-box {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.form-input-box:focus-within {
+  border-color: var(--dark-solid);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-input-field {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 500;
+  outline: none;
+}
+
+.form-input-field::placeholder {
+  color: var(--text-muted);
+}
+
+.form-select-control {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 90px;
+  border: none;
+  background: transparent;
+  font-size: 0.92rem;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+}
+
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Form Grid 2-Col for tablet and desktop */
+@media (min-width: 640px) {
+  .form-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}

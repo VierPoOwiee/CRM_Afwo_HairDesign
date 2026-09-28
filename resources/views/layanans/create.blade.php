@@ -2,14 +2,17 @@
 
 @section('title', 'Tambah Layanan')
 
-@section('content')
-    <h1 class="text-2xl font-bold text-gray-900">Tambah Layanan</h1>
-    <p class="mt-1 text-sm text-gray-500">Lengkapi layanan beserta varian harga &amp; komisinya.</p>
+@section('nav-active', 'services')
 
-    <div class="mt-6 max-w-5xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('layanan.store') }}" method="POST">
-            @csrf
-            @include('layanans._form', ['submitLabel' => 'Simpan Layanan'])
-        </form>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/edit-layanan.css') }}">
+@endpush
+
+@section('content')
+    <div class="edit-layanan-header">
+        <h1 class="edit-layanan-title" id="edit-layanan-title">Tambah Layanan</h1>
+        <p class="edit-layanan-subtitle" id="edit-layanan-subtitle">Lengkapi layanan beserta varian harga &amp; komisinya.</p>
     </div>
+
+    @include('layanans._form', ['submitLabel' => 'Simpan Layanan'])
 @endsection

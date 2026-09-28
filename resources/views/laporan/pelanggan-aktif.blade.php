@@ -2,10 +2,37 @@
 
 @section('title', 'Data Pelanggan Aktif')
 
+@section('nav-active', 'reports-active-clients')
+
+@section('container_width', 'app-content-wide')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pelanggan-aktif.css') }}">
+@endpush
+
+@php
+    $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $totalPelanggan = $pelanggans->count();
+    $totalKunjungan = (int) $pelanggans->sum('jumlah_kunjungan');
+    $totalBelanja = (float) $pelanggans->sum('total_belanja');
+    $rataRata = $totalKunjungan > 0 ? $totalBelanja / $totalKunjungan : 0;
+    $badge = function (int $j) {
+        return $j >= 5 ? 'badge-vip' : ($j >= 3 ? 'badge-loyal' : 'badge-reguler');
+    };
+    $seg = fn ($lbl) => strtoupper($lbl);
+    $fmtTanggal = function ($dt) {
+        if (!$dt) return '-';
+        $m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $c = \Carbon\Carbon::parse($dt);
+        return $c->format('d') . ' ' . $m[$c->format('n') - 1] . ' ' . $c->format('Y');
+    };
+@endphp
+
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Data Pelanggan Aktif</h1>
-        <p class="mt-1 text-sm text-gray-500">Pelanggan dengan minimal 1 transaksi dalam periode yang dipilih.</p>
+
+    <div class="active-clients-header">
+        <h1 class="active-clients-title">Data Pelanggan Aktif</h1>
+        <p class="active-clients-subtitle">Pelanggan dengan minimal 1 transaksi selesai dalam periode yang dipilih.</p>
     </div>
 
     @include('laporan._filter-periode', [
@@ -13,41 +40,74 @@
         'resetUrl' => route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']),
     ])
 
-    <div class="mt-6 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div class="active-clients-kpi-grid">
+        <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Total Pelanggan Aktif</span>
+            <div class="kpi-mini-value">{{ $totalPelanggan }}</div>
+            <span class="kpi-mini-sub">orang berkunjung periode ini</span>
+        </div>
+        <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Total Kunjungan</span>
+            <div class="kpi-mini-value">{{ $totalKunjungan }}</div>
+            <span class="kpi-mini-sub">transaksi selesai</span>
+        </div>
+        <div class="kpi-mini-card featured-gold-kpi">
+            <span class="kpi-mini-label">Total Nilai Transaksi</span>
+            <div class="kpi-mini-value">{{ $fmt($totalBelanja) }}</div>
+            <span class="kpi-mini-sub">omset periode terpilih</span>
+        </div>
+        <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Rata-rata Belanja (AOV)</span>
+            <div class="kpi-mini-value">{{ $fmt($rataRata) }}</div>
+            <span class="kpi-mini-sub">per kunjungan</span>
+        </div>
+    </div>
+
+    <div class="active-clients-results-card">
         @if ($pelanggans->isEmpty())
-            <div class="px-6 py-16 text-center">
-                <p class="text-sm font-medium text-gray-700">Tidak ada pelanggan aktif untuk periode ini.</p>
+            <div class="empty-state-card">
+                <div class="empty-state-content">
+                    <p class="empty-state-text">Tidak ada pelanggan aktif untuk periode yang dipilih.</p>
+                </div>
             </div>
         @else
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <div class="results-toolbar-header">
+                <div class="sort-label">Daftar Pelanggan <span style="opacity:.6;">&middot; {{ $totalPelanggan }} orang</span></div>
+            </div>
+            <div class="table-responsive-wrapper">
+                <table class="active-clients-table">
+                    <thead>
                         <tr>
-                            <th class="px-4 py-3">Nama</th>
-                            <th class="px-4 py-3">Kontak</th>
-                            <th class="px-4 py-3 text-right">Jumlah Kunjungan</th>
-                            <th class="px-4 py-3 text-right">Total Belanja</th>
-                            <th class="px-4 py-3">Kunjungan Terakhir</th>
-                            <th class="px-4 py-3"></th>
+                            <th>Pelanggan</th>
+                            <th>Kontak</th>
+                            <th style="text-align: right;">Jumlah Kunjungan</th>
+                            <th style="text-align: right;">Total Belanja</th>
+                            <th>Kunjungan Terakhir</th>
+                            <th style="text-align: right;">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody>
                         @foreach ($pelanggans as $p)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium text-gray-900">{{ $p->nama }}</td>
-                                <td class="px-4 py-3 text-gray-500">{{ $p->no_wa }}</td>
-                                <td class="px-4 py-3 text-right text-gray-900">{{ $p->jumlah_kunjungan }}</td>
-                                <td class="px-4 py-3 text-right font-medium text-gray-900">
-                                    Rp{{ number_format((float) ($p->total_belanja ?? 0), 0, ',', '.') }}
+                            <tr>
+                                <td>
+                                    <div class="client-meta-cell">
+                                        <div class="client-avatar-circle">{{ mb_substr($p->nama, 0, 1) }}</div>
+                                        <div>
+                                            <a href="{{ route('laporan.pelanggan-riwayat', $p) }}" class="client-name-link">{{ $p->nama }}</a>
+                                            <div><span class="client-segment-badge {{ $badge((int) $p->jumlah_kunjungan) }}">{{ $seg($badge((int) $p->jumlah_kunjungan) === 'badge-vip' ? 'VIP' : ($badge((int) $p->jumlah_kunjungan) === 'badge-loyal' ? 'Loyal' : 'Reguler')) }}</span></div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="px-4 py-3 text-gray-500">
-                                    {{ $p->kunjungan_terakhir ? \Carbon\Carbon::parse($p->kunjungan_terakhir)->format('d M Y H:i') : '-' }}
+                                <td style="color: var(--text-secondary);">{{ $p->no_wa }}</td>
+                                <td style="text-align: right;">
+                                    <span class="visit-badge">{{ $p->jumlah_kunjungan }}&times;</span>
                                 </td>
-                                <td class="px-4 py-3 text-right">
-                                    <a href="{{ route('laporan.pelanggan-riwayat', $p) }}"
-                                       class="font-medium text-blue-600 hover:text-blue-800">
-                                        Riwayat &rarr;
-                                    </a>
+                                <td style="text-align: right;" class="spend-amount-highlight">{{ $fmt($p->total_belanja ?? 0) }}</td>
+                                <td style="color: var(--text-secondary);">{{ $fmtTanggal($p->kunjungan_terakhir) }}</td>
+                                <td>
+                                    <div class="action-buttons-cell">
+                                        <a href="{{ route('laporan.pelanggan-riwayat', $p) }}" class="btn-table-action btn-view-profile">Riwayat &rarr;</a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -56,4 +116,5 @@
             </div>
         @endif
     </div>
+
 @endsection

@@ -1,0 +1,551 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - REVISED DASHBOARD STYLES (MATCHING MOCKUP & PALETTE)
+   ========================================================================== */
+
+/* Welcome Header Section */
+.dashboard-welcome-header {
+  margin-top: 4px;
+  margin-bottom: 18px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.welcome-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.welcome-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   1. TOP KPI STAT CARDS (4 COLUMNS GRID)
+   ========================================================================== */
+.stats-cards-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (min-width: 540px) {
+  .stats-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1080px) {
+  .stats-cards-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+.stat-kpi-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 115px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.stat-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Featured Dark Card (Pemasukan Hari Ini) */
+.stat-kpi-card.featured-dark-card {
+  background: linear-gradient(135deg, #2A181E 0%, #1F1418 100%);
+  border: 1px solid rgba(229, 169, 60, 0.25);
+  box-shadow: 0 4px 16px rgba(35, 20, 25, 0.25);
+}
+
+.stat-kpi-card.featured-dark-card:hover {
+  box-shadow: 0 6px 20px rgba(35, 20, 25, 0.35);
+}
+
+.stat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.stat-card-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.featured-dark-card .stat-card-label {
+  color: #E2D7DA;
+}
+
+.stat-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.featured-dark-card .stat-card-icon {
+  color: var(--accent-gold);
+}
+
+.stat-card-icon.warning-icon {
+  color: #EF4444;
+}
+
+.stat-card-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.featured-dark-card .stat-card-value {
+  color: #FFFFFF;
+}
+
+.stat-card-value.danger-value {
+  color: #EF4444;
+}
+
+.stat-card-subtext {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.badge-growth-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba(229, 169, 60, 0.18);
+  color: #FCD34D;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   2. MAIN DASHBOARD SPLIT GRID (LEFT 65% / RIGHT 35%)
+   ========================================================================== */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (min-width: 960px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1.8fr 1fr;
+    gap: 22px;
+  }
+}
+
+.dashboard-col-left,
+.dashboard-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Standard Dashboard Card */
+.dash-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden; /* Crucial to prevent table overflow from breaking grid layout */
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.dash-card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dash-card-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.dash-card-subtitle {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.dash-card-meta {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dash-card-link {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #B45309;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.dash-card-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   3. TREN PEMASUKAN (AREA CHART SVG)
+   ========================================================================== */
+.chart-container-box {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.chart-svg-responsive {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 110px;
+  display: block;
+}
+
+.chart-x-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.chart-interactive-point {
+  cursor: pointer;
+  transition: transform 0.15s ease, r 0.15s ease;
+}
+
+.chart-interactive-point:hover {
+  r: 6;
+  fill: var(--text-primary);
+}
+
+/* ==========================================================================
+   4. TRANSAKSI HARI INI (TABLE)
+   ========================================================================== */
+.table-responsive-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding-bottom: 2px;
+  box-sizing: border-box;
+}
+
+.today-trans-table {
+  width: 100%;
+  min-width: 440px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.today-trans-table th {
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8A6D3B;
+  background-color: #FBF8F2;
+  border-bottom: 1px solid #EFE8D8;
+  white-space: nowrap;
+}
+
+.today-trans-table th:first-child {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.today-trans-table th:last-child {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+  text-align: right;
+}
+
+.today-trans-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 500;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.today-trans-table tr:last-child td {
+  border-bottom: none;
+}
+
+.today-trans-table tr:hover td {
+  background-color: #FAFAFB;
+}
+
+.trans-no-badge {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.trans-client-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.trans-service-text {
+  color: var(--text-secondary);
+}
+
+.trans-time-text {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.trans-total-bold {
+  font-weight: 800;
+  text-align: right;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   5. STOK PRODUK MENIPIS & LAYANAN TERPOPULER (RIGHT COLUMN)
+   ========================================================================== */
+/* Low Stock List */
+.low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.low-stock-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #F3F4F6;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.low-stock-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.low-stock-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.stock-initial-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: #FBF8F2;
+  border: 1px solid #EFE8D8;
+  color: #8A5826;
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stock-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.stock-item-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-item-category {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge-stock-danger {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Popular Services List */
+.popular-services-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.popular-service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F3F4F6;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.popular-service-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.service-row-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.service-row-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   6. MOBILE (IPHONE) SPECIFIC MEDIA QUERY (<= 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .welcome-title {
+    font-size: 1.25rem;
+  }
+  .welcome-subtitle {
+    font-size: 0.78rem;
+  }
+  .dash-card {
+    padding: 14px 15px;
+  }
+  .stat-kpi-card {
+    padding: 14px 15px;
+    min-height: 105px;
+  }
+  .stat-card-value {
+    font-size: 1.35rem;
+  }
+}

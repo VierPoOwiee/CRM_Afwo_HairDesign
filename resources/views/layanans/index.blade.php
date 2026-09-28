@@ -1,122 +1,126 @@
 @extends('layouts.app')
 
-@section('title', 'Data Layanan')
+@section('title', 'Layanan')
+
+@section('nav-active', 'services')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
+@endpush
 
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-text-primary">Data Layanan</h1>
-            <p class="mt-1 text-sm text-text-muted">
-                {{ $layanans->total() }} layanan terdaftar.
-            </p>
-        </div>
-
-        <div class="flex items-center gap-2">
-            <form action="{{ route('layanan.index') }}" method="GET" class="flex w-full max-w-sm items-center gap-2">
-                <input type="text" name="q" value="{{ $q }}"
-                       placeholder="Cari nama layanan..."
-                       class="block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                @if ($kategoriFilter !== '')
-                    <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
-                @endif
-                <button type="submit"
-                        class="rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                    Cari
-                </button>
-            </form>
-            <a href="{{ route('layanan.create') }}"
-               class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-                <span class="text-lg leading-none">+</span>
-                <span class="hidden sm:inline">Tambah</span>
-            </a>
-        </div>
+    <!-- Section Intro & Add Button -->
+    <div class="services-intro-section">
+        <h1 class="services-title">Service Management</h1>
+        <p class="services-subtitle">Organize and update your premium salon offerings.</p>
     </div>
 
-    <div class="mb-4 flex flex-wrap items-center gap-2">
-        <a href="{{ route('layanan.index', array_merge(request()->except('kategori', 'page'), $q !== '' ? ['q' => $q] : [])) }}"
-           class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-            Semua
-        </a>
-        @foreach ($kategoriList as $k)
-            <a href="{{ route('layanan.index', array_merge(request()->except('kategori', 'page'), ['kategori' => $k])) }}"
-               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $k ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                {{ $k }}
+    <a href="{{ route('layanan.create') }}" class="btn-add-full" id="add-service-btn" data-field="add-service-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add New Service</span>
+    </a>
+
+    <!-- Pill Filter Tabs -->
+    <div class="pill-filter-container" id="service-category-filter">
+        @php
+            $pillTabs = [
+                'all' => 'Semua',
+                'potong' => 'Potong',
+                'styling' => 'Styling',
+                'warna' => 'Warna &amp; Highlights',
+                'spa' => 'Spa',
+            ];
+            $pillValues = ['all', 'potong', 'styling', 'warna', 'spa'];
+        @endphp
+
+        @foreach ($pillValues as $slug)
+            @php
+                $url = route('layanan.index', array_merge(request()->except('kategori', 'page'), $slug === 'all' ? [] : ['kategori' => $slug]));
+            @endphp
+            <a href="{{ $url }}"
+               class="pill-tab-btn {{ $kategoriSlug === $slug ? 'active' : '' }}"
+               data-filter="{{ $slug }}"
+               aria-pressed="{{ $kategoriSlug === $slug ? 'true' : 'false' }}">
+                {!! $pillTabs[$slug] !!}
             </a>
         @endforeach
     </div>
 
-    @if ($layanans->isEmpty())
-        <div class="rounded-xl border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
-            <p class="text-sm font-medium text-text-secondary">Belum ada data layanan.</p>
-            @if ($q !== '')
-                <p class="mt-1 text-sm text-text-muted">Tidak ditemukan hasil untuk "<span class="font-medium">{{ $q }}</span>".</p>
-                <a href="{{ route('layanan.index') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Tampilkan semua
-                </a>
-            @else
-                <a href="{{ route('layanan.create') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    Tambah layanan pertama &rarr;
-                </a>
-            @endif
-        </div>
-    @else
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach ($layanans as $l)
-                <div class="flex flex-col rounded-xl border border-gray-200 bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
-                    <div class="flex items-start justify-between gap-2">
-                        <p class="font-medium text-text-primary">{{ $l->nama_layanan }}</p>
-                    </div>
+    <!-- Services List Grid -->
+    <div class="services-list-grid" id="service-list" data-field="service-list">
+        @forelse ($layanans as $l)
+            @php
+                $catKey = strtolower(preg_replace('/\s+/', '-', $l->kategori));
+                if ($catKey === 'warna-rambut') {
+                    $catKey = 'warna';
+                } elseif ($catKey === 'treatment' || $catKey === 'treatment-rambut') {
+                    $catKey = 'spa';
+                }
+                if (! in_array($catKey, ['potong', 'styling', 'warna', 'spa'])) {
+                    $catKey = 'potong';
+                }
+                $tagTokens = [
+                    'potong' => 'HAIR',
+                    'styling' => 'STYLING',
+                    'warna' => 'COLOR',
+                    'spa' => 'SPA',
+                ];
+                $hargaList = $l->hargaLayanan;
+                $firstHarga = $hargaList->first();
+                $varianNames = $hargaList->where('varian', '!=', '')->pluck('varian')->take(2)->map(function ($v) {
+                    return ucfirst(trim((string) $v));
+                });
+            @endphp
 
-                    <div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-                        <span class="rounded-full bg-accent-light px-2 py-0.5 font-medium text-accent-text">{{ $l->kategori }}</span>
-                        @if ($l->aktif)
-                            <span class="rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700">Aktif</span>
-                        @else
-                            <span class="rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-600">Nonaktif</span>
-                        @endif
-                    </div>
-
-                    <ul class="mt-3 flex-1 space-y-1.5 border-t border-gray-100 pt-3">
-                        @forelse ($l->hargaLayanan as $h)
-                            <li class="flex flex-col gap-0.5 text-sm">
-                                <span class="font-medium text-text-primary">
-                                    <span class="text-xs text-text-muted">{{ $h->varian }}:</span>
-                                    {{ $h->labelHargaDasar() }}
-                                </span>
-                                @if ($h->labelKomisi())
-                                    <span class="text-xs text-text-muted">Komisi: {{ $h->labelKomisi() }}</span>
-                                @endif
-                            </li>
-                        @empty
-                            <li class="text-sm text-text-muted">Belum ada varian harga.</li>
-                        @endforelse
-                    </ul>
-
-                    <div class="mt-3 flex items-center gap-4 border-t border-gray-100 pt-3 text-sm">
-                        <a href="{{ route('layanan.show', $l) }}" class="font-medium text-blue-600 hover:text-blue-800">
-                            Detail
-                        </a>
-                        <a href="{{ route('layanan.edit', $l) }}" class="font-medium text-accent-text hover:text-accent">
-                            Edit
-                        </a>
-                        <form action="{{ route('layanan.destroy', $l) }}" method="POST"
-                              class="ml-auto"
-                              onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($l->nama_layanan) }}&quot; beserta semua varian harga dan SELURUH transaksi yang pernah memakai layanan ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                                Hapus
-                            </button>
-                        </form>
-                    </div>
+            <article class="service-card" data-category="{{ $catKey }}">
+                <div class="service-card-top">
+                    <span class="category-tag {{ $catKey }}">{{ $tagTokens[$catKey] }}</span>
+                    <a href="{{ route('layanan.edit', $l) }}" class="btn-edit-icon" aria-label="Edit {{ $l->nama_layanan }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </a>
                 </div>
-            @endforeach
-        </div>
-
-        @if ($layanans->hasPages())
-            <div class="mt-4">
-                {{ $layanans->links() }}
+                <h2 class="service-card-name">{{ $l->nama_layanan }}</h2>
+                <p class="service-card-desc">
+                    @if ($l->aktif)
+                        <span class="service-status-pill status-active">Aktif</span>
+                    @else
+                        <span class="service-status-pill status-inactive">Nonaktif</span>
+                    @endif
+                    {{ $varianNames->isEmpty() ? ($hargaList->isEmpty() ? 'Belum ada varian harga.' : $hargaList->count().' varian harga.') : 'Varian: '.$varianNames->join(', ').($hargaList->count() > 2 ? ', ...' : '') }}
+                </p>
+                <div class="service-card-bottom">
+                    <div class="service-duration-box">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>{{ $hargaList->count() }} Varian</span>
+                    </div>
+                    <span class="service-price-val">{{ $firstHarga ? $firstHarga->labelHargaDasar() : '-' }}</span>
+                </div>
+            </article>
+        @empty
+            <div id="services-empty-state" class="empty-filter-state show">
+                @if ($q !== '')
+                    <p>Tidak ditemukan layanan untuk kata kunci "<span class="font-medium">{{ $q }}</span>".</p>
+                @elseif ($kategoriSlug !== 'all')
+                    <p>Tidak ada layanan pada kategori ini.</p>
+                @else
+                    <p>Belum ada layanan. Klik "Add New Service" untuk menambahkan layanan pertama.</p>
+                @endif
             </div>
-        @endif
+        @endforelse
+    </div>
+
+    @if ($layanans->hasPages())
+        <div class="mt-4 mb-6">
+            @include('partials.pagination', ['paginator' => $layanans])
+        </div>
     @endif
 @endsection

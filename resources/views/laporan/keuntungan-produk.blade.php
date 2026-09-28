@@ -2,12 +2,29 @@
 
 @section('title', 'Laporan Keuntungan Produk')
 
+@section('nav-active', 'reports-sales')
+
+@section('container_width', 'app-content-wide')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}">
+@endpush
+
+@php
+    $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $pct = fn ($n) => number_format((float) $n, 1, ',', '.') . ' %';
+    $upDown = fn (float $v) => $v >= 0 ? '#047857' : '#B91C1C';
+@endphp
+
 @section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Laporan Keuntungan Produk</h1>
-        <p class="mt-1 text-sm text-gray-500">
+
+    <div class="report-intro-section">
+        <h1 class="report-title">Laporan Keuntungan Produk</h1>
+        <p class="report-subtitle">
             Selisih harga jual dengan modal (harga beli/restock) yang tersimpan saat transaksi.
-            Modal rata-rata dihitung otomatis dari riwayat pembelian.</p>
+            Modal rata-rata dihitung otomatis dari riwayat pembelian.
+        </p>
     </div>
 
     @include('laporan._filter-periode', [
@@ -15,96 +32,86 @@
         'resetUrl' => route('laporan.keuntungan-produk', ['preset' => 'bulan-ini']),
     ])
 
-    {{-- Filter kategori produk --}}
-    <form action="{{ route('laporan.keuntungan-produk') }}" method="GET" class="mt-3">
-        <input type="hidden" name="preset" value="{{ $preset }}">
-        <input type="hidden" name="dari" value="{{ $dari }}">
-        <input type="hidden" name="sampai" value="{{ $sampai }}">
-        <div class="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-card px-4 py-3 shadow-sm">
-            <span class="text-xs font-medium text-gray-500">Kategori Produk:</span>
-            <a href="{{ route('laporan.keuntungan-produk', ['preset' => $preset, 'dari' => $dari, 'sampai' => $sampai]) }}"
-               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                Semua
+    <div class="report-pill-row">
+        <a href="{{ route('laporan.keuntungan-produk', ['preset' => $preset, 'dari' => $dari, 'sampai' => $sampai]) }}"
+           class="category-pill {{ $kategoriFilter === '' ? 'active' : '' }}">
+            Semua Kategori
+        </a>
+        @foreach ($kategoriList as $key => $label)
+            <a href="{{ route('laporan.keuntungan-produk', ['preset' => $preset, 'dari' => $dari, 'sampai' => $sampai, 'kategori_produk' => $key]) }}"
+               class="category-pill {{ $kategoriFilter === $key ? 'active' : '' }}">
+                {{ $label }}
             </a>
-            @foreach ($kategoriList as $key => $label)
-                <a href="{{ route('laporan.keuntungan-produk', ['preset' => $preset, 'dari' => $dari, 'sampai' => $sampai, 'kategori_produk' => $key]) }}"
-                   class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $key ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                    {{ $label }}
-                </a>
-            @endforeach
-        </div>
-    </form>
-
-    {{-- Tabs --}}
-    <div class="mt-6 flex flex-wrap items-center gap-2 border-b border-gray-200 pb-0">
-        <button type="button" data-tab="retail" onclick="switchTab('retail')"
-                class="tab-btn tab-btn-retail rounded-t-lg px-4 py-2 text-sm font-medium border border-b-0">Mode 1 &middot; Retail (Dijual Per PCS)</button>
-        <button type="button" data-tab="treatment" onclick="switchTab('treatment')"
-                class="tab-btn tab-btn-treatment rounded-t-lg px-4 py-2 text-sm font-medium border border-b-0">Mode 2 &middot; Treatment (Dijual per Layanan)</button>
+        @endforeach
     </div>
 
-    @php
-        $rp = fn ($n) => 'Rp'.number_format((float) $n, 0, ',', '.');
-        $pct = fn ($n) => number_format((float) $n, 1, ',', '.').' %';
-    @endphp
+    {{-- Tabs Mode --}}
+    <div class="trans-tabs-row">
+        <button type="button" class="trans-filter-tab active" data-tab="retail" onclick="switchTab('retail')">Mode 1 &middot; Retail (Dijual Per PCS)</button>
+        <button type="button" class="trans-filter-tab" data-tab="treatment" onclick="switchTab('treatment')">Mode 2 &middot; Treatment (Dijual per Layanan)</button>
+    </div>
 
     {{-- ===== Mode 1: Retail ===== --}}
-    <div id="tab-panel-retail" class="tab-panel mt-6 space-y-6">
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Omset Produk</p>
-                <p class="mt-1 text-lg font-bold text-gray-900">{{ $rp($retailTotals['omset']) }}</p>
+    <div id="tab-panel-retail" class="tab-panel">
+        <div class="report-stat-grid">
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Omset Produk</span>
+                <span class="mini-stat-val">{{ $fmt($retailTotals['omset']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Modal (Harga Beli)</p>
-                <p class="mt-1 text-lg font-bold text-gray-900">{{ $rp($retailTotals['modal']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Modal (Harga Beli)</span>
+                <span class="mini-stat-val">{{ $fmt($retailTotals['modal']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Keuntungan</p>
-                <p class="mt-1 text-lg font-bold {{ $retailTotals['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $rp($retailTotals['keuntungan']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Keuntungan</span>
+                <span class="mini-stat-val" style="color: {{ $upDown($retailTotals['keuntungan']) }};">{{ $fmt($retailTotals['keuntungan']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Margin</p>
-                <p class="mt-1 text-lg font-bold {{ $retailTotals['margin'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $pct($retailTotals['margin']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Margin</span>
+                <span class="mini-stat-val" style="color: {{ $upDown($retailTotals['margin']) }};">{{ $pct($retailTotals['margin']) }}</span>
             </div>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-card shadow-sm">
-            <div class="border-b border-gray-100 px-4 py-3">
-                <h2 class="text-sm font-semibold text-gray-900">Keuntungan per Produk (Retail)</h2>
-                <p class="text-xs text-gray-400">{{ intval($retailTotals['qty']) }} unit terjual dalam {{ count($retailRows) }} produk, {{ $retailTotals['jumlah'] }} item transaksi.</p>
+        <div class="daily-group-card">
+            <div class="daily-group-header">
+                <div class="daily-group-title">
+                    <span>Keuntungan per Produk (Retail)</span>
+                </div>
+                <span class="daily-group-badge">{{ $retailRows->count() }} Produk</span>
             </div>
             @if ($retailRows->isEmpty())
-                <div class="px-6 py-12 text-center">
-                    <p class="text-sm font-medium text-text-secondary">Belum ada penjualan produk retail di periode ini.</p>
-                </div>
+                <div class="report-empty-note">Belum ada penjualan produk retail di periode ini.</div>
             @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <div class="table-responsive-wrapper">
+                    <table class="daily-trans-table">
                         <thead>
-                            <tr class="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
-                                <th class="px-4 py-2.5 font-medium">Produk</th>
-                                <th class="py-2.5 pr-4 font-medium">Kategori</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Qty</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Omset</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Modal</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Keuntungan</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Margin</th>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Kategori</th>
+                                <th style="text-align: right;">Qty</th>
+                                <th style="text-align: right;">Omset</th>
+                                <th style="text-align: right;">Modal</th>
+                                <th style="text-align: right;">Keuntungan</th>
+                                <th style="text-align: right;">Margin</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody>
                             @foreach ($retailRows as $r)
                                 <tr>
-                                    <td class="px-4 py-2.5 text-gray-900">
-                                        <span class="font-medium">{{ $r['nama_produk'] }}</span>
-                                        @if ($r['merek']) <span class="text-xs text-gray-400">({{ $r['merek'] }})</span> @endif
+                                    <td>
+                                        <span class="trans-service-title">{{ $r['nama_produk'] }}</span>
+                                        @if ($r['merek'])
+                                            <div class="trans-worker-tag">{{ $r['merek'] }}</div>
+                                        @endif
                                     </td>
-                                    <td class="py-2.5 pr-4 text-gray-500">{{ $r['kategori'] }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ intval($r['qty']) }} {{ $r['satuan'] }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ $rp($r['omset']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-500">{{ $rp($r['modal']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right font-medium {{ $r['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $rp($r['keuntungan']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right {{ $r['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $r['omset'] > 0 ? $pct(($r['keuntungan'] / $r['omset']) * 100) : '—' }}</td>
+                                    <td class="trans-worker-tag">{{ $r['kategori'] }}</td>
+                                    <td style="text-align: right; font-weight: 700;">{{ intval($r['qty']) }} {{ $r['satuan'] }}</td>
+                                    <td style="text-align: right;" class="trans-amount-cell">{{ $fmt($r['omset']) }}</td>
+                                    <td style="text-align: right;" class="trans-worker-tag">{{ $fmt($r['modal']) }}</td>
+                                    <td style="text-align: right; font-weight: 800; color: {{ $upDown($r['keuntungan']) }};">{{ $fmt($r['keuntungan']) }}</td>
+                                    <td style="text-align: right; font-weight: 800; color: {{ $upDown($r['keuntungan']) }};">
+                                        {{ $r['omset'] > 0 ? $pct(($r['keuntungan'] / $r['omset']) * 100) : '—' }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -112,66 +119,73 @@
                 </div>
             @endif
         </div>
+
+        <p class="report-subtitle" style="margin-top: 10px;">
+            {{ intval($retailTotals['qty']) }} unit terjual dalam {{ $retailRows->count() }} produk, {{ $retailTotals['jumlah'] }} item transaksi.
+        </p>
     </div>
 
     {{-- ===== Mode 2: Treatment ===== --}}
-    <div id="tab-panel-treatment" class="tab-panel mt-6 space-y-6 hidden">
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Omset Produk Terpakai</p>
-                <p class="mt-1 text-lg font-bold text-gray-900">{{ $rp($layananTotals['omset']) }}</p>
+    <div id="tab-panel-treatment" class="tab-panel hidden">
+        <div class="report-stat-grid">
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Omset Produk Terpakai</span>
+                <span class="mini-stat-val">{{ $fmt($layananTotals['omset']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Modal Bahan</p>
-                <p class="mt-1 text-lg font-bold text-gray-900">{{ $rp($layananTotals['modal']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Modal Bahan</span>
+                <span class="mini-stat-val">{{ $fmt($layananTotals['modal']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Keuntungan</p>
-                <p class="mt-1 text-lg font-bold {{ $layananTotals['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $rp($layananTotals['keuntungan']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Keuntungan</span>
+                <span class="mini-stat-val" style="color: {{ $upDown($layananTotals['keuntungan']) }};">{{ $fmt($layananTotals['keuntungan']) }}</span>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-card p-4 shadow-sm">
-                <p class="text-xs font-medium text-gray-500">Margin</p>
-                <p class="mt-1 text-lg font-bold {{ $layananTotals['margin'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $pct($layananTotals['margin']) }}</p>
+            <div class="report-stat-mini-card">
+                <span class="mini-stat-label">Margin</span>
+                <span class="mini-stat-val" style="color: {{ $upDown($layananTotals['margin']) }};">{{ $pct($layananTotals['margin']) }}</span>
             </div>
         </div>
 
-        <div class="rounded-lg border border-gray-200 bg-card shadow-sm">
-            <div class="border-b border-gray-100 px-4 py-3">
-                <h2 class="text-sm font-semibold text-gray-900">Keuntungan per Produk (Treatment)</h2>
-                <p class="text-xs text-gray-400">Dihitung dari total ml produk yang terpakai pada layanan: nilai jual produk (omset) dikurangi modal bahan.
-                {{ $kategoriFilter !== '' ? 'Diffilter kategori produk: '.$kategoriList[$kategoriFilter].'.' : 'Semua kategori produk.' }}</p>
+        <div class="daily-group-card">
+            <div class="daily-group-header">
+                <div class="daily-group-title">
+                    <span>Keuntungan per Produk (Treatment)</span>
+                </div>
+                <span class="daily-group-badge">{{ $layananRows->count() }} Produk</span>
             </div>
             @if ($layananRows->isEmpty())
-                <div class="px-6 py-12 text-center">
-                    <p class="text-sm font-medium text-text-secondary">Belum ada pemakaian produk pada layanan di periode ini.</p>
-                </div>
+                <div class="report-empty-note">Belum ada pemakaian produk pada layanan di periode ini.</div>
             @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <div class="table-responsive-wrapper">
+                    <table class="daily-trans-table">
                         <thead>
-                            <tr class="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
-                                <th class="px-4 py-2.5 font-medium">Produk</th>
-                                <th class="py-2.5 pr-4 font-medium">Kategori</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Total Pemakaian (ml)</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Omset</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Modal Bahan</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Keuntungan</th>
-                                <th class="py-2.5 pr-4 font-medium text-right">Margin</th>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Kategori</th>
+                                <th style="text-align: right;">Total Pemakaian</th>
+                                <th style="text-align: right;">Omset</th>
+                                <th style="text-align: right;">Modal Bahan</th>
+                                <th style="text-align: right;">Keuntungan</th>
+                                <th style="text-align: right;">Margin</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody>
                             @foreach ($layananRows as $r)
                                 <tr>
-                                    <td class="px-4 py-2.5 text-gray-900">
-                                        <span class="font-medium">{{ $r['nama_produk'] }}</span>
-                                        @if ($r['merek']) <span class="text-xs text-gray-400">({{ $r['merek'] }})</span> @endif
+                                    <td>
+                                        <span class="trans-service-title">{{ $r['nama_produk'] }}</span>
+                                        @if ($r['merek'])
+                                            <div class="trans-worker-tag">{{ $r['merek'] }}</div>
+                                        @endif
                                     </td>
-                                    <td class="py-2.5 pr-4 text-gray-500">{{ $r['kategori'] }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ number_format((float) $r['total_ml'], 0, ',', '.') }} ml</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-900">{{ $rp($r['omset']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right text-gray-500">{{ $rp($r['modal']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right font-medium {{ $r['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $rp($r['keuntungan']) }}</td>
-                                    <td class="py-2.5 pr-4 text-right {{ $r['keuntungan'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $r['omset'] > 0 ? $pct(($r['keuntungan'] / $r['omset']) * 100) : '—' }}</td>
+                                    <td class="trans-worker-tag">{{ $r['kategori'] }}</td>
+                                    <td style="text-align: right; font-weight: 700;">{{ number_format((float) $r['total_ml'], 0, ',', '.') }} ml</td>
+                                    <td style="text-align: right;" class="trans-amount-cell">{{ $fmt($r['omset']) }}</td>
+                                    <td style="text-align: right;" class="trans-worker-tag">{{ $fmt($r['modal']) }}</td>
+                                    <td style="text-align: right; font-weight: 800; color: {{ $upDown($r['keuntungan']) }};">{{ $fmt($r['keuntungan']) }}</td>
+                                    <td style="text-align: right; font-weight: 800; color: {{ $upDown($r['keuntungan']) }};">
+                                        {{ $r['omset'] > 0 ? $pct(($r['keuntungan'] / $r['omset']) * 100) : '—' }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -179,16 +193,27 @@
                 </div>
             @endif
         </div>
+
+        <p class="report-subtitle" style="margin-top: 10px;">
+            Dihitung dari total ml produk yang terpakai pada layanan: nilai jual produk (omset) dikurangi modal bahan.
+            {{ $kategoriFilter !== '' ? 'Difilter kategori produk: '.($kategoriList[$kategoriFilter] ?? $kategoriFilter).'.' : 'Semua kategori produk.' }}
+        </p>
     </div>
 
     {{-- Grafik tren 6 bulan --}}
-    <div class="mt-6 rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-        <h2 class="text-sm font-semibold text-gray-900">Tren Keuntungan Produk 6 Bulan Terakhir</h2>
-        <p class="mt-0.5 text-xs text-gray-400">Retail + treatment (nilai jual produk terpakai dikurangi modal bahan).</p>
-        <div class="relative h-64 mt-4">
+    <div class="revenue-chart-card">
+        <div class="revenue-chart-header">
+            <div class="chart-header-left">
+                <span class="chart-label-sm">Tren Keuntungan Produk</span>
+                <span class="chart-revenue-val">6 Bulan Terakhir</span>
+            </div>
+        </div>
+        <div class="svg-bar-chart-container" style="height: 240px;">
             <canvas id="chartKeuntunganProduk"></canvas>
         </div>
+        <p class="report-subtitle" style="margin-top: 8px;">Retail + treatment (nilai jual produk terpakai dikurangi modal bahan).</p>
     </div>
+
 @endsection
 
 @push('scripts')
@@ -198,11 +223,8 @@
     function switchTab(name) {
         document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.add('hidden'); });
         document.getElementById('tab-panel-' + name).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(function (b) {
-            b.classList.toggle('bg-white', b.dataset.tab !== name);
-            b.classList.toggle('bg-gray-200', b.dataset.tab !== name);
-            b.classList.toggle('text-gray-700', b.dataset.tab !== name);
-            b.classList.toggle('text-gray-900', b.dataset.tab === name);
+        document.querySelectorAll('.trans-filter-tab').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.tab === name);
         });
     }
     window.switchTab = switchTab;
@@ -220,12 +242,15 @@
                     label: 'Keuntungan Produk',
                     data: values,
                     backgroundColor: values.map(function (v) { return v >= 0 ? 'rgba(16,185,129,0.75)' : 'rgba(239,68,68,0.75)'; }),
+                    borderColor: values.map(function (v) { return v >= 0 ? 'rgb(5,150,105)' : 'rgb(220,38,38)'; }),
+                    borderWidth: 1,
                     borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: { padding: { top: 20 } },
                 plugins: {
                     legend: { display: false },
                     tooltip: { callbacks: { label: function (ctx) { return 'Keuntungan: Rp' + new Intl.NumberFormat('id-ID').format(ctx.raw); } } }

@@ -1,159 +1,145 @@
 @extends('layouts.app')
 
-@section('title', 'Data Produk')
+@section('title', 'Produk')
+
+@section('nav-active', 'products')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/produk.css') }}">
+@endpush
 
 @section('content')
-    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-text-primary">Data Produk</h1>
-            <p class="mt-1 text-sm text-text-muted">
-                {{ $produks->total() }} produk {{ $mode === 'pcs' ? 'dijual per pcs' : 'untuk layanan' }} terdaftar.
-            </p>
-        </div>
+    <!-- Section Intro & Add Button -->
+    <div class="products-intro-section">
+        <h1 class="products-title">Product Management</h1>
+        <p class="products-subtitle">Kelola stok produk retail dan produk pendukung layanan.</p>
+    </div>
 
-        <div class="flex items-center gap-2">
-            <form action="{{ route('produk.index') }}" method="GET" class="flex w-full max-w-sm items-center gap-2">
-                <input type="text" name="q" value="{{ $q }}"
-                       placeholder="Cari nama produk, merek..."
-                       class="block w-full rounded-lg border border-gray-300 bg-card px-3 py-2 text-sm text-text-primary shadow-sm placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none">
-                <input type="hidden" name="mode" value="{{ $mode }}">
-                @if ($kategoriFilter !== '')
-                    <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
-                @endif
-                <button type="submit"
-                        class="rounded-lg bg-card px-4 py-2 text-sm font-medium text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover">
-                    Cari
-                </button>
-            </form>
-            <a href="{{ route('produk.create') }}"
-               class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-dark-hover">
-                <span class="text-lg leading-none">+</span>
-                <span class="hidden sm:inline">Tambah</span>
+    <a href="{{ route('produk.create') }}" class="btn-add-full" id="add-product-btn" data-field="add-product-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add New Product</span>
+    </a>
+
+    <!-- Pill Filter Tabs -->
+    <div class="pill-filter-container" id="product-category-filter">
+        @php
+            $modeTabs = ['all' => 'Semua', 'pcs' => 'Dijual Per Pcs', 'layanan' => 'Produk Layanan'];
+        @endphp
+        @foreach ($modeTabs as $slug => $label)
+            @php
+                $url = route('produk.index', array_merge(request()->except(['mode', 'kategori', 'page']), $slug === 'all' ? [] : ['mode' => $slug]));
+            @endphp
+            <a href="{{ $url }}"
+               class="pill-tab-btn {{ $mode === $slug ? 'active' : '' }}"
+               data-filter="{{ $slug }}"
+               aria-pressed="{{ $mode === $slug ? 'true' : 'false' }}">
+                {{ $label }}
             </a>
+        @endforeach
+    </div>
+
+    @if ($mode === 'all' && $stokMenipis > 0)
+        <div class="stock-low-banner">
+            <span class="stock-low-dot"></span>
+            <span><strong>{{ $stokMenipis }} produk dijual per pcs</strong> punya stok menipis (stok &le; {{ \App\Models\Produk::STOK_MENIPIS }}).</span>
         </div>
-    </div>
+    @endif
 
-    {{-- Pilih jenis produk dulu: layanan atau jual per pcs --}}
-    <div class="mb-3 flex flex-wrap items-center gap-2">
-        <a href="{{ route('produk.index', array_merge(request()->except(['mode', 'kategori', 'page']), ['mode' => 'layanan'])) }}"
-           class="rounded-lg px-4 py-2 text-sm font-medium {{ $mode === 'layanan' ? 'bg-dark text-white' : 'bg-card text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover' }}">
-            Dijual untuk Layanan
-        </a>
-        <a href="{{ route('produk.index', array_merge(request()->except(['mode', 'kategori', 'page']), ['mode' => 'pcs'])) }}"
-           class="rounded-lg px-4 py-2 text-sm font-medium {{ $mode === 'pcs' ? 'bg-dark text-white' : 'bg-card text-text-secondary ring-1 ring-inset ring-gray-300 hover:bg-card-hover' }}">
-            Dijual Per PCS
-        </a>
-    </div>
-
-    {{-- Pilihan kategori baru muncul setelah mode dipilih (khusus layanan) --}}
+    {{-- Filter kategori khusus mode layanan --}}
     @if ($mode === 'layanan')
-        <div class="mb-4 flex flex-wrap items-center gap-2">
-            <a href="{{ route('produk.index', array_merge(request()->except(['kategori', 'page']))) }}"
-               class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === '' ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                Semua
-            </a>
+        <div class="pill-filter-container" id="product-subcategory-filter">
+            @php
+                $subUrl = route('produk.index', array_merge(request()->except(['kategori', 'page']), ['mode' => 'layanan']));
+            @endphp
+            <a href="{{ $subUrl }}"
+               class="pill-tab-btn {{ $kategoriFilter === '' ? 'active' : '' }}"
+               data-filter="all">Semua Kategori</a>
             @foreach ($kategoriList as $key => $label)
-                <a href="{{ route('produk.index', array_merge(request()->except(['kategori', 'page']), ['kategori' => $key])) }}"
-                   class="rounded-full px-3 py-1 text-xs font-medium {{ $kategoriFilter === $key ? 'bg-dark text-white' : 'bg-badge-neutral-bg text-badge-neutral-text hover:bg-gray-200' }}">
-                    {{ $label }}
-                </a>
+                <a href="{{ route('produk.index', array_merge(request()->except(['kategori', 'page']), ['mode' => 'layanan', 'kategori' => $key])) }}"
+                   class="pill-tab-btn {{ $kategoriFilter === $key ? 'active' : '' }}"
+                   data-filter="{{ $key }}">{{ $label }}</a>
             @endforeach
         </div>
     @endif
 
-    @if ($stokMenipis > 0 && $mode === 'pcs')
-        <div class="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            <span class="font-semibold">{{ $stokMenipis }} produk stok menipis</span> (stok &le; {{ \App\Models\Produk::STOK_MENIPIS }}).
-        </div>
-    @endif
+    <!-- Products List Grid -->
+    <div class="products-list-grid" id="product-list" data-field="product-list">
+        @forelse ($produks as $p)
+            @php
+                $isRetail = $p->kategori_produk === 'dijual';
+                $tagKey = $isRetail ? 'retail' : 'produk-layanan';
+                $tagText = $isRetail ? 'RETAIL' : 'PRODUK LAYANAN';
+            @endphp
 
-    @if ($produks->isEmpty())
-        <div class="rounded-xl border border-dashed border-gray-300 bg-card px-6 py-16 text-center">
-            <p class="text-sm font-medium text-text-secondary">Belum ada data produk.</p>
-            @if ($q !== '')
-                <p class="mt-1 text-sm text-text-muted">Tidak ditemukan hasil untuk "<span class="font-medium">{{ $q }}</span>".</p>
-                <a href="{{ route('produk.index') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    &larr; Tampilkan semua
-                </a>
-            @else
-                <a href="{{ route('produk.create') }}" class="mt-4 inline-block text-sm font-medium text-accent-text hover:text-accent">
-                    Tambah produk pertama &rarr;
-                </a>
-            @endif
-        </div>
-    @else
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            @foreach ($produks as $p)
-                <div class="flex flex-col rounded-xl border border-gray-200 bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md {{ $p->aktif && $p->kategori_produk === 'dijual' && $p->stokMenipis() ? 'border-amber-300 ring-1 ring-amber-200' : '' }}">
-                    <div class="flex items-start justify-between gap-2">
-                        <p class="font-medium text-text-primary">{{ $p->nama_produk }}</p>
-                        @if ($p->aktif && $p->kategori_produk === 'dijual' && $p->stokMenipis())
-                            <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">Menipis</span>
-                        @endif
-                    </div>
-
-                    <div class="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-                        @if ($p->kategori_produk !== 'dijual')
-                            <span class="rounded-full bg-accent-light px-2 py-0.5 font-medium text-accent-text">{{ $p->merek }}</span>
-                        @endif
-                        <span class="rounded-full bg-blue-50 px-2 py-0.5 font-medium text-blue-700">{{ $p->labelKategori() }}</span>
-                        @if ($p->aktif)
-                            <span class="rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700">Aktif</span>
-                        @else
-                            <span class="rounded-full bg-gray-100 px-2 py-0.5 font-medium text-gray-600">Nonaktif</span>
-                        @endif
-                    </div>
-
-                    <dl class="mt-2 flex-1 space-y-1 text-sm">
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Harga</dt>
-                            <dd class="text-right font-medium text-text-primary">{{ $p->labelHarga() }}</dd>
-                        </div>
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Modal</dt>
-                            <dd class="text-right text-text-primary">{{ $p->labelModalPerSatuan() }}</dd>
-                        </div>
-                        @if ($p->kategori_produk === 'dijual')
-                        <div class="flex justify-between gap-4">
-                            <dt class="text-text-muted">Stok</dt>
-                            <dd class="text-right text-text-primary">
-                                {{ $p->stok }}
-                                @if ($p->aktif && $p->stokMenipis())
-                                    <span class="text-amber-600">(menipis)</span>
-                                @endif
-                            </dd>
-                        </div>
-                        @endif
-                    </dl>
-
-                    <div class="mt-3 flex items-center gap-4 border-t border-gray-100 pt-3 text-sm">
-                        <a href="{{ route('produk.show', $p) }}" class="font-medium text-blue-600 hover:text-blue-800">
-                            Detail
-                        </a>
-                        <a href="{{ route('produk.edit', $p) }}" class="font-medium text-accent-text hover:text-accent">
-                            Edit
-                        </a>
-                        <a href="{{ route('produk.restock-form', $p) }}" class="font-medium text-emerald-600 hover:text-emerald-800">
-                            Restock
-                        </a>
-                        <form action="{{ route('produk.destroy', $p) }}" method="POST"
-                              class="ml-auto"
-                              onsubmit="return confirm('Hapus produk &quot;{{ addslashes($p->nama_produk) }}&quot; beserta SELURUH transaksi yang pernah memakai produk ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                                Hapus
-                            </button>
-                        </form>
-                    </div>
+            <article class="product-card" data-category="{{ $tagKey }}">
+                <div class="product-card-top">
+                    <span class="product-tag {{ $tagKey }}">{{ $tagText }}</span>
+                    <a href="{{ route('produk.edit', $p) }}" class="btn-edit-icon" aria-label="Edit {{ $p->nama_produk }}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </a>
                 </div>
-            @endforeach
-        </div>
-
-        @if ($produks->hasPages())
-            <div class="mt-4">
-                {{ $produks->links() }}
+                <h2 class="product-card-name">{{ $p->nama_produk }}</h2>
+                <p class="product-card-desc">
+                    @if ($isRetail)
+                        @if ($p->aktif)
+                            <span class="product-status-pill status-active">Aktif</span>
+                        @else
+                            <span class="product-status-pill status-inactive">Nonaktif</span>
+                        @endif
+                        {{ $p->merek ? 'Merek '.$p->merek : 'Produk retail' }} &mdash; dijual per satuan ke pelanggan.
+                    @else
+                        @if ($p->aktif)
+                            <span class="product-status-pill status-active">Aktif</span>
+                        @else
+                            <span class="product-status-pill status-inactive">Nonaktif</span>
+                        @endif
+                        {{ $p->merek ? 'Merek '.$p->merek.' &mdash; ' : '' }}kategori {{ $p->labelKategori() }} ({{ $p->satuan }}).
+                    @endif
+                </p>
+                <div class="product-card-bottom">
+                    <div class="product-info-box">
+                        @if ($isRetail)
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            <span>Stok: {{ $p->stok }} pcs
+                                @if ($p->aktif && $p->stokMenipis())
+                                    <span class="product-stock-low">Menipis</span>
+                                @endif
+                            </span>
+                        @else
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                            </svg>
+                            <span>Satuan: {{ $p->satuan }}</span>
+                        @endif
+                    </div>
+                    <span class="product-price-val">{{ $p->labelHarga() }}</span>
+                </div>
+            </article>
+        @empty
+            <div id="products-empty-state" class="empty-filter-state show">
+                @if ($q !== '')
+                    <p>Tidak ditemukan produk untuk kata kunci "<span class="font-medium">{{ $q }}</span>".</p>
+                @elseif ($kategoriFilter !== '')
+                    <p>Tidak ada produk pada kategori ini.</p>
+                @else
+                    <p>Belum ada produk. Klik "Add New Product" untuk menambahkan produk pertama.</p>
+                @endif
             </div>
-        @endif
+        @endforelse
+    </div>
+
+    @if ($produks->hasPages())
+        <div class="mt-4 mb-6">
+            @include('partials.pagination', ['paginator' => $produks])
+        </div>
     @endif
 @endsection

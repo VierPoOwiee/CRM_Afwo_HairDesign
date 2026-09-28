@@ -1,0 +1,688 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - CLIENT DIRECTORY STYLES (DYNAMIC FLUID NO-SCROLL)
+   ========================================================================== */
+
+.clients-page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.clients-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.clients-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clients-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.clients-count-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #B45309;
+  background-color: #FEF3C7;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.clients-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.btn-add-client-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--accent-gold);
+  color: #1E2024;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(229, 169, 60, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-add-client-gold:hover {
+  background-color: #D99B26;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);
+}
+
+/* Toolbar Card - Lebar 100% presisi dengan card tabel */
+.clients-toolbar-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+/* Mode Desktop: Button tabs */
+.clients-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.client-filter-tab {
+  border: none;
+  background: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  padding: 7px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.client-filter-tab:hover {
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+}
+
+.client-filter-tab.active {
+  background-color: var(--dark-solid);
+  color: #FFFFFF;
+}
+
+/* Controls Right */
+.clients-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.client-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  width: 190px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.client-search-box:focus-within {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.12);
+}
+
+.client-search-box .search-input {
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.client-sort-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.sort-prefix-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   DROPDOWN WITH AFWO DESIGN SYSTEM
+   ========================================================================== */
+.sort-select-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 7px 32px 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234B5563' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.sort-select-control:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.15);
+}
+
+.sort-select-control option {
+  background-color: #FFFFFF;
+  color: #111827;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+}
+
+/* Mobile filter dropdown wrapper (hidden by default on desktop) */
+.mobile-filter-dropdown-wrap {
+  display: none;
+}
+
+/* ==========================================================================
+   TABLE DIRECTORY (PERFECT RESPONSIVE & ZERO CLIPPING)
+   ========================================================================== */
+.clients-directory-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.clients-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.clients-detail-table th {
+  padding: 14px 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border-color);
+  background-color: #F9FAFB;
+  white-space: nowrap;
+}
+
+.clients-detail-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+/* Margin wajar pada ujung kiri dan ujung kanan tabel */
+.clients-detail-table th:first-child,
+.clients-detail-table td:first-child {
+  padding-left: 20px;
+}
+
+.clients-detail-table th:last-child,
+.clients-detail-table td:last-child {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.clients-detail-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.clients-detail-table tbody tr:hover td {
+  background-color: #F8FAFC;
+}
+
+.client-name-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.client-name-title:hover {
+  color: #B45309;
+  text-decoration: underline;
+}
+
+.client-phone-num {
+  font-family: monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.gender-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background-color: #F3F4F6;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.hair-type-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background-color: #EFF6FF;
+  color: #1D4ED8;
+  white-space: nowrap;
+}
+
+.condition-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.condition-sehat {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.condition-agak-rusak {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.condition-rusak {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+/* Ellipsis for Notes */
+.client-notes-ellipsis {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Action Buttons - Nempel rapi di kanan dengan margin wajar */
+.client-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-client-action {
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-client-edit {
+  background-color: #F3F4F6;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-client-edit:hover {
+  background-color: #E5E7EB;
+}
+
+.btn-client-schedule {
+  background-color: #FEF3C7;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+}
+
+.btn-client-schedule:hover {
+  background-color: #FDE68A;
+}
+
+/* ==========================================================================
+   MODAL DETAIL PELANGGAN
+   ========================================================================== */
+.client-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.client-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.client-modal-card {
+  background-color: #FFFFFF;
+  border-radius: var(--radius-lg, 16px);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.client-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #FAFAFA;
+}
+
+.client-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+}
+
+.btn-close-modal:hover {
+  color: var(--text-primary);
+}
+
+.client-modal-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.modal-detail-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-detail-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.modal-detail-val {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+.client-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  background-color: #FAFAFA;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-modal-edit {
+  background-color: #2D2319;
+  color: #FFFFFF;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-modal-edit:hover {
+  background-color: #1A140F;
+}
+
+.btn-modal-appointment {
+  background-color: #FEF3C7;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-modal-appointment:hover {
+  background-color: #FDE68A;
+}
+
+/* Empty state */
+.empty-state-card {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   GRADUAL FLUID RESPONSIVE BREAKPOINTS (1 KOLOM DEMI 1 KOLOM SINKRON)
+   Urutan penambahan kolom saat space bertambah:
+   HP Minimal : NAMA, AKSI
+   + Space    : NO. WHATSAPP
+   + Space    : JENIS KELAMIN
+   + Space    : JENIS RAMBUT
+   + Space    : KONDISI RAMBUT
+   + Space    : CATATAN (Ellipsis)
+   ========================================================================== */
+
+/* 1. Layar Sedang (<= 1200px): Sembunyikan Catatan */
+@media (max-width: 1200px) {
+  .col-notes {
+    display: none !important;
+  }
+}
+
+/* 2. Layar Laptop Menengah (<= 1040px): Sembunyikan Kondisi Rambut */
+@media (max-width: 1040px) {
+  .col-condition {
+    display: none !important;
+  }
+  .client-search-box {
+    width: 170px;
+  }
+}
+
+/* 3. Layar Tablet Lebar (<= 920px): Sembunyikan Jenis Rambut */
+@media (max-width: 920px) {
+  .col-hair-type {
+    display: none !important;
+  }
+  .client-filter-tab {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 4. Layar Tablet (<= 780px): Sembunyikan Jenis Kelamin & Toolbar beralih ke Search Full + 2 Dropdown */
+@media (max-width: 780px) {
+  .clients-toolbar-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .clients-tabs-row {
+    display: none !important;
+  }
+
+  .clients-controls-right {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .client-search-box {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-filter-dropdown-wrap {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .mobile-filter-dropdown-wrap .sort-select-control {
+    flex: 1;
+    width: 50%;
+  }
+
+  .client-sort-box {
+    display: none !important;
+  }
+
+  .col-gender {
+    display: none !important;
+  }
+}
+
+/* 5. Layar HP (<= 580px): Sembunyikan No WhatsApp -> Tersisa NAMA PELANGGAN & AKSI */
+@media (max-width: 580px) {
+  .col-phone {
+    display: none !important;
+  }
+
+  .clients-detail-table th:first-child,
+  .clients-detail-table td:first-child {
+    padding-left: 12px;
+  }
+
+  .clients-detail-table th:last-child,
+  .clients-detail-table td:last-child {
+    padding-right: 12px;
+  }
+
+  .clients-detail-table th,
+  .clients-detail-table td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .client-actions-cell {
+    gap: 4px;
+  }
+
+  .btn-client-action {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+}

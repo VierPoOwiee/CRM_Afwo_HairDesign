@@ -2,84 +2,97 @@
 
 @section('title', 'Riwayat ' . $pelanggan->nama)
 
+@section('nav-active', 'reports-active-clients')
+
+@section('container_width', 'app-content-wide')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/pelanggan-aktif.css') }}">
+@endpush
+
+@php
+    $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $fmtTanggal = function ($dt, $denganJam = false) {
+        if (!$dt) return '-';
+        $m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        $c = \Carbon\Carbon::parse($dt);
+        $tgl = $c->format('d') . ' ' . $m[$c->format('n') - 1] . ' ' . $c->format('Y');
+        return $denganJam ? $tgl . ' &middot; ' . $c->format('H:i') : $tgl;
+    };
+@endphp
+
 @section('content')
-    <div class="mb-6">
-        <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}" class="text-sm text-accent-text hover:text-accent">&larr; Kembali ke Pelanggan Aktif</a>
-        <div class="mt-2">
-            <h1 class="text-2xl font-bold text-gray-900">{{ $pelanggan->nama }}</h1>
-            <p class="mt-1 text-sm text-gray-500">Riwayat transaksi lengkap &middot; {{ $pelanggan->no_wa }}</p>
+
+    <div class="active-clients-header">
+        <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}"
+           class="btn-table-action btn-view-profile" style="align-self:flex-start;">&larr; Kembali ke Pelanggan Aktif</a>
+        <h1 class="active-clients-title">{{ $pelanggan->nama }}</h1>
+        <p class="active-clients-subtitle">Riwayat transaksi lengkap &middot; {{ $pelanggan->no_wa }}</p>
+    </div>
+
+    <div class="active-clients-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Total Kunjungan</span>
+            <div class="kpi-mini-value">{{ $jumlahKunjungan }}</div>
+        </div>
+        <div class="kpi-mini-card featured-gold-kpi">
+            <span class="kpi-mini-label">Total Belanja</span>
+            <div class="kpi-mini-value">{{ $fmt($totalBelanja) }}</div>
+        </div>
+        <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Kunjungan Terakhir</span>
+            <div class="kpi-mini-value" style="font-size:1.1rem;">{{ $fmtTanggal($transaksis->first()?->waktu_kunjungan) }}</div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
-        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">Total Kunjungan</p>
-            <p class="mt-2 text-2xl font-bold text-gray-900">{{ $jumlahKunjungan }}</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">Total Belanja</p>
-            <p class="mt-2 text-2xl font-bold text-gray-900">Rp{{ number_format($totalBelanja, 0, ',', '.') }}</p>
-        </div>
-        <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">Kunjungan Terakhir</p>
-            <p class="mt-2 text-lg font-bold text-gray-900">
-                {{ $transaksis->first() ? $transaksis->first()->waktu_kunjungan->format('d M Y') : '-' }}
-            </p>
-        </div>
-    </div>
-
-    <div class="rounded-lg border border-gray-200 bg-card shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="text-base font-semibold text-gray-900">Riwayat Transaksi</h2>
-        </div>
+    <div class="active-clients-results-card">
         @if ($transaksis->isEmpty())
-            <div class="px-6 py-12 text-center">
-                <p class="text-sm text-gray-400">Belum ada riwayat transaksi.</p>
+            <div class="empty-state-card">
+                <div class="empty-state-content">
+                    <p class="empty-state-text">Belum ada riwayat transaksi untuk pelanggan ini.</p>
+                </div>
             </div>
         @else
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <div class="results-toolbar-header">
+                <div class="sort-label">Riwayat Transaksi <span style="opacity:.6;">&middot; {{ $jumlahKunjungan }} transaksi</span></div>
+            </div>
+            <div class="table-responsive-wrapper">
+                <table class="active-clients-table">
+                    <thead>
                         <tr>
-                            <th class="px-4 py-3">No Struk</th>
-                            <th class="px-4 py-3">Tanggal</th>
-                            <th class="px-4 py-3">Item</th>
-                            <th class="px-4 py-3">Staf</th>
-                            <th class="px-4 py-3 text-right">Total</th>
+                            <th>No Struk</th>
+                            <th>Tanggal</th>
+                            <th>Item</th>
+                            <th>Staf</th>
+                            <th style="text-align: right;">Total</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody>
                         @foreach ($transaksis as $t)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3">
-                                    <a href="{{ route('transaksi.show', $t) }}" class="font-medium text-blue-600 hover:text-blue-800">
-                                        {{ $t->no_struk }}
-                                    </a>
+                            <tr>
+                                <td>
+                                    <a href="{{ route('transaksi.show', $t) }}" class="client-name-link">{{ $t->no_struk }}</a>
                                 </td>
-                                <td class="px-4 py-3 text-gray-500">{{ $t->waktu_kunjungan->format('d M Y H:i') }}</td>
-                                <td class="px-4 py-3">
-                                    <div class="space-y-0.5">
-                                        @foreach ($t->details as $d)
-                                            <p class="text-xs text-gray-600">
-                                                @if ($d->tipe_item === 'layanan')
-                                                    {{ $d->layanan->nama_layanan ?? '-' }} ({{ $d->varian_dipilih ?? '-' }})
-                                                @else
-                                                    {{ $d->produk->nama_produk ?? '-' }} &times; {{ $d->qty }}
-                                                @endif
-                                            </p>
-                                        @endforeach
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="space-y-0.5">
-                                        @foreach ($t->details->where('tipe_item', 'layanan') as $d)
-                                            @if ($d->staf)
-                                                <p class="text-xs text-gray-600">{{ $d->staf->nama }}</p>
+                                <td style="color: var(--text-secondary);">{!! $fmtTanggal($t->waktu_kunjungan, true) !!}</td>
+                                <td>
+                                    @foreach ($t->details as $d)
+                                        <div style="font-size:.8rem; color: var(--text-primary); font-weight:500;">
+                                            @if ($d->tipe_item === 'layanan')
+                                                {{ $d->layanan->nama_layanan ?? '-' }} <span style="color: var(--text-muted);">({{ $d->varian_dipilih ?? '-' }})</span>
+                                            @else
+                                                {{ $d->produk->nama_produk ?? '-' }} <span style="color: var(--text-muted);">&times; {{ $d->qty }}</span>
                                             @endif
-                                        @endforeach
-                                    </div>
+                                        </div>
+                                    @endforeach
                                 </td>
-                                <td class="px-4 py-3 text-right font-medium text-gray-900">Rp{{ number_format((float) $t->total_bayar, 0, ',', '.') }}</td>
+                                <td>
+                                    @foreach ($t->details->where('tipe_item', 'layanan') as $d)
+                                        @if ($d->staf)
+                                            <div style="font-size:.8rem; color: var(--text-secondary);">{{ $d->staf->nama }}</div>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td style="text-align: right;" class="spend-amount-highlight">{{ $fmt($t->total_bayar) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -87,4 +100,5 @@
             </div>
         @endif
     </div>
+
 @endsection

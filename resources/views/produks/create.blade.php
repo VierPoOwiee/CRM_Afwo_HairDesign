@@ -2,14 +2,18 @@
 
 @section('title', 'Tambah Produk')
 
-@section('content')
-    <h1 class="text-2xl font-bold text-gray-900">Tambah Produk</h1>
-    <p class="mt-1 text-sm text-gray-500">Lengkapi data produk baru di bawah ini.</p>
+@section('nav-active', 'products')
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <form action="{{ route('produk.store') }}" method="POST">
-            @csrf
-            @include('produks._form', ['submitLabel' => 'Simpan Produk'])
-        </form>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/edit-layanan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/edit-produk.css') }}">
+@endpush
+
+@section('content')
+    <div class="edit-produk-header">
+        <h1 class="edit-produk-title" id="edit-produk-title">Tambah Produk</h1>
+        <p class="edit-produk-subtitle" id="edit-produk-subtitle">Lengkapi data produk baru di bawah ini.</p>
     </div>
+
+    @include('produks._form', ['submitLabel' => 'Simpan Produk'])
 @endsection

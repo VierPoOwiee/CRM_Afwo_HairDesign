@@ -2,156 +2,160 @@
 
 @section('title', 'Restock '.$produk->nama_produk)
 
+@section('nav-active', 'products')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/edit-produk.css') }}">
+@endpush
+
 @section('content')
-    <div class="flex flex-wrap items-center gap-4">
-        <a href="{{ route('produk.show', $produk) }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div class="min-w-0">
-            <h1 class="text-2xl font-bold text-gray-900">Restock &mdash; {{ $produk->nama_produk }}</h1>
-            <p class="mt-1 text-sm text-gray-500">Catat pembelian stok. Modal rata-rata dihitung otomatis.</p>
-        </div>
-        <div class="ml-auto">
-            <a href="{{ route('produk.index') }}" class="text-sm font-medium text-accent-text hover:text-accent">Data Produk &rarr;</a>
-        </div>
+    <div class="edit-produk-header">
+        <h1 class="edit-produk-title" id="edit-produk-title">Restock Produk</h1>
+        <p class="edit-produk-subtitle" id="edit-produk-subtitle">Catat pembelian stok &mdash; modal rata-rata dihitung otomatis.</p>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <div class="lg:col-span-2 space-y-6">
-            {{-- Info produk --}}
-            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-                <h2 class="text-sm font-semibold text-gray-900">Kondisi Saat Ini</h2>
-                <dl class="mt-3 space-y-3 text-sm">
-                    <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">Kategori</dt>
-                        <dd class="text-right text-gray-900">{{ $produk->labelKategori() }}</dd>
+    <div class="restock-layout">
+        <div class="restock-left">
+
+            {{-- Info produk / kondisi saat ini --}}
+            <article class="card form-section-card">
+                <h2 class="restock-panel-title">Kondisi Saat Ini</h2>
+                <div class="info-panel-list">
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Produk</span>
+                        <span class="info-panel-value">{{ $produk->nama_produk }}</span>
                     </div>
-                    <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">Satuan</dt>
-                        <dd class="text-right text-gray-900">{{ $produk->satuan }}</dd>
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Kategori</span>
+                        <span class="info-panel-value">{{ $produk->labelKategori() }}</span>
                     </div>
-                    <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">Stok</dt>
-                        <dd class="text-right text-gray-900">{{ $produk->stok }}</dd>
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Satuan</span>
+                        <span class="info-panel-value">{{ $produk->satuan }}</span>
                     </div>
-                    <div class="flex justify-between gap-4">
-                        <dt class="text-gray-500">Harga Jual</dt>
-                        <dd class="text-right text-gray-900">{{ $produk->labelHarga() }}</dd>
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Stok</span>
+                        <span class="info-panel-value {{ $produk->aktif && $produk->kategori_produk === 'dijual' && $produk->stokMenipis() ? 'highlight' : '' }}">
+                            {{ $produk->stok }}
+                            @if ($produk->aktif && $produk->kategori_produk === 'dijual' && $produk->stokMenipis())
+                                &nbsp;(menipis)
+                            @endif
+                        </span>
                     </div>
-                    <div class="rounded-md bg-accent-light px-3 py-2 flex justify-between gap-4">
-                        <dt class="text-accent-text">Modal rata-rata</dt>
-                        <dd class="text-right font-semibold text-accent-text">{{ $produk->labelModalPerSatuan() }}</dd>
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Harga Jual</span>
+                        <span class="info-panel-value">{{ $produk->labelHarga() }}</span>
                     </div>
-                    <p class="text-xs text-gray-400">Modal rata-rata (weighted average) &means; campuran harga beli lama &amp; baru. Diperbarui otomatis setiap kali restock.</p>
-                </dl>
-            </div>
+                    <div class="info-panel-item">
+                        <span class="info-panel-label">Modal rata-rata</span>
+                        <span class="info-panel-value highlight">{{ $produk->labelModalPerSatuan() }}</span>
+                    </div>
+                    <span class="field-help-text">Modal rata-rata (weighted average) &mdash; campuran harga beli lama &amp; baru. Diperbarui otomatis setiap kali restock.</span>
+                </div>
+            </article>
 
             {{-- Form restock --}}
-            <div class="rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-                <h2 class="text-sm font-semibold text-gray-900">Form Restock</h2>
-                <form action="{{ route('produk.restock', $produk) }}" method="POST" class="mt-4 space-y-4">
+            <article class="card form-section-card">
+                <h2 class="restock-panel-title">Form Restock</h2>
+                <form id="form-restock" class="edit-produk-stack" action="{{ route('produk.restock', $produk) }}" method="POST">
                     @csrf
-                    <div>
-                        <label for="qty" class="block text-sm font-medium text-gray-700">
-                            Jumlah
-                            <span class="text-xs text-gray-400">
-                                {{ $produk->kategori_produk === 'dijual' ? '(pcs)' : '(ml)' }}
-                            </span>
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="1" step="1" required
-                               class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-                        @error('qty') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
 
-                    <div>
-                        <label for="harga_beli" class="block text-sm font-medium text-gray-700">
-                            Harga Beli per Satuan (Rp)
-                            <span class="text-xs text-gray-400">per {{ $produk->satuan }}</span>
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" inputmode="numeric" name="harga_beli" id="harga_beli"
-                               value="{{ old('harga_beli') }}" required
-                               class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-                        @error('harga_beli') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" required
-                               class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-                        @error('tanggal') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
-                        <textarea name="keterangan" id="keterangan" rows="2" maxlength="255"
-                                  class="mt-1 block w-full rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none"
-                                  placeholder="Contoh: stok habis, restock bulanan...">{{ old('keterangan') }}</textarea>
-                        @error('keterangan') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div class="rounded-md bg-gray-50 px-3 py-2 text-sm" id="modalPreviewWrap">
-                        <div class="flex justify-between gap-4">
-                            <span class="text-gray-500">Modal rata-rata baru</span>
-                            <span class="font-semibold text-gray-900" id="modalPreview">--</span>
+                    <div class="form-group-item">
+                        <label class="form-label" for="qty">Jumlah ({{ $produk->kategori_produk === 'dijual' ? 'pcs' : 'ml' }}) <span class="required-star">*</span></label>
+                        <div class="form-input-box">
+                            <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="1" step="1" required class="form-input-control">
                         </div>
-                        <p class="mt-0.5 text-[11px] text-gray-400">Preview: (stok lama &times; modal lama + qty &times; harga beli) / stok setelah restock.</p>
+                        @error('qty')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <button type="submit"
-                                class="rounded-lg bg-dark px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-dark-hover">
-                            Simpan Restock
-                        </button>
-                        <a href="{{ route('produk.show', $produk) }}"
-                           class="rounded-lg bg-card px-5 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                            Batal
-                        </a>
+                    <div class="form-group-item">
+                        <label class="form-label" for="harga_beli">Harga Beli per Satuan (Rp) <span class="required-star">*</span></label>
+                        <div class="form-input-box">
+                            <input type="text" inputmode="numeric" name="harga_beli" id="harga_beli" value="{{ old('harga_beli') }}" required class="form-input-control">
+                        </div>
+                        <span class="field-help-text">Harga beli per {{ $produk->satuan }}.</span>
+                        @error('harga_beli')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group-item">
+                        <label class="form-label" for="tanggal">Tanggal <span class="required-star">*</span></label>
+                        <div class="form-input-box">
+                            <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" max="{{ date('Y-m-d') }}" required class="form-input-control">
+                        </div>
+                        @error('tanggal')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group-item">
+                        <label class="form-label" for="keterangan">Keterangan</label>
+                        <div class="form-input-box">
+                            <textarea name="keterangan" id="keterangan" rows="2" maxlength="255" class="form-input-control" style="resize: vertical;"
+                                      placeholder="Contoh: stok habis, restock bulanan...">{{ old('keterangan') }}</textarea>
+                        </div>
+                        @error('keterangan')
+                            <span class="field-error">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="modal-note-box" id="modalPreviewWrap">
+                        <span class="info-panel-label">Modal rata-rata baru</span>
+                        <span class="modal-note-value" id="modalPreview">--</span>
+                    </div>
+
+                    <div class="form-bottom-actions">
+                        <button type="submit" class="btn-dark-solid" id="btn-save-restock">Simpan Restock</button>
+                        <a href="{{ route('produk.show', $produk) }}" class="btn-light-outline" id="btn-cancel-restock">Batal</a>
                     </div>
                 </form>
-            </div>
+            </article>
         </div>
 
         {{-- Riwayat pembelian --}}
-        <div class="lg:col-span-3 rounded-lg border border-gray-200 bg-card p-5 shadow-sm">
-            <h2 class="text-sm font-semibold text-gray-900">Riwayat Pembelian / Restock</h2>
-            <p class="mt-0.5 text-xs text-gray-400">Terakhir {{ $riwayat->count() <= 0 ? 0 : $riwayat->count() }} catatan. Total stok &amp; modal rata-rata setelah tiap pembelian tercatat di sini.</p>
+        <article class="card form-section-card">
+            <h2 class="restock-panel-title">Riwayat Pembelian / Restock</h2>
+            <span class="field-help-text">Terakhir {{ $riwayat->count() }} catatan. Total stok &amp; modal rata-rata setelah tiap pembelian tercatat di sini.</span>
 
             @if ($riwayat->isEmpty())
-                <div class="mt-4 rounded-xl border border-dashed border-gray-300 bg-card px-6 py-12 text-center">
-                    <p class="text-sm font-medium text-text-secondary">Belum ada riwayat pembelian.</p>
-                    <p class="mt-1 text-sm text-text-muted">Restock pertama akan mencatat harga beli sebagai modal awal.</p>
+                <div class="restock-empty">
+                    <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Belum ada riwayat pembelian.</p>
+                    <p class="field-help-text">Restock pertama akan mencatat harga beli sebagai modal awal.</p>
                 </div>
             @else
-                <div class="mt-4 overflow-x-auto">
-                    <table class="w-full text-sm">
+                <div class="restock-table-wrapper">
+                    <table class="restock-table">
                         <thead>
-                            <tr class="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
-                                <th class="py-2 pr-4 font-medium">Tanggal</th>
-                                <th class="py-2 pr-4 font-medium">Qty</th>
-                                <th class="py-2 pr-4 font-medium">Harga Beli</th>
-                                <th class="py-2 pr-4 font-medium">Modal Rata2</th>
-                                <th class="py-2 pr-4 font-medium">Stok Akhir</th>
-                                <th class="py-2 pr-4 font-medium">Dicatat Oleh</th>
-                                <th class="py-2 font-medium">Keterangan</th>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Qty</th>
+                                <th>Harga Beli</th>
+                                <th>Modal Rata2</th>
+                                <th>Stok Akhir</th>
+                                <th>Dicatat Oleh</th>
+                                <th>Keterangan</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody>
                             @foreach ($riwayat as $pb)
                                 <tr>
-                                    <td class="py-2.5 pr-4 whitespace-nowrap text-gray-900">{{ $pb->tanggal?->format('d M Y') }}</td>
-                                    <td class="py-2.5 pr-4 text-gray-900">{{ $pb->qty }}</td>
-                                    <td class="py-2.5 pr-4 text-gray-900">Rp{{ number_format((float) $pb->harga_beli, 0, ',', '.') }}</td>
-                                    <td class="py-2.5 pr-4 text-gray-900">Rp{{ number_format((float) $pb->harga_modal_rata_rata, 0, ',', '.') }}</td>
-                                    <td class="py-2.5 pr-4 text-gray-900">{{ $pb->stok_setelah }}</td>
-                                    <td class="py-2.5 pr-4 text-gray-500">{{ $pb->dicatatOleh?->name ?? '—' }}</td>
-                                    <td class="py-2.5 text-gray-500">{{ $pb->keterangan ?? '—' }}</td>
+                                    <td>{{ $pb->tanggal?->format('d M Y') }}</td>
+                                    <td><span class="restock-qty-badge">+{{ $pb->qty }}</span></td>
+                                    <td>Rp{{ number_format((float) $pb->harga_beli, 0, ',', '.') }}</td>
+                                    <td>Rp{{ number_format((float) $pb->harga_modal_rata_rata, 0, ',', '.') }}</td>
+                                    <td>{{ $pb->stok_setelah }}</td>
+                                    <td class="muted">{{ $pb->dicatatOleh?->name ?? '—' }}</td>
+                                    <td class="muted">{{ $pb->keterangan ?? '—' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             @endif
-        </div>
+        </article>
     </div>
 
     <script>

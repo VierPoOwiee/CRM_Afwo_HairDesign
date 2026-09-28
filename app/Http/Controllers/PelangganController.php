@@ -10,19 +10,36 @@ class PelangganController extends Controller
     public function index(Request $request)
     {
         $q = trim((string) $request->query('q'));
+        $kondisi = (string) $request->query('kondisi', 'all');
+        $sort = (string) $request->query('sort', 'name-asc');
+
+        $kondisiMap = [
+            'sehat' => 'Sehat',
+            'agak-rusak' => 'Agak Rusak',
+            'rusak' => 'Rusak',
+        ];
 
         $pelanggans = Pelanggan::query()
+            ->whereNull('deleted_at')
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('nama', 'like', "%{$q}%")
-                    ->orWhere('no_wa', 'like', "%{$q}%")
-                    ->orWhere('username_instagram', 'like', "%{$q}%")
-                    ->orWhere('alamat', 'like', "%{$q}%");
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama', 'like', "%{$q}%")
+                        ->orWhere('no_wa', 'like', "%{$q}%")
+                        ->orWhere('username_instagram', 'like', "%{$q}%")
+                        ->orWhere('alamat', 'like', "%{$q}%");
+                });
             })
-            ->orderByDesc('updated_at')
+            ->when(array_key_exists($kondisi, $kondisiMap), function ($query) use ($kondisi, $kondisiMap) {
+                $query->where('kondisi_rambut', $kondisiMap[$kondisi]);
+            })
+            ->when($sort === 'name-desc', fn ($query) => $query->orderByDesc('nama'))
+            ->when($sort === 'hair-type', fn ($query) => $query->orderBy('jenis_rambut')->orderBy('nama'))
+            ->when($sort === 'condition', fn ($query) => $query->orderBy('kondisi_rambut')->orderBy('nama'))
+            ->when(! in_array($sort, ['name-desc', 'hair-type', 'condition'], true), fn ($query) => $query->orderBy('nama'))
             ->paginate(10)
             ->withQueryString();
 
-        return view('pelanggans.index', compact('pelanggans', 'q'));
+        return view('pelanggans.index', compact('pelanggans', 'q', 'kondisi', 'sort', 'kondisiMap'));
     }
 
     public function create()
@@ -32,6 +49,13 @@ class PelangganController extends Controller
 
     public function show(Pelanggan $pelanggan)
     {
+        $pelanggan->load([
+            'transaksiKunjungan' => fn ($t) => $t
+                ->with('details.layanan', 'details.produk')
+                ->orderByDesc('waktu_kunjungan')
+                ->limit(15),
+        ]);
+
         return view('pelanggans.show', compact('pelanggan'));
     }
 
