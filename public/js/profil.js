@@ -1,33 +1,16 @@
 ﻿// Profil Saya Handler Script for AFWO Hair Design CRM
+// Data pengguna SELALU dirender oleh server (Laravel). Script ini tidak
+// menyimpan data hardcode dan tidak menimpa nilai yang sudah dirender.
 document.addEventListener('DOMContentLoaded', () => {
-  // Check logged in user or default to Owner Afwo
-  const savedUserStr = sessionStorage.getItem('afwo_logged_in_user');
-  let currentUser = {
-    name: 'Owner Afwo',
-    email: 'owner@afwo.com',
-    role: 'Owner'
-  };
-
-  if (savedUserStr) {
-    try {
-      currentUser = JSON.parse(savedUserStr);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  // Populate user display
   const userNameDisplay = document.getElementById('profil-display-name');
-  const userEmailDisplay = document.getElementById('profil-display-email');
+  const userUsernameDisplay = document.getElementById('profil-display-username');
   const userAvatarDisplay = document.getElementById('profil-display-avatar');
   const inputName = document.getElementById('profil-input-name');
-  const inputEmail = document.getElementById('profil-input-email');
+  const inputUsername = document.getElementById('profil-input-username');
 
-  if (userNameDisplay) userNameDisplay.textContent = currentUser.name;
-  if (userEmailDisplay) userEmailDisplay.textContent = currentUser.email;
-  if (userAvatarDisplay) userAvatarDisplay.textContent = currentUser.name.charAt(0).toUpperCase();
-  if (inputName) inputName.value = currentUser.name;
-  if (inputEmail) inputEmail.value = currentUser.email;
+  if (userAvatarDisplay && userNameDisplay) {
+    userAvatarDisplay.textContent = userNameDisplay.textContent.trim().charAt(0).toUpperCase();
+  }
 
   // Form 1: Profil Update
   const formProfile = document.getElementById('form-profil-info');
@@ -52,11 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hideProfileAlert();
 
       const newName = inputName ? inputName.value.trim() : '';
-      const newEmail = inputEmail ? inputEmail.value.trim() : '';
+      const newUsername = inputUsername ? inputUsername.value.trim() : '';
       const currPass = inputCurrPassword1 ? inputCurrPassword1.value : '';
 
-      if (!newName || !newEmail) {
-        showProfileAlert('Nama dan Email wajib diisi!', 'error');
+      if (!newName || !newUsername) {
+        showProfileAlert('Nama dan Username wajib diisi!', 'error');
         return;
       }
 
@@ -74,14 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       setTimeout(() => {
-        currentUser.name = newName;
-        currentUser.email = newEmail;
-        sessionStorage.setItem('afwo_logged_in_user', JSON.stringify(currentUser));
-
-        if (userNameDisplay) userNameDisplay.textContent = currentUser.name;
-        if (userEmailDisplay) userEmailDisplay.textContent = currentUser.email;
-        if (userAvatarDisplay) userAvatarDisplay.textContent = currentUser.name.charAt(0).toUpperCase();
         if (inputCurrPassword1) inputCurrPassword1.value = '';
+
+        if (userNameDisplay) userNameDisplay.textContent = newName;
+        if (userUsernameDisplay) userUsernameDisplay.textContent = '@' + newUsername;
+        if (userAvatarDisplay) userAvatarDisplay.textContent = newName.charAt(0).toUpperCase();
 
         if (submitBtn) {
           submitBtn.disabled = false;

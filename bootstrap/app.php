@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'paksa.ganti.password' => \App\Http\Middleware\PaksaGantiPassword::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

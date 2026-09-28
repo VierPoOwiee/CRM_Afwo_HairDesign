@@ -7,11 +7,14 @@
 @section('container_width', 'app-content-wide')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}">
     <link rel="stylesheet" href="{{ asset('css/pelanggan-aktif.css') }}">
 @endpush
 
 @php
     $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    $rataRata = $jumlahKunjungan > 0 ? $totalBelanja / $jumlahKunjungan : 0;
     $fmtTanggal = function ($dt, $denganJam = false) {
         if (!$dt) return '-';
         $m = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -23,41 +26,50 @@
 
 @section('content')
 
-    <div class="active-clients-header">
-        <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}"
-           class="btn-table-action btn-view-profile" style="align-self:flex-start;">&larr; Kembali ke Pelanggan Aktif</a>
-        <h1 class="active-clients-title">{{ $pelanggan->nama }}</h1>
-        <p class="active-clients-subtitle">Riwayat transaksi lengkap &middot; {{ $pelanggan->no_wa }}</p>
-    </div>
-
-    <div class="active-clients-kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="kpi-mini-card">
-            <span class="kpi-mini-label">Total Kunjungan</span>
-            <div class="kpi-mini-value">{{ $jumlahKunjungan }}</div>
-        </div>
-        <div class="kpi-mini-card featured-gold-kpi">
-            <span class="kpi-mini-label">Total Belanja</span>
-            <div class="kpi-mini-value">{{ $fmt($totalBelanja) }}</div>
-        </div>
-        <div class="kpi-mini-card">
-            <span class="kpi-mini-label">Kunjungan Terakhir</span>
-            <div class="kpi-mini-value" style="font-size:1.1rem;">{{ $fmtTanggal($transaksis->first()?->waktu_kunjungan) }}</div>
+    <div class="trans-page-header-row">
+        <div class="trans-header-title-group">
+            <a href="{{ route('laporan.pelanggan-aktif', ['preset' => 'bulan-ini']) }}" class="btn-table-action btn-table-action-back">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+                Kembali ke Pelanggan Aktif
+            </a>
+            <h1 class="trans-page-title">{{ $pelanggan->nama }}</h1>
+            <p class="trans-page-subtitle">Riwayat transaksi lengkap &middot; {{ $pelanggan->no_wa ?: 'tanpa nomor WhatsApp' }}</p>
         </div>
     </div>
 
-    <div class="active-clients-results-card">
+    <div class="report-stat-triplet">
+        <div class="report-stat-mini-card">
+            <span class="mini-stat-label">Total Kunjungan</span>
+            <span class="mini-stat-val">{{ $jumlahKunjungan }}</span>
+            <span class="mini-stat-sub">transaksi selesai</span>
+        </div>
+        <div class="report-stat-mini-card is-featured">
+            <span class="mini-stat-label">Total Belanja</span>
+            <span class="mini-stat-val">{{ $fmt($totalBelanja) }}</span>
+            <span class="mini-stat-sub">seluruh riwayat</span>
+        </div>
+        <div class="report-stat-mini-card">
+            <span class="mini-stat-label">Rata-rata per Kunjungan</span>
+            <span class="mini-stat-val">{{ $fmt($rataRata) }}</span>
+            <span class="mini-stat-sub">kunjungan terakhir {{ $fmtTanggal($transaksis->first()?->waktu_kunjungan) }}</span>
+        </div>
+    </div>
+
+    <div class="daily-group-card">
+        <div class="daily-group-header">
+            <div class="daily-group-title">
+                <span>Riwayat Transaksi</span>
+            </div>
+            <span class="daily-group-badge">{{ $jumlahKunjungan }} Transaksi</span>
+        </div>
+
         @if ($transaksis->isEmpty())
-            <div class="empty-state-card">
-                <div class="empty-state-content">
-                    <p class="empty-state-text">Belum ada riwayat transaksi untuk pelanggan ini.</p>
-                </div>
+            <div class="report-empty-note" style="padding: 40px 16px;">
+                Belum ada riwayat transaksi untuk pelanggan ini.
             </div>
         @else
-            <div class="results-toolbar-header">
-                <div class="sort-label">Riwayat Transaksi <span style="opacity:.6;">&middot; {{ $jumlahKunjungan }} transaksi</span></div>
-            </div>
             <div class="table-responsive-wrapper">
-                <table class="active-clients-table">
+                <table class="daily-trans-table">
                     <thead>
                         <tr>
                             <th>No Struk</th>
@@ -71,31 +83,43 @@
                         @foreach ($transaksis as $t)
                             <tr>
                                 <td>
-                                    <a href="{{ route('transaksi.show', $t) }}" class="client-name-link">{{ $t->no_struk }}</a>
+                                    <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link">{{ $t->no_struk }}</a>
                                 </td>
-                                <td style="color: var(--text-secondary);">{!! $fmtTanggal($t->waktu_kunjungan, true) !!}</td>
+                                <td class="trans-worker-tag">{!! $fmtTanggal($t->waktu_kunjungan, true) !!}</td>
                                 <td>
-                                    @foreach ($t->details as $d)
-                                        <div style="font-size:.8rem; color: var(--text-primary); font-weight:500;">
+                                    @forelse ($t->details as $d)
+                                        <div class="trans-service-title">
                                             @if ($d->tipe_item === 'layanan')
-                                                {{ $d->layanan->nama_layanan ?? '-' }} <span style="color: var(--text-muted);">({{ $d->varian_dipilih ?? '-' }})</span>
+                                                {{ $d->layanan->nama_layanan ?? '-' }}
+                                                <span class="trans-worker-tag">({{ $d->varian_dipilih ?? '-' }})</span>
                                             @else
-                                                {{ $d->produk->nama_produk ?? '-' }} <span style="color: var(--text-muted);">&times; {{ $d->qty }}</span>
+                                                {{ $d->produk->nama_produk ?? '-' }}
+                                                <span class="trans-worker-tag">&times; {{ $d->qty }}</span>
                                             @endif
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <span class="trans-worker-tag">&mdash;</span>
+                                    @endforelse
                                 </td>
                                 <td>
-                                    @foreach ($t->details->where('tipe_item', 'layanan') as $d)
-                                        @if ($d->staf)
-                                            <div style="font-size:.8rem; color: var(--text-secondary);">{{ $d->staf->nama }}</div>
-                                        @endif
-                                    @endforeach
+                                    @forelse ($t->details->where('tipe_item', 'layanan')->whereNotNull('id_staf') as $d)
+                                        <div class="trans-worker-tag">{{ $d->staf->nama }}</div>
+                                    @empty
+                                        <span class="trans-worker-tag">&mdash;</span>
+                                    @endforelse
                                 </td>
-                                <td style="text-align: right;" class="spend-amount-highlight">{{ $fmt($t->total_bayar) }}</td>
+                                <td style="text-align: right;" class="trans-amount-cell client-spend-cell">
+                                    {{ $fmt($t->total_bayar) }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr class="client-tfoot-row">
+                            <th colspan="4">TOTAL {{ $jumlahKunjungan }} TRANSAKSI</th>
+                            <th style="text-align: right; color: #B45309;">{{ $fmt($totalBelanja) }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         @endif

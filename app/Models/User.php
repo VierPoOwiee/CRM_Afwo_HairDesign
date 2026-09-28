@@ -14,9 +14,12 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role',
+        'aktif',
+        'wajib_ganti_password',
     ];
 
     protected $hidden = [
@@ -29,6 +32,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'aktif' => 'boolean',
+            'wajib_ganti_password' => 'boolean',
         ];
     }
 

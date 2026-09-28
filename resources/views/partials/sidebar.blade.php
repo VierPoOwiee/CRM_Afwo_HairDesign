@@ -163,6 +163,24 @@
             </ul>
         @endif
 
+        {{-- Section: PENGATURAN (owner only) --}}
+        @if (Auth::check() && Auth::user()->isOwner())
+            <div class="sidebar-section-label" style="margin-top: 14px;">PENGATURAN</div>
+            <ul class="sidebar-menu-list">
+                <li class="sidebar-nav-item">
+                    <a href="{{ route('pengguna.index') }}" class="sidebar-nav-link" id="nav-users">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M19 8v6"></path>
+                            <path d="M22 11h-6"></path>
+                        </svg>
+                        <span>Kelola Pengguna</span>
+                    </a>
+                </li>
+            </ul>
+        @endif
+
     </nav>
 
     {{-- Sidebar User Footer --}}

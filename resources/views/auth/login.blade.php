@@ -33,20 +33,20 @@
             <form id="form-login" class="login-form-stack" method="POST" action="{{ route('login.post') }}" autocomplete="on">
                 @csrf
 
-                {{-- Email Input Group --}}
+                {{-- Username Input Group --}}
                 <div class="login-form-group">
-                    <label for="login-email" class="login-form-label">Email</label>
+                    <label for="login-username" class="login-form-label">Username</label>
                     <div class="login-input-wrapper">
                         <input
-                            type="email"
-                            id="login-email"
-                            name="email"
+                            type="text"
+                            id="login-username"
+                            name="username"
                             class="login-input-control"
-                            data-field="email"
-                            placeholder="nama@afwo.com"
-                            value="{{ old('email') ?: 'owner@afwo.com' }}"
+                            data-field="username"
+                            placeholder="contoh: owner"
+                            value="{{ old('username') }}"
                             required
-                            autocomplete="email"
+                            autocomplete="username"
                         >
                     </div>
                 </div>

@@ -10,21 +10,25 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // PENTING: password di bawah hanya untuk data awal/testing.
+        // Wajib diganti setiap user setelah login pertama.
         User::updateOrCreate(
-            ['email' => 'owner@afwo.com'],
+            ['username' => 'owner'],
             [
                 'name' => 'Owner Afwo',
+                'email' => null,
                 'role' => 'owner',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('ganti-password-ini'),
             ]
         );
 
         User::updateOrCreate(
-            ['email' => 'kasir@afwo.com'],
+            ['username' => 'kasir'],
             [
                 'name' => 'Kasir Afwo',
+                'email' => null,
                 'role' => 'kasir',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('ganti-password-ini'),
             ]
         );
     }

@@ -1,16 +1,16 @@
 ﻿// Login Handler Script for AFWO Hair Design CRM (Laravel)
 // Form login disubmit normal ke POST /login oleh Laravel.
-// Script ini hanya mengelola: toggle password + remember-email (localStorage).
+// Script ini hanya mengelola: toggle password + remember-username (localStorage).
 document.addEventListener('DOMContentLoaded', () => {
-  const emailInput = document.getElementById('login-email');
+  const usernameInput = document.getElementById('login-username');
   const rememberCheckbox = document.getElementById('login-remember');
   const togglePasswordBtn = document.getElementById('btn-toggle-password');
   const passwordInput = document.getElementById('login-password');
 
   // Check saved remember me
-  const savedEmail = localStorage.getItem('afwo_remember_email');
-  if (savedEmail && emailInput) {
-    emailInput.value = savedEmail;
+  const savedUsername = localStorage.getItem('afwo_remember_username');
+  if (savedUsername && usernameInput) {
+    usernameInput.value = savedUsername;
     if (rememberCheckbox) rememberCheckbox.checked = true;
   }
 
@@ -35,15 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Simpan email saat checkbox "Ingat saya" dicentang (bila form disubmit)
-  if (emailInput && rememberCheckbox) {
+  // Simpan username saat checkbox "Ingat saya" dicentang (bila form disubmit)
+  if (usernameInput && rememberCheckbox) {
     const form = document.getElementById('form-login');
     if (form) {
       form.addEventListener('submit', () => {
         if (rememberCheckbox.checked) {
-          localStorage.setItem('afwo_remember_email', emailInput.value.trim());
+          localStorage.setItem('afwo_remember_username', usernameInput.value.trim());
         } else {
-          localStorage.removeItem('afwo_remember_email');
+          localStorage.removeItem('afwo_remember_username');
         }
       });
     }

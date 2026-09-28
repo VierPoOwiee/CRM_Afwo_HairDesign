@@ -20,7 +20,7 @@
                 <div class="profil-avatar-badge">{{ strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}</div>
                 <div class="profil-user-details">
                     <div class="profil-user-fullname">{{ Auth::user()->name }}</div>
-                    <div class="profil-user-email-text">{{ Auth::user()->email }}</div>
+                    <div class="profil-user-email-text">{{ '@'.Auth::user()->username }}</div>
                     <span class="profil-role-pill">{{ ucfirst(Auth::user()->role) }}</span>
                 </div>
             </div>
@@ -45,17 +45,17 @@
                     </div>
 
                     <div class="profil-form-group">
-                        <label for="email" class="profil-label">Email <span class="req-star">*</span></label>
+                        <label for="username" class="profil-label">Username <span class="req-star">*</span></label>
                         <div class="profil-input-box">
-                            <input type="email" id="email" name="email" value="{{ old('email', Auth::user()->email) }}" required class="profil-input">
+                            <input type="text" id="username" name="username" value="{{ old('username', Auth::user()->username) }}" required autocomplete="username" class="profil-input">
                         </div>
-                        @error('email')
+                        @error('username')
                             <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="profil-notice-banner">
-                        Untuk mengubah nama atau email, masukkan password Anda saat ini.
+                        Untuk mengubah nama atau username, masukkan password Anda saat ini.
                     </div>
 
                     <div class="profil-form-group">
@@ -77,7 +77,7 @@
         </section>
 
         {{-- Password Card --}}
-        <section class="profil-card">
+        <section class="profil-card" id="ganti-password">
             <h2 class="profil-card-title">Ubah Password</h2>
             <p class="profil-card-subtitle">Pastikan password baru minimal 8 karakter.</p>
 

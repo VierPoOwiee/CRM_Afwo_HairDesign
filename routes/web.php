@@ -9,6 +9,7 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiController;
@@ -27,13 +28,18 @@ Route::middleware('auth')->group(function () {
 });
 
 // Semua halaman harus login dulu
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
 
     Route::redirect('/', '/pelanggan');
 
     // Owner-only routes
     Route::middleware('role:owner')->group(function () {
         Route::get('/dashboard', [DashboardOwnerController::class, 'index'])->name('dashboard');
+
+        Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+        Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
+        Route::put('/pengguna/{user}/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset-password');
+        Route::put('/pengguna/{user}/toggle-aktif', [PenggunaController::class, 'toggleAktif'])->name('pengguna.toggle-aktif');
 
         Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
         Route::get('/laporan/pelanggan-aktif', [LaporanController::class, 'pelangganAktif'])->name('laporan.pelanggan-aktif');
