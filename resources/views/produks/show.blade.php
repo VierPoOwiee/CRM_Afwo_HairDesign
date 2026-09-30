@@ -38,7 +38,7 @@
             <div class="flex justify-between gap-4">
                 <dt class="text-gray-500">Kategori</dt>
                 <dd class="text-right text-gray-900">
-                    <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">{{ $produk->labelKategori() }}</span>
+                    <span class="rounded-xl bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">{{ $produk->labelKategori() }}</span>
                 </dd>
             </div>
             <div class="flex justify-between gap-4">
@@ -59,7 +59,7 @@
                 <dd class="text-right text-gray-900">
                     {{ $produk->stok }}
                     @if ($produk->aktif && $produk->stokMenipis())
-                        <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Menipis</span>
+                        <span class="rounded-xl bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Menipis</span>
                     @endif
                 </dd>
             </div>
@@ -68,9 +68,9 @@
                 <dt class="text-gray-500">Status</dt>
                 <dd class="text-right text-gray-900">
                     @if ($produk->aktif)
-                        <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
+                        <span class="rounded-xl bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
                     @else
-                        <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
+                        <span class="rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
                     @endif
                 </dd>
             </div>

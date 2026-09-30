@@ -34,12 +34,12 @@
                 <dt class="text-gray-500">Status</dt>
                 <dd class="text-right text-gray-900">
                     @if ($layanan->aktif)
-                        <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
+                        <span class="rounded-xl bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
                     @else
-                        <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
+                        <span class="rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
                     @endif
                     @if ($layanan->termasuk_potong)
-                        <span class="ml-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">Termasuk Potong</span>
+                        <span class="ml-1 rounded-xl bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">Termasuk Potong</span>
                     @endif
                 </dd>
             </div>
@@ -49,7 +49,7 @@
                     <dd class="text-right text-gray-900">
                         <div class="flex flex-wrap gap-1 justify-end">
                             @foreach ($layanan->produk as $p)
-                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                                <span class="inline-flex items-center rounded-xl bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
                                     {{ $p->merek }} — {{ $p->nama_produk }}
                                 </span>
                             @endforeach

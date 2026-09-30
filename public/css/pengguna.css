@@ -79,7 +79,7 @@
   font-weight: 800;
   letter-spacing: 0.03em;
   padding: 3px 10px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 .user-status-aktif {
@@ -97,7 +97,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   padding: 3px 10px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #F3F4F6;
   color: var(--text-secondary);
 }
@@ -269,7 +269,7 @@
   font-size: 0.7rem;
   font-weight: 800;
   padding: 2px 8px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #FEF3C7;
   color: #92400E;
   margin-top: 4px;

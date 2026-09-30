@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - PRODUCT MANAGEMENT STYLES (RESPONSIVE)
    ========================================================================== */
 
@@ -135,7 +135,7 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -158,7 +158,7 @@
   display: inline-block;
   margin-left: 4px;
   padding: 1px 7px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #FEF3C7;
   color: #92400E;
   font-size: 0.66rem;

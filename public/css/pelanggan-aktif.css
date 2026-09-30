@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - DATA PELANGGAN AKTIF (GAYA KHUSUS HALAMAN INI)
    Base design mengikuti laporan.css & riwayat.css
    ========================================================================== */
@@ -29,7 +29,6 @@
 
 .client-name-link:hover {
   color: #B45309;
-  text-decoration: underline;
 }
 
 /* Badge segmentasi (VIP / Loyal / Reguler) */
@@ -39,7 +38,7 @@
   font-weight: 800;
   letter-spacing: 0.03em;
   padding: 1px 8px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 .segment-pill-vip {
@@ -64,7 +63,7 @@
   justify-content: center;
   min-width: 34px;
   padding: 2px 8px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #F3F4F6;
   color: var(--text-primary);
   font-size: 0.78rem;

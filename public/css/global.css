@@ -40,11 +40,11 @@
   --sidebar-text-muted: #9CA3AF;
 
   /* Sizing & Radius */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
+  --radius-xs: 12px;
+  --radius-sm: 12px;
   --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-lg: 12px;
+  --radius-xl: 12px;
   --radius-full: 9999px;
   
   /* Shadows */
@@ -71,12 +71,19 @@ ul, ol, li {
   padding: 0;
 }
 
+a, u, ins, abbr, acronym, summary, b, strong, small, span, label, legend,
+caption, figcaption, h1, h2, h3, h4, h5, h6, p, li, td, th, dt, dd,
+button, input, select, textarea, div, code, kbd, samp, time, mark, sub, sup {
+  text-decoration: none;
+}
+
 html, body {
   min-height: 100%;
   font-family: var(--font-sans);
   background-color: #EAECEF;
   color: var(--text-primary);
   line-height: 1.45;
+  text-decoration: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -318,7 +325,7 @@ html, body {
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: var(--dark-solid);
   color: #FFFFFF;
   font-size: 0.82rem;
@@ -661,7 +668,7 @@ html, body {
   background-color: #18191B;
   color: #FFFFFF;
   padding: 14px 22px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;

@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - ADD / EDIT APPOINTMENT FORM STYLES (MATCHING DESIGN THEME)
    ========================================================================== */
 
@@ -20,7 +20,6 @@
 
 .form-inline-action-link:hover {
   color: var(--text-primary);
-  text-decoration: underline;
 }
 
 /* Quick Time Slot Picker */
@@ -51,7 +50,7 @@
   border: 1px solid var(--border-color);
   color: var(--text-secondary);
   padding: 6px 14px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 700;
   font-family: var(--font-sans);
@@ -292,7 +291,7 @@
   background-color: #FEF3C7;
   border: 1px solid #FCD34D;
   color: #92400E;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   padding: 4px 12px;
   font-size: 0.8rem;
   font-weight: 700;

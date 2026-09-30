@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - PROFIL PELANGGAN STYLES (RESPONSIVE)
    ========================================================================== */
 
@@ -358,7 +358,7 @@
   background-color: #F3F4F6;
   border: 1px solid var(--border-color);
   padding: 3px 10px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   white-space: nowrap;
 }
 
@@ -414,7 +414,6 @@
 
 .btn-restore:hover {
   color: #065F46;
-  text-decoration: underline;
 }
 
 .arsip-empty-box {
@@ -438,8 +437,4 @@
   font-weight: 700;
   color: #B45309;
   text-decoration: none;
-}
-
-.arsip-empty-link:hover {
-  text-decoration: underline;
 }

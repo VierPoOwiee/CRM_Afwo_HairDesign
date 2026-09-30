@@ -341,10 +341,6 @@
   text-decoration: none;
 }
 
-.modal-note-link:hover {
-  text-decoration: underline;
-}
-
 /* Info panel (kondisi produk saat ini) */
 .info-panel {
   display: flex;
@@ -382,7 +378,7 @@
   display: inline-flex;
   align-items: center;
   padding: 3px 10px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #FEF3C7;
   color: #92400E;
 }
@@ -428,7 +424,7 @@
 .restock-qty-badge {
   display: inline-block;
   padding: 2px 9px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
   background-color: #EEF2FF;
   color: #3730A3;
   font-weight: 700;

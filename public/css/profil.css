@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - PROFIL SAYA PAGE STYLES
    ========================================================================== */
 
@@ -33,7 +33,7 @@
 .profil-card {
   background-color: var(--bg-card, #FFFFFF);
   border: 1px solid var(--border-color, #E5E7EB);
-  border-radius: var(--radius-lg, 16px);
+  border-radius: var(--radius-lg);
   padding: 28px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   box-sizing: border-box;
@@ -105,7 +105,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 10px;
-  border-radius: 9999px;
+  border-radius: var(--radius-md);
   margin-top: 4px;
 }
 
@@ -145,7 +145,7 @@
   height: 44px;
   padding: 0 16px;
   border: 1px solid var(--border-color, #E5E7EB);
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   font-size: 0.92rem;
   font-family: inherit;
   color: var(--text-primary, #111827);
@@ -183,7 +183,7 @@
 .profil-notice-banner {
   background-color: #FEF7EA;
   border: 1px solid #F9E2AF;
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   padding: 12px 16px;
   font-size: 0.88rem;
   font-weight: 500;
@@ -207,7 +207,7 @@
   background-color: #2D2319;
   color: #FFFFFF;
   border: none;
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   font-size: 0.92rem;
   font-weight: 700;
   font-family: inherit;
@@ -232,7 +232,7 @@
 
 .profil-form-alert {
   padding: 10px 14px;
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   font-size: 0.85rem;
   font-weight: 500;
   margin-bottom: 12px;

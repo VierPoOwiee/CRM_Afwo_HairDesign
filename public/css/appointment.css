@@ -367,7 +367,7 @@
 
 .mini-cal-cell {
   padding: 5px 0;
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--text-primary);
   font-weight: 500;
@@ -441,7 +441,7 @@
   color: var(--text-muted);
   background-color: #F3F4F6;
   padding: 2px 6px;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-md);
 }
 
 .btn-select-all {
@@ -672,7 +672,6 @@
 
 .apt-more-badge:hover {
   color: var(--text-primary);
-  text-decoration: underline;
 }
 
 /* --------------------------------------------------------------------------

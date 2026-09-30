@@ -67,9 +67,9 @@
                             <td class="px-4 py-3 font-medium text-gray-900">{{ $row['nama_staf'] }}</td>
                             <td class="px-4 py-3">
                                 @if ($row['skema'] === 'persen_omset_harian')
-                                    <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">% Omset Harian</span>
+                                    <span class="rounded-xl bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">% Omset Harian</span>
                                 @else
-                                    <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Per Layanan</span>
+                                    <span class="rounded-xl bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Per Layanan</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-right text-gray-900">
