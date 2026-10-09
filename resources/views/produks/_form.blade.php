@@ -12,8 +12,8 @@
     $satuanVal = old('satuan', $produk->satuan ?? '');
 
     $kategoriLayanan = Produk::kategoriLayanan();
-    $radioLeft = array_merge(['dijual'], array_values(array_intersect(['Bleaching', 'Keratin', 'Hairtreatment', 'Serum', 'Keriting'], $kategoriLayanan)), ['dipakai_layanan']);
-    $radioRight = array_values(array_intersect(['Color', 'Oxidant', 'Smoothing', 'Creambath', 'Repair', 'Masker'], $kategoriLayanan));
+    $kategoriPenjualan = ['dijual', 'dipakai_layanan'];
+    $kategoriProduk = $kategoriLayanan;
 
     $radioHelp = [
         'dijual' => ['/pcs', 'Harga jual per 1 pcs produk.'],
@@ -79,14 +79,16 @@
             <button type="button" class="btn btn-secondary" id="btn-ganti-merek-mode">Pilih Merek</button>
         </div>
 
-        <!-- Baris 2: Kategori Produk (Radio Grid 2 Kolom) -->
+        <!-- Baris 2: Kategori Produk (2 Kelompok: Penjualan & Produk) -->
         <div class="form-group-item">
             <label class="form-label">Kategori Produk <span class="required-star">*</span></label>
-            <span class="field-help-text" style="margin-top: -2px; margin-bottom: 6px;">Dijual per pcs ke pelanggan, atau dipakai staf saat treatment.</span>
+            <span class="field-help-text" style="margin-top: -2px; margin-bottom: 6px;">Pilih kelompok kategori, lalu jenis kategorinya.</span>
 
-            <div class="product-category-radio-grid">
-                <div class="radio-col">
-                    @foreach ($radioLeft as $val)
+            <div class="category-group">
+                <span class="category-group-title">Kategori Penjualan</span>
+                <span class="category-group-help">Dijual per pcs ke pelanggan, atau dipakai staf secara umum saat layanan.</span>
+                <div class="product-category-radio-grid">
+                    @foreach ($kategoriPenjualan as $val)
                         @php
                             [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
                         @endphp
@@ -99,9 +101,13 @@
                         </label>
                     @endforeach
                 </div>
+            </div>
 
-                <div class="radio-col">
-                    @foreach ($radioRight as $val)
+            <div class="category-group">
+                <span class="category-group-title">Kategori Produk</span>
+                <span class="category-group-help">Jenis bahan khusus yang dipakai staf saat treatment (bleaching, warna, keratin, dll).</span>
+                <div class="product-category-radio-grid">
+                    @foreach ($kategoriProduk as $val)
                         @php
                             [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
                         @endphp
@@ -115,6 +121,7 @@
                     @endforeach
                 </div>
             </div>
+
             @error('kategori_produk')
                 <span class="field-error">{{ $message }}</span>
             @enderror

@@ -144,6 +144,31 @@
 }
 
 /* Product Category Radio Grid (2 Kolom) */
+.category-group {
+  margin-bottom: 16px;
+}
+
+.category-group:last-child {
+  margin-bottom: 0;
+}
+
+.category-group-title {
+  display: block;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 2px;
+}
+
+.category-group-help {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+
 .product-category-radio-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
