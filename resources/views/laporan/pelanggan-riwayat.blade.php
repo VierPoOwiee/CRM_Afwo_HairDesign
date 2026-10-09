@@ -117,7 +117,7 @@
                     <tfoot>
                         <tr class="client-tfoot-row">
                             <th colspan="4">TOTAL {{ $jumlahKunjungan }} TRANSAKSI</th>
-                            <th style="text-align: right; color: #B45309;">{{ $fmt($totalBelanja) }}</th>
+                            <th style="text-align: right; color: var(--text-link);">{{ $fmt($totalBelanja) }}</th>
                         </tr>
                     </tfoot>
                 </table>

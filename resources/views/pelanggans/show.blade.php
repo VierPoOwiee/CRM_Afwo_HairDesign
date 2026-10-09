@@ -35,10 +35,10 @@
     </section>
 
     <div class="profile-actions">
-        <a href="{{ route('pelanggan.edit', $pelanggan) }}" class="btn-outline btn-profile-action" data-field="btn-edit-profile">
+        <a href="{{ route('pelanggan.edit', $pelanggan) }}" class="btn btn-secondary btn-profile-action" data-field="btn-edit-profile">
             <span>EDIT PROFILE</span>
         </a>
-        <a href="{{ route('appointment.create', ['pelanggan' => $pelanggan->id]) }}" class="btn-dark btn-profile-action" data-field="btn-book-appointment">
+        <a href="{{ route('appointment.create', ['pelanggan' => $pelanggan->id]) }}" class="btn btn-primary btn-profile-action" data-field="btn-book-appointment">
             <span>BOOK APPOINTMENT</span>
         </a>
     </div>

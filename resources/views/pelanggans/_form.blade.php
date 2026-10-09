@@ -106,8 +106,8 @@
     </div>
 
     <div class="form-actions-row">
-        <button type="submit" id="btn-save-customer" class="btn-primary-gold">{{ $submitLabel }}</button>
-        <a href="{{ route('pelanggan.index') }}" class="btn-secondary-cancel">Batal</a>
+        <a href="{{ route('pelanggan.index') }}" class="btn btn-secondary">Batal</a>
+        <button type="submit" id="btn-save-customer" class="btn btn-primary">{{ $submitLabel }}</button>
     </div>
 
 </div>

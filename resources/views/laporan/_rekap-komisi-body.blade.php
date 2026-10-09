@@ -11,16 +11,16 @@
     };
 @endphp
 
-<div class="rekap-summary-banner">
+<div class="rekap-summary-banner" data-field="rekap-summary-banner">
     <span class="summary-banner-label">Total Komisi yang Harus Dibayar</span>
-    <span class="summary-banner-amount">{{ $fmt($totalBayarSemuaStaf) }}</span>
-    <span class="summary-banner-period">Periode: {{ $dari }} s/d {{ $sampai }}</span>
+    <div class="summary-banner-amount" id="summary-total-commission">{{ $fmt($totalBayarSemuaStaf) }}</div>
+    <span class="summary-banner-period" id="summary-period-label">Periode: {{ $dari }} s/d {{ $sampai }}</span>
 </div>
 
 {{-- Section Pendapatan Karyawan (navigasi ke slip per karyawan) — SELALU tampil,
      apa pun isi datanya. Tidak ikut tercetak, karena slip aslinya menyusul
      sebagai halaman tersendiri saat cetak gabungan --}}
-<div class="rekap-table-card no-print">
+<section class="rekap-table-card no-print" data-field="rekap-table-card">
     <div class="rekap-card-header">
         <h2 class="rekap-card-title">Pendapatan Karyawan</h2>
         <p class="rekap-card-desc">
@@ -34,7 +34,7 @@
         </div>
     @else
         <div class="table-responsive-wrapper">
-            <table class="rekap-commission-table">
+            <table class="rekap-commission-table" id="commission-table">
                 <thead>
                     <tr>
                         <th>Karyawan</th>
@@ -59,7 +59,7 @@
                             </td>
                             <td style="text-align: right;">{{ $fmt($item['gaji_pokok']) }}</td>
                             <td style="text-align: right;">{{ $fmt($item['total_komisi']) }}</td>
-                            <td style="text-align: right; font-weight: 800; color: #B45309;">{{ $fmt($item['total_pendapatan']) }}</td>
+                            <td style="text-align: right; font-weight: 800; color: var(--text-link);">{{ $fmt($item['total_pendapatan']) }}</td>
                             <td style="text-align: right;">
                                 <a href="{{ route('laporan.rekap-komisi.slip', array_merge(['karyawan' => $k->id], request()->only(['preset', 'dari', 'sampai']))) }}"
                                    class="btn-view-slip">
@@ -73,17 +73,17 @@
             </table>
         </div>
     @endif
-</div>
+</section>
 
 @if ($grandTotal->isEmpty())
-    <div class="rekap-table-card">
-        <div class="rekap-empty-card">
+    <section class="rekap-table-card">
+        <div class="rekap-empty-card" id="rekap-empty-box">
             <p class="rekap-empty-text">Belum ada data komisi untuk periode ini.</p>
         </div>
-    </div>
+    </section>
 @else
     {{-- Rekap Tabel --}}
-    <div class="rekap-table-card">
+    <section class="rekap-table-card">
         <div class="rekap-card-header">
             <h2 class="rekap-card-title">Rekap per Staf</h2>
             <p class="rekap-card-desc">Klik baris untuk melihat rincian komisi per tanggal / per transaksi.</p>
@@ -102,8 +102,7 @@
                 </thead>
                 <tbody id="rekap-staf-tbody">
                     @foreach ($grandTotal as $row)
-                        <tr class="rekap-staf-row" data-target="detail-{{ $row['id_staf'] }}"
-                            style="cursor: pointer;">
+                        <tr class="rekap-staf-row" data-target="detail-{{ $row['id_staf'] }}">
                             <td style="font-weight: 700;">{{ $row['nama_staf'] }}</td>
                             <td>
                                 @if ($row['skema'] === 'persen_omset_harian')
@@ -129,7 +128,7 @@
                             <td style="text-align: right; font-weight: 800;">{{ $fmt($row['total_keseluruhan']) }}</td>
                             <td style="text-align: right;">
                                 <span class="rekap-chevron">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9l-7 7-7-7"/></svg>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 9l-7 7-7-7"/></svg>
                                 </span>
                             </td>
                         </tr>
@@ -137,12 +136,12 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 
     {{-- Detail per Staf (expandable) --}}
-    <div style="margin: -6px 0 18px;">
+    <div class="rekap-detail-stack">
         @foreach ($grandTotal as $row)
-            <div id="detail-{{ $row['id_staf'] }}" class="rekap-detail-card hidden" style="display: none;">
+            <div id="detail-{{ $row['id_staf'] }}" class="rekap-detail-card hidden">
                 <div class="rekap-detail-header">
                     <div>
                         <div class="rekap-detail-title">{{ $row['nama_staf'] }}</div>
@@ -217,7 +216,7 @@
                                     @foreach ($layananItems as $kt)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('transaksi.show', $kt->transaksi) }}" style="font-weight: 700; color: #B45309; text-decoration: none;">
+                                                <a href="{{ route('transaksi.show', $kt->transaksi) }}" class="rekap-struk-link">
                                                     {{ $kt->transaksi->no_struk ?? '-' }}
                                                 </a>
                                             </td>
@@ -243,8 +242,8 @@
         row.addEventListener('click', function () {
             var target = document.getElementById(row.dataset.target);
             if (!target) return;
-            var open = target.style.display !== 'none';
-            target.style.display = open ? 'none' : 'block';
+            var open = !target.classList.contains('hidden');
+            target.classList.toggle('hidden', open);
             row.classList.toggle('rekap-detail-open', !open);
         });
     });

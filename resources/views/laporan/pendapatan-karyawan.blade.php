@@ -26,38 +26,38 @@
     </div>
 
     {{-- Filter bulan --}}
-    <div class="income-filter-card no-print">
+    <section class="income-filter-card no-print" data-field="income-filter-card">
         <form action="{{ route('laporan.pendapatan-karyawan') }}" method="GET" class="income-filter-row">
             <div class="filter-month-item">
                 <label class="month-label" for="bulan">Bulan</label>
                 <div class="month-select-wrapper">
-                    <select name="bulan" id="bulan" class="month-select-field">
+                    <select name="bulan" id="bulan" class="month-select-field" data-field="select-month-picker">
                         @foreach ($pilihanBulan as $p)
                             <option value="{{ $p['value'] }}" {{ $p['value'] === $bulanInput ? 'selected' : '' }}>{{ $p['label'] }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn-show-dark">Tampilkan</button>
+            <button type="submit" class="btn-show-dark" data-field="btn-show-month">Tampilkan</button>
             @if ($bulanInput !== now()->format('Y-m'))
-                <a href="{{ route('laporan.pendapatan-karyawan') }}" class="btn-slip-detail" style="text-decoration:none;">Reset ke Bulan Ini</a>
+                <a href="{{ route('laporan.pendapatan-karyawan') }}" class="btn-slip-detail">Reset ke Bulan Ini</a>
             @endif
         </form>
-    </div>
+    </section>
 
     {{-- Total keseluruhan --}}
-    <div class="income-summary-banner">
-        <span class="income-banner-label">Total Pendapatan Semua Karyawan — {{ $namaBulan }}</span>
-        <span class="income-banner-amount">{{ $fmt($grandTotal['total_pendapatan']) }}</span>
-        <span class="income-banner-subtext">
+    <div class="income-summary-banner" data-field="income-summary-banner">
+        <span class="income-banner-label" id="summary-month-title">Total Pendapatan Semua Karyawan — {{ $namaBulan }}</span>
+        <div class="income-banner-amount" id="summary-total-all-income">{{ $fmt($grandTotal['total_pendapatan']) }}</div>
+        <span class="income-banner-subtext" id="summary-breakdown-subtext">
             Komisi {{ $fmt($grandTotal['total_komisi']) }} &middot; Gaji Pokok {{ $fmt($grandTotal['gaji_pokok']) }} &middot; Uang Makan {{ $fmt($grandTotal['uang_makan']) }}
         </span>
     </div>
 
     {{-- Tabel per karyawan --}}
-    <div class="income-table-card">
+    <section class="income-table-card" data-field="income-table-card">
         <div class="table-responsive-wrapper">
-            <table class="income-detail-table">
+            <table class="income-detail-table" id="monthly-income-table">
                 <thead>
                     <tr>
                         <th>Karyawan</th>
@@ -69,10 +69,10 @@
                         <th style="text-align: right;">Hadir (hari)</th>
                         <th style="text-align: right;">Uang Makan</th>
                         <th style="text-align: right;">Total Pendapatan</th>
-                        <th style="text-align: right;" class="no-print"></th>
+                        <th style="text-align: right;" class="no-print">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="monthly-income-body" data-field="monthly-income-body">
                     @forelse ($baris as $row)
                         @php $k = $row['karyawan']; @endphp
                         <tr>
@@ -114,7 +114,7 @@
                                     <span style="color: var(--text-muted);">—</span>
                                 @endif
                             </td>
-                            <td style="text-align: right; font-weight: 800; color: #B45309;">{{ $fmt($row['total_pendapatan']) }}</td>
+                            <td style="text-align: right; font-weight: 800; color: var(--text-link);">{{ $fmt($row['total_pendapatan']) }}</td>
                             <td style="text-align: right;" class="no-print">
                                 <a href="{{ route('laporan.rekap-komisi.slip', [
                                         'karyawan' => $k->id,
@@ -122,9 +122,9 @@
                                         'dari' => $dariCarbon->toDateString(),
                                         'sampai' => $sampaiCarbon->toDateString(),
                                     ]) }}"
-                                   class="btn-slip-detail" style="text-decoration:none;">
+                                   class="btn-slip-detail">
                                     Slip Detail
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
                                 </a>
                             </td>
                         </tr>
@@ -135,16 +135,16 @@
                     @endforelse
                 </tbody>
                 @if ($baris->isNotEmpty())
-                    <tfoot>
+                    <tfoot id="monthly-income-foot">
                         <tr class="income-tfoot-row">
                             <th colspan="2">TOTAL</th>
-                            <th style="text-align: right;">{{ $fmt($grandTotal['komisi_per_layanan']) }}</th>
-                            <th style="text-align: right;">{{ $fmt($grandTotal['komisi_persen_harian']) }}</th>
-                            <th style="text-align: right;">{{ $fmt($grandTotal['total_komisi']) }}</th>
-                            <th style="text-align: right;">{{ $fmt($grandTotal['gaji_pokok']) }}</th>
-                            <th style="text-align: right;">{{ $grandTotal['jumlah_hadir'] }}</th>
-                            <th style="text-align: right;">{{ $fmt($grandTotal['uang_makan']) }}</th>
-                            <th style="text-align: right; color: #B45309;">{{ $fmt($grandTotal['total_pendapatan']) }}</th>
+                            <th style="text-align: right;" id="foot-comm-service">{{ $fmt($grandTotal['komisi_per_layanan']) }}</th>
+                            <th style="text-align: right;" id="foot-comm-daily">{{ $fmt($grandTotal['komisi_persen_harian']) }}</th>
+                            <th style="text-align: right;" id="foot-total-comm">{{ $fmt($grandTotal['total_komisi']) }}</th>
+                            <th style="text-align: right;" id="foot-total-salary">{{ $fmt($grandTotal['gaji_pokok']) }}</th>
+                            <th style="text-align: right;" id="foot-total-attendance">{{ $grandTotal['jumlah_hadir'] }}</th>
+                            <th style="text-align: right;" id="foot-total-meal">{{ $fmt($grandTotal['uang_makan']) }}</th>
+                            <th style="text-align: right; color: var(--text-link);" id="foot-grand-total">{{ $fmt($grandTotal['total_pendapatan']) }}</th>
                             <th class="no-print"></th>
                         </tr>
                     </tfoot>
@@ -157,6 +157,6 @@
                 Uang makan {{ $fmt($uangMakanPerHari) }} per hari hadir dari absensi, hanya untuk karyawan skema per layanan.
             </p>
         </div>
-    </div>
+    </section>
 
 @endsection

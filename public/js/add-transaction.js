@@ -404,9 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </select>
           </div>
           <div class="dosage-stepper">
-            <button type="button" class="btn-step btn-step-minus">−</button>
+            <button type="button" class="btn btn-secondary btn-icon btn-step-minus">−</button>
             <input type="number" step="10" min="10" value="20" class="stepper-input" data-field="product-amount-ml">
-            <button type="button" class="btn-step btn-step-plus">+</button>
+            <button type="button" class="btn btn-secondary btn-icon btn-step-plus">+</button>
             <span class="unit-label">ml</span>
           </div>
           <button type="button" class="btn-remove-row" aria-label="Hapus Produk">✕</button>

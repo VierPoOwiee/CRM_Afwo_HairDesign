@@ -13,15 +13,17 @@
 
 @section('content')
 
-    <div class="report-intro-section">
-        <h1 class="report-title">Rekap Komisi Staf</h1>
-        <p class="report-subtitle">Total komisi yang harus dibayarkan ke semua staf.</p>
+    <div class="rekap-header-row">
+        <div class="rekap-title-group">
+            <h1 class="rekap-title">Rekap Komisi Staf</h1>
+            <p class="rekap-subtitle">Total komisi yang harus dibayarkan ke semua staf.</p>
+        </div>
     </div>
 
     @include('laporan._filter-periode', [
         'action' => route('laporan.rekap-komisi'),
         'resetUrl' => route('laporan.rekap-komisi', ['preset' => 'bulan-ini']),
-        'showExtraFilters' => false,
+        'filterField' => 'rekap-filter-card',
     ])
 
     @include('laporan._rekap-komisi-body')

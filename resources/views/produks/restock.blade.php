@@ -107,9 +107,9 @@
                         <span class="modal-note-value" id="modalPreview">--</span>
                     </div>
 
-                    <div class="form-bottom-actions">
-                        <button type="submit" class="btn-dark-solid" id="btn-save-restock">Simpan Restock</button>
-                        <a href="{{ route('produk.show', $produk) }}" class="btn-light-outline" id="btn-cancel-restock">Batal</a>
+                    <div class="form-actions-row">
+                        <a href="{{ route('produk.show', $produk) }}" class="btn btn-secondary" id="btn-cancel-restock">Batal</a>
+                        <button type="submit" class="btn btn-primary" id="btn-save-restock">Simpan Restock</button>
                     </div>
                 </form>
             </article>

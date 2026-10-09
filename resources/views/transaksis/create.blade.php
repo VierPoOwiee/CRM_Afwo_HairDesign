@@ -31,10 +31,10 @@
         {{-- Card: Interconnected Searchable Combobox untuk Pilih/Tambah Pelanggan --}}
         <article class="card customer-combobox-card" data-field="customer-card">
             <div class="combobox-group-item">
-                <label class="form-label" for="pelanggan_search">CLIENT / CUSTOMER</label>
+                <label class="form-label" for="pelanggan_search">NAMA PELANGGAN</label>
                 <div class="combobox-wrapper" id="name-combobox-wrapper">
                     <div class="combobox-input-box">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
@@ -131,7 +131,7 @@
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
                 <h2 class="card-section-title">Isi dari Appointment</h2>
-                <button type="button" id="appt_toggle" class="btn-date-reset" style="margin-left: auto;">Sembunyikan</button>
+                <button type="button" id="appt_toggle" class="btn btn-secondary" style="margin-left: auto;">Sembunyikan</button>
             </div>
             <div id="appt_picker_body" class="appt-picker-body">
                 <div class="appt-picker-toolbar">
@@ -139,7 +139,7 @@
                         <label class="form-label" for="appt_date">Tanggal</label>
                         <input type="date" id="appt_date" value="{{ date('Y-m-d') }}" class="native-picker-input">
                     </div>
-                    <button type="button" id="appt_load_btn" class="btn-dark" style="padding: 9px 16px;">Muat Jadwal</button>
+                    <button type="button" id="appt_load_btn" class="btn btn-secondary" style="padding: 9px 16px;">Muat Jadwal</button>
                 </div>
                 <div id="appt_list" class="appt-list"></div>
                 <p id="appt_empty" class="appt-empty-text hidden">Tidak ada appointment pada tanggal ini.</p>
@@ -151,7 +151,7 @@
         </div>
 
         {{-- Full-Width ADD SERVICE Button --}}
-        <button type="button" id="btn-add-service" class="btn-add-service-full" data-action="add-service">
+        <button type="button" id="btn-add-service" class="btn btn-secondary btn-block" data-action="add-service">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="16"></line>
@@ -326,14 +326,14 @@
             </div>
         </article>
 
-        {{-- Bottom Dual Actions: DISCARD & SAVE --}}
-        <div class="dual-actions-container">
-            <button type="submit" id="btn-save-changes" class="btn-dark" data-field="btn-save-changes">
-                <span>SAVE CHANGES</span>
-            </button>
-            <a href="{{ route('transaksi.index') }}" id="btn-discard" class="btn-outline" data-field="btn-discard">
-                <span>DISCARD</span>
+        {{-- Bottom Dual Actions: BATAL & SIMPAN --}}
+        <div class="form-actions-row">
+            <a href="{{ route('transaksi.index') }}" id="btn-discard" class="btn btn-secondary" data-field="btn-discard">
+                <span>Batal</span>
             </a>
+            <button type="submit" id="btn-save-changes" class="btn btn-primary" data-field="btn-save-changes">
+                <span>Simpan Transaksi</span>
+            </button>
         </div>
     </form>
 
@@ -346,7 +346,7 @@
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <div>
-                    <label class="form-label" for="new_pelanggan_nama">Nama <span style="color: #B91C1C;">*</span></label>
+                    <label class="form-label" for="new_pelanggan_nama">Nama <span style="color: var(--status-danger);">*</span></label>
                     <input type="text" id="new_pelanggan_nama" class="text-input-field">
                 </div>
                 <div>
@@ -373,8 +373,8 @@
                 <div id="new_pelanggan_error" class="modal-error-plain hidden"></div>
             </div>
             <div class="modal-actions-plain">
-                <button type="button" id="cancelPelangganBtn2" class="btn-outline">Batal</button>
-                <button type="button" id="savePelangganBtn" class="btn-dark">Simpan</button>
+                <button type="button" id="cancelPelangganBtn2" class="btn btn-secondary">Batal</button>
+                <button type="button" id="savePelangganBtn" class="btn btn-primary">Simpan</button>
             </div>
         </div>
     </div>
@@ -834,7 +834,7 @@
                             '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div style="background-color: var(--accent-light, #FFF7ED); border-radius: var(--radius-md); padding: 12px 14px;">' +
+                    '<div style="background-color: var(--accent-light, var(--gold-50)); border-radius: var(--radius-md); padding: 12px 14px;">' +
                         '<label class="form-label">TOTAL HARGA</label>' +
                         '<p class="produk-subtotal-display" style="font-size: 1.15rem; font-weight: 900; color: var(--text-primary); margin: 0;">Rp0</p>' +
                     '</div>' +
@@ -880,6 +880,8 @@
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
             row.querySelector('.id-layanan-input').value = layananId;
             row.querySelector('.search-layanan-results').classList.remove('show');
+            var selInput = row.querySelector('.search-layanan');
+            if (selInput) selInput.blur();
 
             return fetch('{{ route("api.layanan.search") }}?q=' + encodeURIComponent(row.querySelector('.search-layanan').value))
                 .then(function(r) { return r.json(); })
@@ -935,8 +937,8 @@
                         '<label class="form-label" style="font-size: 0.7rem;">Merk / Produk' + (isDefault ? ' <span class="unique-key-hint">(' + kategori + ')</span>' : '') + '</label>' +
                         '<div class="input-container-icon" style="padding: 6px 12px;">' +
                             '<input type="text" placeholder="Cari merk/produk..." autocomplete="off" class="produk-search" style="border: none; background: transparent; outline: none; flex: 1; font-size: 0.86rem; font-family: var(--font-sans); color: var(--text-primary);">' +
-                            '<div class="produk-selected hidden" style="display: none; flex: 1; align-items: center; gap: 6px; min-width: 0;">' +
-                                '<span class="produk-selected-name" style="min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.86rem; font-weight: 600; color: var(--text-primary);"></span>' +
+'<div class="produk-selected" style="display: none; flex: 1; align-items: center; gap: 6px; min-width: 0;">' +
+                                    '<span class="produk-selected-name" onclick="clearProdukUsage(this)" title="Klik untuk ganti merk/produk" style="min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.86rem; font-weight: 600; color: var(--text-primary); cursor: pointer;"></span>' +
                                 '<button type="button" onclick="clearProdukUsage(this)" title="Ganti pilihan" style="border: none; background: none; cursor: pointer; color: var(--text-muted); font-size: 1rem;">&times;</button>' +
                             '</div>' +
                         '</div>' +
@@ -950,15 +952,15 @@
             var html;
             if (isDefault) {
                 var mlVal = (parseFloat(defaultMl) || 0);
-                html = '<div class="produk-usage-item" data-pidx="' + pIdx + '" data-mode="default" data-kategori="' + String(kategori).replace(/"/g, '&quot;') + '" data-default-ml="' + mlVal + '" style="border: 1px solid #FDE68A; background: #FFFDF8; border-radius: var(--radius-md); padding: 10px 12px;">' +
+                html = '<div class="produk-usage-item" data-pidx="' + pIdx + '" data-mode="default" data-kategori="' + String(kategori).replace(/"/g, '&quot;') + '" data-default-ml="' + mlVal + '" style="border: 1px solid var(--gold-200); background: var(--accent-soft); border-radius: var(--radius-md); padding: 10px 12px;">' +
                     head +
                     '<div class="usage-detail" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 10px;">' +
                         '<div>' +
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
-                                '<button type="button" class="btn-step btn-step-minus" onclick="stepMl(this, -10)">−</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">−</button>' +
                                 '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="' + mlVal + '" min="0" step="1" class="pemakaian-ml-input stepper-input" oninput="recalcHarga(' + idx + ')">' +
-                                '<button type="button" class="btn-step btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
                             '</div>' +
                         '</div>' +
@@ -970,15 +972,15 @@
                     '</div>' +
                 '</div>';
             } else {
-                html = '<div class="produk-usage-item" data-pidx="' + pIdx + '" style="border: 1px solid var(--border-color); background: #FFFFFF; border-radius: var(--radius-md); padding: 10px 12px;">' +
+                html = '<div class="produk-usage-item" data-pidx="' + pIdx + '" style="border: 1px solid var(--border-color); background: var(--surface); border-radius: var(--radius-md); padding: 10px 12px;">' +
                     head +
                     '<div class="usage-detail hidden" style="margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 10px;">' +
                         '<div>' +
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
-                                '<button type="button" class="btn-step btn-step-minus" onclick="stepMl(this, -10)">−</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">−</button>' +
                                 '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input stepper-input" oninput="recalcHarga(' + idx + ')">' +
-                                '<button type="button" class="btn-step btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
                             '</div>' +
                         '</div>' +
@@ -1051,6 +1053,7 @@
                 input.value = match.nama_produk;
                 input.style.display = 'none';
                 sel.style.display = 'flex';
+                sel.classList.remove('hidden');
                 var selName = sel.querySelector('.produk-selected-name');
                 selName.textContent = match.nama_produk;
                 selName.setAttribute('title', match.nama_produk);
@@ -1086,12 +1089,18 @@
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="search-result-noresult">Tidak ditemukan</div>'; results.classList.add('show'); return; }
                             results.innerHTML = data.map(function(p) {
-                                var name = p.nama_produk.replace(/'/g, "\\'");
-                                return '<div class="search-result-option" onclick="selectProdukUsage(this,' + idx + ',' + pIdx + ',' + p.id + ',\'' + name + '\',' + p.harga_per_satuan + ',' + p.stok + ')">' +
+                                return '<div class="search-result-option" data-idx="' + idx + '" data-pidx="' + pIdx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_satuan + '" data-stok="' + p.stok + '">' +
                                     '<span>' + p.nama_produk + '</span>' +
                                     '<span class="search-result-muted">' + p.merek + '</span>' +
                                 '</div>';
                             }).join('');
+                            results.querySelectorAll('.search-result-option').forEach(function(optEl) {
+                                optEl.addEventListener('click', function() {
+                                    selectProdukUsage(optEl, optEl.getAttribute('data-idx'), optEl.getAttribute('data-pidx'),
+                                        optEl.getAttribute('data-id'), optEl.getAttribute('data-nama') || '',
+                                        optEl.getAttribute('data-harga'), optEl.getAttribute('data-stok'));
+                                });
+                            });
                             results.classList.add('show');
                         });
                 }, 300);
@@ -1106,6 +1115,7 @@
             input.style.display = 'none';
             var sel = item.querySelector('.produk-selected');
             sel.style.display = 'flex';
+            sel.classList.remove('hidden');
             var selName = sel.querySelector('.produk-selected-name');
             selName.textContent = nama;
             selName.setAttribute('title', nama);
@@ -1298,6 +1308,14 @@
         // =========================================================================
         // PRODUK SEARCH & SELECTION (standalone retail)
         // =========================================================================
+        function escAttr(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
         function initSearchProduk(idx) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
             var input = row.querySelector('.search-produk');
@@ -1314,12 +1332,19 @@
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="search-result-noresult">Tidak ditemukan</div>'; results.classList.add('show'); return; }
                             results.innerHTML = data.map(function(p) {
-                                var stokClass = p.stok <= 0 ? ' color: #B91C1C;' : '';
-                                return '<div class="search-result-option" onclick="selectProduk(' + idx + ',' + p.id + ',\'' + p.nama_produk.replace(/'/g, "\\'") + '\',' + p.harga_per_satuan + ',' + p.stok + ',\'' + p.satuan + '\')">' +
+                                var stokClass = p.stok <= 0 ? ' color: var(--status-danger);' : '';
+                                return '<div class="search-result-option" data-idx="' + idx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_satuan + '" data-stok="' + p.stok + '" data-satuan="' + escAttr(p.satuan) + '">' +
                                     '<span>' + p.nama_produk + '</span>' +
                                     '<span class="search-result-muted" style="' + stokClass + '">(' + p.merek + ') Stok: ' + p.stok + '</span>' +
                                 '</div>';
                             }).join('');
+                            results.querySelectorAll('.search-result-option').forEach(function(optEl) {
+                                optEl.addEventListener('click', function() {
+                                    selectProduk(optEl.getAttribute('data-idx'), optEl.getAttribute('data-id'),
+                                        optEl.getAttribute('data-nama') || '', optEl.getAttribute('data-harga'),
+                                        optEl.getAttribute('data-stok'), optEl.getAttribute('data-satuan') || '');
+                                });
+                            });
                             results.classList.add('show');
                         });
                 }, 300);
@@ -1519,6 +1544,40 @@
                 paymentOptions.forEach(function(opt) { opt.classList.remove('active'); });
                 option.classList.add('active');
             });
+        });
+
+        // Segmented pill radio: sinkronkan class active dengan radio yang dipilih
+        // (jenis_pengerjaan sendiri/berdua, ketebalan rambut, dll) sehingga hanya
+        // satu pill yang menyala dan mengikuti pilihan terbaru.
+        document.addEventListener('change', function(e) {
+            var target = e.target;
+            if (!target || target.type !== 'radio') return;
+            var group = target.closest('.segmented-pill-group');
+            if (!group) return;
+            group.querySelectorAll('.segmented-pill-label').forEach(function(l) {
+                l.classList.remove('active');
+            });
+            var label = target.closest('.segmented-pill-label');
+            if (label) label.classList.add('active');
+        });
+
+        // Pilih produk dari dropdown hasil search (retail & pemakaian) via delegasi
+        // event, sehingga seluruh baris hasil — termasuk teks merk — selalu bisa
+        // diklik apa pun isi nama produknya.
+        document.addEventListener('click', function(e) {
+            var opt = e.target.closest ? e.target.closest('.search-produk-results .search-result-option') : null;
+            if (opt) {
+                selectProduk(opt.getAttribute('data-idx'), opt.getAttribute('data-id'),
+                    opt.getAttribute('data-nama') || '', opt.getAttribute('data-harga'),
+                    opt.getAttribute('data-stok'), opt.getAttribute('data-satuan') || '');
+                return;
+            }
+            var optUsage = e.target.closest ? e.target.closest('.produk-search-results .search-result-option') : null;
+            if (optUsage) {
+                selectProdukUsage(optUsage, optUsage.getAttribute('data-idx'), optUsage.getAttribute('data-pidx'),
+                    optUsage.getAttribute('data-id'), optUsage.getAttribute('data-nama') || '',
+                    optUsage.getAttribute('data-harga'), optUsage.getAttribute('data-stok'));
+            }
         });
 
         // =========================================================================

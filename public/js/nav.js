@@ -4,19 +4,22 @@
  * backdrop blur, and highlights the active route across all pages.
  * Adapted for Laravel: active nav key dibaca dari <body data-nav-active="...">,
  * logout memakai form POST (route('logout')) -> lihat partial sidebar.
+ *
+ * Catatan: tombol "X" di sidebar sudah dihapus. Drawer ditutup lewat backdrop,
+ * tombol Escape, atau menekan salah satu link navigasi.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   const menuToggles = document.querySelectorAll('.js-menu-toggle');
   const adminSidebar = document.getElementById('admin-sidebar');
   const navOverlay = document.getElementById('nav-overlay');
-  const closeBtn = document.getElementById('nav-close-btn');
 
   function openMenu() {
     if (adminSidebar && navOverlay) {
       adminSidebar.classList.add('is-active');
       navOverlay.classList.add('is-active');
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('nav-open');
+      menuToggles.forEach(btn => btn.setAttribute('aria-expanded', 'true'));
     }
   }
 
@@ -24,11 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminSidebar && navOverlay) {
       adminSidebar.classList.remove('is-active');
       navOverlay.classList.remove('is-active');
-      document.body.style.overflow = '';
+      document.body.classList.remove('nav-open');
+      menuToggles.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
     }
   }
 
-  // Bind toggle buttons (mobile header hamburger icon)
+  // Bind toggle buttons (hamburger di app bar)
   menuToggles.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -36,17 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Close button in sidebar
-  if (closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeMenu();
-    });
-  }
-
-  // Click on backdrop to close
+  // Klik backdrop untuk menutup
   if (navOverlay) {
     navOverlay.addEventListener('click', closeMenu);
+  }
+
+  // Memilih menu akan menutup drawer di mobile (pengganti tombol X)
+  if (adminSidebar) {
+    adminSidebar.querySelectorAll('.sidebar-nav-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
   }
 
   // Keyboard Escape key to close

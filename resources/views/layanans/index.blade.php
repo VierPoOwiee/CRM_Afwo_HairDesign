@@ -15,12 +15,12 @@
         <p class="services-subtitle">Organize and update your premium salon offerings.</p>
     </div>
 
-    <a href="{{ route('layanan.create') }}" class="btn-add-full" id="add-service-btn" data-field="add-service-btn">
+    <a href="{{ route('layanan.create') }}" class="btn btn-primary page-primary-action" id="add-service-btn" data-field="add-service-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        <span>Add New Service</span>
+        <span>Tambah Layanan</span>
     </a>
 
     <!-- Pill Filter Tabs -->
@@ -108,19 +108,17 @@
         @empty
             <div id="services-empty-state" class="empty-filter-state show">
                 @if ($q !== '')
-                    <p>Tidak ditemukan layanan untuk kata kunci "<span class="font-medium">{{ $q }}</span>".</p>
+                    <p>Tidak ditemukan layanan untuk kata kunci "<strong>{{ $q }}</strong>".</p>
                 @elseif ($kategoriSlug !== 'all')
                     <p>Tidak ada layanan pada kategori ini.</p>
                 @else
-                    <p>Belum ada layanan. Klik "Add New Service" untuk menambahkan layanan pertama.</p>
+                    <p>Belum ada layanan. Klik "Tambah Layanan" untuk menambahkan layanan pertama.</p>
                 @endif
             </div>
         @endforelse
     </div>
 
     @if ($layanans->hasPages())
-        <div class="mt-4 mb-6">
-            @include('partials.pagination', ['paginator' => $layanans])
-        </div>
+        @include('partials.pagination', ['paginator' => $layanans])
     @endif
 @endsection

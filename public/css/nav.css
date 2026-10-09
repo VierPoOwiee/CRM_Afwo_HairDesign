@@ -1,117 +1,246 @@
 /* ==========================================================================
-   AFWO HAIR DESIGN - VERTICAL ADMIN SIDEBAR & RESPONSIVE NAV STYLES
+   AFWO HAIR DESIGN - APP SHELL: SIDEBAR, APP BAR, DRAWER
+   Semua warna memakai token dari styles/global.css.
    ========================================================================== */
 
-/* Dark Backdrop Overlay (Mobile Drawer) */
+/* ==========================================================================
+   1. OVERLAY (drawer mobile)
+   ========================================================================== */
 .nav-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
+}
+.nav-overlay.is-active { opacity: 1; visibility: visible; }
+
+/* ==========================================================================
+   2. LAYOUT WRAPPER
+   --------------------------------------------------------------------------
+   Body dikunci (tidak ikut scroll). Semua halaman digeser di dalam
+   .app-main-content supaya app bar tetap terlihat dan sidebar desktop
+   tidak terpotong. Height tetap di .app-layout (bukan min-height) supaya
+   drawer mobile tidak membuat halaman "melompat" saat dibuka.
+   ========================================================================== */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-page);
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   3. APP BAR (header sticky, semua ukuran layar)
+   ========================================================================== */
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  width: 100%;
+  min-height: var(--appbar-h);
+  padding: var(--sp-2) var(--sp-3);
+  padding-top: max(var(--sp-2), env(safe-area-inset-top));
+  padding-left: max(var(--sp-3), env(safe-area-inset-left));
+  padding-right: max(var(--sp-3), env(safe-area-inset-right));
+  background-color: color-mix(in srgb, var(--bg-page) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+}
+
+@supports not (background-color: color-mix(in srgb, red 50%, blue)) {
+  .app-bar { background-color: var(--bg-page); }
+}
+
+.app-bar__left,
+.app-bar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+.app-bar__right { gap: var(--sp-1); }
+
+.app-bar__title {
+  font-size: var(--fs-14);
+  font-weight: var(--fw-bold);
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-16);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-1);
+  text-decoration: none;
+  white-space: nowrap;
+}
+/* Brand: teks charcoal (--nav-text) + titik emas. Berlaku untuk app-bar
+   maupun sidebar karena keduanya bertenang di light mode. Titik emas
+   HANYA sebagai penanda - tidak pernah jadi warna teks. */
+/* Titik brand: emas gelap di light (sidebar & app-bar keduanya terang,
+   #EDB92F hanya 1.8:1 di sana), emas terang di dark. Tetap satu penanda. */
+.brand-logo__dot { color: var(--text-link); }
+[data-theme="dark"] .brand-logo__dot { color: var(--accent); }
+
+/* Tombol toggle tema (matahari / bulan) */
+.theme-toggle { position: relative; overflow: hidden; }
+.theme-toggle svg {
+  position: absolute;
+  transition: transform var(--dur-slow) var(--ease), opacity var(--dur) var(--ease);
+}
+.theme-toggle .icon-moon { transform: translateY(140%); opacity: 0; }
+.theme-toggle .icon-sun { transform: translateY(0); opacity: 1; }
+[data-theme="dark"] .theme-toggle .icon-sun { transform: translateY(-140%); opacity: 0; }
+[data-theme="dark"] .theme-toggle .icon-moon { transform: translateY(0); opacity: 1; }
+
+/* Toggle tema di app bar: tombol persegi 44px (sasar sentuh) agar tidak
+   terlihat kecil di samping avatar profil. */
+.app-bar .icon-btn.theme-toggle {
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-xs);
+  color: var(--text-1);
+}
+.app-bar .icon-btn.theme-toggle:hover {
+  border-color: var(--border-strong);
+  background-color: var(--surface-2);
+}
+.app-bar .icon-btn.theme-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Avatar bulat di app bar */
+.app-bar__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  border: 2px solid var(--surface);
+  box-shadow: var(--shadow-xs);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-extrabold);
+  text-decoration: none;
+  overflow: hidden;
+}
+.app-bar__avatar:hover { background-color: var(--accent-hover); }
+
+/* ==========================================================================
+   4. SIDEBAR - panel melayang bersudut membulat
+   ========================================================================== */
+.admin-sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(3px);
-  z-index: 50;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-}
-
-.nav-overlay.is-active {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Layout Wrapper */
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  background-color: var(--bg-main);
-  box-sizing: border-box;
-}
-
-/* Vertical Admin Sidebar */
-.admin-sidebar {
-  width: 250px;
-  flex-shrink: 0;
-  background-color: var(--sidebar-bg);
-  min-height: 100vh;
+  bottom: 0;
+  z-index: var(--z-drawer);
   display: flex;
   flex-direction: column;
-  padding: 22px 16px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  z-index: 60;
+  width: 280px;
+  max-width: 84vw;
+  height: 100%;
+  padding: var(--sp-4) var(--sp-3);
+  padding-top: max(var(--sp-4), env(safe-area-inset-top));
+  padding-bottom: max(var(--sp-4), env(safe-area-inset-bottom));
+  background-color: var(--sidebar-bg);
+  color: var(--nav-text);
+  border-right: 1px solid var(--nav-border);
+  border-radius: 0 var(--radius-2xl) var(--radius-2xl) 0;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-100%);
+  transition: transform var(--dur-slow) var(--ease);
   overflow-y: auto;
+  overscroll-behavior: contain;
   box-sizing: border-box;
 }
+.admin-sidebar.is-active { transform: translateX(0); }
 
-/* Sidebar Brand Header */
+/* --- Brand header --- */
 .sidebar-brand-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 8px 18px 8px;
-  border-bottom: 1px solid var(--sidebar-divider);
-  margin-bottom: 16px;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-2) var(--sp-4);
+  flex-shrink: 0;
 }
-
-.brand-text-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
+.brand-text-group { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .sidebar-brand-title {
   font-family: var(--font-sans);
-  font-size: 1.4rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #FFFFFF;
+  font-size: var(--fs-20);
+  font-weight: var(--fw-extrabold);
+  letter-spacing: var(--ls-tight);
+  color: var(--nav-text);
   text-decoration: none;
 }
-
 .sidebar-brand-badge {
-  font-size: 0.68rem;
-  font-weight: 700;
+  font-size: var(--fs-12);
+  font-weight: var(--fw-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-gold);
+  color: var(--text-2);
 }
-
-.nav-close-btn {
-  background: none;
-  border: none;
-  color: #9CA3AF;
-  cursor: pointer;
-  padding: 6px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  transition: color 0.15s ease, background-color 0.15s ease;
-}
-
-.nav-close-btn:hover {
-  color: #FFFFFF;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Vertical Navigation Menu */
+[data-theme="dark"] .sidebar-brand-badge { color: var(--accent); }
+/* --- Navigation --- */
+/* Sidebar ikut terkunci (body tidak scroll), jadi daftar menunya yang
+   digeser sendiri supaya panel tetap muat di layar pendek. */
 .sidebar-nav-container {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .sidebar-section-label {
-  font-size: 0.68rem;
-  font-weight: 800;
+  padding: var(--sp-4) var(--sp-3) var(--sp-2);
+  font-size: var(--fs-12);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9CA3AF;
-  padding: 12px 14px 4px 14px;
+  color: var(--nav-text-muted);
 }
+.sidebar-section-label:first-child { padding-top: var(--sp-1); }
+.sidebar-section-label-spaced { margin-top: var(--sp-1); }
 
 .sidebar-menu-list,
 ul.sidebar-menu-list {
@@ -119,11 +248,10 @@ ul.sidebar-menu-list {
   list-style-type: none !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: var(--sp-1) !important;
   margin: 0 !important;
   padding: 0 !important;
 }
-
 .sidebar-nav-item,
 li.sidebar-nav-item {
   list-style: none !important;
@@ -133,142 +261,235 @@ li.sidebar-nav-item {
 }
 
 .sidebar-nav-link {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: var(--sp-3);
+  min-height: var(--touch);
+  padding: var(--sp-2) var(--sp-3);
   border-radius: var(--radius-md);
   text-decoration: none;
-  color: var(--sidebar-text-muted);
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: all 0.15s ease;
-  position: relative;
+  color: var(--nav-text-muted);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-medium);
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
-
 .sidebar-nav-link:hover {
-  color: #FFFFFF;
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--nav-hover-bg);
+  color: var(--nav-text);
 }
+.sidebar-nav-link:hover .nav-icon { color: var(--nav-text); }
 
-/* Active Item State */
+/* Item aktif: pill penuh emas, ikon + teks charcoal */
 .sidebar-nav-link.active,
 a.sidebar-nav-link.active {
-  background-color: #282A30 !important;
-  color: #FFFFFF !important;
-  font-weight: 700 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background-color: var(--accent) !important;
+  color: var(--accent-contrast) !important;
+  font-weight: var(--fw-bold) !important;
+  box-shadow: var(--shadow-accent);
 }
-
 .sidebar-nav-link.active::before,
-a.sidebar-nav-link.active::before {
-  content: '' !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 6px !important;
-  bottom: 6px !important;
-  width: 3.5px !important;
-  background-color: var(--accent-gold) !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
+a.sidebar-nav-link.active::before { content: none !important; }
 .sidebar-nav-link.active .nav-icon,
-a.sidebar-nav-link.active .nav-icon {
-  color: var(--accent-gold) !important;
-}
+a.sidebar-nav-link.active .nav-icon { color: var(--accent-contrast) !important; }
 
+/* Ikon garis: satu set, stroke 1.75-2px */
 .nav-icon {
-  width: 18px;
-  height: 18px;
-  color: var(--sidebar-text-muted);
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
-  transition: color 0.15s ease;
+  color: var(--nav-text-muted);
+  transition: color var(--dur-fast) var(--ease);
 }
 
-.sidebar-nav-link:hover .nav-icon {
-  color: #FFFFFF;
-}
-
-/* Sidebar User Footer */
+/* --- Footer: kartu user + Log Out --- */
 .sidebar-user-footer {
-  padding-top: 14px;
-  border-top: 1px solid var(--sidebar-divider);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: auto;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--nav-border);
+  flex-shrink: 0;
 }
-
 .sidebar-user-card {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
+  gap: var(--sp-3);
+  min-height: var(--touch);
+  padding: var(--sp-2) var(--sp-2);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--nav-text);
+  transition: background-color var(--dur-fast) var(--ease);
 }
+.sidebar-user-card:hover { background-color: var(--nav-hover-bg); }
 
 .user-avatar-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: var(--accent-gold);
-  color: #111827;
-  font-size: 0.82rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-size: var(--fs-14);
+  font-weight: var(--fw-extrabold);
 }
-
-.sidebar-user-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
+.sidebar-user-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .sidebar-user-meta .user-name {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: #FFFFFF;
+  font-size: var(--fs-13);
+  font-weight: var(--fw-bold);
+  color: var(--nav-text);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.sidebar-user-meta .user-role {
-  font-size: 0.72rem;
-  color: var(--sidebar-text-muted);
-}
+.sidebar-user-meta .user-role { font-size: var(--fs-12); color: var(--nav-text-muted); }
 
 .sidebar-logout-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: #EF4444;
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 8px 10px;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: var(--touch);
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--nav-border);
   border-radius: var(--radius-md);
-  transition: background-color 0.15s ease;
+  color: var(--nav-text);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
+.sidebar-logout-btn:hover { background-color: var(--nav-hover-bg); border-color: var(--border-strong); }
+.sidebar-logout-btn svg { flex-shrink: 0; }
 
-.sidebar-logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.12);
+/* Kartu user aktif (halaman Profil) */
+.sidebar-user-card.active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow-accent);
 }
+.sidebar-user-card.active .user-avatar-circle { background-color: var(--accent-contrast); color: var(--accent); }
+.sidebar-user-card.active .user-name { color: var(--accent-contrast); }
+.sidebar-user-card.active .user-role { color: var(--accent-contrast); opacity: 0.78; }
 
-/* Main Content Area */
+/* Toggle tema di dalam drawer (ikon flow, tanpa absolute positioning) */
+.sidebar-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: var(--touch);
+  width: 100%;
+  padding: var(--sp-2) var(--sp-4);
+  background: none;
+  border: 1px solid var(--nav-border);
+  border-radius: var(--radius-md);
+  color: var(--nav-text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-13);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.sidebar-theme-toggle:hover { background-color: var(--nav-hover-bg); border-color: var(--border-strong); }
+.sidebar-theme-toggle svg { flex-shrink: 0; }
+.sidebar-theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .sidebar-theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .sidebar-theme-toggle .icon-sun { display: none; }
+
+/* ==========================================================================
+   5. MAIN CONTENT
+   ========================================================================== */
 .app-main-content {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   width: 100%;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-main);
+  background-color: var(--bg-page);
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
 }
 
-/* Centered Content Column (default 1280px, override per page) */
+.mobile-only { display: flex; }
+
+/* ==========================================================================
+   6. BREAKPOINT - MOBILE FIRST (max-width: 1023px = drawer)
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .desktop-only { display: none !important; }
+}
+
+/* ==========================================================================
+   7. BREAKPOINT - DESKTOP >= 1024px (sidebar tetap, melayang)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .app-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+    padding-left: max(var(--sp-4), env(safe-area-inset-left));
+    padding-right: max(var(--sp-4), env(safe-area-inset-right));
+    padding-bottom: max(var(--sp-4), env(safe-area-inset-bottom));
+  }
+
+  .admin-sidebar {
+    position: sticky;
+    top: var(--sp-4);
+    left: auto;
+    bottom: auto;
+    flex-shrink: 0;
+    width: var(--sidebar-w);
+    max-width: none;
+    height: calc(100vh - var(--sp-4) * 2);
+    height: calc(100dvh - var(--sp-4) * 2);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--nav-border);
+    box-shadow: var(--shadow-lg);
+    transform: none;
+  }
+  .admin-sidebar.is-active { transform: none; }
+
+  .mobile-only { display: none !important; }
+
+  .app-main-content {
+    border-radius: var(--radius-2xl);
+    background-color: var(--bg-page);
+    height: 100%;
+  }
+
+  .app-bar { border-radius: var(--radius-2xl); border: 1px solid var(--border); }
+}
+
+@media (min-width: 1280px) {
+  .app-layout { gap: var(--sp-5); }
+  .admin-sidebar { width: 280px; }
+}
+
+/* Mobile: app bar tanpa border bawah yang membulat */
+@media (max-width: 1023px) {
+  .app-bar { border-bottom: 1px solid var(--border); }
+  .app-bar__title { display: none; }
+}
+
+@media (min-width: 1025px) {}
+
+@media (max-width: 1024px) {}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
 .app-content {
   width: 100%;
   max-width: 1280px;
@@ -278,90 +499,9 @@ a.sidebar-nav-link.active .nav-icon {
   box-sizing: border-box;
 }
 
-/* Halaman laporan & kalender appointment boleh melebar sampai 1440px */
 .app-content.app-content-wide {
   max-width: 1440px;
 }
 
-.mobile-top-header {
-  display: none;
-}
-
-/* ==========================================================================
-   RESPONSIVE BREAKPOINTS (DESKTOP VS MOBILE/TABLET)
-   ========================================================================== */
-
-/* Desktop (> 1024px) */
-@media (min-width: 1025px) {
-  .admin-sidebar {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-  }
-  .mobile-only {
-    display: none !important;
-  }
-  .mobile-top-header {
-    display: none !important;
-  }
-  .app-main {
-    padding: 24px 36px 80px 36px;
-    max-width: none;
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-}
-
-/* Mobile & Tablet (<= 1024px) */
-@media (max-width: 1024px) {
-  .app-layout {
-    flex-direction: column;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  .admin-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 280px;
-    max-width: 82vw;
-    height: 100%;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .admin-sidebar.is-active {
-    transform: translateX(0);
-  }
-
-  .nav-close-btn.mobile-only {
-    display: flex !important;
-  }
-
-  .mobile-top-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    background-color: var(--bg-main);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 30;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .app-main {
-    padding: 14px 16px 80px 16px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    overflow-x: hidden;
-  }
-}
+/* .app-main memakai padding responsif dari global.css (media query 480 / 1024),
+   jadi nav.css tidak menimpanya lagi di sini. */

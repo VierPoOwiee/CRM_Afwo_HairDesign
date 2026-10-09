@@ -2,7 +2,13 @@
     $currentPreset = $preset ?? 'bulan-ini';
 @endphp
 
-<div class="report-filter-card" data-field="report-filters">
+<section class="card report-filter-card" data-field="{{ $filterField ?? 'report-filters' }}">
+    <div class="card__header">
+        <div class="card__title-group">
+            <h2 class="card__title">Filter Laporan</h2>
+            <p class="card__subtitle">Tentukan periode, jenis pengerjaan, dan karyawan yang dihitung.</p>
+        </div>
+    </div>
     <form action="{{ $action ?? '#' }}" method="GET">
         <div class="report-filter-grid">
 
@@ -86,16 +92,16 @@
         </div>
 
         <div class="report-filter-actions">
-            <button type="submit" class="btn-filter-apply">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="{{ $resetUrl ?? '#' }}" class="btn btn--secondary btn-filter-reset">Refresh</a>
+            <button type="submit" class="btn btn--primary btn-filter-apply">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                     <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                 </svg>
                 Terapkan Filter
             </button>
-            <a href="{{ $resetUrl ?? '#' }}" class="btn-filter-reset">Reset</a>
         </div>
     </form>
-</div>
+</section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

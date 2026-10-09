@@ -65,21 +65,24 @@
 
 <div id="{{ $name }}_wrapper">
     @if ($label)
-        <label for="{{ $name }}_number" class="block text-sm font-medium text-gray-700">
-            {{ $label }} @if ($required)<span class="text-red-500">*</span>@endif
+        <label for="{{ $name }}_number" class="form-label">
+            {{ $label }} @if ($required)<span class="required-star">*</span>@endif
         </label>
     @endif
 
-    <div class="mt-1 flex gap-2">
-        <select id="{{ $name }}_country" aria-label="Kode negara"
-                class="w-[45%] max-w-[180px] shrink-0 rounded-lg border-gray-300 bg-white text-text-primary px-2 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none">
-            @foreach ($countries as $c)
-                <option value="{{ $c[1] }}">{{ $c[2] }} {{ $c[0] }} (+{{ $c[1] }})</option>
-            @endforeach
-        </select>
-        <input type="text" inputmode="numeric" autocomplete="tel-national" id="{{ $name }}_number"
-               placeholder="{{ $placeholder }}" maxlength="13" @if ($required) required @endif
-               class="block w-full flex-1 rounded-lg border-gray-300 bg-white text-text-primary px-3 py-2 text-sm shadow-sm focus:border-accent focus:ring-accent/30 focus:outline-none placeholder:text-text-muted">
+    <div class="phone-split-input">
+        <div class="country-select-box">
+            <select id="{{ $name }}_country" class="country-select" aria-label="Kode negara">
+                @foreach ($countries as $c)
+                    <option value="{{ $c[1] }}">{{ $c[2] }} {{ $c[0] }} (+{{ $c[1] }})</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="phone-number-box">
+            <input type="text" inputmode="numeric" autocomplete="tel-national" id="{{ $name }}_number"
+                   class="phone-number-field" placeholder="{{ $placeholder }}" maxlength="13"
+                   @if ($required) required @endif>
+        </div>
     </div>
 
     <input type="hidden" name="{{ $name }}" id="{{ $name }}" value="{{ old($name, $value) }}">
@@ -88,7 +91,7 @@
         $phoneError = isset($errors) ? $errors->first($name) : null;
     @endphp
     @if ($phoneError)
-        <p class="mt-1 text-xs text-red-600">{{ $phoneError }}</p>
+        <p class="field-error">{{ $phoneError }}</p>
     @endif
 </div>
 

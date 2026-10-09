@@ -22,25 +22,13 @@
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
 }
 
 .trans-page-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
-}
-
-.btn-create-order {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.2);
+  color: var(--text-2);
 }
 
 /* KPI Sparkline Grid (Sesuai Referensi Gambar 1) */
@@ -59,8 +47,8 @@
 }
 
 .trans-kpi-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   display: flex;
@@ -70,8 +58,8 @@
 }
 
 .trans-kpi-card.featured-revenue-card {
-  border-color: #FDE68A;
-  background: linear-gradient(180deg, #FFFDF8 0%, #FFFFFF 100%);
+  border-color: var(--border-accent);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--surface) 100%);
 }
 
 .trans-kpi-info {
@@ -83,18 +71,18 @@
 .trans-kpi-label {
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 .trans-kpi-num {
   font-size: 1.45rem;
   font-weight: 900;
-  color: var(--text-primary);
+  color: var(--text-1);
   letter-spacing: -0.02em;
 }
 
 .trans-kpi-card.featured-revenue-card .trans-kpi-num {
-  color: #B45309;
+  color: var(--text-link);
 }
 
 .trans-kpi-chart {
@@ -108,10 +96,13 @@
   height: 100%;
 }
 
-/* Toolbar Card (Tabs + Search + Dates) */
+/* Toolbar Card (Tabs + Search + Dates)
+   - Desktop (>=900px): tab di kiri, seluruh kontrol filter dalam SATU BARIS.
+   - Tablet (641-899px): tetap satu baris, kotak pencarian boleh menyempit.
+   - Mobile (<=640px): kontrol ditumpuk penuh lebar agar tidak terpotong. */
 .trans-toolbar-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 14px 18px;
   box-shadow: var(--shadow-sm);
@@ -143,7 +134,7 @@
   font-family: var(--font-sans);
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-2);
   padding: 6px 14px;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -152,13 +143,13 @@
 }
 
 .trans-filter-tab:hover {
-  background-color: #F3F4F6;
-  color: var(--text-primary);
+  background-color: var(--surface-2);
+  color: var(--text-1);
 }
 
 .trans-filter-tab.active {
-  background-color: var(--dark-solid);
-  color: #FFFFFF;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
 }
 
 .trans-search-filter-controls {
@@ -166,57 +157,134 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .trans-search-box {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 7px 12px;
   width: 100%;
   max-width: 260px;
+  min-width: 0;
+}
+
+.trans-search-box .search-input {
+  min-width: 0;
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-1);
+}
+
+.trans-search-box .search-icon {
+  flex: 0 0 auto;
+  color: var(--text-3);
 }
 
 .trans-date-filter-group {
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
 }
 
 .date-input-inline {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 6px 10px;
   font-size: 0.82rem;
   font-family: var(--font-sans);
-  color: var(--text-primary);
-  background-color: #FFFFFF;
+  color: var(--text-1);
+  background-color: var(--surface);
   outline: none;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .date-separator {
-  color: var(--text-muted);
+  color: var(--text-3);
   font-weight: 700;
+  flex: 0 0 auto;
 }
 
-.btn-date-reset {
-  background-color: #F3F4F6;
-  border: 1px solid var(--border-color);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  padding: 6px 10px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s ease;
+/* --- Desktop: seluruh kontrol dalam satu baris --- */
+@media (min-width: 900px) {
+  .trans-search-filter-controls {
+    flex-wrap: nowrap;
+    flex: 0 1 auto;
+    justify-content: flex-end;
+  }
+
+  .trans-search-box {
+    flex: 1 1 200px;
+    max-width: 320px;
+  }
+
+  .trans-date-filter-group {
+    flex: 0 0 auto;
+  }
 }
 
-.btn-date-reset:hover {
-  background-color: #E5E7EB;
-  color: var(--text-primary);
+/* --- Tablet: satu baris tetap, kotak pencarian menyempit --- */
+@media (min-width: 641px) and (max-width: 899px) {
+  .trans-search-filter-controls {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .trans-search-box {
+    flex: 1 1 140px;
+    max-width: none;
+    min-width: 120px;
+  }
+
+  .trans-date-filter-group {
+    flex: 0 1 auto;
+  }
+
+  .date-input-inline {
+    flex: 1 1 auto;
+    width: 120px;
+  }
+}
+
+/* --- Mobile: kontrol ditumpuk, setiap kontrol penuh lebar --- */
+@media (max-width: 640px) {
+  .trans-toolbar-card {
+    padding: 12px;
+  }
+
+  .trans-search-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .trans-search-box {
+    max-width: none;
+  }
+
+  .trans-date-filter-group {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .date-input-inline {
+    flex: 1 1 130px;
+    width: auto;
+  }
+
+  .trans-date-filter-group .btn {
+    flex: 1 1 100%;
+  }
 }
 
 /* Daily Groups Container */
@@ -226,27 +294,17 @@
   gap: 20px;
 }
 
-.table-responsive-wrapper {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 0;
-  padding-bottom: 2px;
-  box-sizing: border-box;
-}
-
 .daily-group-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
 
 .daily-group-header {
-  background-color: #F9FAFB;
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--accent-soft);
+  border-bottom: 1px solid var(--border);
   padding: 12px 18px;
   display: flex;
   align-items: center;
@@ -256,7 +314,7 @@
 .daily-group-title {
   font-size: 0.92rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -265,8 +323,8 @@
 .daily-group-badge {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #B45309;
-  background-color: #FEF3C7;
+  color: var(--text-link);
+  background-color: var(--accent-soft);
   padding: 2px 10px;
   border-radius: var(--radius-md);
 }
@@ -282,18 +340,18 @@
   padding: 10px 14px;
   font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  border-bottom: 1px solid var(--border-color);
-  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
   text-align: left;
 }
 
 .daily-trans-table td {
   padding: 12px 14px;
-  border-bottom: 1px solid #F1F5F9;
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
   vertical-align: middle;
 }
 
@@ -302,15 +360,19 @@
 }
 
 .daily-trans-table tr:hover td {
-  background-color: #F8FAFC;
+  background-color: var(--accent-soft);
 }
 
 .trans-order-id-link {
   font-weight: 800;
-  color: #B45309;
+  color: var(--text-link);
   text-decoration: none;
   font-family: monospace;
   font-size: 0.88rem;
+}
+
+.trans-order-id-link:hover {
+  color: var(--text-1);
 }
 
 .trans-client-meta {
@@ -323,8 +385,8 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #FEF3C7;
-  color: #B45309;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -335,27 +397,27 @@
 
 .trans-client-name {
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .trans-client-phone {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 .trans-service-title {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .trans-worker-tag {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .trans-amount-cell {
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .payment-method-badge {
@@ -364,23 +426,23 @@
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  background-color: #F3F4F6;
-  color: var(--text-secondary);
+  background-color: var(--surface-2);
+  color: var(--text-2);
 }
 
 .badge-qris {
-  background-color: #E0E7FF;
-  color: #3730A3;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
 }
 
 .badge-cash {
-  background-color: #DCFCE7;
-  color: #166534;
+  background-color: var(--accent-soft);
+  color: var(--text-1);
 }
 
 .badge-transfer {
-  background-color: #FCE7F3;
-  color: #9D174D;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
 }
 
 /* Status Badges */
@@ -392,25 +454,31 @@
   border-radius: var(--radius-md);
 }
 
+/* Selesai (Paid): hijau lembut + teks hijau tua */
 .status-paid {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: var(--status-done-bg);
+  color: var(--status-done-fg);
+  border: 1px solid var(--status-done-border);
 }
 
+/* Menunggu (Pending): emas lembut + teks charcoal */
 .status-pending {
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress-fg);
+  border: 1px solid var(--status-progress-border);
 }
 
+/* Dibatalkan: outline abu transparan (bukan emas) */
 .status-cancelled {
-  background-color: #FEE2E2;
-  color: #991B1B;
+  background-color: var(--status-cancel-bg);
+  color: var(--status-cancel-fg);
+  border: 1px solid var(--status-cancel-border);
 }
 
 .btn-detail-receipt {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-1);
   font-size: 0.78rem;
   font-weight: 700;
   padding: 5px 10px;
@@ -420,8 +488,8 @@
 }
 
 .btn-detail-receipt:hover {
-  background-color: #F3F4F6;
-  border-color: #CBD5E1;
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
 }
 
 /* Receipt Modal Styles */
@@ -432,7 +500,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  background-color: var(--surface-overlay);
   backdrop-filter: blur(4px);
   z-index: 9999;
   align-items: center;
@@ -445,12 +513,12 @@
 }
 
 .modal-dialog-card {
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border-radius: var(--radius-lg);
   max-width: 440px;
   width: 100%;
   padding: 24px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 25px -5px var(--black-24);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -460,14 +528,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 12px;
 }
 
 .modal-header-title {
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .btn-close-modal {
@@ -475,40 +543,54 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 .modal-footer-row {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid var(--border-color);
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
   padding-top: 12px;
 }
-
-.btn-print-receipt {
-  background-color: #B45309;
-  color: #FFFFFF;
-  border: none;
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  cursor: pointer;
+.modal-footer-row .btn {
+  white-space: nowrap;
 }
 
-.btn-modal-close-action {
-  background-color: #F3F4F6;
-  border: 1px solid var(--border-color);
-  padding: 8px 16px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  cursor: pointer;
+@media (max-width: 479px) {
+  .modal-footer-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .modal-footer-row .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
 }
 
-/* ==========================================================================
-   DETAIL TRANSAKSI PAGE (transaksis.show)
-   ========================================================================== */
+@media (max-width: 359px) {
+  .modal-footer-row { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 640px) {}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
+.table-responsive-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding-bottom: 2px;
+  box-sizing: border-box;
+}
 
 .btn-back-ghost {
   display: inline-flex;
@@ -525,7 +607,7 @@
 }
 
 .btn-back-ghost:hover {
-  background-color: #F3F4F6;
+  background-color: var(--surface-2);
   color: var(--text-primary);
 }
 
@@ -536,43 +618,19 @@
   flex-wrap: wrap;
 }
 
-.btn-action-danger {
-  background-color: #FFFFFF;
-  border: 1px solid #FECACA;
-  color: #B91C1C;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-sans);
-}
-
-.btn-action-danger:hover {
-  background-color: #FEF2F2;
-  border-color: #F87171;
-}
-
 .detail-section-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
 }
 
-@media (min-width: 1024px) {
-  .detail-section-grid {
+.detail-section-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
-}
 
 .detail-card {
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 18px;
@@ -595,11 +653,9 @@
   gap: 10px;
 }
 
-@media (min-width: 640px) {
-  .detail-def-list {
+.detail-def-list {
     grid-template-columns: 1fr 1fr;
   }
-}
 
 .detail-def {
   display: flex;
@@ -640,7 +696,7 @@
 
 .detail-items-table td {
   padding: 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   vertical-align: top;
 }
@@ -677,11 +733,11 @@
   margin-top: 10px;
   font-weight: 900;
   font-size: 1rem;
-  color: #B45309;
+  color: var(--text-link);
 }
 
 .komisi-entry {
-  border: 1px solid #F1F5F9;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 12px;
   margin-bottom: 10px;
@@ -717,12 +773,10 @@
   gap: 8px;
 }
 
-@media (min-width: 640px) {
-  .komisi-entry-form {
+.komisi-entry-form {
     flex-direction: row;
     align-items: flex-end;
   }
-}
 
 .komisi-item-line {
   display: flex;
@@ -734,7 +788,27 @@
 }
 
 .komisi-item-line + .komisi-item-line {
-  border-top: 1px dashed #F1F5F9;
+  border-top: 1px dashed var(--border);
   margin-top: 4px;
   padding-top: 8px;
+}
+
+/* Group harian di halaman laporan memakai wrapper pill + total omset
+   (selain judul dan badge yang sudah ada di atas). */
+.daily-summary-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-total-amount {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-link);
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-trans-table .trans-time-val {
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }

@@ -409,7 +409,10 @@ class TransaksiController extends Controller
         $produks = Produk::where('aktif', true)
             ->when($mode === 'dijual', fn ($query) => $query->where('kategori_produk', 'dijual'))
             ->when($mode === 'pakai', fn ($query) => $query->where('kategori_produk', '!=', 'dijual'))
-            ->where('nama_produk', 'like', "%{$q}%")
+            ->where(function ($query) use ($q) {
+                $query->where('nama_produk', 'like', "%{$q}%")
+                    ->orWhere('merek', 'like', "%{$q}%");
+            })
             ->limit(10)
             ->get();
 

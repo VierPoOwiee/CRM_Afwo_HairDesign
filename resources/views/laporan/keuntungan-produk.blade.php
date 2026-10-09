@@ -14,7 +14,7 @@
 @php
     $fmt = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
     $pct = fn ($n) => number_format((float) $n, 1, ',', '.') . ' %';
-    $upDown = fn (float $v) => $v >= 0 ? '#047857' : '#B91C1C';
+    $upDown = fn (float $v) => $v >= 0 ? 'var(--status-ok)' : 'var(--status-danger)';
 @endphp
 
 @section('content')
@@ -232,17 +232,28 @@
     var labels = @json($trenBulanan->pluck('label')->values());
     var values = @json($trenBulanan->pluck('keuntungan')->map(fn ($v) => round((float) $v))->values());
 
+    // Canvas tidak bisa membaca var(--x); token harus di-resolve via theme engine.
+    function tok(name, fallback) {
+        var v = (window.AFWOTheme && window.AFWOTheme.token(name)) || '';
+        return v || fallback || '#000';
+    }
+    function warnaNilai() {
+        return values.map(function (v) {
+            return v >= 0 ? tok('--status-ok', '#047857') : tok('--status-danger', '#DC2626');
+        });
+    }
+
     var canvas = document.getElementById('chartKeuntunganProduk');
     if (canvas && window.Chart && labels.length > 0) {
-        new Chart(canvas, {
+        var chartKeuntungan = new Chart(canvas, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
                     label: 'Keuntungan Produk',
                     data: values,
-                    backgroundColor: values.map(function (v) { return v >= 0 ? 'rgba(16,185,129,0.75)' : 'rgba(239,68,68,0.75)'; }),
-                    borderColor: values.map(function (v) { return v >= 0 ? 'rgb(5,150,105)' : 'rgb(220,38,38)'; }),
+                    backgroundColor: warnaNilai(),
+                    borderColor: warnaNilai(),
                     borderWidth: 1,
                     borderRadius: 6
                 }]
@@ -259,6 +270,14 @@
                     y: { beginAtZero: true, ticks: { callback: function (v) { return 'Rp' + (v >= 1000 ? (v / 1000) + 'K' : v); } } }
                 }
             }
+        });
+
+        // Warna kanvas perlu di-resolve ulang saat tema berganti.
+        document.addEventListener('afwo:themechange', function () {
+            var w = warnaNilai();
+            chartKeuntungan.data.datasets[0].backgroundColor = w;
+            chartKeuntungan.data.datasets[0].borderColor = w;
+            chartKeuntungan.update('none');
         });
     }
 

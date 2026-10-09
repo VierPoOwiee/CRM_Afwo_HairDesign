@@ -59,7 +59,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="button" class="btn-add-brand-gold" id="btn-add-brand">+ Baru</button>
+                    <button type="button" class="btn btn-secondary" id="btn-add-brand">+ Baru</button>
                 </div>
                 <span class="field-help-text">Butuh merek baru? Klik "+ Baru" lalu ketik namanya.</span>
                 @error('merek')
@@ -76,7 +76,7 @@
                        placeholder="Ketik merek baru..." value="{{ old('merek_baru') }}"
                        class="form-input-control">
             </div>
-            <button type="button" class="btn-add-brand-gold" id="btn-ganti-merek-mode">Pilih Merek</button>
+            <button type="button" class="btn btn-secondary" id="btn-ganti-merek-mode">Pilih Merek</button>
         </div>
 
         <!-- Baris 2: Kategori Produk (Radio Grid 2 Kolom) -->
@@ -183,9 +183,9 @@
         </div>
 
         <!-- Bottom Action Buttons -->
-        <div class="form-bottom-actions">
-            <button type="submit" class="btn-dark-solid" id="btn-save-produk" data-field="btn-save-produk">{{ $submitLabel }}</button>
-            <a href="{{ route('produk.index') }}" class="btn-light-outline" id="btn-cancel-produk" data-field="btn-cancel">Batal</a>
+        <div class="form-actions-row">
+            <a href="{{ route('produk.index') }}" class="btn btn-secondary" id="btn-cancel-produk" data-field="btn-cancel">Batal</a>
+            <button type="submit" class="btn btn-primary" id="btn-save-produk" data-field="btn-save-produk">{{ $submitLabel }}</button>
         </div>
 
     </article>

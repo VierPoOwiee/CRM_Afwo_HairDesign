@@ -16,12 +16,12 @@
         <p class="products-subtitle">Kelola stok produk retail dan produk pendukung layanan.</p>
     </div>
 
-    <a href="{{ route('produk.create') }}" class="btn-add-full" id="add-product-btn" data-field="add-product-btn">
+    <a href="{{ route('produk.create') }}" class="btn btn-primary page-primary-action" id="add-product-btn" data-field="add-product-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        <span>Add New Product</span>
+        <span>Tambah Produk</span>
     </a>
 
     <!-- Pill Filter Tabs -->
@@ -127,19 +127,17 @@
         @empty
             <div id="products-empty-state" class="empty-filter-state show">
                 @if ($q !== '')
-                    <p>Tidak ditemukan produk untuk kata kunci "<span class="font-medium">{{ $q }}</span>".</p>
+                    <p>Tidak ditemukan produk untuk kata kunci "<strong>{{ $q }}</strong>".</p>
                 @elseif ($kategoriFilter !== '')
                     <p>Tidak ada produk pada kategori ini.</p>
                 @else
-                    <p>Belum ada produk. Klik "Add New Product" untuk menambahkan produk pertama.</p>
+                    <p>Belum ada produk. Klik "Tambah Produk" untuk menambahkan produk pertama.</p>
                 @endif
             </div>
         @endforelse
     </div>
 
     @if ($produks->hasPages())
-        <div class="mt-4 mb-6">
-            @include('partials.pagination', ['paginator' => $produks])
-        </div>
+        @include('partials.pagination', ['paginator' => $produks])
     @endif
 @endsection

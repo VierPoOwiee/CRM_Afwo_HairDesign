@@ -157,24 +157,24 @@
                     <svg viewBox="0 0 600 160" class="chart-svg-responsive" id="income-trend-svg" aria-label="Grafik Tren Pemasukan">
                         <defs>
                             <linearGradient id="areaGradientGold" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#E5A93C" stop-opacity="0.25"/>
-                                <stop offset="85%" stop-color="#FBF8F2" stop-opacity="0.08"/>
-                                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+                                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.25"/>
+                                <stop offset="85%" stop-color="var(--surface)" stop-opacity="0.08"/>
+                                <stop offset="100%" stop-color="var(--surface)" stop-opacity="0.0"/>
                             </linearGradient>
                         </defs>
 
-                        <g class="chart-gridlines" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3">
+                        <g class="chart-gridlines" stroke="var(--chart-grid)" stroke-width="1" stroke-dasharray="3 3">
                             <line x1="0" y1="30" x2="600" y2="30"></line>
                             <line x1="0" y1="80" x2="600" y2="80"></line>
                             <line x1="0" y1="130" x2="600" y2="130"></line>
                         </g>
 
                         <path id="chart-area-path" fill="url(#areaGradientGold)" d="{{ $areaPathD }}"></path>
-                        <path id="chart-line-path" fill="none" stroke="#C5932D" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="{{ $linePathD }}"></path>
+                        <path id="chart-line-path" fill="none" stroke="var(--gold-600)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" d="{{ $linePathD }}"></path>
 
                         <g id="chart-points-group">
                             @foreach ($chartPoints as $pt)
-                                <circle cx="{{ number_format($pt['x'], 1) }}" cy="{{ number_format($pt['y'], 1) }}" r="4" fill="#FFFFFF" stroke="#C5932D" stroke-width="2.5" class="chart-interactive-point">
+                                <circle cx="{{ number_format($pt['x'], 1) }}" cy="{{ number_format($pt['y'], 1) }}" r="4" fill="var(--surface)" stroke="var(--gold-600)" stroke-width="2.5" class="chart-interactive-point">
                                     <title>{{ $pt['day'] }}: Rp{{ number_format($pt['income'], 0, ',', '.') }}</title>
                                 </circle>
                             @endforeach

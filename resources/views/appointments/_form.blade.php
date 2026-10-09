@@ -131,11 +131,11 @@
 
     <!-- Action Buttons -->
     <div class="form-actions-row">
-        <button type="submit" id="btn-save-appointment" class="btn-primary-gold">
+        <a href="{{ route('appointment.index') }}" id="btn-cancel" class="btn btn-secondary">Batal</a>
+        <button type="submit" id="btn-save-appointment" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             <span>{{ $submitLabel }}</span>
         </button>
-        <a href="{{ route('appointment.index') }}" id="btn-cancel" class="btn-secondary-cancel">Batal</a>
     </div>
 
 </div>
@@ -176,8 +176,8 @@
         </div>
         <div id="new_pelanggan_error" class="modal-error-plain hidden"></div>
         <div class="modal-actions-plain">
-            <button type="button" id="cancelPelangganBtn" class="btn-secondary-cancel">Batal</button>
-            <button type="button" id="savePelangganBtn" class="btn-primary-gold">Simpan</button>
+            <button type="button" id="cancelPelangganBtn" class="btn btn-secondary">Batal</button>
+            <button type="button" id="savePelangganBtn" class="btn btn-primary">Simpan</button>
         </div>
     </div>
 </div>
@@ -315,7 +315,7 @@
     var selectedLayanan = [];
 
     function textChip(label, removeId) {
-        return '<span class="appt-picked-chip" style="background-color:#FEF3C7; border-color:#FCD34D; color:#92400E;">' +
+        return '<span class="appt-picked-chip" style="background-color:var(--gold-100); border-color:var(--gold-300); color:var(--text-link);">' +
             '<span>' + label + '</span>' +
             '<button type="button" class="remove" data-remove-layanan="' + removeId + '" title="Hapus">&times;</button></span>';
     }

@@ -40,7 +40,7 @@
                             <input type="text" id="name" name="name" value="{{ old('name', Auth::user()->name) }}" required class="profil-input">
                         </div>
                         @error('name')
-                            <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
+                            <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -50,7 +50,7 @@
                             <input type="text" id="username" name="username" value="{{ old('username', Auth::user()->username) }}" required autocomplete="username" class="profil-input">
                         </div>
                         @error('username')
-                            <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
+                            <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -65,7 +65,7 @@
                                    class="profil-input input-tinted" placeholder="Masukkan password untuk konfirmasi">
                         </div>
                         @error('current_password')
-                            <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
+                            <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                                    class="profil-input" placeholder="Masukkan password saat ini">
                         </div>
                         @error('password.current_password')
-                            <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
+                            <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -108,7 +108,7 @@
                                    class="profil-input" placeholder="Minimal 8 karakter">
                         </div>
                         @error('password.password')
-                            <p style="font-size: .78rem; color: #DC2626; margin: 2px 0 0;">{{ $message }}</p>
+                            <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
 

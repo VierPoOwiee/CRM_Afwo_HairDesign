@@ -46,7 +46,7 @@
                       onsubmit="return confirm('Batalkan transaksi &quot;{{ addslashes($transaksi->no_struk) }}&quot;? Stok produk akan dikembalikan.')">
                     @csrf
                     @method('PUT')
-                    <button type="submit" class="btn-action-danger">Batalkan Transaksi</button>
+                    <button type="submit" class="btn btn-danger">Batalkan Transaksi</button>
                 </form>
             @endif
 
@@ -54,7 +54,7 @@
                   onsubmit="return confirm('Hapus transaksi &quot;{{ addslashes($transaksi->no_struk) }}&quot;? Stok produk akan dikembalikan.')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn-action-danger">Hapus</button>
+                <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
 
             <button type="button" onclick="window.print()" class="btn-print-receipt">Cetak Struk</button>
@@ -160,7 +160,7 @@
                                     <td style="text-align: right; white-space: nowrap;">
                                         {{ $fmt($d->harga_saat_transaksi) }}
                                         @if ((float) $d->diskon > 0)
-                                            <div style="font-size: 0.72rem; color: #DC2626;">-Diskon {{ $fmt($d->diskon) }}</div>
+                                            <div style="font-size: 0.72rem; color: var(--status-danger);">-Diskon {{ $fmt($d->diskon) }}</div>
                                         @endif
                                     </td>
                                     <td style="text-align: right;">{{ rtrim(rtrim((string) $d->qty, '0'), '.') }}</td>
@@ -199,10 +199,10 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; color: var(--text-secondary);">
                         <span>Total Diskon</span>
-                        <span style="font-weight: 600; color: #DC2626;">- {{ $fmt($totalDiskon) }}</span>
+                        <span style="font-weight: 600; color: var(--status-danger);">- {{ $fmt($totalDiskon) }}</span>
                     </div>
                     <hr style="border: none; border-top: 1px dashed var(--border-color); margin: 6px 0;">
-                    <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 0.95rem; color: #B45309;">
+                    <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 0.95rem; color: var(--text-link);">
                         <span>Total Bayar</span>
                         <span>{{ $fmt($transaksi->total_bayar) }}</span>
                     </div>
@@ -238,7 +238,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <span style="font-weight: 800; color: #B45309;">{{ $fmt($kt->jumlah_komisi) }}</span>
+                                <span style="font-weight: 800; color: var(--text-link);">{{ $fmt($kt->jumlah_komisi) }}</span>
                             </div>
                             <form action="{{ route('transaksi.komisi-staf.update', $transaksi) }}" method="POST" class="komisi-entry-form">
                                 @csrf
@@ -281,7 +281,7 @@
                         <div class="komisi-entry">
                             <div class="komisi-entry-head">
                                 <span class="komisi-entry-name">{{ $staf->nama ?? 'Staf #'.$stafId }}</span>
-                                <span style="font-weight: 800; color: #B45309;">{{ $fmt($dTotal) }}</span>
+                                <span style="font-weight: 800; color: var(--text-link);">{{ $fmt($dTotal) }}</span>
                             </div>
                             @foreach ($details as $d)
                                 <div class="komisi-item-line">
@@ -298,7 +298,7 @@
                                         <input type="hidden" name="detail_id" value="{{ $d->id }}">
                                         <input type="text" inputmode="numeric" name="komisi_nominal" value="{{ $d->komisi_nominal }}"
                                                class="native-picker-input" style="width: 96px; text-align: right; padding: 4px 8px; font-size: 0.8rem;">
-                                        <button type="submit" style="background: none; border: none; color: #B45309; font-weight: 800; cursor: pointer; font-size: 0.8rem;">OK</button>
+                                        <button type="submit" style="background: none; border: none; color: var(--text-link); font-weight: 800; cursor: pointer; font-size: 0.8rem;">OK</button>
                                     </form>
                                 </div>
                             @endforeach
@@ -314,7 +314,7 @@
             .page-detail-actions, .btn-back-ghost, form {
                 display: none !important;
             }
-            body { background: #FFFFFF !important; }
+            body { background: var(--surface) !important; }
             .detail-card { box-shadow: none; }
         }
     </style>

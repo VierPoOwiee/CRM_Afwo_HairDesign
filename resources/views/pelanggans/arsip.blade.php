@@ -80,9 +80,7 @@
         </div>
 
         @if ($pelanggans->hasPages())
-            <div style="margin-top: 6px;">
-                {{ $pelanggans->links() }}
-            </div>
+            @include('partials.pagination', ['paginator' => $pelanggans])
         @endif
     @endif
 

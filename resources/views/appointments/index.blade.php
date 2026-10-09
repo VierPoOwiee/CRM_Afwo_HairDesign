@@ -17,14 +17,14 @@
     $judulBulan = $namaBulan[$bulanAktif->month - 1].' '.$bulanAktif->year;
 
     $colorMap = [
-        'amber'   => ['color' => '#F59E0B', 'bg' => '#FEF3C7'],
-        'emerald' => ['color' => '#10B981', 'bg' => '#D1FAE5'],
-        'blue'    => ['color' => '#3B82F6', 'bg' => '#DBEAFE'],
-        'violet'  => ['color' => '#8B5CF6', 'bg' => '#EDE9FE'],
-        'pink'    => ['color' => '#EC4899', 'bg' => '#FCE7F3'],
-        'orange'  => ['color' => '#E5A93C', 'bg' => '#FFFBEB'],
-        'teal'    => ['color' => '#14B8A6', 'bg' => '#F0FDFA'],
-        'rose'    => ['color' => '#E11D48', 'bg' => '#FFE4E6'],
+        'amber'   => ['color' => 'var(--seg-amber)',   'bg' => 'var(--seg-amber-bg)'],
+        'emerald' => ['color' => 'var(--seg-emerald)', 'bg' => 'var(--seg-emerald-bg)'],
+        'blue'    => ['color' => 'var(--seg-blue)',    'bg' => 'var(--seg-blue-bg)'],
+        'violet'  => ['color' => 'var(--seg-violet)',  'bg' => 'var(--seg-violet-bg)'],
+        'pink'    => ['color' => 'var(--seg-pink)',    'bg' => 'var(--seg-pink-bg)'],
+        'orange'  => ['color' => 'var(--seg-orange)',  'bg' => 'var(--seg-orange-bg)'],
+        'teal'    => ['color' => 'var(--seg-teal)',    'bg' => 'var(--seg-teal-bg)'],
+        'rose'    => ['color' => 'var(--seg-rose)',    'bg' => 'var(--seg-rose-bg)'],
     ];
 
     $statusMap = [
@@ -56,9 +56,9 @@
                     <input type="text" id="cal-quick-search" placeholder="Cari appointment..." aria-label="Cari jadwal appointment">
                 </div>
 
-                <a href="{{ route('appointment.create') }}" class="btn-primary-gold btn-schedule-action">
+                <a href="{{ route('appointment.create') }}" class="btn btn-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    <span>+ Appointment</span>
+                    <span>Appointment</span>
                 </a>
             </div>
         </header>
@@ -66,41 +66,8 @@
         <!-- Main Calendar Split Grid -->
         <div class="calendar-workspace-grid">
 
-            <!-- SISI KIRI: Filter Panel & Mini Calendar -->
+            <!-- SISI KIRI: Panel Filter Klien -->
             <aside class="calendar-side-panel">
-
-                <div class="mini-calendar-card">
-                    <div class="mini-cal-header">
-                        <span class="mini-cal-month">{{ $judulBulan }}</span>
-                        <div class="mini-cal-arrows">
-                            <a href="{{ route('appointment.index', ['bulan' => $prevBulan]) }}" class="mini-arrow-btn" aria-label="Bulan sebelumnya">‹</a>
-                            <a href="{{ route('appointment.index', ['bulan' => $nextBulan]) }}" class="mini-arrow-btn" aria-label="Bulan berikutnya">›</a>
-                        </div>
-                    </div>
-                    <div class="mini-cal-grid">
-                        <span class="mini-cal-day-label">Sn</span>
-                        <span class="mini-cal-day-label">Sl</span>
-                        <span class="mini-cal-day-label">Rb</span>
-                        <span class="mini-cal-day-label">Km</span>
-                        <span class="mini-cal-day-label">Jm</span>
-                        <span class="mini-cal-day-label">Sb</span>
-                        <span class="mini-cal-day-label">Mg</span>
-                        @foreach ($hariGrid as $hari)
-                            @php
-                                $miniTanggal = $hari['tanggal']->format('Y-m-d');
-                                $cls = 'mini-cal-cell';
-                                if (! $hari['dalamBulanIni']) $cls .= ' other-month inactive';
-                                if ($hari['isHariIni']) $cls .= ' today';
-                                if ($hari['dalamBulanIni'] && $perTanggal->has($miniTanggal)) $cls .= ' has-event';
-                            @endphp
-                            @if ($hari['dalamBulanIni'])
-                                <button type="button" class="{{ $cls }}" data-tanggal="{{ $miniTanggal }}">{{ $hari['tanggal']->day }}</button>
-                            @else
-                                <span class="{{ $cls }}">{{ $hari['tanggal']->day }}</span>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
 
                 <div class="filter-section-card">
                     <div class="filter-section-header">
@@ -143,7 +110,7 @@
                 </div>
 
                 <div class="filter-section-card status-legend-card">
-                    <span class="filter-section-title">Status Appointment</span>
+                    <span class="filter-section-title">Status Janji Temu</span>
                     <div class="status-legend-list">
                         <label class="client-check-row">
                             <input type="checkbox" class="js-filter-status" data-status="terkonfirmasi" checked>
@@ -239,7 +206,7 @@
                 <div class="day-schedule-actions">
                     <a href="{{ route('appointment.create') }}" id="btn-add-for-day" class="btn-schedule-add-action">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>+ Tambah Appointment</span>
+                        <span>Tambah Appointment</span>
                     </a>
                     <button type="button" id="btn-close-day-schedule" class="btn-close-schedule" aria-label="Tutup Jadwal Harian">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -430,7 +397,7 @@
         var infoRows = '' +
             popRow(IX_CLOCK, '<span style="font-weight: 700;">' + lamanya + '</span>') +
             popRow(IX_USER, 'Stylist: <span style="font-weight: 700;">' + esc(a.karyawan) + '</span>') +
-            (a.no_wa ? popRow(IX_PHONE, '<a href="https://wa.me/' + phoneDigits(a.no_wa) + '" target="_blank" rel="noopener" style="color: #B45309; font-weight: 700;">' + esc(a.no_wa) + '</a>') : '');
+            (a.no_wa ? popRow(IX_PHONE, '<a href="https://wa.me/' + phoneDigits(a.no_wa) + '" target="_blank" rel="noopener" style="color: var(--text-link); font-weight: 700;">' + esc(a.no_wa) + '</a>') : '');
         var layanan = (a.layanans && a.layanans.length)
             ? '<div class="pop-notes-box"><span style="font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted);">Layanan</span>' +
                 a.layanans.map(function (n) { return '<div style="margin-top: 4px;">&bull; ' + esc(n) + '</div>'; }).join('') + '</div>'
@@ -440,15 +407,15 @@
             : '';
 
         var footer = '';
+        footer += '<form method="POST" action="' + URL_HAPUS.replace('P_ID', a.id) + '" style="margin:0;" onsubmit="return confirm(\'Hapus appointment ini? Tindakan tidak bisa dibatalkan.\')">' +
+            '<input type="hidden" name="_token" value="' + CSRF + '">' +
+            '<input type="hidden" name="_method" value="DELETE">' +
+            '<button type="submit" class="btn btn-danger">Hapus</button>' +
+        '</form>' +
+        '<a href="' + URL_EDIT.replace('P_ID', a.id) + '" class="btn btn-secondary">Edit</a>';
         if (a.status !== 'selesai') {
-            footer += '<form method="POST" action="' + URL_SELESAI.replace('P_ID', a.id) + '" style="margin:0;"><input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="PUT"><button type="submit" class="btn-pop-action btn-pop-complete">&#10003; Selesaikan</button></form>';
+            footer += '<form method="POST" action="' + URL_SELESAI.replace('P_ID', a.id) + '" style="margin:0;"><input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="PUT"><button type="submit" class="btn btn-primary">&#10003; Selesaikan</button></form>';
         }
-        footer += '<a href="' + URL_EDIT.replace('P_ID', a.id) + '" class="btn-pop-action btn-pop-edit">Edit</a>' +
-            '<form method="POST" action="' + URL_HAPUS.replace('P_ID', a.id) + '" style="margin:0; margin-left:auto;" onsubmit="return confirm(\'Hapus appointment ini? Tindakan tidak bisa dibatalkan.\')">' +
-                '<input type="hidden" name="_token" value="' + CSRF + '">' +
-                '<input type="hidden" name="_method" value="DELETE">' +
-                '<button type="submit" class="btn-pop-action btn-pop-delete">Hapus</button>' +
-            '</form>';
 
         var html = '<div class="popover-header">' +
             '<div class="popover-client-meta">' +

@@ -58,7 +58,7 @@
                             <span class="arsip-meta-label">Kontak</span>
                             <span class="arsip-meta-value">
                                 @if ($k->kontak)
-                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $k->kontak) }}" target="_blank" style="color: #047857;">
+                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $k->kontak) }}" target="_blank" style="color: var(--status-ok);">
                                         {{ $k->kontak }}
                                     </a>
                                 @else
@@ -90,9 +90,7 @@
         </div>
 
         @if ($karyawans->hasPages())
-            <div style="margin-top: 6px;">
-                {{ $karyawans->links() }}
-            </div>
+            @include('partials.pagination', ['paginator' => $karyawans])
         @endif
     @endif
 

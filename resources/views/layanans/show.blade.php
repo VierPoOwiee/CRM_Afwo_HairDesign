@@ -2,94 +2,93 @@
 
 @section('title', $layanan->nama_layanan)
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/services.css') }}">
+@endpush
+
 @section('content')
-    <div class="flex flex-wrap items-center gap-4">
-        <a href="{{ route('layanan.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ $layanan->nama_layanan }}</h1>
-            <p class="mt-1 text-sm text-gray-500">Detail harga &amp; komisi tiap varian.</p>
+    <div class="page-header-row">
+        <a href="{{ route('layanan.index') }}" class="btn-back-ghost" aria-label="Kembali ke daftar layanan">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </a>
+        <div class="page-header-title-group">
+            <h1 class="page-title">{{ $layanan->nama_layanan }}</h1>
+            <p class="page-subtitle">Detail harga &amp; komisi tiap varian.</p>
         </div>
-        <div class="ml-auto flex items-center gap-4 text-sm">
-            <a href="{{ route('layanan.edit', $layanan) }}" class="font-medium text-accent-text hover:text-accent">
-                Edit
-            </a>
+        <div class="page-header-actions">
+            <a href="{{ route('layanan.edit', $layanan) }}" class="btn btn-secondary">Edit</a>
             <form action="{{ route('layanan.destroy', $layanan) }}" method="POST"
                   onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($layanan->nama_layanan) }}&quot; beserta semua varian harganya?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                    Hapus
-                </button>
+                <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
         </div>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
-        <dl class="space-y-3 text-sm">
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Kategori</dt>
-                <dd class="text-right text-gray-900">{{ $layanan->kategori }}</dd>
+    <div class="detail-card">
+        <dl class="def-list">
+            <div class="def-row">
+                <dt class="def-label">Kategori</dt>
+                <dd class="def-value">{{ $layanan->kategori }}</dd>
             </div>
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Status</dt>
-                <dd class="text-right text-gray-900">
+            <div class="def-row">
+                <dt class="def-label">Status</dt>
+                <dd class="def-value">
                     @if ($layanan->aktif)
-                        <span class="rounded-xl bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
+                        <span class="pill pill--ok">Aktif</span>
                     @else
-                        <span class="rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
+                        <span class="pill pill--muted">Nonaktif</span>
                     @endif
                     @if ($layanan->termasuk_potong)
-                        <span class="ml-1 rounded-xl bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">Termasuk Potong</span>
+                        <span class="pill pill--warn">Termasuk Potong</span>
                     @endif
                 </dd>
             </div>
             @if ($layanan->produk->isNotEmpty())
-                <div class="flex justify-between gap-4">
-                    <dt class="text-gray-500">Produk Digunakan</dt>
-                    <dd class="text-right text-gray-900">
-                        <div class="flex flex-wrap gap-1 justify-end">
-                            @foreach ($layanan->produk as $p)
-                                <span class="inline-flex items-center rounded-xl bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                                    {{ $p->merek }} — {{ $p->nama_produk }}
-                                </span>
-                            @endforeach
-                        </div>
+                <div class="def-row">
+                    <dt class="def-label">Produk Digunakan</dt>
+                    <dd class="def-value">
+                        @foreach ($layanan->produk as $p)
+                            <span class="pill pill--muted">{{ $p->merek }} &mdash; {{ $p->nama_produk }}</span>
+                        @endforeach
                     </dd>
                 </div>
             @endif
         </dl>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card shadow-sm sm:overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="hidden sm:table-header-group">
-                <tr class="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    <th class="px-4 py-3">Varian</th>
-                    <th class="px-4 py-3">Harga</th>
-                    <th class="px-4 py-3">Komisi</th>
+    <div class="varian-table-wrap">
+        <table class="varian-table">
+            <thead>
+                <tr>
+                    <th>Varian</th>
+                    <th>Harga</th>
+                    <th>Komisi</th>
                 </tr>
             </thead>
-            <tbody class="space-y-3 sm:space-y-0 sm:divide-y sm:divide-gray-200">
+            <tbody>
                 @forelse ($layanan->hargaLayanan as $h)
-                    <tr class="block space-y-2 rounded-md border border-gray-200 p-4 sm:table-row sm:space-y-0 sm:rounded-none sm:border-0 sm:p-0">
-                        <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
-                            <span class="text-gray-500 sm:hidden">Varian</span>
-                            <span class="font-medium text-gray-900">{{ $h->varian }}</span>
+                    <tr>
+                        <td>
+                            <span class="varian-col-label">Varian</span>
+                            <span class="varian-name">{{ $h->varian }}</span>
                         </td>
-                        <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
-                            <span class="text-gray-500 sm:hidden">Harga</span>
-                            <span class="text-right text-gray-900 sm:text-left">{{ $h->labelHargaDasar() }}</span>
+                        <td>
+                            <span class="varian-col-label">Harga</span>
+                            <span>{{ $h->labelHargaDasar() }}</span>
                         </td>
-                        <td class="flex items-center justify-between gap-4 sm:table-cell sm:px-4 sm:py-3">
-                            <span class="text-gray-500 sm:hidden">Komisi</span>
-                            <span class="text-right text-gray-900 sm:text-left">{{ $h->labelKomisi() ?? '-' }}</span>
+                        <td>
+                            <span class="varian-col-label">Komisi</span>
+                            <span>{{ $h->labelKomisi() ?? '-' }}</span>
                         </td>
                     </tr>
                 @empty
-                    <tr class="block sm:table-row">
-                        <td colspan="3" class="px-4 py-8 text-center text-sm text-gray-400">
-                            Belum ada varian harga.
-                        </td>
+                    <tr>
+                        <td colspan="3" class="varian-empty">Belum ada varian harga.</td>
                     </tr>
                 @endforelse
             </tbody>

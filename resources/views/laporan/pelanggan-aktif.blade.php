@@ -195,7 +195,7 @@
                         <tr class="client-tfoot-row">
                             <th colspan="2">TOTAL</th>
                             <th style="text-align: right;">{{ $totalKunjungan }}</th>
-                            <th style="text-align: right; color: #B45309;">{{ $fmt($totalBelanja) }}</th>
+                            <th style="text-align: right; color: var(--text-link);">{{ $fmt($totalBelanja) }}</th>
                             <th colspan="2"></th>
                         </tr>
                     </tfoot>

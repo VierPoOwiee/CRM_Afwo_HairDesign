@@ -13,7 +13,7 @@
 
             <div class="absensi-header-section">
                 <h1 class="absensi-page-title">Absensi Karyawan</h1>
-                <p class="absensi-page-subtitle">Catat kehadiran harian. Uang makan Rp25.000 dibayar per hari hadir untuk karyawan skema per layanan (karyawan % omset harian tidak mendapat uang makan).</p>
+                <p class="absensi-page-subtitle">Catat kehadiran harian dan rekap uang makan karyawan per bulan.</p>
             </div>
 
             @if (session('success'))
@@ -35,7 +35,7 @@
                     <div class="absensi-card-header">
                         <div class="absensi-card-title-group">
                             <h2 class="absensi-card-title">Catat Kehadiran</h2>
-                            <p class="absensi-card-subtitle">Pilih tanggal, centang karyawan yang hadir, lalu simpan.</p>
+                            <p class="absensi-card-subtitle">Centang karyawan yang hadir, lalu klik Simpan.</p>
                         </div>
                         <div class="absensi-date-picker-wrap">
                             <span class="absensi-picker-label">Tanggal</span>
@@ -44,6 +44,16 @@
                                    onchange="window.location = '{{ route('absensi.index') }}?tanggal=' + encodeURIComponent(this.value);">
                         </div>
                     </div>
+
+                    @if ($karyawans->isNotEmpty())
+                        <div class="absensi-checkall-bar">
+                            <label class="absensi-checkall-label">
+                                <input type="checkbox" id="check-all-attendance" class="absensi-checkbox">
+                                <span>Centang semua</span>
+                            </label>
+                            <span class="absensi-checkall-count" id="attendance-selected-count"></span>
+                        </div>
+                    @endif
 
                     <div class="absensi-table-container">
                         <table class="absensi-table" id="table-catat-kehadiran">
@@ -86,8 +96,8 @@
 
                     @if ($karyawans->isNotEmpty())
                         <div class="absensi-card-footer">
-                            <span class="absensi-footer-note">Karyawan % Omset Harian tidak menerima uang makan.</span>
-                            <button type="submit" class="btn-simpan-kehadiran" id="btn-save-attendance">Simpan Kehadiran</button>
+                            <span class="absensi-footer-note">Uang makan Rp25.000/hari hanya untuk skema Per Layanan.</span>
+                            <button type="submit" class="btn btn-primary" id="btn-save-attendance">Simpan Kehadiran</button>
                         </div>
                     @endif
                 </section>
@@ -99,7 +109,7 @@
                     <div class="absensi-card-header">
                         <div class="absensi-card-title-group">
                             <h2 class="absensi-card-title">Rekap Kehadiran &amp; Uang Makan</h2>
-                            <p class="absensi-card-subtitle">Uang makan Rp25.000 per kehadiran, dijumlahkan per bulan dan ikut masuk ke laporan pendapatan karyawan.</p>
+                            <p class="absensi-card-subtitle">Jumlah hadir per karyawan, dengan uang makan Rp25.000 per kehadiran.</p>
                         </div>
                         <div class="absensi-rekap-filter-wrap">
                             <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -110,7 +120,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn-absensi-filter" id="btn-filter-rekap">Tampilkan</button>
+                            <button type="submit" class="btn btn-secondary btn-sm" id="btn-filter-rekap">Tampilkan</button>
                         </div>
                     </div>
 
@@ -168,3 +178,29 @@
 
         </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    var master = document.getElementById('check-all-attendance');
+    var counter = document.getElementById('attendance-selected-count');
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('.js-attendance-check'));
+    if (!master || boxes.length === 0) return;
+
+    function refresh() {
+        var checked = boxes.filter(function (b) { return b.checked; }).length;
+        var total = boxes.length;
+        master.checked = checked === total;
+        master.indeterminate = checked > 0 && checked < total;
+        if (counter) counter.textContent = checked + ' dari ' + total + ' terpilih';
+    }
+
+    master.addEventListener('change', function () {
+        boxes.forEach(function (b) { b.checked = master.checked; });
+        refresh();
+    });
+    boxes.forEach(function (b) { b.addEventListener('change', refresh); });
+    refresh();
+})();
+</script>
+@endpush

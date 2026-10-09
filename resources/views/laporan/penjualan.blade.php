@@ -64,9 +64,9 @@
     $sentiment = in_array($insightData['sentiment'] ?? '', ['positive', 'negative', 'neutral']) ? $insightData['sentiment'] : 'neutral';
 
     $trendIcon = [
-        'up' => ['path' => 'M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941', 'color' => '#047857'],
-        'down' => ['path' => 'M2.25 6L9 12.75l4.286-4.286a11.948 11.948 0 014.306 6.43l.776 2.898m0 0l3.182-5.511m-3.182 5.51l-5.511-3.181', 'color' => '#B91C1C'],
-        'neutral' => ['path' => 'M7.5 12h9', 'color' => '#92400E'],
+        'up' => ['path' => 'M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941', 'color' => 'var(--status-ok)'],
+        'down' => ['path' => 'M2.25 6L9 12.75l4.286-4.286a11.948 11.948 0 014.306 6.43l.776 2.898m0 0l3.182-5.511m-3.182 5.51l-5.511-3.181', 'color' => 'var(--status-danger)'],
+        'neutral' => ['path' => 'M7.5 12h9', 'color' => 'var(--text-link)'],
     ];
     $trendKey = fn ($k) => match ($k) {
         'positive', 'up' => 'up',
@@ -122,10 +122,15 @@
 
 @section('content')
 
-    <!-- Intro Section -->
-    <div class="report-intro-section">
-        <h1 class="report-title">Laporan Penjualan</h1>
-        <p class="report-subtitle">Analisa penjualan dan tren omset.</p>
+    {{-- ===== Page Header (pola global) ===== --}}
+    <div class="page-header">
+        <span class="page-header__eyebrow">Laporan Penjualan</span>
+        <div class="page-header__row">
+            <div>
+                <h1 class="page-header__title" id="report-page-title">Ringkasan Penjualan</h1>
+                <p class="page-header__subtitle">Pantau omset, jumlah transaksi, dan layanan terlaris pada periode terpilih.</p>
+            </div>
+        </div>
     </div>
 
     @include('laporan._filter-periode', [
@@ -137,42 +142,41 @@
     ])
 
     @if (session('success'))
-        <div class="report-empty-note" style="background-color: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('success') }}</div>
+        <div class="report-empty-note" style="background-color: var(--status-ok-bg); color: var(--status-ok-fg); border: 1px solid var(--status-ok-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('success') }}</div>
     @endif
     @if (session('error'))
-        <div class="report-empty-note" style="background-color: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('error') }}</div>
+        <div class="report-empty-note" style="background-color: var(--status-danger-bg); color: var(--status-danger-fg); border: 1px solid var(--status-danger-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('error') }}</div>
     @endif
     @if (session('insight_info'))
-        <div class="report-empty-note" style="background-color: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('insight_info') }}</div>
+        <div class="report-empty-note" style="background-color: var(--gold-50); color: var(--text-link); border: 1px solid var(--gold-200); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('insight_info') }}</div>
     @endif
 
     {{-- ============ AI INSIGHT CARD ============ --}}
-    <div class="ai-insight-card" id="ai-insight-card" data-field="ai-insight-card">
-        <div class="ai-insight-header" style="justify-content: space-between; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <svg class="ai-sparkle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <section class="card ai-insight-card" id="ai-insight-card" data-field="ai-insight-card">
+        <div class="ai-insight-header no-print" style="justify-content: space-between; flex-wrap: wrap;">
+            <div class="card__title-group" style="display: flex; align-items: center; gap: 10px;">
+                <svg class="ai-sparkle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
                     <path d="M12 2L14.39 8.26L21 9.27L16.27 13.88L17.82 20.4L12 16.77L6.18 20.4L7.73 13.88L3 9.27L9.61 8.26L12 2Z"></path>
                 </svg>
-                <span class="ai-insight-title">AI Insight — Analisa Keuntungan</span>
+                <h2 class="ai-insight-title">AI Insight — Analisa Keuntungan</h2>
             </div>
 
             <form method="POST" action="{{ route('laporan.insight.generate') }}" class="no-print" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 @csrf
                 <input type="hidden" name="periode" value="{{ $insightPeriode }}">
-                <button type="submit" id="btnGenerateInsight"
+                <button type="submit" id="btnGenerateInsight" class="btn btn--ghost"
                     @if ($insightCooldown || $kuotaAi['habis'])
                         disabled
                         title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, reset ' . $kuotaAi['label_reset'] : 'Analisa baru saja digenerate, tunggu beberapa menit' }}"
-                    @endif
-                    class="btn-ai-summary-link">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    @endif>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                     {{ $insight ? 'Generate Ulang' : 'Generate Analisa' }}
                 </button>
                 @if ($insightCooldown)
                     <span id="insightCooldownLabel" data-sisa="{{ $insightCooldownSisaDetik }}" class="insight-cooldown-chip">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                             <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         Bisa generate lagi dalam
@@ -233,7 +237,7 @@
                 <ul class="insight-rekomendasi-list">
                     @foreach ($insightData['rekomendasi'] as $rekomendasi)
                         <li>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             {{ $rekomendasi }}
@@ -264,14 +268,14 @@
                     placeholder="Contoh: kenapa omset kategori Warna Rambut turun drastis?"
                     class="tanya-field">{{ old('pertanyaan') }}</textarea>
                 @error('pertanyaan')
-                    <p style="font-size: 0.76rem; color: #B91C1C; margin-top: 6px;">{{ $message }}</p>
+                    <p style="font-size: 0.76rem; color: var(--status-danger); margin-top: 6px;">{{ $message }}</p>
                 @enderror
                 <div class="tanya-actions-bar">
                     <span class="tanya-char-hint">Maksimal 500 karakter</span>
                     <button type="submit"
                         @if ($kuotaAi['habis']) disabled title="Kuota AI hari ini habis, reset {{ $kuotaAi['label_reset'] }}" @endif
-                        class="btn-ai-summary-link">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        class="btn btn--primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                         </svg>
@@ -281,7 +285,7 @@
             </form>
 
             @if ($kuotaAi['habis'])
-                <p style="font-size: 0.78rem; color: #B91C1C; margin-top: 10px;">
+                <p style="font-size: 0.78rem; color: var(--status-danger); margin-top: 10px;">
                     Kuota AI hari ini habis ({{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}). Lanjut besok &mdash; reset {{ $kuotaAi['label_reset'] }}.
                 </p>
             @endif
@@ -303,22 +307,18 @@
                 </div>
             @endif
         </div>
-    </div>
+    </section>
 
     {{-- ============ TOTAL REVENUE & CHART ============ --}}
-    <div class="revenue-chart-card" data-field="revenue-chart-card">
-        <div class="revenue-chart-header">
-            <div class="chart-header-left">
-                <span class="chart-label-sm">Total Revenue</span>
-                <span class="chart-revenue-val">{{ $fmt($totalOmset) }}</span>
-                <span class="report-subtitle">{{ $dari }} s/d {{ $sampai }}</span>
-                @if ($isBulanBerjalan)
-                    <span class="report-subtitle">Bulan Ini = omset month-to-date s.d. {{ now()->format('d M Y') }} (belum final).</span>
-                @endif
+    <section class="card revenue-chart-card" data-field="revenue-chart-card">
+        <div class="card__header">
+            <div class="card__title-group">
+                <h2 class="card__title">Grafik Pendapatan</h2>
+                <p class="card__subtitle">Perbandingan omset {{ $dari }} s/d {{ $sampai }}.</p>
             </div>
             @if ($omsetMaks > 0)
-                <span class="growth-badge-pill {{ $perubahan >= 0 ? '' : 'down' }}">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <span class="badge badge--accent growth-badge-pill {{ $perubahan >= 0 ? '' : 'down' }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         @if ($perubahan >= 0)
                             <line x1="7" y1="17" x2="17" y2="7"></line>
                             <polyline points="7 7 17 7 17 17"></polyline>
@@ -327,64 +327,107 @@
                             <polyline points="17 7 17 17 7 17"></polyline>
                         @endif
                     </svg>
-                    {{ $perubahan >= 0 ? '+' : '' }}{{ abs(round($perubahan)) }}%
+                    <span>{{ $perubahan >= 0 ? '+' : '' }}{{ abs(round($perubahan)) }}% dari bulan lalu</span>
                 </span>
             @endif
         </div>
 
-        @if ($omsetMaks <= 0)
-            <div class="report-empty-note">Belum ada transaksi pada periode ini. Chart akan muncul otomatis setelah ada transaksi.</div>
-        @else
-            <div class="svg-bar-chart-container">
-                <canvas id="chartOmsetBulan"></canvas>
+        <div class="revenue-chart-body">
+            <div class="chart-header-left">
+                <span class="chart-label-sm">Total Pendapatan</span>
+                <span class="chart-revenue-val">{{ $fmt($totalOmset) }}</span>
+                @if ($isBulanBerjalan)
+                    <span class="card__subtitle">Bulan Ini = omset month-to-date s.d. {{ now()->format('d M Y') }} (belum final).</span>
+                @endif
             </div>
-            <div class="chart-axis-labels">
-                <span>Bulan Lalu</span>
-                <span>Bulan Ini{{ $isBulanBerjalan ? ' (MTD)' : '' }}</span>
-            </div>
-        @endif
-    </div>
+
+            @if ($omsetMaks <= 0)
+                <div class="report-empty-note">Belum ada transaksi pada periode ini. Chart akan muncul otomatis setelah ada transaksi.</div>
+            @else
+                <div class="svg-bar-chart-container">
+                    <canvas id="chartOmsetBulan"></canvas>
+                </div>
+                <div class="chart-axis-labels">
+                    <span>Bulan Lalu</span>
+                    <span>Bulan Ini{{ $isBulanBerjalan ? ' (MTD)' : '' }}</span>
+                </div>
+            @endif
+        </div>
+    </section>
 
     {{-- Tren Omset Harian --}}
     @if ($trenHarian->isNotEmpty())
-        <div class="revenue-chart-card no-print">
-            <div class="revenue-chart-header">
-                <div class="chart-header-left">
-                    <span class="chart-label-sm">Tren Omset Harian</span>
-                    <span class="chart-revenue-val">{{ $trenHarian->count() }} Hari Aktif</span>
+        <section class="card revenue-chart-card no-print">
+            <div class="card__header">
+                <div class="card__title-group">
+                    <h2 class="card__title">Tren Omset Harian</h2>
+                    <p class="card__subtitle">{{ $trenHarian->count() }} hari punya transaksi pada periode ini.</p>
                 </div>
             </div>
-            <div class="svg-bar-chart-container">
-                <canvas id="chartTren"></canvas>
+            <div class="revenue-chart-body">
+                <div class="chart-header-left">
+                    <span class="chart-label-sm">Total Harian</span>
+                    <span class="chart-revenue-val">{{ $fmt($trenHarian->sum('total')) }}</span>
+                </div>
+                <div class="svg-bar-chart-container">
+                    <canvas id="chartTren"></canvas>
+                </div>
+                <div class="chart-axis-labels">
+                    @foreach ($trenAxis as $t)
+                        <span>{{ $t }}</span>
+                    @endforeach
+                </div>
             </div>
-            <div class="chart-axis-labels">
-                @foreach ($trenAxis as $t)
-                    <span>{{ $t }}</span>
-                @endforeach
-            </div>
-        </div>
+        </section>
     @endif
 
     {{-- ============ REPORT STATS ============ --}}
     <div class="report-stat-triplet" data-field="report-stats">
-        <div class="report-stat-mini-card">
-            <span class="mini-stat-label">Total Omset</span>
-            <span class="mini-stat-val">{{ $fmt($totalOmset) }}</span>
-        </div>
-        <div class="report-stat-mini-card">
-            <span class="mini-stat-label">Jumlah Transaksi</span>
-            <span class="mini-stat-val">{{ $jumlahTransaksi }}</span>
-        </div>
-        <div class="report-stat-mini-card">
-            <span class="mini-stat-label">Rata-rata / Transaksi</span>
-            <span class="mini-stat-val">{{ $fmt($rataRata) }}</span>
-        </div>
+        <article class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Total Omset</span>
+                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M18 18.5a2.5 2.5 0 00-2.5-2.5h-1a2.5 2.5 0 110-5h.5a2.5 2.5 0 001.5-4.46l-1.7-1.16A2.5 2.5 0 0012.5 3c-.4 0-.79.1-1.16.25L9.6 2.1A2.5 2.5 0 006 3.2L4.3 4.36A2.5 2.5 0 002 8.8v2.2a2.5 2.5 0 001.2 2.12l1.6 1.1A2.5 2.5 0 008 16.4v2.2a2.5 2.5 0 001.2 2.12l1.6 1.1A2.5 2.5 0 0014 23.5h1a2.5 2.5 0 002.5-2.5v-2.5z"></path>
+                </svg>
+            </div>
+            <span class="stat-card__value" id="report-total-revenue" data-field="total-revenue">{{ $fmt($totalOmset) }}</span>
+            <span class="stat-card__subtext">{{ $dari }} s/d {{ $sampai }}</span>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Jumlah Transaksi</span>
+                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                </svg>
+            </div>
+            <span class="stat-card__value" id="report-transaction-count" data-field="transaction-count">{{ $jumlahTransaksi }}</span>
+            <span class="stat-card__subtext">Transaksi selesai</span>
+        </article>
+
+        <article class="stat-card">
+            <div class="stat-card__top">
+                <span class="stat-card__label">Rata-rata / Transaksi</span>
+                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"></path>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"></path>
+                </svg>
+            </div>
+            <span class="stat-card__value" id="report-average-revenue" data-field="average-revenue">{{ $fmt($rataRata) }}</span>
+            <span class="stat-card__subtext">Per transaksi</span>
+        </article>
     </div>
 
     {{-- ============ CATEGORY BREAKDOWN ============ --}}
     @if ($breakdownKategori->isNotEmpty())
-        <div class="category-breakdown-card" id="category-breakdown" data-field="category-breakdown">
-            <h2 class="category-breakdown-title">Breakdown per Kategori Layanan</h2>
+        <section class="card category-breakdown-card" id="category-breakdown" data-field="category-breakdown">
+            <div class="card__header">
+                <div class="card__title-group">
+                    <h2 class="card__title">Rincian Kategori Layanan</h2>
+                    <p class="card__subtitle">Kontribusi tiap kategori terhadap total omset periode ini.</p>
+                </div>
+            </div>
 
             <div class="category-visual-grid">
                 @foreach ($catTiles as $tile)
@@ -401,9 +444,9 @@
                     <div class="cat-detail-row">
                         <div class="cat-detail-left">
                             <span class="cat-detail-name">{{ $row->kategori }}</span>
-                            <span class="cat-detail-count">{{ $row->jumlah_item }} item</span>
+                            <span class="cat-detail-count" data-field="category-count">{{ $row->jumlah_item }} item</span>
                         </div>
-                        <span class="cat-detail-total">{{ $fmt($row->total_subtotal) }}</span>
+                        <span class="cat-detail-total" data-field="category-total">{{ $fmt($row->total_subtotal) }}</span>
                     </div>
                 @endforeach
             </div>
@@ -416,22 +459,27 @@
                     </div>
                 </div>
             @endif
-        </div>
+        </section>
     @endif
 
-    {{-- ============ DARK SUMMARY BANNER ============ --}}
-    <div class="dark-summary-banner" data-field="category-summary-banner">
-        <span class="dark-summary-label">Ringkasan Periode ({{ $dari }} – {{ $sampai }})</span>
-        <div class="dark-summary-total-val" id="dark-summary-total-val">Total Omset: {{ $fmt($totalOmset) }}</div>
-        <div class="dark-summary-btn-group">
-            <button type="button" class="btn-banner-export" id="btn-export-csv">EXPORT CSV</button>
-            <button type="button" class="btn-banner-generate" id="btn-generate-report">CETAK LAPORAN</button>
+    {{-- ============ RINGKASAN + AKSI ============ --}}
+    <section class="report-summary-banner" data-field="category-summary-banner">
+        <div class="report-summary-text">
+            <span class="report-summary-label">Ringkasan Periode ({{ $dari }} – {{ $sampai }})</span>
+            <span class="report-summary-total" id="dark-summary-total-val">Total Omset: {{ $fmt($totalOmset) }}</span>
         </div>
-    </div>
+        <div class="report-summary-actions">
+            <button type="button" class="btn btn--secondary" id="btn-export-csv" data-field="btn-export-csv">Ekspor CSV</button>
+            <button type="button" class="btn btn--primary" id="btn-generate-report" data-field="btn-generate-report">Cetak Laporan</button>
+        </div>
+    </section>
 
     {{-- ============ RIWAYAT TRANSAKSI ============ --}}
-    <div class="report-history-section" data-field="report-history-section">
-        <h2 class="report-history-heading">Riwayat Transaksi</h2>
+    <section class="report-history-section" data-field="report-history-section">
+        <div class="section-heading">
+            <h2 class="card__title">Riwayat Transaksi</h2>
+            <p class="card__subtitle">Rincian transaksi harian pada periode terpilih.</p>
+        </div>
 
         @forelse ($grouped as $tanggal => $dayTrxs)
             @php
@@ -451,7 +499,7 @@
             <div class="daily-group-card">
                 <div class="daily-group-header">
                     <div class="daily-group-title">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.5">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-link)" stroke-width="2.5" aria-hidden="true" focusable="false">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -459,9 +507,9 @@
                         </svg>
                         <span>{{ $heading }}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="daily-summary-pills">
                         <span class="daily-group-badge">{{ $dayTrxs->count() }} Transaksi</span>
-                        <span style="font-size: 0.82rem; font-weight: 800; color: #B45309;">{{ $fmt($dayTotal) }}</span>
+                        <span class="daily-total-amount">{{ $fmt($dayTotal) }}</span>
                     </div>
                 </div>
 
@@ -499,7 +547,7 @@
                                 <tr data-trx-id="{{ $t->id }}">
                                     <td style="width: 110px;">
                                         <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link">{{ $t->no_struk }}</a>
-                                        <div style="font-size: 0.72rem; color: var(--text-muted);">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('H:i') : '--:--' }} WIB</div>
+                                        <div class="trans-time-val">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('H:i') : '--:--' }} WIB</div>
                                     </td>
                                     <td>
                                         <div class="trans-client-meta">
@@ -535,7 +583,7 @@
         @empty
             <div class="report-empty-note">Tidak ada transaksi untuk periode dan filter ini.</div>
         @endforelse
-    </div>
+    </section>
 
 @endsection
 
@@ -543,6 +591,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Canvas/Chart.js tidak bisa membaca var(--x) langsung, jadi token harus
+    // di-resolve ke nilai rgb yang sebenarnya lewat theme engine.
+    function tok(name, fallback) {
+        var v = (window.AFWOTheme && window.AFWOTheme.token(name)) || '';
+        return v || fallback || '#000';
+    }
+
     function rpFull(v) {
         return 'Rp' + Number(v).toLocaleString('id-ID');
     }
@@ -565,7 +620,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const raw = dataset.data[j];
                     if (raw <= 0) return;
                     ctx.save();
-                    ctx.fillStyle = '#374151';
+                    ctx.fillStyle = tok('--text-2', '#374151');
                     ctx.font = '600 11px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'bottom';
@@ -578,18 +633,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Chart 1: Perbandingan omset bulan ini (MTD) vs bulan lalu penuh
     const canvasOmset = document.getElementById('chartOmsetBulan');
+    let chartOmsetInst = null;
     if (canvasOmset) {
         const omset = @json($omsetChart);
 
-        new Chart(canvasOmset, {
+        chartOmsetInst = new Chart(canvasOmset, {
             type: 'bar',
             data: {
                 labels: ['Bulan Lalu', 'Bulan Ini' + (omset.mtd ? ' (MTD)' : '')],
                 datasets: [{
                     label: 'Omset',
                     data: [omset.lalu, omset.ini],
-                    backgroundColor: ['#5C4033', '#C6A15B'],
-                    borderColor: ['#3D2A1C', '#8A6A2E'],
+                    backgroundColor: [tok('--gold-800'), tok('--gold-600')],
+                    borderColor: [tok('--gold-900'), tok('--gold-700')],
                     borderWidth: 1,
                     borderRadius: 6,
                     maxBarThickness: 90,
@@ -632,15 +688,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Chart 2: Breakdown kategori layanan (bulan ini vs bulan lalu)
     const canvasKategori = document.getElementById('chartBreakdownKategori');
+    let chartKategoriInst = null;
     if (canvasKategori) {
         const breakdown = @json($ringkasanData['breakdown_kategori'] ?? []);
         if (Array.isArray(breakdown) && breakdown.length) {
             const kategoriLabels = breakdown.map((k) => k.kategori);
-            const warnaBulanIni = breakdown.map((k) =>
-                k.omset_ini >= k.omset_lalu ? '#16a34a' : '#dc2626'
+            const warnaBulanIni = () => breakdown.map((k) =>
+                k.omset_ini >= k.omset_lalu ? tok('--status-ok', '#047857') : tok('--status-danger', '#DC2626')
             );
 
-            new Chart(canvasKategori, {
+            chartKategoriInst = new Chart(canvasKategori, {
                 type: 'bar',
                 data: {
                     labels: kategoriLabels,
@@ -648,13 +705,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         {
                             label: 'Bulan Lalu',
                             data: breakdown.map((k) => k.omset_lalu),
-                            backgroundColor: '#9CA3AF',
+                            backgroundColor: tok('--text-3', '#9CA3AF'),
                             borderRadius: 4,
                         },
                         {
                             label: 'Bulan Ini',
                             data: breakdown.map((k) => k.omset_ini),
-                            backgroundColor: warnaBulanIni,
+                            backgroundColor: warnaBulanIni(),
                             borderRadius: 4,
                         }
                     ]
@@ -687,19 +744,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Chart 3: Tren omset harian
     const canvasTren = document.getElementById('chartTren');
+    let chartTrenInst = null;
     if (canvasTren) {
         const labelsTren = @json($trenHarian->pluck('tanggal'));
         const dataTren = @json($trenHarian->pluck('total'));
 
-        new Chart(canvasTren, {
+        chartTrenInst = new Chart(canvasTren, {
             type: 'bar',
             data: {
                 labels: labelsTren,
                 datasets: [{
                     label: 'Omset',
                     data: dataTren,
-                    backgroundColor: 'rgba(198, 161, 91, 0.7)',
-                    borderColor: 'rgb(138, 106, 46)',
+                    backgroundColor: tok('--gold-600', '#B45309'),
+                    borderColor: tok('--gold-700', '#8A6A2E'),
                     borderWidth: 1,
                     borderRadius: 4,
                 }]
@@ -726,6 +784,36 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Warna kanvas tidak bisa membaca var(--x), jadi saat tema berganti
+    // grafik harus diwarnai ulang dengan nilai token yang di-resolve ulang.
+    document.addEventListener('afwo:themechange', function () {
+        if (chartOmsetInst) {
+            const ds = chartOmsetInst.data.datasets[0];
+            ds.backgroundColor = [tok('--gold-800', '#5C4033'), tok('--gold-600', '#C6A15B')];
+            ds.borderColor = [tok('--gold-900', '#3D2A1C'), tok('--gold-700', '#8A6A2E')];
+            chartOmsetInst.update('none');
+        }
+
+        if (chartKategoriInst) {
+            const sets = chartKategoriInst.data.datasets;
+            if (sets[0]) sets[0].backgroundColor = tok('--text-3', '#9CA3AF');
+            if (sets[1]) {
+                sets[1].backgroundColor = sets[1].data.map(function (v, i) {
+                    const lalu = sets[0] ? sets[0].data[i] : 0;
+                    return v >= lalu ? tok('--status-ok', '#047857') : tok('--status-danger', '#DC2626');
+                });
+            }
+            chartKategoriInst.update('none');
+        }
+
+        if (chartTrenInst) {
+            const ds = chartTrenInst.data.datasets[0];
+            ds.backgroundColor = tok('--gold-600', '#B45309');
+            ds.borderColor = tok('--gold-700', '#8A6A2E');
+            chartTrenInst.update('none');
+        }
+    });
 
     // Cooldown tombol Tanya AI: disable 3 detik setelah kirim
     const formTanya = document.getElementById('formTanyaAi');

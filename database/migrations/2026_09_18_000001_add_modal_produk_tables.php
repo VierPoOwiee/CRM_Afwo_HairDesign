@@ -79,8 +79,18 @@ return new class extends Migration
         });
 
         Schema::table('detail_transaksi', function (Blueprint $table) {
+            // MySQL memakai index majemuk [id_produk, tipe_item] sebagai index
+            // pendukung FK id_produk, sehingga index ini tidak bisa langsung
+            // di-drop. Lepas FK dulu, baru hapus index, lalu pasang ulang FK
+            // (Laravel akan otomatis membuat index pendukung tunggalnya lagi).
             if (Schema::hasIndex('detail_transaksi', 'detail_transaksi_id_produk_tipe_item_index')) {
+                $fk = collect(Schema::getForeignKeys('detail_transaksi'))
+                    ->firstWhere(fn ($f) => in_array('id_produk', $f['columns'] ?? []));
+                if ($fk) {
+                    $table->dropForeign($fk['name']);
+                }
                 $table->dropIndex('detail_transaksi_id_produk_tipe_item_index');
+                $table->foreign('id_produk')->references('id')->on('produk');
             }
             if (Schema::hasColumn('detail_transaksi', 'keuntungan')) {
                 $table->dropColumn('keuntungan');

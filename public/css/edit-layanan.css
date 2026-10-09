@@ -11,14 +11,14 @@
 .edit-layanan-title {
   font-size: 1.65rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
 
 .edit-layanan-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   margin-top: 4px;
   font-weight: 400;
 }
@@ -37,8 +37,8 @@
   flex-direction: column;
   gap: 20px;
   padding: 26px 28px;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
@@ -67,7 +67,7 @@
 .form-label {
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
   letter-spacing: -0.005em;
 }
 
@@ -75,8 +75,8 @@
 .form-input-box {
   display: flex;
   align-items: center;
-  background-color: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   gap: 8px;
@@ -84,8 +84,8 @@
 }
 
 .form-input-box:focus-within {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--gold-a15);
 }
 
 .form-input-control {
@@ -95,12 +95,12 @@
   font-size: 0.92rem;
   font-family: var(--font-sans);
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-1);
   outline: none;
 }
 
 .form-input-control::placeholder {
-  color: #9CA3AF;
+  color: var(--text-2);
 }
 
 .form-select-control {
@@ -110,7 +110,7 @@
   font-size: 0.92rem;
   font-family: var(--font-sans);
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
   outline: none;
   cursor: pointer;
 }
@@ -131,21 +131,21 @@
   user-select: none;
   font-size: 0.88rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .checkbox-custom-label input[type="checkbox"] {
   width: 17px;
   height: 17px;
-  accent-color: #E5A93C;
+  accent-color: var(--accent);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .muted-note {
   font-size: 0.78rem;
   font-weight: 400;
-  color: #6B7280;
+  color: var(--text-2);
 }
 
 /* Varian Section */
@@ -166,7 +166,7 @@
 .variants-title {
   font-size: 1.05rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   margin: 0;
 }
 
@@ -174,9 +174,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  color: #374151;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-link);
   font-size: 0.82rem;
   font-weight: 700;
   font-family: var(--font-sans);
@@ -187,14 +187,14 @@
 }
 
 .btn-add-variant-row:hover {
-  background-color: #F9FAFB;
-  border-color: #9CA3AF;
-  color: #111827;
+  background-color: var(--accent-soft);
+  border-color: var(--border-strong);
+  color: var(--text-1);
 }
 
 .variants-help-text {
   font-size: 0.78rem;
-  color: #6B7280;
+  color: var(--text-2);
   line-height: 1.45;
   margin: 0;
 }
@@ -203,7 +203,7 @@
 .variants-table-wrapper {
   overflow-x: auto;
   margin-top: 4px;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
 }
 
 .variants-grid-header {
@@ -213,7 +213,7 @@
   padding: 8px 4px;
   font-size: 0.72rem;
   font-weight: 800;
-  color: #6B7280;
+  color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   align-items: center;
@@ -233,8 +233,8 @@
 }
 
 .variant-input-box {
-  background-color: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 8px 10px;
   display: flex;
@@ -243,8 +243,8 @@
 }
 
 .variant-input-box:focus-within {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 2px rgba(229, 169, 60, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--gold-a15);
 }
 
 .variant-input-field {
@@ -254,18 +254,18 @@
   font-size: 0.86rem;
   font-family: var(--font-sans);
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text-1);
   outline: none;
 }
 
 .variant-input-field::placeholder {
-  color: #9CA3AF;
+  color: var(--text-2);
 }
 
 .btn-delete-variant {
   background: transparent;
   border: none;
-  color: #DC2626;
+  color: var(--text-link);
   font-size: 0.84rem;
   font-weight: 700;
   font-family: var(--font-sans);
@@ -276,7 +276,7 @@
 }
 
 .btn-delete-variant:hover {
-  color: #991B1B;
+  color: var(--text-link);
 }
 
 /* Default Produk Varian Sub-box */
@@ -284,8 +284,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #FAFAF9;
-  border: 1px dashed #D1D5DB;
+  background-color: var(--surface);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-md);
   padding: 10px 16px;
   cursor: pointer;
@@ -294,8 +294,8 @@
 }
 
 .default-product-variant-box:hover {
-  background-color: #F5F5F4;
-  border-color: #9CA3AF;
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
 }
 
 .dpv-left {
@@ -304,17 +304,17 @@
   gap: 8px;
   font-size: 0.84rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .dpv-plus {
   font-size: 1rem;
-  color: #6B7280;
+  color: var(--text-2);
 }
 
 .dpv-subtext {
   font-size: 0.78rem;
-  color: #6B7280;
+  color: var(--text-2);
 }
 
 @media (max-width: 768px) {
@@ -323,10 +323,10 @@
   }
   .variant-item-row {
     grid-template-columns: 1fr;
-    background: #F9FAFB;
+    background: var(--accent-soft);
     padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #E5E7EB;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
     gap: 8px;
   }
   .default-product-variant-box {
@@ -336,57 +336,7 @@
   }
 }
 
-/* Bottom Action Buttons */
-.form-bottom-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.btn-dark-solid {
-  background-color: #2D2319;
-  color: #FFFFFF;
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 11px 24px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-dark-solid:hover {
-  background-color: #1A130C;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn-light-outline {
-  background-color: #FFFFFF;
-  color: #4B5563;
-  border: 1px solid #E5E7EB;
-  border-radius: var(--radius-md);
-  padding: 11px 22px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  font-family: var(--font-sans);
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-light-outline:hover {
-  background-color: #F9FAFB;
-  border-color: #D1D5DB;
-  color: #111827;
-}
-
-/* ==========================================================================
-   Default Produk Varian Panel (adaptasi Laravel - per baris varian)
-   ========================================================================== */
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
 
 .default-produk-cell {
   grid-column: 1 / -1;
@@ -400,8 +350,8 @@
   display: none;
   flex-direction: column;
   gap: 10px;
-  background-color: #FAFAF9;
-  border: 1px dashed #D1D5DB;
+  background-color: var(--surface-2);
+  border: 1px dashed var(--border-strong);
   border-radius: var(--radius-md);
   padding: 14px 16px;
 }
@@ -447,19 +397,18 @@
 .dp-ml-unit {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6B7280;
+  color: var(--text-3);
 }
 
 .dp-add-row {
   align-self: flex-start;
 }
 
-@media (max-width: 768px) {
-  .dp-input-box {
+.dp-input-box {
     min-width: 100%;
   }
-  .dp-add-row {
+
+.dp-add-row {
     align-self: stretch;
     justify-content: center;
   }
-}

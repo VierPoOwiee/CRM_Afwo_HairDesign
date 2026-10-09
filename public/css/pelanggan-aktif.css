@@ -5,12 +5,12 @@
 
 /* Featured (gold) KPI card */
 .report-stat-mini-card.is-featured {
-  border-color: #FDE68A;
-  background: linear-gradient(180deg, #FFFDF8 0%, #FFFFFF 100%);
+  border-color: var(--gold-200);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--surface) 100%);
 }
 
 .report-stat-mini-card.is-featured .mini-stat-val {
-  color: #B45309;
+  color: var(--text-link);
 }
 
 .mini-stat-sub {
@@ -28,7 +28,7 @@
 }
 
 .client-name-link:hover {
-  color: #B45309;
+  color: var(--text-link);
 }
 
 /* Badge segmentasi (VIP / Loyal / Reguler) */
@@ -42,18 +42,18 @@
 }
 
 .segment-pill-vip {
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--gold-100);
+  color: var(--text-link);
 }
 
 .segment-pill-loyal {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
 }
 
 .segment-pill-reguler {
-  background-color: #DBEAFE;
-  color: #1E40AF;
+  background-color: var(--surface-2);
+  color: var(--status-progress-fg);
 }
 
 /* Chip jumlah kunjungan */
@@ -64,7 +64,7 @@
   min-width: 34px;
   padding: 2px 8px;
   border-radius: var(--radius-md);
-  background-color: #F3F4F6;
+  background-color: var(--surface-2);
   color: var(--text-primary);
   font-size: 0.78rem;
   font-weight: 800;
@@ -72,13 +72,13 @@
 
 /* Nominal belanja */
 .client-spend-cell {
-  color: #B45309;
+  color: var(--text-link);
 }
 
 /* Baris total tabel */
 .client-tfoot-row th {
   padding: 14px;
-  background-color: #F9FAFB;
+  background-color: var(--surface-2);
   border-top: 2px solid var(--border-color);
   font-size: 0.78rem;
   font-weight: 900;
@@ -93,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 0.78rem;
@@ -107,12 +107,12 @@
 }
 
 .btn-table-action:hover {
-  background-color: #F3F4F6;
-  border-color: #CBD5E1;
+  background-color: var(--surface-2);
+  border-color: var(--border);
   color: var(--text-primary);
 }
 
 .btn-table-action-back {
   align-self: flex-start;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
 }

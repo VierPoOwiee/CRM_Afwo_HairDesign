@@ -2,26 +2,26 @@
    AFWO HAIR DESIGN - PRODUCT MANAGEMENT STYLES (RESPONSIVE)
    ========================================================================== */
 
-/* Header & Intro */
+/* Header & Intro
+   Jarak ke tombol "Tambah" sekarang datang dari .page-primary-action
+   (margin-top 16px), jadi blok ini tidak lagi memberi margin bawah sendiri. */
 .products-intro-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
-  margin-bottom: 16px;
+  gap: var(--sp-2);
 }
 
 .products-title {
   font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
 }
 
 .products-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   line-height: 1.4;
 }
 
@@ -38,21 +38,21 @@
 }
 
 .product-tag.retail {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: var(--accent-soft);
+  color: var(--text-1);
 }
 
 .product-tag.produk-layanan {
-  background-color: #DBEAFE;
-  color: #1E40AF;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
 }
 
 /* Product Card Grid */
 .products-list-grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 24px;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
 }
 
 .product-card {
@@ -60,9 +60,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 20px;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -81,13 +81,13 @@
 .product-card-name {
   font-size: 1.12rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   margin-top: 2px;
 }
 
 .product-card-desc {
   font-size: 0.84rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   line-height: 1.45;
 }
 
@@ -97,7 +97,7 @@
   justify-content: space-between;
   margin-top: 6px;
   padding-top: 10px;
-  border-top: 1px solid #F3F4F6;
+  border-top: 1px solid var(--border);
 }
 
 .product-info-box {
@@ -106,13 +106,13 @@
   gap: 6px;
   font-size: 0.84rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .product-price-val {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 /* Tablet & Desktop Layout */
@@ -123,13 +123,11 @@
   .products-list-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: var(--sp-4);
   }
 }
 
-/* ==========================================================================
-   Adaptasi Laravel (status pill, stok menipis, banner stok menipis)
-   ========================================================================== */
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
 
 .product-status-pill {
   display: inline-flex;
@@ -145,13 +143,13 @@
 }
 
 .product-status-pill.status-active {
-  background-color: #DCFCE7;
-  color: #166534;
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
 }
 
 .product-status-pill.status-inactive {
-  background-color: #F3F4F6;
-  color: #6B7280;
+  background-color: var(--surface-2);
+  color: var(--text-3);
 }
 
 .product-stock-low {
@@ -159,8 +157,8 @@
   margin-left: 4px;
   padding: 1px 7px;
   border-radius: var(--radius-md);
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--gold-100);
+  color: var(--text-link);
   font-size: 0.66rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -174,9 +172,9 @@
   padding: 11px 16px;
   margin-bottom: 18px;
   border-radius: var(--radius-md);
-  border: 1px solid #FDE68A;
-  background-color: #FEFCE8;
-  color: #92400E;
+  border: 1px solid var(--gold-200);
+  background-color: var(--accent-soft);
+  color: var(--text-link);
   font-size: 0.84rem;
   line-height: 1.4;
 }
@@ -186,5 +184,5 @@
   height: 9px;
   flex-shrink: 0;
   border-radius: 50%;
-  background-color: #F59E0B;
+  background-color: var(--gold-500);
 }

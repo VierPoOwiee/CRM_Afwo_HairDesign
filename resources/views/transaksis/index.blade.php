@@ -40,7 +40,7 @@
             <p class="trans-page-subtitle">Kelola dan tinjau seluruh riwayat penjualan salon per hari.</p>
         </div>
 
-        <a href="{{ route('transaksi.create') }}" class="btn-primary-gold btn-create-order" id="btn-add-transaction">
+        <a href="{{ route('transaksi.create') }}" class="btn btn-primary page-primary-action" id="btn-add-transaction">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -58,8 +58,8 @@
             </div>
             <div class="trans-kpi-chart">
                 <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-blue">
-                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14" fill="none" stroke="#3B82F6" stroke-width="2.4"/>
-                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14 L 80 32 L 0 32 Z" fill="rgba(59, 130, 246, 0.12)"/>
+                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14" fill="none" stroke="var(--status-progress-fg)" stroke-width="2.4"/>
+                    <path d="M0 24 Q 15 10, 30 20 T 60 8 T 80 14 L 80 32 L 0 32 Z" fill="var(--status-progress-bg)"/>
                 </svg>
             </div>
         </div>
@@ -71,8 +71,8 @@
             </div>
             <div class="trans-kpi-chart">
                 <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-green">
-                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6" fill="none" stroke="#10B981" stroke-width="2.4"/>
-                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6 L 80 32 L 0 32 Z" fill="rgba(16, 185, 129, 0.12)"/>
+                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6" fill="none" stroke="var(--status-ok)" stroke-width="2.4"/>
+                    <path d="M0 20 Q 20 6, 40 16 T 70 8 T 80 6 L 80 32 L 0 32 Z" fill="var(--status-ok-bg)"/>
                 </svg>
             </div>
         </div>
@@ -84,8 +84,8 @@
             </div>
             <div class="trans-kpi-chart">
                 <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-orange">
-                    <path d="M0 16 Q 25 24, 50 12 T 80 20" fill="none" stroke="#F59E0B" stroke-width="2.4"/>
-                    <path d="M0 16 Q 25 24, 50 12 T 80 20 L 80 32 L 0 32 Z" fill="rgba(245, 158, 11, 0.12)"/>
+                    <path d="M0 16 Q 25 24, 50 12 T 80 20" fill="none" stroke="var(--gold-500)" stroke-width="2.4"/>
+                    <path d="M0 16 Q 25 24, 50 12 T 80 20 L 80 32 L 0 32 Z" fill="var(--gold-100)"/>
                 </svg>
             </div>
         </div>
@@ -97,8 +97,8 @@
             </div>
             <div class="trans-kpi-chart">
                 <svg viewBox="0 0 80 32" class="sparkline-svg sparkline-gold">
-                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4" fill="none" stroke="#E5A93C" stroke-width="2.4"/>
-                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4 L 80 32 L 0 32 Z" fill="rgba(229, 169, 60, 0.18)"/>
+                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4" fill="none" stroke="var(--accent)" stroke-width="2.4"/>
+                    <path d="M0 22 Q 20 18, 40 8 T 65 14 T 80 4 L 80 32 L 0 32 Z" fill="var(--gold-a18)"/>
                 </svg>
             </div>
         </div>
@@ -146,7 +146,7 @@
                 <input type="date" id="filter-date-from" name="dari" value="{{ $dari ?? '' }}" class="date-input-inline js-auto-submit" title="Dari Tanggal">
                 <span class="date-separator">-</span>
                 <input type="date" id="filter-date-to" name="sampai" value="{{ $sampai ?? '' }}" class="date-input-inline js-auto-submit" title="Sampai Tanggal">
-                <button type="button" class="btn-date-reset" id="btn-reset-dates" title="Reset Filter Tanggal">Reset</button>
+                <button type="button" class="btn btn-secondary" id="btn-reset-dates" title="Refresh Filter Tanggal">Refresh</button>
             </div>
         </form>
     </div>
@@ -171,7 +171,7 @@
             <div class="daily-group-card">
                 <div class="daily-group-header">
                     <div class="daily-group-title">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.5">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-link)" stroke-width="2.5">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -181,7 +181,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span class="daily-group-badge">{{ $dayTrxs->count() }} Transaksi</span>
-                        <span style="font-size: 0.82rem; font-weight: 800; color: #B45309;">{{ $fmt($dayTotal) }}</span>
+                        <span style="font-size: 0.82rem; font-weight: 800; color: var(--text-link);">{{ $fmt($dayTotal) }}</span>
                     </div>
                 </div>
 
@@ -256,7 +256,7 @@
         @empty
             <div class="empty-state-card">
                 <div class="empty-state-content">
-                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8">
+                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -272,9 +272,7 @@
     </div>
 
     @if ($transaksis->hasPages())
-        <div class="mt-4 mb-6">
-            @include('partials.pagination', ['paginator' => $transaksis])
-        </div>
+        @include('partials.pagination', ['paginator' => $transaksis])
     @endif
 
     <!-- Receipt Templates (server-rendered, dipakai modal) -->
@@ -332,7 +330,7 @@
                 @endforelse
             </div>
 
-            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: #B45309; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: var(--text-link); margin-bottom: 8px;">
                 <span>TOTAL:</span>
                 <span>{{ $fmt($t->total_bayar) }}</span>
             </div>

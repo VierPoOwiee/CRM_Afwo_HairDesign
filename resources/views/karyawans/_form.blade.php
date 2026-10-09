@@ -91,8 +91,8 @@
     </div>
 
     <div class="form-actions-row">
-        <button type="submit" id="btn-save-worker" class="btn-primary-gold">{{ $submitLabel }}</button>
-        <a href="{{ route('karyawan.index') }}" class="btn-secondary-cancel">Batal</a>
+        <a href="{{ route('karyawan.index') }}" class="btn btn-secondary">Batal</a>
+        <button type="submit" id="btn-save-worker" class="btn btn-primary">{{ $submitLabel }}</button>
     </div>
 
 </div>

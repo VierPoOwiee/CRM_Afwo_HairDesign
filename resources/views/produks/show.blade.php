@@ -2,75 +2,78 @@
 
 @section('title', $produk->nama_produk)
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/produk.css') }}">
+@endpush
+
 @section('content')
-    <div class="flex flex-wrap items-center gap-4">
-        <a href="{{ route('produk.index') }}" class="text-gray-400 hover:text-gray-600">&larr;</a>
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">{{ $produk->nama_produk }}</h1>
-            <p class="mt-1 text-sm text-gray-500">Detail informasi produk.</p>
+    <div class="page-header-row">
+        <a href="{{ route('produk.index') }}" class="btn-back-ghost" aria-label="Kembali ke daftar produk">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </a>
+        <div class="page-header-title-group">
+            <h1 class="page-title">{{ $produk->nama_produk }}</h1>
+            <p class="page-subtitle">Detail informasi produk.</p>
         </div>
-        <div class="ml-auto flex items-center gap-4 text-sm">
-            <a href="{{ route('produk.restock-form', $produk) }}" class="font-medium text-emerald-600 hover:text-emerald-800">
-                Restock
-            </a>
-            <a href="{{ route('produk.edit', $produk) }}" class="font-medium text-accent-text hover:text-accent">
-                Edit
-            </a>
+        <div class="page-header-actions">
+            <a href="{{ route('produk.restock-form', $produk) }}" class="btn btn-primary">Restock</a>
+            <a href="{{ route('produk.edit', $produk) }}" class="btn btn-secondary">Edit</a>
             <form action="{{ route('produk.destroy', $produk) }}" method="POST"
                   onsubmit="return confirm('Hapus produk &quot;{{ addslashes($produk->nama_produk) }}&quot;?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="font-medium text-red-600 hover:text-red-800">
-                    Hapus
-                </button>
+                <button type="submit" class="btn btn-danger">Hapus</button>
             </form>
         </div>
     </div>
 
-    <div class="mt-6 max-w-3xl rounded-lg border border-gray-200 bg-card p-6 shadow-sm">
-        <dl class="space-y-3 text-sm">
+    <div class="detail-card">
+        <dl class="def-list">
             @if ($produk->kategori_produk !== 'dijual')
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Merek</dt>
-                <dd class="text-right text-gray-900">{{ $produk->merek }}</dd>
+            <div class="def-row">
+                <dt class="def-label">Merek</dt>
+                <dd class="def-value">{{ $produk->merek }}</dd>
             </div>
             @endif
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Kategori</dt>
-                <dd class="text-right text-gray-900">
-                    <span class="rounded-xl bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">{{ $produk->labelKategori() }}</span>
+            <div class="def-row">
+                <dt class="def-label">Kategori</dt>
+                <dd class="def-value">
+                    <span class="pill pill--muted">{{ $produk->labelKategori() }}</span>
                 </dd>
             </div>
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Satuan</dt>
-                <dd class="text-right text-gray-900">{{ $produk->satuan }}</dd>
+            <div class="def-row">
+                <dt class="def-label">Satuan</dt>
+                <dd class="def-value">{{ $produk->satuan }}</dd>
             </div>
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Harga</dt>
-                <dd class="text-right font-medium text-gray-900">{{ $produk->labelHarga() }}</dd>
+            <div class="def-row">
+                <dt class="def-label">Harga</dt>
+                <dd class="def-value product-price-val">{{ $produk->labelHarga() }}</dd>
             </div>
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Modal Rata-Rata</dt>
-                <dd class="text-right font-medium text-gray-900">{{ $produk->labelModalPerSatuan() }}</dd>
+            <div class="def-row">
+                <dt class="def-label">Modal Rata-Rata</dt>
+                <dd class="def-value product-price-val">{{ $produk->labelModalPerSatuan() }}</dd>
             </div>
             @if ($produk->kategori_produk === 'dijual')
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Stok</dt>
-                <dd class="text-right text-gray-900">
+            <div class="def-row">
+                <dt class="def-label">Stok</dt>
+                <dd class="def-value">
                     {{ $produk->stok }}
                     @if ($produk->aktif && $produk->stokMenipis())
-                        <span class="rounded-xl bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Menipis</span>
+                        <span class="pill pill--warn">Menipis</span>
                     @endif
                 </dd>
             </div>
             @endif
-            <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">Status</dt>
-                <dd class="text-right text-gray-900">
+            <div class="def-row">
+                <dt class="def-label">Status</dt>
+                <dd class="def-value">
                     @if ($produk->aktif)
-                        <span class="rounded-xl bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
+                        <span class="pill pill--ok">Aktif</span>
                     @else
-                        <span class="rounded-xl bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">Nonaktif</span>
+                        <span class="pill pill--muted">Nonaktif</span>
                     @endif
                 </dd>
             </div>

@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - EDIT / TAMBAH KARYAWAN STYLES (RESPONSIVE)
    ========================================================================== */
 
@@ -18,18 +18,18 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  color: var(--text-primary);
+  color: var(--text-1);
   text-decoration: none;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   transition: all 0.15s ease;
   flex-shrink: 0;
   box-shadow: var(--shadow-sm);
 }
 
 .back-arrow-link:hover {
-  background-color: #F3F4F6;
-  border-color: #CBD5E1;
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
   transform: translateX(-2px);
 }
 
@@ -43,21 +43,21 @@
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
 }
 
 .edit-page-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* Edit Card */
 .edit-form-card {
   display: flex;
   flex-direction: column;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-sm);
@@ -73,8 +73,8 @@
 .form-input-box {
   display: flex;
   align-items: center;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -82,8 +82,8 @@
 }
 
 .form-input-box:focus-within {
-  border-color: var(--dark-solid);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--black-06);
 }
 
 .form-input-field {
@@ -92,13 +92,13 @@
   background: transparent;
   font-size: 0.92rem;
   font-family: var(--font-sans);
-  color: var(--text-primary);
+  color: var(--text-1);
   font-weight: 500;
   outline: none;
 }
 
 .form-input-field::placeholder {
-  color: var(--text-muted);
+  color: var(--text-3);
 }
 
 /* Form Grid 2-Col for tablet and desktop */

@@ -211,9 +211,9 @@
         </div>
 
         <!-- Bottom Action Buttons -->
-        <div class="form-bottom-actions">
-            <button type="submit" class="btn-dark-solid" id="btn-save-layanan" data-field="btn-save-layanan">{{ $submitLabel }}</button>
-            <a href="{{ route('layanan.index') }}" class="btn-light-outline" id="btn-cancel-layanan" data-field="btn-cancel">Batal</a>
+        <div class="form-actions-row">
+            <a href="{{ route('layanan.index') }}" class="btn btn-secondary" id="btn-cancel-layanan" data-field="btn-cancel">Batal</a>
+            <button type="submit" class="btn btn-primary" id="btn-save-layanan" data-field="btn-save-layanan">{{ $submitLabel }}</button>
         </div>
 
     </article>

@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    AFWO HAIR DESIGN - WORKER DIRECTORY STYLES (MATCHING CLIENT DIRECTORY)
    ========================================================================== */
 
@@ -6,9 +6,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-4);
   flex-wrap: wrap;
   gap: 16px;
+}
+
+/* Tombol "Tambah" ada di dalam header row, jadi jarak vertikalnya
+   ditangani oleh margin-bottom header row - bukan oleh margin tombol,
+   supaya tidak ada margin dobel. */
+.worker-page-header-row .page-primary-action {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .worker-title-group {
@@ -20,7 +28,7 @@
 .worker-page-title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   letter-spacing: -0.02em;
 }
 
@@ -29,43 +37,21 @@
   align-items: center;
   font-size: 0.76rem;
   font-weight: 700;
-  color: #B45309;
-  background-color: #FEF3C7;
+  color: var(--text-link);
+  background-color: var(--accent-soft);
   padding: 3px 10px;
   border-radius: var(--radius-md);
 }
 
 .worker-page-subtitle {
   font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.btn-add-worker-gold {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--accent-gold);
-  color: #1E2024;
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(229, 169, 60, 0.25);
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-add-worker-gold:hover {
-  background-color: #D99B26;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);
+  color: var(--text-2);
 }
 
 /* Toolbar Card */
 .worker-toolbar-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 12px 18px;
   margin-bottom: 20px;
@@ -93,7 +79,7 @@
   font-size: 0.82rem;
   font-weight: 700;
   font-family: var(--font-sans);
-  color: var(--text-secondary);
+  color: var(--text-2);
   padding: 7px 14px;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -102,13 +88,13 @@
 }
 
 .worker-filter-tab:hover {
-  background-color: #F3F4F6;
-  color: var(--text-primary);
+  background-color: var(--surface-2);
+  color: var(--text-1);
 }
 
 .worker-filter-tab.active {
-  background-color: var(--dark-solid);
-  color: #FFFFFF;
+  background-color: var(--ink);
+  color: var(--text-on-ink);
 }
 
 /* Controls Right */
@@ -124,8 +110,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 6px 12px;
   width: 200px;
@@ -133,8 +119,8 @@
 }
 
 .worker-search-box:focus-within {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--gold-a12);
 }
 
 .worker-search-box .search-input {
@@ -143,7 +129,7 @@
   outline: none;
   font-family: var(--font-sans);
   font-size: 0.84rem;
-  color: var(--text-primary);
+  color: var(--text-1);
   width: 100%;
 }
 
@@ -157,7 +143,7 @@
 .sort-prefix-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
 }
 
@@ -168,14 +154,14 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 7px 32px 7px 12px;
   font-size: 0.82rem;
   font-weight: 600;
   font-family: var(--font-sans);
-  color: var(--text-primary);
-  background-color: #FFFFFF;
+  color: var(--text-1);
+  background-color: var(--surface);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234B5563' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -187,13 +173,13 @@
 }
 
 .sort-select-control:focus {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 3px rgba(229, 169, 60, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--gold-a15);
 }
 
 .sort-select-control option {
-  background-color: #FFFFFF;
-  color: #111827;
+  background-color: var(--surface);
+  color: var(--text-1);
   padding: 8px 12px;
   font-size: 0.84rem;
 }
@@ -207,8 +193,8 @@
    DIRECTORY CARD & TABLE (ZERO SCROLL & CLEAN EDGE ALIGNMENT)
    ========================================================================== */
 .worker-directory-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -234,18 +220,18 @@
   padding: 14px 12px;
   font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--border-color);
-  background-color: #F9FAFB;
+  border-bottom: 2px solid var(--border);
+  background-color: var(--accent-soft);
   white-space: nowrap;
 }
 
 .worker-detail-table td {
   padding: 13px 12px;
-  border-bottom: 1px solid #F1F5F9;
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
   vertical-align: middle;
 }
 
@@ -267,27 +253,27 @@
 }
 
 .worker-detail-table tbody tr:hover td {
-  background-color: #F8FAFC;
+  background-color: var(--accent-soft);
 }
 
 .worker-name-title {
   font-weight: 700;
   font-size: 0.88rem;
-  color: var(--text-primary);
+  color: var(--text-1);
   text-decoration: none;
   display: inline-block;
   white-space: nowrap;
 }
 
 .worker-name-title:hover {
-  color: #B45309;
+  color: var(--text-link);
 }
 
 .worker-phone-num {
   font-family: monospace;
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
   white-space: nowrap;
 }
 
@@ -300,14 +286,18 @@
   white-space: nowrap;
 }
 
+/* Tier VIP: emas lembut + border emas lembut, teks charcoal */
 .badge-vip {
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--accent-soft-2);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent-soft);
 }
 
+/* Tier Loyal: outline netral */
 .badge-loyal {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-strong);
 }
 
 /* Action Buttons - Nempel rapi di kanan dengan margin wajar */
@@ -334,13 +324,13 @@
 }
 
 .btn-worker-edit {
-  background-color: #F3F4F6;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-1);
 }
 
 .btn-worker-edit:hover {
-  background-color: #E5E7EB;
+  background-color: var(--surface-2);
 }
 
 /* ==========================================================================
@@ -352,7 +342,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: var(--surface-overlay);
   backdrop-filter: blur(4px);
   z-index: 100;
   display: flex;
@@ -371,11 +361,11 @@
 }
 
 .worker-modal-card {
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 30px var(--black-16);
   overflow: hidden;
   box-sizing: border-box;
   display: flex;
@@ -387,21 +377,21 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
-  background-color: #FAFAFA;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
 }
 
 .worker-modal-title {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .btn-close-modal {
   background: none;
   border: none;
   font-size: 1.3rem;
-  color: #9CA3AF;
+  color: var(--text-2);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -412,7 +402,7 @@
 }
 
 .btn-close-modal:hover {
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .worker-modal-body {
@@ -430,7 +420,7 @@
   align-items: flex-start;
   gap: 16px;
   padding-bottom: 9px;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-detail-row:last-child {
@@ -441,7 +431,7 @@
 .modal-detail-label {
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-3);
   flex-shrink: 0;
   width: 130px;
 }
@@ -449,7 +439,7 @@
 .modal-detail-val {
   font-size: 0.86rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
   text-align: right;
   flex: 1;
   word-break: break-word;
@@ -457,27 +447,26 @@
 
 .worker-modal-footer {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--sp-3);
   padding: 14px 20px;
-  background-color: #FAFAFA;
-  border-top: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.worker-modal-footer .btn {
+  white-space: nowrap;
 }
 
-.btn-modal-edit {
-  background-color: #2D2319;
-  color: #FFFFFF;
-  font-size: 0.84rem;
-  font-weight: 700;
-  padding: 8px 18px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.btn-modal-edit:hover {
-  background-color: #1A140F;
+@media (max-width: 479px) {
+  .worker-modal-footer .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
 }
 
 /* Empty State */
@@ -495,7 +484,7 @@
 
 .empty-state-text {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   font-weight: 500;
 }
 

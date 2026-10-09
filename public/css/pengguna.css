@@ -5,7 +5,7 @@
 
 /* Panel form tambah kasir */
 .user-form-card {
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -52,7 +52,7 @@
   align-items: center;
   gap: 6px;
   background-color: var(--dark-solid);
-  color: #FFFFFF;
+  color: var(--accent-contrast);
   border: none;
   font-family: var(--font-sans);
   font-size: 0.82rem;
@@ -83,13 +83,13 @@
 }
 
 .user-status-aktif {
-  background-color: #D1FAE5;
-  color: #065F46;
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
 }
 
 .user-status-nonaktif {
-  background-color: #FEE2E2;
-  color: #991B1B;
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
 }
 
 .user-role-pill {
@@ -98,18 +98,18 @@
   font-weight: 800;
   padding: 3px 10px;
   border-radius: var(--radius-md);
-  background-color: #F3F4F6;
+  background-color: var(--surface-2);
   color: var(--text-secondary);
 }
 
 .user-role-pill.is-owner {
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--gold-100);
+  color: var(--text-link);
 }
 
 .user-username-text {
   font-weight: 700;
-  color: #B45309;
+  color: var(--text-link);
 }
 
 /* Aksi baris */
@@ -117,7 +117,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-family: var(--font-sans);
@@ -132,28 +132,28 @@
 }
 
 .btn-user-action:hover {
-  background-color: #F3F4F6;
-  border-color: #CBD5E1;
+  background-color: var(--surface-2);
+  border-color: var(--border);
 }
 
 .btn-user-action.is-danger {
-  color: #B91C1C;
-  border-color: #FECACA;
+  color: var(--status-danger);
+  border-color: var(--status-danger-border);
 }
 
 .btn-user-action.is-danger:hover {
-  background-color: #FEF2F2;
-  border-color: #F87171;
+  background-color: var(--status-danger-bg);
+  border-color: var(--status-danger);
 }
 
 .btn-user-action.is-success {
-  color: #047857;
-  border-color: #A7F3D0;
+  color: var(--status-ok-fg);
+  border-color: var(--status-ok-border);
 }
 
 .btn-user-action.is-success:hover {
-  background-color: #ECFDF5;
-    border-color: #6EE7B7;
+  background-color: var(--status-ok-bg);
+    border-color: var(--status-ok-border);
 }
 
 .user-actions-cell {
@@ -169,8 +169,8 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: linear-gradient(135deg, #FFFDF5 0%, #FEF9E7 100%);
-  border: 1px solid #FDE68A;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-soft-2) 100%);
+  border: 1px solid var(--gold-200);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   box-shadow: var(--shadow-sm);
@@ -179,7 +179,7 @@
 }
 
 .user-temppass-icon {
-  color: #D97706;
+  color: var(--text-link);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -192,13 +192,13 @@
 .user-temppass-title {
   font-size: 0.92rem;
   font-weight: 800;
-  color: #92400E;
+  color: var(--text-link);
   margin-bottom: 2px;
 }
 
 .user-temppass-subtitle {
   font-size: 0.78rem;
-  color: #78350F;
+  color: var(--text-link);
   margin: 0 0 10px;
 }
 
@@ -214,8 +214,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #FFFFFF;
-  border: 1px solid #FDE68A;
+  background-color: var(--surface);
+  border: 1px solid var(--gold-200);
   border-radius: var(--radius-md);
   padding: 7px 12px;
 }
@@ -240,8 +240,8 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background-color: #B45309;
-  color: #FFFFFF;
+  background-color: var(--gold-600);
+  color: var(--accent-contrast);
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font-sans);
@@ -253,13 +253,13 @@
 }
 
 .btn-copy-temppass:hover {
-  background-color: #92400E;
+  background-color: var(--gold-700);
 }
 
 .user-temppass-note {
   font-size: 0.76rem;
   font-weight: 700;
-  color: #92400E;
+  color: var(--text-link);
   margin: 0;
 }
 
@@ -270,7 +270,7 @@
   font-weight: 800;
   padding: 2px 8px;
   border-radius: var(--radius-md);
-  background-color: #FEF3C7;
-  color: #92400E;
+  background-color: var(--gold-100);
+  color: var(--text-link);
   margin-top: 4px;
 }

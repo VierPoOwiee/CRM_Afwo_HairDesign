@@ -6,12 +6,6 @@
             <a href="{{ route('dashboard') }}" class="sidebar-brand-title">Afwo.</a>
             <span class="sidebar-brand-badge">Hair Design CRM</span>
         </div>
-        <button type="button" id="nav-close-btn" class="nav-close-btn mobile-only" aria-label="Tutup Menu">
-            <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
     </div>
 
     {{-- Vertical Navigation Menu with Section Groups --}}
@@ -192,6 +186,16 @@
                 <span class="user-role">{{ Auth::check() ? (Auth::user()->isOwner() ? 'Administrator' : 'Kasir') : 'Administrator' }}</span>
             </div>
         </a>
+        <button type="button" class="sidebar-theme-toggle mobile-only js-theme-toggle" aria-label="Ganti tema" aria-pressed="false">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.2"></circle>
+                <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"></path>
+            </svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8Z"></path>
+            </svg>
+            <span class="sidebar-theme-toggle-label">Tema</span>
+        </button>
         <form method="POST" action="{{ route('logout') }}" style="margin:0;">
             @csrf
             <button type="submit" class="sidebar-logout-btn" id="nav-logout-link" title="Keluar" style="background:none;border:none;cursor:pointer;font-family:var(--font-sans);">

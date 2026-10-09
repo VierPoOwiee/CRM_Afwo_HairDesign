@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    AFWO HAIR DESIGN - PENDAPATAN BULANAN KARYAWAN STYLES
    ========================================================================== */
 
@@ -16,19 +16,19 @@
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
 }
 
 .income-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 /* Filter Bar Card */
 .income-filter-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
@@ -52,7 +52,7 @@
 .month-label {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -60,8 +60,8 @@
 .month-select-wrapper {
   display: flex;
   align-items: center;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 8px 12px;
 }
@@ -73,13 +73,13 @@
   outline: none;
   font-family: var(--font-sans);
   font-size: 0.86rem;
-  color: var(--text-primary);
+  color: var(--text-1);
   cursor: pointer;
 }
 
 .btn-show-dark {
-  background-color: var(--dark-solid);
-  color: #FFFFFF;
+  background-color: var(--ink);
+  color: var(--text-on-ink);
   border: none;
   border-radius: var(--radius-md);
   padding: 9px 20px;
@@ -91,16 +91,16 @@
 }
 
 .btn-show-dark:hover {
-  background-color: #000000;
+  background-color: var(--surface-contrast);
 }
 
 /* Gold Summary Banner Card */
 .income-summary-banner {
-  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-  border: 1px solid #FDE68A;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-soft) 100%);
+  border: 1px solid var(--border-accent);
   border-radius: var(--radius-lg);
   padding: 22px 24px;
-  box-shadow: 0 2px 10px rgba(180, 83, 9, 0.06);
+  box-shadow: 0 2px 10px var(--gold-a04);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -112,27 +112,27 @@
 .income-banner-label {
   font-size: 0.88rem;
   font-weight: 700;
-  color: #92400E;
+  color: var(--text-link);
 }
 
 .income-banner-amount {
   font-size: 2.2rem;
   font-weight: 900;
-  color: #78350F;
+  color: var(--text-link);
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
 .income-banner-subtext {
   font-size: 0.8rem;
-  color: #B45309;
+  color: var(--text-link);
   font-weight: 600;
 }
 
 /* Table Card */
 .income-table-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -151,32 +151,32 @@
   padding: 14px 16px;
   font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--border-color);
-  background-color: #F9FAFB;
+  border-bottom: 2px solid var(--border);
+  background-color: var(--accent-soft);
   white-space: nowrap;
 }
 
 .income-detail-table td {
   padding: 14px 16px;
-  border-bottom: 1px solid #F1F5F9;
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
   vertical-align: middle;
   white-space: nowrap;
 }
 
 .income-detail-table tr:hover td {
-  background-color: #F8FAFC;
+  background-color: var(--accent-soft);
 }
 
 .income-tfoot-row th {
   padding: 16px;
-  background-color: #F9FAFB;
-  border-top: 2px solid var(--border-color);
+  background-color: var(--accent-soft);
+  border-top: 2px solid var(--border);
   font-weight: 900;
-  color: var(--text-primary);
+  color: var(--text-1);
   font-size: 0.88rem;
   white-space: nowrap;
 }
@@ -187,9 +187,9 @@
   font-weight: 700;
   padding: 3px 10px;
   border-radius: var(--radius-sm);
-  background-color: #FEF3C7;
-  color: #92400E;
-  border: 1px solid #FDE68A;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  border: 1px solid var(--border-accent);
   white-space: nowrap;
 }
 
@@ -199,9 +199,9 @@
   font-weight: 700;
   padding: 3px 10px;
   border-radius: var(--radius-sm);
-  background-color: #D1FAE5;
-  color: #065F46;
-  border: 1px solid #A7F3D0;
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent);
   white-space: nowrap;
 }
 
@@ -209,32 +209,33 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 6px 12px;
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .btn-slip-detail:hover {
-  background-color: #F3F4F6;
-  border-color: #CBD5E1;
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
 }
 
 .income-table-footer-legend {
   padding: 16px 20px;
-  background-color: #FAFAFA;
-  border-top: 1px solid #F1F5F9;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border-accent);
 }
 
 .legend-text {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   line-height: 1.5;
   margin: 0;
 }
@@ -246,7 +247,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
+  background-color: var(--surface-overlay);
   backdrop-filter: blur(3px);
   z-index: 999;
   display: flex;
@@ -257,11 +258,11 @@
 }
 
 .slip-modal-dialog {
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   border-radius: var(--radius-lg);
   width: 100%;
   max-width: 580px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px var(--black-24);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -273,32 +274,32 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
 }
 
 .slip-modal-title {
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   margin: 0;
 }
 
 .btn-close-modal {
   background: none;
   border: none;
-  color: #9CA3AF;
+  color: var(--text-2);
   cursor: pointer;
   padding: 4px;
 }
 
 .btn-close-modal:hover {
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .slip-paper-content {
   padding: 24px 28px;
   overflow-y: auto;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
 }
 
 .slip-brand-header {
@@ -313,14 +314,14 @@
   font-size: 1.35rem;
   font-weight: 900;
   letter-spacing: -0.02em;
-  color: #1E2024;
+  color: var(--text-1);
 }
 
 .slip-doc-type {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #B45309;
+  color: var(--text-link);
   text-transform: uppercase;
   margin-top: 2px;
 }
@@ -340,17 +341,17 @@
 
 .slip-meta-label {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   font-weight: 600;
 }
 
 .slip-meta-val {
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .slip-divider {
   border: none;
-  border-top: 1px dashed var(--border-color);
+  border-top: 1px dashed var(--border);
   margin: 16px 0;
 }
 
@@ -365,23 +366,23 @@
   padding: 8px 0;
   font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-muted);
-  border-bottom: 2px solid var(--border-color);
+  color: var(--text-3);
+  border-bottom: 2px solid var(--border);
   text-transform: uppercase;
 }
 
 .slip-breakdown-table td {
   padding: 10px 0;
-  border-bottom: 1px solid #F1F5F9;
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
 }
 
 .slip-total-row th {
   padding: 14px 0 8px 0;
   font-size: 0.95rem;
   font-weight: 900;
-  color: #B45309;
-  border-top: 2px solid var(--border-color);
+  color: var(--text-link);
+  border-top: 2px solid var(--border);
   border-bottom: none;
 }
 
@@ -390,7 +391,7 @@
   justify-content: space-between;
   margin-top: 30px;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .slip-sig-box {
@@ -405,43 +406,38 @@
   height: 50px;
 }
 
+/* Aksi slip: Tutup (sekunder) selalu lebih dulu, Cetak (utama) paling akhir */
 .slip-modal-actions {
   padding: 14px 20px;
-  background-color: #F9FAFB;
-  border-top: 1px solid var(--border-color);
+  background-color: var(--accent-soft);
+  border-top: 1px solid var(--border);
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.btn-print-slip {
-  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  background-color: var(--accent-gold);
-  color: var(--dark-solid);
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 9px 18px;
-  font-size: 0.85rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+.slip-modal-actions .btn {
+  white-space: nowrap;
 }
 
-.btn-print-slip:hover {
-  background-color: #D99B26;
+@media (max-width: 479px) {
+  .slip-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .slip-modal-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
 }
 
-.btn-cancel-modal {
-  background-color: #FFFFFF;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 9px 16px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
+@media (max-width: 359px) {
+  .slip-modal-actions { grid-template-columns: 1fr; }
 }
 
 /* Print Styles */

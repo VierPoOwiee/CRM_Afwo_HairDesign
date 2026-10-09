@@ -17,7 +17,7 @@
             <p class="worker-page-subtitle">Kelola tim karyawan, kontak telepon, gaji pokok bulanan, dan pengaturan skema komisi.</p>
         </div>
 
-        <a href="{{ route('karyawan.create') }}" class="btn-primary-gold btn-add-worker-gold" id="btn-add-worker">
+        <a href="{{ route('karyawan.create') }}" class="btn btn-primary page-primary-action" id="btn-add-worker">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -88,7 +88,7 @@
         <div class="worker-directory-card">
             <div class="empty-state-card">
                 <div class="empty-state-content">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -98,7 +98,7 @@
                         <a href="{{ route('karyawan.index') }}" class="btn-worker-action btn-worker-edit" style="border-radius: var(--radius-md); padding: 8px 16px;">Tampilkan Semua</a>
                     @else
                         <p class="empty-state-text">Belum ada data karyawan. Tambahkan karyawan pertama untuk memulai.</p>
-                        <a href="{{ route('karyawan.create') }}" class="btn-primary-gold btn-add-worker-gold" style="width: auto;">Tambah Karyawan</a>
+                        <a href="{{ route('karyawan.create') }}" class="btn btn-primary" style="width: auto;">Tambah Karyawan</a>
                     @endif
                 </div>
             </div>
@@ -145,7 +145,7 @@
                                     @if ($k->skema_komisi === 'persen_omset_harian')
                                         <span class="client-segment-badge badge-vip">{{ $skemaLabel }}</span>
                                     @else
-                                        <span class="client-segment-badge" style="background-color: #EFF6FF; color: #1D4ED8;">{{ $skemaLabel }}</span>
+                                        <span class="client-segment-badge" style="background-color: var(--status-progress-bg); color: var(--status-progress-fg);">{{ $skemaLabel }}</span>
                                     @endif
                                 </td>
                                 <td class="col-rate">
@@ -197,7 +197,7 @@
             </div>
 
             <div class="worker-modal-footer">
-                <a href="#" class="btn-modal-edit" id="mdl-btn-worker-edit">Edit Data</a>
+                <a href="#" class="btn btn-secondary" id="mdl-btn-worker-edit">Edit Data</a>
             </div>
         </div>
     </div>

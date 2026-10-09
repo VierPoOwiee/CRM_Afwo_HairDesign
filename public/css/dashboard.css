@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    AFWO HAIR DESIGN - REVISED DASHBOARD STYLES (MATCHING MOCKUP & PALETTE)
    ========================================================================== */
 
@@ -16,14 +16,14 @@
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.25;
   word-break: break-word;
 }
 
 .welcome-subtitle {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-2);
   margin-top: 4px;
   line-height: 1.4;
   word-break: break-word;
@@ -58,8 +58,8 @@
 }
 
 .stat-kpi-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   display: flex;
@@ -83,13 +83,13 @@
 
 /* Featured Dark Card (Pemasukan Hari Ini) */
 .stat-kpi-card.featured-dark-card {
-  background: linear-gradient(135deg, #2A181E 0%, #1F1418 100%);
-  border: 1px solid rgba(229, 169, 60, 0.25);
-  box-shadow: 0 4px 16px rgba(35, 20, 25, 0.25);
+  background: #edb92f;
+  border: 1px solid var(--gold-a25);
+  box-shadow: 0 4px 16px var(--accent-shadow);
 }
 
 .stat-kpi-card.featured-dark-card:hover {
-  box-shadow: 0 6px 20px rgba(35, 20, 25, 0.35);
+  box-shadow: 0 6px 20px var(--accent-shadow);
 }
 
 .stat-card-top {
@@ -103,35 +103,35 @@
 .stat-card-label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-2);
   white-space: nowrap;
 }
 
 .featured-dark-card .stat-card-label {
-  color: #E2D7DA;
+  color: #ffffff;
 }
 
 .stat-card-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-muted);
+  color: var(--text-3);
   flex-shrink: 0;
 }
 
 .featured-dark-card .stat-card-icon {
-  color: var(--accent-gold);
+  color: var(--accent);
 }
 
 .stat-card-icon.warning-icon {
-  color: #EF4444;
+  color: var(--text-link);
 }
 
 .stat-card-value {
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   line-height: 1.2;
   margin-bottom: 6px;
   white-space: nowrap;
@@ -140,25 +140,28 @@
 }
 
 .featured-dark-card .stat-card-value {
-  color: #FFFFFF;
+  color: var(--text-on-contrast);
 }
 
 .stat-card-value.danger-value {
-  color: #EF4444;
+  color: var(--text-link);
 }
 
 .stat-card-subtext {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
 }
 
+/* Tren naik: hijau lembut + teks hijau tua. Ikon panah + tanda "+" tetap
+   menjadi pembawa makna utama, warna hanya penguat. */
 .badge-growth-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background-color: rgba(229, 169, 60, 0.18);
-  color: #FCD34D;
+  background-color: var(--status-done-bg);
+  color: var(--status-done-fg);
+  border: 1px solid var(--status-done-border);
   font-size: 0.72rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -200,8 +203,8 @@
 
 /* Standard Dashboard Card */
 .dash-card {
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   box-shadow: var(--shadow-sm);
@@ -230,19 +233,19 @@
 .dash-card-title {
   font-size: 0.98rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-1);
   white-space: nowrap;
 }
 
 .dash-card-subtitle {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
 }
 
 .dash-card-meta {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -250,7 +253,7 @@
 .dash-card-link {
   font-size: 0.82rem;
   font-weight: 700;
-  color: #B45309;
+  color: var(--text-link);
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
@@ -258,7 +261,7 @@
 }
 
 .dash-card-link:hover {
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 /* ==========================================================================
@@ -288,7 +291,7 @@
   padding-top: 6px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-3);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -301,7 +304,7 @@
 
 .chart-interactive-point:hover {
   r: 6;
-  fill: var(--text-primary);
+  fill: var(--text-1);
 }
 
 /* ==========================================================================
@@ -331,9 +334,9 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #8A6D3B;
-  background-color: #FBF8F2;
-  border-bottom: 1px solid #EFE8D8;
+  color: var(--text-1);
+  background-color: var(--accent-soft);
+  border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
@@ -350,8 +353,8 @@
 
 .today-trans-table td {
   padding: 10px 10px;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-1);
   font-weight: 500;
   vertical-align: middle;
   white-space: nowrap;
@@ -362,33 +365,33 @@
 }
 
 .today-trans-table tr:hover td {
-  background-color: #FAFAFB;
+  background-color: var(--surface);
 }
 
 .trans-no-badge {
   font-family: monospace;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .trans-client-name {
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 .trans-service-text {
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .trans-time-text {
-  color: var(--text-muted);
+  color: var(--text-3);
   font-size: 0.78rem;
 }
 
 .trans-total-bold {
   font-weight: 800;
   text-align: right;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 
 /* ==========================================================================
@@ -411,7 +414,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 6px 0;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid var(--border);
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -435,9 +438,9 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  background-color: #FBF8F2;
-  border: 1px solid #EFE8D8;
-  color: #8A5826;
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border);
+  color: var(--text-link);
   font-size: 0.72rem;
   font-weight: 800;
   display: flex;
@@ -457,7 +460,7 @@
 .stock-item-name {
   font-size: 0.84rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -465,15 +468,16 @@
 
 .stock-item-category {
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Stok menipis: merah lembut + teks merah tua */
 .badge-stock-danger {
-  background-color: #FEE2E2;
-  color: #DC2626;
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
   font-size: 0.74rem;
   font-weight: 700;
   padding: 3px 8px;
@@ -498,7 +502,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 8px 0;
-  border-bottom: 1px solid #F3F4F6;
+  border-bottom: 1px solid var(--border);
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -513,7 +517,7 @@
 .service-row-name {
   font-size: 0.84rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -522,7 +526,7 @@
 .service-row-count {
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-3);
   white-space: nowrap;
   flex-shrink: 0;
 }

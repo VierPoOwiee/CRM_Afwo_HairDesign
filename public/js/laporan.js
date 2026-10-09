@@ -15,7 +15,7 @@ const ReportDatabaseAPI = {
     { id: 'TRX-121088', date: '2026-08-25', time: '11:00 WIB', client: 'Melati Putri', phone: '+62 81711223344', service: 'Keratin Smooth Treatment', worker: 'Budi', amount: 850000, category: 'Smoothing & Perm', method: 'QRIS', status: 'Selesai (Paid)' },
     { id: 'TRX-121087', date: '2026-08-25', time: '14:20 WIB', client: 'Marcus Sterling', phone: '+62 81899001122', service: 'Haircut & Styling', worker: 'Agus Pratama', amount: 120000, category: 'Potong Rambut', method: 'Tunai', status: 'Selesai (Paid)' },
     { id: 'TRX-121086', date: '2026-08-24', time: '09:45 WIB', client: 'Dewi Anggraini', phone: '+62 81233445566', service: 'Full Bleaching + Color', worker: 'Rina', amount: 950000, category: 'Coloring', method: 'Transfer', status: 'Selesai (Paid)' },
-    { id: 'TRX-121085', date: '2026-08-24', time: '16:00 WIB', client: 'Sari Handayani', phone: '+62 81298765432', service: 'L'Oreal Hair Masker', worker: 'Rina', amount: 150000, category: 'Hair Spa & Treatment', method: 'QRIS', status: 'Selesai (Paid)' }
+    { id: 'TRX-121085', date: '2026-08-24', time: '16:00 WIB', client: 'Sari Handayani', phone: '+62 81298765432', service: "L'Oreal Hair Masker", worker: 'Rina', amount: 150000, category: 'Hair Spa & Treatment', method: 'QRIS', status: 'Selesai (Paid)' }
   ],
 
   async fetchReportData(filters = {}) {
