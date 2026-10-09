@@ -13,6 +13,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        // Sebelum menyempitkan enum, pindahkan dulu kategori baru ke kategori
+        // lama (Hairtreatment) agar rollback tidak memotong (truncate) data.
+        DB::table('produk')
+            ->whereIn('kategori_produk', ['Serum', 'Repair', 'Keriting', 'Masker'])
+            ->update(['kategori_produk' => 'Hairtreatment']);
+
         DB::statement("ALTER TABLE produk MODIFY kategori_produk ENUM('dijual','dipakai_layanan','Color','Bleaching','Oxidant','Keratin','Smoothing','Hairtreatment','Creambath') NOT NULL DEFAULT 'dipakai_layanan'");
     }
 };

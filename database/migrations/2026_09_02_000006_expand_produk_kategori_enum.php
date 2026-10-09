@@ -39,6 +39,13 @@ return new class extends Migration
 
     public function down(): void
     {
+        // Sebelum menyempitkan enum kembali ke dua nilai awal, pindahkan dulu
+        // produk berkategori spesifik ke 'dipakai_layanan' agar rollback tidak
+        // memotong (truncate) data.
+        DB::table('produk')
+            ->whereIn('kategori_produk', ['Color', 'Bleaching', 'Oxidant', 'Keratin', 'Smoothing', 'Hairtreatment', 'Creambath'])
+            ->update(['kategori_produk' => 'dipakai_layanan']);
+
         Schema::table('produk', function (Blueprint $table) {
             $table->enum('kategori_produk', ['dijual', 'dipakai_layanan'])->default('dipakai_layanan')->change();
         });

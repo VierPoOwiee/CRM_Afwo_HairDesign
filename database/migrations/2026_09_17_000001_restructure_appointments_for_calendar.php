@@ -37,7 +37,20 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->dropForeign(['id_pelanggan', 'id_karyawan', 'id_layanan']);
+            // Di rollback penuh, FK id_layanan sudah lebih dulu dihapus oleh
+            // 2026_09_17_000002_make_appointment_layanan_relation.down(), jadi
+            // hanya drop FK yang benar-benar masih ada di tabel.
+            $fks = collect(Schema::getForeignKeys('appointments'));
+            $dropFk = function (string $column) use ($table, $fks) {
+                $fk = $fks->first(fn ($f) => in_array($column, $f['columns'] ?? [], true));
+                if ($fk) {
+                    $table->dropForeign($fk['name']);
+                }
+            };
+
+            $dropFk('id_pelanggan');
+            $dropFk('id_karyawan');
+            $dropFk('id_layanan');
             $table->dropIndex(['tanggal']);
 
             $table->string('nama')->nullable();
