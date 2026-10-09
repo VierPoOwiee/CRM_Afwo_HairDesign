@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'name' => 'Owner Afwo',
                 'email' => null,
                 'role' => 'owner',
-                'password' => Hash::make('ganti-password-ini'),
+                'password' => Hash::make('12345678'),
             ]
         );
 

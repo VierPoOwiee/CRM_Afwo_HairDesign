@@ -23,6 +23,43 @@
   font-weight: 400;
 }
 
+/* Header dengan tombol kembali (gaya sama seperti halaman pelanggan/karyawan) */
+.edit-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 20px;
+}
+
+.back-arrow-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  text-decoration: none;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-arrow-link:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+  transform: translateX(-2px);
+}
+
+.edit-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 /* Form Stack */
 .edit-produk-stack {
   display: flex;

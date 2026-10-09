@@ -1,4 +1,4 @@
-*.log
+*.lognpm -v 
 .DS_Store
 .env
 .env.backup
