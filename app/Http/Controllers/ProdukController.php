@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DetailTransaksi;
 use App\Models\DetailTransaksiProduk;
+use App\Models\Merek;
 use App\Models\Produk;
 use App\Models\TransaksiKunjungan;
 use App\Services\ProdukModalService;
@@ -74,6 +75,7 @@ class ProdukController extends Controller
         $data = $this->validated($request);
 
         Produk::create($data);
+        $this->daftarkanMerek($data['merek'] ?? null);
 
         return redirect()
             ->route('produk.index')
@@ -147,10 +149,35 @@ class ProdukController extends Controller
         $data = $this->validated($request);
 
         $produk->update($data);
+        $this->daftarkanMerek($data['merek'] ?? null);
 
         return redirect()
             ->route('produk.index')
             ->with('success', 'Produk "'.$data['nama_produk'].'" berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus merek dari daftar master (tidak mengubah data produk yang ada).
+     */
+    public function destroyMerek(Merek $merek)
+    {
+        $nama = $merek->nama;
+        $merek->delete();
+
+        return response()->json([
+            'ok' => true,
+            'nama' => $nama,
+        ]);
+    }
+
+    private function daftarkanMerek(?string $nama): void
+    {
+        $nama = trim((string) $nama);
+        if ($nama === '') {
+            return;
+        }
+
+        Merek::firstOrCreate(['nama' => $nama]);
     }
 
     public function destroy(Produk $produk)

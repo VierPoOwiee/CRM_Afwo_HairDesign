@@ -72,6 +72,8 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
     Route::get('produk/{produk}/restock', [ProdukController::class, 'restockForm'])->name('produk.restock-form');
     Route::post('produk/{produk}/restock', [ProdukController::class, 'restock'])->name('produk.restock');
 
+    Route::delete('produk/merek/{merek}', [ProdukController::class, 'destroyMerek'])->name('produk.merek.destroy');
+
     Route::get('karyawan/arsip', [KaryawanController::class, 'arsip'])->name('karyawan.arsip');
     Route::post('karyawan/{karyawan}/restore', [KaryawanController::class, 'restore'])->name('karyawan.restore');
 
