@@ -492,6 +492,7 @@
   border-color: var(--border-accent);
 }
 
+<<<<<<< HEAD
 /* Tombol aksi di dalam modal detail struk (ikon saja, ukuran seragam) */
 .btn-modal-action {
   display: inline-flex;
@@ -578,6 +579,8 @@
 
 .modal-footer-row #form-hapus-transaksi { display: inline-flex; }
 
+=======
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
 /* Receipt Modal Styles */
 .modal-backdrop {
   display: none;
@@ -636,7 +639,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+<<<<<<< HEAD
   justify-content: center;
+=======
+  justify-content: flex-end;
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
   gap: var(--sp-3);
   flex-wrap: wrap;
   border-top: 1px solid var(--border);

@@ -117,7 +117,11 @@
                                 <th class="col-hair-type">JENIS RAMBUT</th>
                                 <th class="col-condition">KONDISI RAMBUT</th>
                                 <th class="col-notes">CATATAN</th>
+<<<<<<< HEAD
                                 <th style="text-align: right; width: 130px;">AKSI</th>
+=======
+                                <th style="text-align: right; width: 140px;">AKSI</th>
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
                             </tr>
                         </thead>
                         <tbody id="client-table-body">
@@ -162,6 +166,7 @@
                                     </td>
                                     <td style="text-align: right;" onclick="event.stopPropagation();">
                                         <div class="client-actions-cell">
+<<<<<<< HEAD
                                             <a href="{{ route('pelanggan.edit', $p) }}" class="btn-client-action btn-client-edit is-icon-only" title="Edit pelanggan" aria-label="Edit {{ $p->nama }}">
                                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -191,6 +196,10 @@
                                                     </svg>
                                                 </button>
                                             </form>
+=======
+                                            <a href="{{ route('pelanggan.edit', $p) }}" class="btn-client-action btn-client-edit">Edit</a>
+                                            <a href="{{ route('appointment.create', ['pelanggan' => $p->id]) }}" class="btn-client-action btn-client-schedule">+ Janji</a>
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
                                         </div>
                                     </td>
                                 </tr>

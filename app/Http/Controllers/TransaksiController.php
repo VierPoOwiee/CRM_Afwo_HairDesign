@@ -15,7 +15,10 @@ use App\Models\TransaksiKunjungan;
 use App\Services\ProdukModalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+<<<<<<< HEAD
 use Illuminate\Validation\ValidationException;
+=======
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
 
 class TransaksiController extends Controller
 {
@@ -82,6 +85,7 @@ class TransaksiController extends Controller
 
     public function store(Request $request)
     {
+<<<<<<< HEAD
         $this->validateTransaksi($request);
 
         $transaksi = DB::transaction(function () use ($request) {
@@ -113,6 +117,8 @@ class TransaksiController extends Controller
      */
     private function validateTransaksi(Request $request): void
     {
+=======
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
         // Convert empty string IDs to null so nullable+exists rules work
         $cleanedItems = array_map(function ($item) {
             foreach (['id_layanan', 'id_produk', 'id_staf_1', 'id_staf_2'] as $field) {
@@ -120,7 +126,11 @@ class TransaksiController extends Controller
             }
 
             return $item;
+<<<<<<< HEAD
         }, $request->items ?? []);
+=======
+        }, $request->items);
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
         $request->merge(['items' => $cleanedItems]);
 
         $request->validate([
@@ -148,6 +158,7 @@ class TransaksiController extends Controller
         // Manual cross-field validation
         foreach ($request->items as $idx => $item) {
             if ($item['tipe_item'] === 'layanan' && empty($item['id_layanan'])) {
+<<<<<<< HEAD
                 throw ValidationException::withMessages(['items.'.$idx.'.id_layanan' => 'Wajib dipilih untuk item layanan.']);
             }
             if ($item['tipe_item'] === 'layanan' && empty($item['id_staf_1'])) {
@@ -174,6 +185,38 @@ class TransaksiController extends Controller
         $isBerdua = $request->jenis_pengerjaan === 'berdua';
 
         foreach ($request->items as $item) {
+=======
+                return back()->withErrors(['items.'.$idx.'.id_layanan' => 'Wajib dipilih untuk item layanan.'])->withInput();
+            }
+            if ($item['tipe_item'] === 'layanan' && empty($item['id_staf_1'])) {
+                return back()->withErrors(['items.'.$idx.'.id_staf_1' => 'Staf wajib dipilih untuk item layanan.'])->withInput();
+            }
+            if ($item['tipe_item'] === 'produk' && empty($item['id_produk'])) {
+                return back()->withErrors(['items.'.$idx.'.id_produk' => 'Wajib dipilih untuk item produk.'])->withInput();
+            }
+            if ($request->jenis_pengerjaan === 'berdua' && empty($item['id_staf_2'])) {
+                return back()->withErrors(['items.'.$idx.'.id_staf_2' => 'Jenis berdua wajib pilih 2 staf.'])->withInput();
+            }
+            if ($request->jenis_pengerjaan === 'sendiri' && ! empty($item['id_staf_2'])) {
+                return back()->withErrors(['items.'.$idx.'.id_staf_2' => 'Staf ke-2 hanya untuk jenis berdua.'])->withInput();
+            }
+        }
+
+        $transaksi = DB::transaction(function () use ($request) {
+            $noStruk = TransaksiKunjungan::generateNoStruk();
+            $isBerdua = $request->jenis_pengerjaan === 'berdua';
+
+            $transaksi = TransaksiKunjungan::create([
+                'id_pelanggan' => $request->id_pelanggan,
+                'jenis_pengerjaan' => $request->jenis_pengerjaan,
+                'no_struk' => $noStruk,
+                'waktu_kunjungan' => $request->waktu_kunjungan,
+                'metode_pembayaran' => $request->metode_pembayaran,
+                'total_bayar' => 0,
+            ]);
+
+            foreach ($request->items as $item) {
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
                 $harga = (float) $item['harga_saat_transaksi'];
                 $qty = (float) $item['qty'];
                 $diskon = ! empty($item['diskon']) ? (float) $item['diskon'] : 0;
@@ -277,6 +320,7 @@ class TransaksiController extends Controller
                     }
                 }
             }
+<<<<<<< HEAD
     }
 
     public function edit(TransaksiKunjungan $transaksi)
@@ -408,6 +452,24 @@ class TransaksiController extends Controller
             'metode' => $transaksi->metode_pembayaran,
             'items' => $items,
         ];
+=======
+
+            // Recalculate total_bayar from sum of all detail subtotals
+            $transaksi->recalculateTotal();
+
+            // Sync komisi_transaksi for each unique staff
+            KomisiTransaksi::syncForTransaksi($transaksi);
+
+            // Recalculate daily omset commission for persen_omset_harian staff
+            $this->syncKomisiHarianUntuk($transaksi->waktu_kunjungan);
+
+            return $transaksi;
+        });
+
+        return redirect()
+            ->route('transaksi.index')
+            ->with('success', 'Transaksi "'.$transaksi->no_struk.'" berhasil disimpan.');
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
     }
 
     public function show(TransaksiKunjungan $transaksi)
@@ -426,6 +488,7 @@ class TransaksiController extends Controller
 
     public function update(Request $request, TransaksiKunjungan $transaksi)
     {
+<<<<<<< HEAD
         if ($transaksi->status === 'batal') {
             return back()->with('error', 'Transaksi yang sudah dibatalkan tidak dapat diedit.');
         }
@@ -466,6 +529,9 @@ class TransaksiController extends Controller
         return redirect()
             ->route('transaksi.show', $transaksi)
             ->with('success', 'Transaksi "'.$noStruk.'" berhasil diperbarui.');
+=======
+        //
+>>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
     }
 
     /**
