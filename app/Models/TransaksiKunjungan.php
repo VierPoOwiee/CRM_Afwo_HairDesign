@@ -76,7 +76,9 @@ class TransaksiKunjungan extends Model
     {
         $dicatatOleh = auth()->check() ? auth()->id() : null;
 
-        foreach ($this->details()->with('produkPenggunaan')->get() as $detail) {
+        $details = $this->details()->with('produkPenggunaan')->get();
+
+        foreach ($details as $detail) {
             if ($detail->tipe_item === 'produk' && $detail->id_produk) {
                 $produk = Produk::lockForUpdate()->find($detail->id_produk);
                 if ($produk) {
@@ -91,20 +93,43 @@ class TransaksiKunjungan extends Model
                     );
                 }
             }
+        }
 
-            foreach ($detail->produkPenggunaan as $pu) {
-                $produk = Produk::lockForUpdate()->find($pu->id_produk);
-                if ($produk) {
-                    $produk->increment('stok', $pu->pemakaian_ml);
-                    ProdukModalService::catat(
-                        $produk,
-                        RiwayatStokProduk::JENIS_BATAL,
-                        $pu->pemakaian_ml,
-                        $produk->stok,
-                        $keterangan,
-                        $dicatatOleh
-                    );
-                }
+        // Pemakaian layanan: kembalikan kemasan yang terpotong + pulihkan sisa
+        // kemasan ke kondisi sebelum transaksi. Diproses urut id menurun agar
+        // nilai sisa terakhir = sisa sebelum pemakaian paling awal.
+        $usage = $details->flatMap(fn ($d) => $d->produkPenggunaan)->sortByDesc('id');
+
+        foreach ($usage as $pu) {
+            $produk = Produk::lockForUpdate()->find($pu->id_produk);
+            if (! $produk) {
+                continue;
+            }
+
+            $stokTerpotong = (float) $pu->stok_terpotong;
+            $perubahan = $stokTerpotong;
+
+            if ($pu->sisa_sebelum === null) {
+                // Data lama (sebelum fitur netto): pakai cara lama.
+                $perubahan = (float) $pu->pemakaian_ml / $produk->divisorPenggunaan();
+            } else {
+                $produk->sisa_penggunaan = (float) $pu->sisa_sebelum;
+            }
+
+            if ($perubahan != 0) {
+                $produk->stok = (int) $produk->stok + (int) $perubahan;
+            }
+            $produk->save();
+
+            if ($perubahan != 0) {
+                ProdukModalService::catat(
+                    $produk,
+                    RiwayatStokProduk::JENIS_BATAL,
+                    $perubahan,
+                    $produk->stok,
+                    $keterangan,
+                    $dicatatOleh
+                );
             }
         }
     }

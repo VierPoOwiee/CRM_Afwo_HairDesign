@@ -29,14 +29,14 @@ class ProdukController extends Controller
                 });
             })
             ->when($mode === 'pcs', function ($query) {
-                $query->where('kategori_produk', 'dijual');
+                $query->where('harga_per_pcs', '>', 0);
             })
             ->when($mode === 'layanan', function ($query) {
-                $query->where('kategori_produk', '!=', 'dijual');
+                $query->where('harga_per_penggunaan', '>', 0);
             });
 
         $kategoriList = [];
-        if ($mode === 'layanan') {
+        if ($mode !== 'all') {
             $kategoriList = array_combine(Produk::kategoriLayanan(), Produk::kategoriLayanan());
             if ($kategoriFilter !== '' && array_key_exists($kategoriFilter, $kategoriList)) {
                 $produks->where('kategori_produk', $kategoriFilter);
@@ -53,7 +53,6 @@ class ProdukController extends Controller
             ->withQueryString();
 
         $stokMenipis = Produk::where('aktif', true)
-            ->where('kategori_produk', 'dijual')
             ->where('stok', '<=', Produk::STOK_MENIPIS)
             ->count();
 
@@ -140,7 +139,7 @@ class ProdukController extends Controller
 
         return redirect()
             ->route('produk.show', $produk)
-            ->with('success', 'Restock "'.$produk->nama_produk.'" sebanyak '.rtrim(rtrim($data['qty'], '0'), '.').' '.$produk->satuan.' berhasil disimpan.');
+            ->with('success', 'Restock "'.$produk->nama_produk.'" sebanyak '.rtrim(rtrim((string) $data['qty'], '0'), '.').' pcs berhasil disimpan.');
     }
 
     public function update(Request $request, Produk $produk)
@@ -192,10 +191,18 @@ class ProdukController extends Controller
 
     private function validated(Request $request): array
     {
-        $harga = $request->input('harga_per_satuan');
-        if ($harga !== null) {
-            $s = str_replace(['.', ','], '', (string) $harga);
-            $request->merge(['harga_per_satuan' => $s === '' ? null : $s]);
+        foreach (['harga_per_pcs', 'harga_per_penggunaan'] as $field) {
+            $harga = $request->input($field);
+            if ($harga !== null) {
+                $s = str_replace(['.', ','], '', (string) $harga);
+                $request->merge([$field => $s === '' ? null : $s]);
+            }
+        }
+
+        $netto = $request->input('netto');
+        if ($netto !== null) {
+            $n = str_replace(',', '.', trim((string) $netto));
+            $request->merge(['netto' => $n === '' ? null : $n]);
         }
 
         $modeMerek = $request->input('mode_merek', 'pilih');
@@ -205,13 +212,25 @@ class ProdukController extends Controller
 
         $data = $request->validate([
             'nama_produk' => ['required', 'string', 'max:255'],
-            'merek' => ['nullable', 'required_unless:kategori_produk,dijual', 'string', 'max:255'],
-            'kategori_produk' => ['required', 'in:'.implode(',', ['dijual', 'dipakai_layanan'] + Produk::kategoriLayanan())],
-            'satuan' => ['required', 'in:pcs,/10ml'],
-            'harga_per_satuan' => ['required', 'numeric', 'min:0'],
+            'merek' => ['nullable', 'string', 'max:255'],
+            'kategori_produk' => ['required', 'in:'.implode(',', Produk::kategoriLayanan())],
+            'satuan_penggunaan' => ['required', 'string', 'max:50'],
+            'netto' => ['nullable', 'numeric', 'min:0'],
+            'harga_per_pcs' => ['nullable', 'numeric', 'min:0'],
+            'harga_per_penggunaan' => ['nullable', 'numeric', 'min:0'],
             'stok' => ['nullable', 'integer', 'min:0'],
             'aktif' => ['sometimes', 'boolean'],
         ]);
+
+        $data['harga_per_pcs'] = (float) ($data['harga_per_pcs'] ?? 0);
+        $data['harga_per_penggunaan'] = (float) ($data['harga_per_penggunaan'] ?? 0);
+        $data['netto'] = (float) ($data['netto'] ?? 0);
+
+        if ($data['harga_per_pcs'] <= 0 && $data['harga_per_penggunaan'] <= 0) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'harga_per_pcs' => 'Minimal salah satu harga (per pcs atau per penggunaan) harus lebih dari 0.',
+            ]);
+        }
 
         $data['aktif'] = $request->boolean('aktif');
         $data['stok'] = $data['stok'] ?? 0;

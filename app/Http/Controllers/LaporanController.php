@@ -140,14 +140,14 @@ class LaporanController extends Controller
             ->join('produk', 'detail_transaksi.id_produk', '=', 'produk.id')
             ->selectRaw(
                 'detail_transaksi.id_produk,
-                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan,
+                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan_penggunaan,
                  count(*) as jumlah,
                  sum(detail_transaksi.qty) as qty,
                  sum(detail_transaksi.subtotal) as omset,
                  coalesce(sum(detail_transaksi.harga_modal_satuan * detail_transaksi.qty), 0) as modal,
                  coalesce(sum(detail_transaksi.keuntungan), 0) as keuntungan'
             )
-            ->groupBy('detail_transaksi.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan')
+            ->groupBy('detail_transaksi.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan_penggunaan')
             ->orderByDesc('keuntungan')
             ->get()
             ->map(fn ($r) => [
@@ -155,7 +155,7 @@ class LaporanController extends Controller
                 'nama_produk' => $r->nama_produk,
                 'merek' => $r->merek,
                 'kategori' => $r->kategori_produk,
-                'satuan' => $r->satuan,
+                'satuan' => 'pcs',
                 'jumlah' => (int) $r->jumlah,
                 'qty' => (float) $r->qty,
                 'omset' => (float) $r->omset,
@@ -186,13 +186,13 @@ class LaporanController extends Controller
             ->join('produk', 'detail_transaksi_produk.id_produk', '=', 'produk.id')
             ->selectRaw(
                 'detail_transaksi_produk.id_produk,
-                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan,
+                 produk.nama_produk, produk.merek, produk.kategori_produk, produk.satuan_penggunaan,
                  coalesce(sum(detail_transaksi_produk.pemakaian_ml), 0) as total_ml,
                  coalesce(sum(detail_transaksi_produk.subtotal), 0) as omset,
                  coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as modal,
                  coalesce(sum(detail_transaksi_produk.subtotal), 0) - coalesce(sum(detail_transaksi_produk.harga_modal_terpakai), 0) as keuntungan'
             )
-            ->groupBy('detail_transaksi_produk.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan')
+            ->groupBy('detail_transaksi_produk.id_produk', 'produk.nama_produk', 'produk.merek', 'produk.kategori_produk', 'produk.satuan_penggunaan')
             ->orderByDesc('keuntungan')
             ->get()
             ->map(fn ($r) => [
@@ -200,7 +200,7 @@ class LaporanController extends Controller
                 'nama_produk' => $r->nama_produk,
                 'merek' => $r->merek,
                 'kategori' => $r->kategori_produk,
-                'satuan' => $r->satuan,
+                'satuan' => $r->satuan_penggunaan,
                 'total_ml' => (float) $r->total_ml,
                 'omset' => (float) $r->omset,
                 'modal' => (float) $r->modal,

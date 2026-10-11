@@ -352,3 +352,9 @@
   }
   .varian-table .varian-empty { display: block; padding: 24px 0; }
 }
+
+/* Pencarian layanan */
+.layanan-search-form {
+  margin: 2px 0 18px;
+  max-width: 420px;
+}

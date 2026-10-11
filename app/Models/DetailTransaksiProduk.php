@@ -19,6 +19,9 @@ class DetailTransaksiProduk extends Model
         'harga_per_unit',
         'harga_modal_terpakai',
         'subtotal',
+        'stok_terpotong',
+        'sisa_sebelum',
+        'sisa_sesudah',
     ];
 
     protected $casts = [
@@ -26,6 +29,9 @@ class DetailTransaksiProduk extends Model
         'harga_per_unit' => 'decimal:2',
         'harga_modal_terpakai' => 'decimal:2',
         'subtotal' => 'decimal:2',
+        'stok_terpotong' => 'decimal:2',
+        'sisa_sebelum' => 'decimal:2',
+        'sisa_sesudah' => 'decimal:2',
     ];
 
     public function detailTransaksi(): BelongsTo
@@ -47,8 +53,20 @@ class DetailTransaksiProduk extends Model
             return 0;
         }
 
-        $unit = $pemakaianMl / 10;
+        $unit = $pemakaianMl / $this->divisor();
 
         return $unit * $hargaPerUnit;
+    }
+
+    private function divisor(): float
+    {
+        $satuan = (string) ($this->produk->satuan_penggunaan ?? '/10ml');
+        if (preg_match('/(\d+(?:[.,]\d+)?)/', str_replace(',', '.', $satuan), $m)) {
+            $divisor = (float) $m[1];
+
+            return $divisor > 0 ? $divisor : 10.0;
+        }
+
+        return 10.0;
     }
 }

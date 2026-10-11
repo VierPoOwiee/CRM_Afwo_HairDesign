@@ -72,7 +72,6 @@ class TransaksiController extends Controller
         $pelanggans = Pelanggan::orderBy('nama')->get();
         $karyawans = Karyawan::orderBy('nama')->get();
         $produks = Produk::where('aktif', true)
-            ->where('kategori_produk', '!=', 'dijual')
             ->orderBy('merek')
             ->orderBy('nama_produk')
             ->get();
@@ -196,7 +195,7 @@ class TransaksiController extends Controller
                     RiwayatStokProduk::JENIS_PENJUALAN,
                     -$qty,
                     $produk->stok,
-                    'Penjualan retail '.$qty.' '.($produk->satuan ?? '').' '.$produk->nama_produk,
+                    'Penjualan retail '.$qty.' pcs '.$produk->nama_produk,
                     auth()->id()
                 );
             }
@@ -248,11 +247,43 @@ class TransaksiController extends Controller
                     }
                     $produk = Produk::query()->lockForUpdate()->findOrFail($pu['id_produk']);
                     $pemakaianMl = (float) $pu['pemakaian_ml'];
+                    $satuanPenggunaan = $produk->satuanPenggunaanLabel();
 
-                    $hargaPerUnit = (float) $produk->harga_per_satuan;
-                    $unit = $pemakaianMl / 10;
+                    $divisor = $produk->divisorPenggunaan();
+                    $hargaPerUnit = (float) $produk->harga_per_penggunaan;
+                    $unit = $pemakaianMl / $divisor;
                     $produkSubtotal = $unit * $hargaPerUnit;
                     $hargaModalTerpakai = round((float) $produk->harga_modal_rata_rata * $unit, 2);
+
+                    // --- Stok model "netto per pcs" ---
+                    // Satu pcs punya isi netto (mis. 100ml). Pemakaian mengurangi sisa
+                    // kemasan yang sedang terbuka; saat habis, kemasan berikutnya dibuka
+                    // dan stok (pcs) berkurang 1 otomatis.
+                    $netto = (float) $produk->netto;
+                    $stokTerpotong = 0.0;
+                    $sisaSebelum = (float) $produk->sisa_penggunaan;
+                    $sisa = $sisaSebelum;
+                    $sisaSesudah = null;
+
+                    if ($netto > 0) {
+                        if ($sisa <= 0 && (int) $produk->stok > 0) {
+                            $stokTerpotong += 1;
+                            $sisa = $netto;
+                        }
+                        $sisa -= $pemakaianMl;
+                        while ($sisa < 0 && ($produk->stok - $stokTerpotong) > 0) {
+                            $stokTerpotong += 1;
+                            $sisa += $netto;
+                        }
+                        if ($sisa < 0) {
+                            $sisa = 0;
+                        }
+
+                        $produk->stok = (int) $produk->stok - (int) $stokTerpotong;
+                        $produk->sisa_penggunaan = round($sisa, 2);
+                        $produk->save();
+                        $sisaSesudah = round($sisa, 2);
+                    }
 
                     DetailTransaksiProduk::create([
                         'id_detail_transaksi' => $detail1->id,
@@ -261,19 +292,21 @@ class TransaksiController extends Controller
                         'harga_per_unit' => $hargaPerUnit,
                         'harga_modal_terpakai' => $hargaModalTerpakai,
                         'subtotal' => round($produkSubtotal),
+                        'stok_terpotong' => $stokTerpotong,
+                        'sisa_sebelum' => $netto > 0 ? round($sisaSebelum, 2) : null,
+                        'sisa_sesudah' => $sisaSesudah,
                     ]);
 
-                    // Deduct stock for product used in layanan
-                    $produk->decrement('stok', $pemakaianMl);
-                    $produk->refresh();
-                    ProdukModalService::catat(
-                        $produk,
-                        RiwayatStokProduk::JENIS_PEMAKAIAN_LAYANAN,
-                        -$pemakaianMl,
-                        $produk->stok,
-                        'Pemakaian layanan '.$pemakaianMl.' ml '.$produk->nama_produk,
-                        auth()->id()
-                    );
+                    if ($stokTerpotong > 0) {
+                        ProdukModalService::catat(
+                            $produk,
+                            RiwayatStokProduk::JENIS_PEMAKAIAN_LAYANAN,
+                            -$stokTerpotong,
+                            $produk->stok,
+                            'Buka kemasan baru ('.$stokTerpotong.' pcs) untuk pemakaian '.$produk->nama_produk,
+                            auth()->id()
+                        );
+                    }
                 }
             }
         }
@@ -298,7 +331,6 @@ class TransaksiController extends Controller
 
         $karyawans = Karyawan::orderBy('nama')->get();
         $produks = Produk::where('aktif', true)
-            ->where('kategori_produk', '!=', 'dijual')
             ->orderBy('merek')
             ->orderBy('nama_produk')
             ->get();
@@ -372,7 +404,8 @@ class TransaksiController extends Controller
                             'id' => $p->id,
                             'nama_produk' => $p->nama_produk,
                             'kategori_produk' => $p->kategori_produk,
-                            'harga_per_satuan' => (float) $p->harga_per_satuan,
+                            'harga_per_penggunaan' => (float) $p->harga_per_penggunaan,
+                            'satuan_penggunaan' => $p->satuanPenggunaanLabel(),
                         ];
                     })->values()->all(),
                 ] : null;
@@ -382,7 +415,8 @@ class TransaksiController extends Controller
                         'id_produk' => $pu->id_produk,
                         'nama_produk' => $pu->produk->nama_produk ?? 'Produk',
                         'pemakaian_ml' => (float) $pu->pemakaian_ml,
-                        'harga_per_satuan' => (float) $pu->harga_per_unit,
+                        'harga_per_penggunaan' => (float) $pu->harga_per_unit,
+                        'satuan_penggunaan' => $pu->produk->satuanPenggunaanLabel() ?? '/10ml',
                     ];
                 })->values()->all();
             } else {
@@ -390,7 +424,7 @@ class TransaksiController extends Controller
                 $item['id_produk'] = $detail->id_produk;
                 $item['nama_produk'] = $produk->nama_produk ?? 'Produk';
                 $item['stok'] = $produk ? (float) $produk->stok : 0;
-                $item['satuan'] = $produk->satuan ?? 'pcs';
+                $item['satuan'] = 'pcs';
             }
 
             $items[] = $item;
@@ -589,8 +623,8 @@ class TransaksiController extends Controller
         $mode = $request->input('mode', '');
 
         $produks = Produk::where('aktif', true)
-            ->when($mode === 'dijual', fn ($query) => $query->where('kategori_produk', 'dijual'))
-            ->when($mode === 'pakai', fn ($query) => $query->where('kategori_produk', '!=', 'dijual'))
+            ->when($mode === 'dijual', fn ($query) => $query->where('harga_per_pcs', '>', 0))
+            ->when($mode === 'pakai', fn ($query) => $query->where('harga_per_penggunaan', '>', 0))
             ->where(function ($query) use ($q) {
                 $query->where('nama_produk', 'like', "%{$q}%")
                     ->orWhere('merek', 'like', "%{$q}%");

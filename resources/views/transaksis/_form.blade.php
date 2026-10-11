@@ -384,6 +384,15 @@
             n = parseFloat(n) || 0;
             return (n % 1 === 0) ? String(n) : String(Math.round(n * 100) / 100);
         }
+        function divisorFromSatuan(s) {
+            var m = String(s || '').replace(',', '.').match(/(\d+(?:\.\d+)?)/);
+            return m ? (parseFloat(m[1]) || 1) : 1;
+        }
+        function unitLabelFromSatuan(s) {
+            var t = String(s || '').trim();
+            if (t === '') return '10ml';
+            return t.replace(/^\//, '');
+        }
         function getJenis() { var r = document.querySelector('input[name="jenis_pengerjaan"]:checked'); return r ? r.value : 'sendiri'; }
         function isBerdua() { return getJenis() === 'berdua'; }
 
@@ -1041,7 +1050,9 @@
                 return;
             }
 
-            var hargaPerUnit = parseFloat(match.harga_per_satuan) || 0;
+            var hargaPerUnit = parseFloat(match.harga_per_penggunaan) || 0;
+            var satuanPenggunaan = match.satuan_penggunaan || '/10ml';
+            var divisor = divisorFromSatuan(satuanPenggunaan);
             item.querySelector('.produk-id-input').value = match.id;
             var sel = item.querySelector('.produk-selected');
             if (sel) {
@@ -1055,9 +1066,11 @@
                 selName.setAttribute('title', match.nama_produk);
             }
             item.dataset.harga = hargaPerUnit;
-            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(hargaPerUnit) + ' / 10ml';
+            item.dataset.divisor = divisor;
+            item.dataset.satuanPenggunaan = satuanPenggunaan;
+            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(hargaPerUnit) + ' / ' + unitLabelFromSatuan(satuanPenggunaan);
             if (mlVal > 0 && hargaPerUnit > 0) {
-                item.querySelector('.produk-subtotal-display').textContent = 'Rp' + fmt((mlVal / 10) * hargaPerUnit);
+                item.querySelector('.produk-subtotal-display').textContent = 'Rp' + fmt((mlVal / divisor) * hargaPerUnit);
             } else {
                 item.querySelector('.produk-subtotal-display').textContent = 'Rp0';
             }
@@ -1085,7 +1098,7 @@
                         .then(function(data) {
                             if (data.length === 0) { results.innerHTML = '<div class="search-result-noresult">Tidak ditemukan</div>'; results.classList.add('show'); return; }
                             results.innerHTML = data.map(function(p) {
-                                return '<div class="search-result-option" data-idx="' + idx + '" data-pidx="' + pIdx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_satuan + '" data-stok="' + p.stok + '">' +
+                                return '<div class="search-result-option" data-idx="' + idx + '" data-pidx="' + pIdx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_penggunaan + '" data-satuan="' + escAttr(p.satuan_penggunaan || '/10ml') + '" data-stok="' + p.stok + '">' +
                                     '<span>' + p.nama_produk + '</span>' +
                                     '<span class="search-result-muted">' + p.merek + '</span>' +
                                 '</div>';
@@ -1094,7 +1107,8 @@
                                 optEl.addEventListener('click', function() {
                                     selectProdukUsage(optEl, optEl.getAttribute('data-idx'), optEl.getAttribute('data-pidx'),
                                         optEl.getAttribute('data-id'), optEl.getAttribute('data-nama') || '',
-                                        optEl.getAttribute('data-harga'), optEl.getAttribute('data-stok'));
+                                        optEl.getAttribute('data-harga'), optEl.getAttribute('data-stok'),
+                                        optEl.getAttribute('data-satuan') || '/10ml');
                                 });
                             });
                             results.classList.add('show');
@@ -1103,8 +1117,9 @@
             });
         }
 
-        window.selectProdukUsage = function(el, idx, pIdx, produkId, nama, harga, stok) {
+        window.selectProdukUsage = function(el, idx, pIdx, produkId, nama, harga, stok, satuan) {
             var item = el.closest('.produk-usage-item');
+            var satuanPenggunaan = satuan || '/10ml';
             item.querySelector('.produk-id-input').value = produkId;
             var input = item.querySelector('.produk-search');
             input.value = nama;
@@ -1117,7 +1132,9 @@
             selName.setAttribute('title', nama);
             item.querySelector('.produk-search-results').classList.remove('show');
             item.dataset.harga = harga;
-            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(harga) + ' / 10ml';
+            item.dataset.divisor = divisorFromSatuan(satuanPenggunaan);
+            item.dataset.satuanPenggunaan = satuanPenggunaan;
+            item.querySelector('.produk-unit-harga').textContent = 'Rp' + fmt(harga) + ' / ' + unitLabelFromSatuan(satuanPenggunaan);
             var detail = item.querySelector('.usage-detail');
             detail.classList.remove('hidden');
             detail.style.display = 'grid';
@@ -1140,6 +1157,7 @@
             }
             item.querySelector('.produk-search-results').classList.remove('show');
             delete item.dataset.harga;
+            delete item.dataset.divisor;
             item.querySelector('.produk-unit-harga').textContent = 'Rp0 / 10ml';
             item.querySelector('.produk-subtotal-display').textContent = 'Rp0';
             var detail = item.querySelector('.usage-detail');
@@ -1244,12 +1262,14 @@
                 var subtotalEl = item.querySelector('.produk-subtotal-display');
                 var unitEl = item.querySelector('.produk-unit-harga');
                 var hargaPerUnit = item.dataset.harga ? (parseFloat(item.dataset.harga) || 0) : 0;
+                var divisor = item.dataset.divisor ? (parseFloat(item.dataset.divisor) || 1) : 1;
                 var ml = mlInput ? (parseFloat(mlInput.value) || 0) : 0;
                 var isDefault = item.dataset.mode === 'default';
                 var defaultMl = isDefault ? (parseFloat(item.dataset.defaultMl) || 0) : 0;
+                var unitText = item.dataset.satuanPenggunaan ? unitLabelFromSatuan(item.dataset.satuanPenggunaan) : '10ml';
 
                 if (idInput && mlInput && idInput.value) {
-                    if (unitEl) unitEl.textContent = 'Rp' + fmt(hargaPerUnit) + ' / 10ml';
+                    if (unitEl) unitEl.textContent = 'Rp' + fmt(hargaPerUnit) + ' / ' + unitText;
                     var cost = 0;
                     var nameEl = item.querySelector('.produk-search');
                     var prodName = nameEl && nameEl.value ? nameEl.value : (item.dataset.kategori || 'Produk');
@@ -1257,12 +1277,12 @@
                     if (isDefault) {
                         var extraMl = Math.max(0, ml - defaultMl);
                         if (extraMl > 0 && hargaPerUnit > 0) {
-                            cost = (extraMl / 10) * hargaPerUnit;
+                            cost = (extraMl / divisor) * hargaPerUnit;
                             productCosts.push(prodName + ' + Rp' + fmt(cost) + ' (' + formatMl(extraMl) + 'ml tambahan)');
                         }
                     } else {
                         if (ml > 0 && hargaPerUnit > 0) {
-                            cost = (ml / 10) * hargaPerUnit;
+                            cost = (ml / divisor) * hargaPerUnit;
                             productCosts.push(prodName + ' ' + formatMl(ml) + 'ml Rp' + fmt(cost));
                         }
                     }
@@ -1329,7 +1349,7 @@
                             if (data.length === 0) { results.innerHTML = '<div class="search-result-noresult">Tidak ditemukan</div>'; results.classList.add('show'); return; }
                             results.innerHTML = data.map(function(p) {
                                 var stokClass = p.stok <= 0 ? ' color: var(--status-danger);' : '';
-                                return '<div class="search-result-option" data-idx="' + idx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_satuan + '" data-stok="' + p.stok + '" data-satuan="' + escAttr(p.satuan) + '">' +
+                                return '<div class="search-result-option" data-idx="' + idx + '" data-id="' + p.id + '" data-nama="' + escAttr(p.nama_produk) + '" data-harga="' + p.harga_per_pcs + '" data-stok="' + p.stok + '" data-satuan="pcs">' +
                                     '<span>' + p.nama_produk + '</span>' +
                                     '<span class="search-result-muted" style="' + stokClass + '">(' + p.merek + ') Stok: ' + p.stok + '</span>' +
                                 '</div>';
@@ -1572,7 +1592,8 @@
             if (optUsage) {
                 selectProdukUsage(optUsage, optUsage.getAttribute('data-idx'), optUsage.getAttribute('data-pidx'),
                     optUsage.getAttribute('data-id'), optUsage.getAttribute('data-nama') || '',
-                    optUsage.getAttribute('data-harga'), optUsage.getAttribute('data-stok'));
+                    optUsage.getAttribute('data-harga'), optUsage.getAttribute('data-stok'),
+                    optUsage.getAttribute('data-satuan') || '/10ml');
             }
         });
 
@@ -1661,8 +1682,9 @@
             if (r && r.closest('.segmented-pill-label')) r.closest('.segmented-pill-label').classList.add('active');
         }
 
-        function selectProdukUsageInto(item, produkId, nama, harga) {
+        function selectProdukUsageInto(item, produkId, nama, harga, satuan) {
             if (!item) return;
+            var satuanPenggunaan = satuan || '/10ml';
             item.querySelector('.produk-id-input').value = produkId;
             var input = item.querySelector('.produk-search');
             if (input) { input.value = nama; input.style.display = 'none'; }
@@ -1676,8 +1698,10 @@
             var results = item.querySelector('.produk-search-results');
             if (results) results.classList.remove('show');
             item.dataset.harga = harga;
+            item.dataset.divisor = divisorFromSatuan(satuanPenggunaan);
+            item.dataset.satuanPenggunaan = satuanPenggunaan;
             var unitEl = item.querySelector('.produk-unit-harga');
-            if (unitEl) unitEl.textContent = 'Rp' + fmt(harga) + ' / 10ml';
+            if (unitEl) unitEl.textContent = 'Rp' + fmt(harga) + ' / ' + unitLabelFromSatuan(satuanPenggunaan);
             var detail = item.querySelector('.usage-detail');
             if (detail) { detail.classList.remove('hidden'); detail.style.display = 'grid'; }
             var hint = item.querySelector('.ml-usage-hint');
@@ -1704,7 +1728,7 @@
                 addProdukUsageRow(idx);
                 var pIdx = usageList.children.length - 1;
                 var item = usageList.querySelector('.produk-usage-item[data-pidx="' + pIdx + '"]');
-                selectProdukUsageInto(item, pu.id_produk, pu.nama_produk, pu.harga_per_satuan);
+                selectProdukUsageInto(item, pu.id_produk, pu.nama_produk, pu.harga_per_penggunaan, pu.satuan_penggunaan);
                 var mlInput = item.querySelector('.pemakaian-ml-input');
                 if (mlInput) mlInput.value = pu.pemakaian_ml;
             });

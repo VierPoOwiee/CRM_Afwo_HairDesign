@@ -256,7 +256,7 @@ class LaporanAiInsightService
             ->map(fn ($p) => [
                 'produk' => (string) $p->nama_produk,
                 'kategori' => (string) $p->labelKategori(),
-                'satuan' => (string) $p->satuan,
+                'satuan' => 'pcs',
                 'stok' => (int) $p->stok,
             ])
             ->values()
