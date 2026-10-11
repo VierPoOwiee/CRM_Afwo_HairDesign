@@ -402,7 +402,6 @@
   background-color: var(--surface-contrast);
 }
 
-<<<<<<< HEAD
 .btn-client-delete {
   background-color: var(--status-danger-bg);
   border: 1px solid var(--status-danger-border);
@@ -421,8 +420,6 @@
   display: block;
 }
 
-=======
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
 /* ==========================================================================
    MODAL DETAIL PELANGGAN
    ========================================================================== */

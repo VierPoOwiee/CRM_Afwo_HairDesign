@@ -245,16 +245,12 @@
                                         <span class="status-pill {{ $statusInfo['pill'] }}">{{ $statusInfo['label'] }}</span>
                                     </td>
                                     <td style="text-align: right;">
-<<<<<<< HEAD
-                                        <button type="button" class="btn-detail-receipt js-open-receipt"
+<button type="button" class="btn-detail-receipt js-open-receipt"
                                                 data-trx-id="{{ $t->id }}"
                                                 data-no-struk="{{ $t->no_struk }}"
                                                 data-status="{{ $t->status }}"
                                                 data-edit-url="{{ route('transaksi.edit', $t) }}"
                                                 data-delete-url="{{ route('transaksi.destroy', $t) }}">Detail Struk</button>
-=======
-                                        <button type="button" class="btn-detail-receipt js-open-receipt" data-trx-id="{{ $t->id }}">Detail Struk</button>
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
                                     </td>
                                 </tr>
                             @endforeach
@@ -355,7 +351,6 @@
         <div class="modal-dialog-card">
             <div class="modal-header-row">
                 <h3 class="modal-header-title">Detail Struk Transaksi</h3>
-<<<<<<< HEAD
                 <button type="button" class="btn-close-modal" id="btn-close-modal" aria-label="Tutup">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -390,14 +385,13 @@
                         <rect x="6" y="14" width="12" height="8"></rect>
                     </svg>
                 </button>
-=======
-                <button type="button" class="btn-close-modal" id="btn-close-modal">✕</button>
-            </div>
-            <div class="modal-body-content" id="modal-receipt-body"></div>
-            <div class="modal-footer-row">
-                <button type="button" class="btn-print-receipt" id="btn-print-receipt">Cetak Struk</button>
-                <button type="button" class="btn-modal-close-action" id="btn-modal-close-action">Tutup</button>
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
+                <button type="button" class="btn-modal-action btn-receipt-print" id="btn-print-receipt" title="Cetak struk" aria-label="Cetak struk">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -438,12 +432,9 @@
 
             var modal = document.getElementById('trans-detail-modal');
             var modalBody = document.getElementById('modal-receipt-body');
-<<<<<<< HEAD
             var editBtn = document.getElementById('btn-edit-transaksi');
             var hapusForm = document.getElementById('form-hapus-transaksi');
             var hapusBtn = document.getElementById('btn-hapus-transaksi');
-=======
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
 
             document.querySelectorAll('.js-open-receipt').forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
@@ -451,7 +442,6 @@
                     var id = btn.getAttribute('data-trx-id');
                     var tpl = document.getElementById('tpl-receipt-' + id);
                     if (!tpl || !modalBody || !modal) return;
-<<<<<<< HEAD
 
                     var status = btn.getAttribute('data-status');
                     if (editBtn) {
@@ -461,16 +451,13 @@
                     if (hapusForm) hapusForm.setAttribute('action', btn.getAttribute('data-delete-url') || '#');
                     if (hapusBtn) hapusBtn.setAttribute('data-no-struk', btn.getAttribute('data-no-struk') || '');
 
-=======
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
                     modalBody.innerHTML = '';
                     modalBody.appendChild(tpl.content.cloneNode(true));
                     modal.classList.add('show');
                 });
             });
 
-<<<<<<< HEAD
-            if (hapusForm) {
+if (hapusForm) {
                 hapusForm.addEventListener('submit', function (e) {
                     var no = hapusBtn ? hapusBtn.getAttribute('data-no-struk') : '';
                     if (!confirm('Hapus transaksi "' + no + '"? Stok produk akan dikembalikan.')) {
@@ -481,11 +468,6 @@
 
             var closes = [
                 document.getElementById('btn-close-modal')
-=======
-            var closes = [
-                document.getElementById('btn-close-modal'),
-                document.getElementById('btn-modal-close-action')
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
             ];
             closes.forEach(function (btn) {
                 if (btn) btn.addEventListener('click', function () {

@@ -94,11 +94,7 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
     Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
 
     Route::resource('transaksi', TransaksiController::class)->only([
-<<<<<<< HEAD
-        'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
-=======
-        'index', 'create', 'store', 'show', 'destroy',
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
+    'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
     ]);
 
     Route::put('transaksi/{transaksi}/batal', [TransaksiController::class, 'cancel'])

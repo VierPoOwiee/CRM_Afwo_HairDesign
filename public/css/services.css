@@ -164,7 +164,6 @@
   transform: scale(1.15);
 }
 
-<<<<<<< HEAD
 .card-actions-group {
   display: inline-flex;
   align-items: center;
@@ -189,8 +188,6 @@
   transform: scale(1.15);
 }
 
-=======
->>>>>>> c46369f0ea4073068b460ba005de65051d14d1ec
 .service-card-name {
   font-size: 1.12rem;
   font-weight: 800;
