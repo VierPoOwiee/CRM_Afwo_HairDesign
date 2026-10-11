@@ -3,54 +3,105 @@
 namespace Database\Seeders;
 
 use App\Models\Appointment;
+use App\Models\Karyawan;
+use App\Models\Layanan;
+use App\Models\Pelanggan;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class AppointmentDummySeeder extends Seeder
 {
     public function run(): void
     {
-        $data = [
-            // ===== Hari ini =====
-            ['offset' => 0, 'waktu' => '10:00', 'nama' => 'Andini Putri', 'no_wa' => '+6281311100001', 'layanan' => [['Cuci Catok / Styling + Blow', 'Styling']]],
-            ['offset' => 0, 'waktu' => '10:00', 'nama' => 'Citra Lestari', 'no_wa' => '+6281311100003', 'layanan' => [['Potong Wanita', 'Potong'], ['Hairmask', 'Treatment']]],
-            ['offset' => 0, 'waktu' => '11:30', 'nama' => 'Bella Safira', 'no_wa' => '+6281311100002', 'layanan' => [['Smoothing', 'Treatment Rambut']]],
-            ['offset' => 0, 'waktu' => '13:00', 'nama' => 'Farhan Maulana', 'no_wa' => '+6281311100006', 'layanan' => [['Potong Pria + Cuci + Blow', 'Potong']]],
-            ['offset' => 0, 'waktu' => '14:30', 'nama' => 'Intan Permata', 'no_wa' => '+6281311100009', 'layanan' => [['Basic Color', 'Warna Rambut']]],
-            ['offset' => 0, 'waktu' => '16:00', 'nama' => 'Dinda Ayu', 'no_wa' => '+6281311100004', 'layanan' => [['Creambath', 'Treatment'], ['Potong Poni', 'Potong']]],
+        $pelanggans = Pelanggan::orderBy('id')->get();
+        $karyawans = Karyawan::orderBy('id')->get();
+        $layanans = Layanan::where('aktif', true)->orderBy('id')->get();
 
-            // ===== Besok =====
-            ['offset' => 1, 'waktu' => '09:30', 'nama' => 'Eka Ramadhani', 'no_wa' => '+6281311100005', 'layanan' => [['Fashion Color', 'Warna Rambut']]],
-            ['offset' => 1, 'waktu' => '13:30', 'nama' => 'Gilang Prakasa', 'no_wa' => '+6281311100007', 'layanan' => [['Keratin Premium', 'Treatment Rambut']]],
-            ['offset' => 1, 'waktu' => '15:00', 'nama' => 'Nadya Kusuma', 'no_wa' => '+6281311199991', 'layanan' => [['Highlight', 'Warna Rambut'], ['Cuci Catok / Styling + Blow', 'Styling']]],
-            ['offset' => 1, 'waktu' => '17:00', 'nama' => 'Hendra Wijaya', 'no_wa' => '+6281311100008', 'layanan' => [['Potong Pria', 'Potong']]],
+        if ($pelanggans->isEmpty() || $karyawans->isEmpty() || $layanans->isEmpty()) {
+            $this->command->error('Data pelanggan/karyawan/layanan belum ada. Jalankan TransaksiDummySeeder dulu.');
 
-            // ===== Lusa sampai +4 hari =====
-            ['offset' => 2, 'waktu' => '10:30', 'nama' => 'Joko Susilo', 'no_wa' => '+6281311100010', 'layanan' => [['Potong Pria + Cuci + Blow', 'Potong'], ['Hair Detox', 'Treatment']]],
-            ['offset' => 2, 'waktu' => '14:00', 'nama' => 'Salsabila Zahra', 'no_wa' => '+6281311199992', 'layanan' => [['Basic Color Two Apply', 'Warna Rambut']]],
-            ['offset' => 3, 'waktu' => '11:00', 'nama' => 'Rani Maharani', 'no_wa' => '+6281311199993', 'layanan' => [['Smoothing', 'Treatment Rambut'], ['Potong Wanita + Cuci + Blow', 'Potong']]],
-            ['offset' => 3, 'waktu' => '16:30', 'nama' => 'Bayu Nugroho', 'no_wa' => '+6281311199994', 'layanan' => [['Cold Perm', 'Treatment Rambut']]],
-            ['offset' => 4, 'waktu' => '09:00', 'nama' => 'Maya Anggraini', 'no_wa' => '+6281311199995', 'layanan' => [['Fashion Color', 'Warna Rambut']]],
-            ['offset' => 5, 'waktu' => '13:00', 'nama' => 'Tasya Amelia', 'no_wa' => '+6281311199996', 'layanan' => [['Keratin Premium', 'Treatment Rambut'], ['Potong Wanita', 'Potong']]],
-            ['offset' => 6, 'waktu' => '15:30', 'nama' => 'Dewi Sinta', 'no_wa' => '+6281311199997', 'layanan' => [['Cuci Catok / Styling + Blow', 'Styling']]],
-        ];
-
-        foreach ($data as $baris) {
-            $tanggal = now()->addDays($baris['offset'])->toDateString();
-
-            Appointment::updateOrCreate(
-                [
-                    'tanggal' => $tanggal,
-                    'waktu' => $baris['waktu'],
-                    'nama' => $baris['nama'],
-                ],
-                [
-                    'service' => array_column($baris['layanan'], 0),
-                    'kategori' => array_column($baris['layanan'], 1),
-                    'no_wa' => $baris['no_wa'],
-                ]
-            );
+            return;
         }
 
-        $this->command->info('Appointment dummy dibuat: '.count($data).' janji temu (hari ini s/d +6 hari).');
+        // Bersihkan sisa appointment lama yang tidak lengkap (warisan skema lama).
+        $orphan = Appointment::whereNull('id_pelanggan')->orWhereNull('id_karyawan')->delete();
+        if ($orphan > 0) {
+            $this->command->info("Menghapus {$orphan} appointment lama yang tidak lengkap.");
+        }
+
+        $awalBulan = Carbon::now()->startOfMonth();
+        $akhirBulan = Carbon::now()->endOfMonth();
+        $hariIni = Carbon::now()->startOfDay();
+
+        $jamSlot = [
+            '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+            '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+            '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00',
+        ];
+        $durasiPilihan = [30, 60, 90, 120, 150, 180];
+        $preferensiList = [
+            'Rambut tebal, minta stylist yang sabar.',
+            'Alergi pewarna amonia, pakai yang bebas amonia.',
+            'Suka hasil blow yang bervolume.',
+            'Rambut sensitif, hindari panas tinggi.',
+            'Konsultasi warna dulu sebelum diwarnai.',
+            'Bawa referensi foto dari Instagram.',
+            'Potongan pendek rapi untuk keperluan kerja.',
+            'Minta jadwal tidak terlalu lama.',
+            null,
+            null,
+        ];
+
+        $pelangganIdx = 0;
+        $karyawanIdx = 0;
+        $layananIdx = 0;
+        $total = 0;
+        $no = 0;
+
+        for ($tgl = $awalBulan->copy(); $tgl->lte($akhirBulan); $tgl->addDay()) {
+            // Salon tutup hari Minggu.
+            if ($tgl->isSunday()) {
+                continue;
+            }
+
+            $jumlahHariIni = $tgl->isSaturday() ? 3 : (($tgl->day % 3) + 1);
+
+            for ($i = 0; $i < $jumlahHariIni; $i++) {
+                $no++;
+                $jam = $jamSlot[($tgl->day * 3 + $i * 5) % count($jamSlot)];
+
+                $pelanggan = $pelanggans[$pelangganIdx++ % $pelanggans->count()];
+                $karyawan = $karyawans[$karyawanIdx++ % $karyawans->count()];
+
+                // 1 - 2 layanan per appointment.
+                $jumlahLayanan = ($no % 4 === 0) ? 2 : 1;
+                $layananTerpilih = [];
+                for ($j = 0; $j < $jumlahLayanan; $j++) {
+                    $layananTerpilih[] = $layanans[$layananIdx++ % $layanans->count()];
+                }
+
+                $status = $tgl->lt($hariIni) ? 'selesai' : 'terkonfirmasi';
+
+                $appointment = Appointment::updateOrCreate(
+                    [
+                        'tanggal' => $tgl->toDateString(),
+                        'jam_mulai' => $jam,
+                        'id_pelanggan' => $pelanggan->id,
+                        'id_karyawan' => $karyawan->id,
+                    ],
+                    [
+                        'durasi_menit' => $durasiPilihan[($no + $jumlahLayanan) % count($durasiPilihan)],
+                        'preferensi' => $preferensiList[$no % count($preferensiList)],
+                        'status' => $status,
+                    ]
+                );
+
+                $appointment->layanans()->sync(collect($layananTerpilih)->pluck('id')->unique()->all());
+
+                $total++;
+            }
+        }
+
+        $this->command->info('Appointment dummy dibuat: '.$total.' janji temu untuk bulan '.$awalBulan->format('F Y').'.');
     }
 }

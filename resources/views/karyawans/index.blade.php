@@ -55,6 +55,7 @@
                 </svg>
                 <input type="text" id="worker-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari nama atau no. telepon...">
             </div>
+            <button type="submit" class="btn-cari" id="btn-worker-search">Cari</button>
 
             <div class="worker-sort-box">
                 <span class="sort-prefix-label">Urutkan:</span>

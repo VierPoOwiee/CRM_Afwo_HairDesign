@@ -55,6 +55,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" id="cal-quick-search" placeholder="Cari appointment..." aria-label="Cari jadwal appointment">
                 </div>
+                <button type="button" class="btn-cari btn-cari--white" id="btn-cal-search">Cari</button>
 
                 <a href="{{ route('appointment.create') }}" class="btn btn-primary" id="btn-add-appointment">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -268,20 +269,77 @@
     // ----- Filters -----
     var searchEl = document.getElementById('cal-quick-search');
 
+    var btnHapusKlien = document.querySelector('.js-hapus-semua-klien');
+    var btnHapusStaf = document.querySelector('.js-hapus-semua-staf');
+
+    function boxesOf(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector));
+    }
+    function groupState(selector) {
+        var list = boxesOf(selector);
+        var checked = list.filter(function (b) { return b.checked; }).length;
+        return {
+            total: list.length,
+            checked: checked,
+            none: checked === 0,
+            all: list.length > 0 && checked === list.length,
+            partial: checked > 0 && checked < list.length,
+        };
+    }
+    function allUnchecked(selector) {
+        var list = boxesOf(selector);
+        return list.length > 0 && list.every(function (b) { return !b.checked; });
+    }
+
+    // Label tombol toggle: "Pilih Semua" saat belum ada yang dipilih,
+    // "Hapus Semua" saat sudah ada yang dipilih.
+    function updateToggleLabels() {
+        if (btnHapusKlien) btnHapusKlien.textContent = allUnchecked('.js-filter-klien') ? 'Pilih Semua' : 'Hapus Semua';
+        if (btnHapusStaf) btnHapusStaf.textContent = allUnchecked('.js-filter-staf') ? 'Pilih Semua' : 'Hapus Semua';
+    }
+
     function applyFilters() {
         var q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+
+        var cg = groupState('.js-filter-klien');
+        var sg = groupState('.js-filter-staf');
+
+        // Klien dan stylist difilter secara independen lalu digabung (union):
+        // appointment tampil jika klien-nya tercentang ATAU stylist-nya tercentang.
+        // Grup yang tercentang penuh dianggap tidak menyaring, supaya centang satu
+        // klien tetap fokus ke klien itu meski semua stylist tercentang.
+        var adaPenyaring = cg.partial || sg.partial;
+
         document.querySelectorAll('.apt-chip-item').forEach(function (chip) {
-            var show = true;
-            var ck = document.querySelector('.js-filter-klien[data-pelanggan-id="' + chip.dataset.pelangganId + '"]');
-            if (ck && !ck.checked) show = false;
-            var sk = document.querySelector('.js-filter-staf[data-karyawan-id="' + chip.dataset.karyawanId + '"]');
-            if (sk && !sk.checked) show = false;
+            var show;
+
+            if (!adaPenyaring) {
+                // Semua tercentang -> tampil semua; keduanya kosong -> tidak ada yang tampil.
+                show = !(cg.none && sg.none);
+            } else {
+                var clientOk = false;
+                var stylistOk = false;
+                if (cg.partial) {
+                    var ck = document.querySelector('.js-filter-klien[data-pelanggan-id="' + chip.dataset.pelangganId + '"]');
+                    clientOk = ck ? ck.checked : true;
+                }
+                if (sg.partial) {
+                    var sk = document.querySelector('.js-filter-staf[data-karyawan-id="' + chip.dataset.karyawanId + '"]');
+                    stylistOk = sk ? sk.checked : true;
+                }
+                show = clientOk || stylistOk;
+            }
+
+            // Status: hanya tampil kalau statusnya tercentang.
             var ss = document.querySelector('.js-filter-status[data-status="' + chip.dataset.status + '"]');
             if (ss && !ss.checked) show = false;
+
             if (show && q) show = (chip.dataset.search || '').indexOf(q) !== -1;
             chip.classList.toggle('hidden', !show);
         });
+
         refreshDayCells();
+        updateToggleLabels();
     }
 
     function refreshDayCells() {
@@ -299,20 +357,22 @@
     }
 
     if (searchEl) searchEl.addEventListener('input', applyFilters);
+    var btnCalSearch = document.getElementById('btn-cal-search');
+    if (btnCalSearch) btnCalSearch.addEventListener('click', applyFilters);
     document.addEventListener('change', function (e) {
         if (e.target.matches('.js-filter-klien, .js-filter-staf, .js-filter-status')) applyFilters();
     });
 
-    var btnHapusKlien = document.querySelector('.js-hapus-semua-klien');
-    if (btnHapusKlien) btnHapusKlien.addEventListener('click', function () {
-        document.querySelectorAll('.js-filter-klien').forEach(function (i) { i.checked = false; });
-        applyFilters();
-    });
-    var btnHapusStaf = document.querySelector('.js-hapus-semua-staf');
-    if (btnHapusStaf) btnHapusStaf.addEventListener('click', function () {
-        document.querySelectorAll('.js-filter-staf').forEach(function (i) { i.checked = false; });
-        applyFilters();
-    });
+    function bindToggle(btn, selector) {
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var pilihSemua = allUnchecked(selector);
+            boxesOf(selector).forEach(function (b) { b.checked = pilihSemua; });
+            applyFilters();
+        });
+    }
+    bindToggle(btnHapusKlien, '.js-filter-klien');
+    bindToggle(btnHapusStaf, '.js-filter-staf');
 
     // ----- Day Schedule Modal -----
     var dayModal = document.getElementById('day-schedule-modal');

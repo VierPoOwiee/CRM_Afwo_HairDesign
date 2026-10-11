@@ -222,4 +222,7 @@
 .produk-search-form {
   margin: 2px 0 18px;
   max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

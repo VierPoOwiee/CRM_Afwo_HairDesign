@@ -830,6 +830,39 @@ body.is-locked { overflow: hidden; }
 .btn-lg { min-height: 52px; padding: 0 var(--sp-5); font-size: var(--fs-16); border-radius: var(--radius-lg); }
 .btn-block { width: 100%; }
 
+/* Tombol "Cari" kuning di samping kolom pencarian */
+.btn-cari {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 18px;
+  background-color: #edb92f;
+  border: 1px solid #edb92f;
+  border-radius: var(--radius-md);
+  color: var(--ink, #3a3a3a);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.btn-cari:hover:not(:disabled) { background-color: #d9a71f; border-color: #d9a71f; }
+.btn-cari:active:not(:disabled) { transform: scale(0.98); }
+.btn-cari:focus-visible { outline-offset: 2px; }
+.btn-cari:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-cari svg { flex-shrink: 0; }
+
+.btn-cari--white {
+  background-color: #ffffff;
+  border-color: var(--border-color);
+  color: var(--text-1);
+}
+.btn-cari--white:hover:not(:disabled) { background-color: #f2f2f2; border-color: var(--border-color); }
+
 /* AKSI UTAMA HALAMAN: tombol aksi utama yang berdiri sendiri di antara
    judul halaman dan tab filter / daftar (mis. "Tambah Produk Baru"). */
 .page-primary-action {

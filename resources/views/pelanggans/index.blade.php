@@ -58,6 +58,7 @@
                     </svg>
                     <input type="text" id="client-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari nama, WhatsApp, IG, alamat...">
                 </div>
+                <button type="submit" class="btn-cari" id="btn-client-search">Cari</button>
 
                 <div class="client-sort-box">
                     <span class="sort-prefix-label">Urutkan:</span>

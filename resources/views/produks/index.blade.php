@@ -40,6 +40,7 @@
             <input type="search" id="produk-search" name="q" value="{{ $q }}" class="search-input"
                    placeholder="Cari nama produk atau merek..." autocomplete="off">
         </div>
+        <button type="submit" class="btn-cari" id="btn-produk-search">Cari</button>
     </form>
 
     <!-- Pill Filter Tabs -->

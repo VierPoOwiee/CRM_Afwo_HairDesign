@@ -141,6 +141,7 @@
                 </svg>
                 <input type="text" id="transaction-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari ID, nama pelanggan, layanan...">
             </div>
+            <button type="submit" class="btn-cari" id="btn-transaction-search">Cari</button>
 
             <div class="trans-date-filter-group">
                 <input type="date" id="filter-date-from" name="dari" value="{{ $dari ?? '' }}" class="date-input-inline js-auto-submit" title="Dari Tanggal">
@@ -291,9 +292,9 @@
                 <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Official Salon Payment Receipt</p>
             </div>
 
-            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 8px;">
-                <span style="color: var(--text-muted);">No. Transaksi:</span>
-                <strong style="font-family: monospace;">{{ $t->no_struk }}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.82rem; margin-bottom: 8px;">
+                <span style="color: var(--text-muted); flex-shrink: 0;">No. Transaksi:</span>
+                <strong style="font-family: monospace; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right;" title="{{ $t->no_struk }}">{{ $t->no_struk }}</strong>
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 8px;">
                 <span style="color: var(--text-muted);">Waktu:</span>

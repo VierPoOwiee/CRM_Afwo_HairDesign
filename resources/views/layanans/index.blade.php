@@ -36,6 +36,7 @@
             <input type="search" id="layanan-search" name="q" value="{{ $q }}" class="search-input"
                    placeholder="Cari nama layanan atau kategori..." autocomplete="off">
         </div>
+        <button type="submit" class="btn-cari" id="btn-layanan-search">Cari</button>
     </form>
 
     <!-- Pill Filter Tabs -->
