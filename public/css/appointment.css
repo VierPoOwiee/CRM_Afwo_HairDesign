@@ -1,0 +1,1527 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - APPOINTMENT CALENDAR STYLES (GOOGLE CALENDAR THEME)
+   ========================================================================== */
+
+.calendar-main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. TOP TOOLBAR (GOOGLE CALENDAR STYLE)
+   ========================================================================== */
+.calendar-top-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.toolbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-cal-today {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-cal-today:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.cal-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-arrow-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cal-arrow-btn:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.cal-period-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.toolbar-right-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Quick Search */
+.cal-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  color: var(--text-3);
+  width: 170px;
+}
+
+.cal-search-box input {
+  border: none;
+  background: transparent;
+  font-size: 0.84rem;
+  font-family: var(--font-sans);
+  color: var(--text-1);
+  outline: none;
+  width: 100%;
+}
+
+/* View Selector Dropdown */
+.cal-view-dropdown-wrapper {
+  position: relative;
+}
+
+.btn-cal-view-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-cal-view-select:hover {
+  background-color: var(--surface-2);
+}
+
+.cal-view-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background-color: var(--surface-contrast);
+  border: 1px solid var(--white-12);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  min-width: 190px;
+  box-shadow: 0 10px 25px var(--black-40);
+  z-index: 70;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-view-menu-panel.show {
+  display: flex;
+}
+
+.cal-view-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-on-contrast-2);
+  font-size: 0.84rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.cal-view-option:hover {
+  background-color: var(--white-08);
+  color: var(--text-on-contrast);
+}
+
+.cal-view-option.active {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  font-weight: 800;
+}
+
+.cal-view-option kbd {
+  font-size: 0.72rem;
+  color: var(--text-2);
+  background-color: var(--white-06);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.cal-view-option.active kbd {
+  color: var(--text-1);
+  background-color: var(--black-12);
+}
+
+.cal-menu-divider {
+  height: 1px;
+  background-color: var(--white-12);
+  margin: 4px 0;
+}
+
+.cal-menu-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: var(--text-2);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.cal-menu-check-item:hover {
+  color: var(--text-on-contrast);
+  background-color: var(--white-04);
+}
+
+.cal-menu-check-item input {
+  accent-color: var(--accent);
+}
+
+/* Tombol utama "Appointment" pada toolbar: satu baris, ikon + teks */
+#btn-new-appointment {
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-14);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   2. MAIN WORKSPACE SPLIT (SIDE PANEL / CALENDAR VIEWPORT)
+   ========================================================================== */
+.calendar-workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .calendar-main-layout {
+    height: calc(100vh - 44px);
+    overflow: hidden;
+  }
+
+  .calendar-workspace-grid {
+  grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+    height: calc(100% - 68px);
+    min-height: 0;
+  }
+
+  /* Side Filter Panel: Independent Scroll */
+  .calendar-side-panel {
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .calendar-side-panel::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .calendar-side-panel::-webkit-scrollbar-thumb {
+    background-color: var(--accent-soft);
+    border-radius: var(--radius-sm);
+  }
+
+  .calendar-viewport-card {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .calendar-viewport-card::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .calendar-viewport-card::-webkit-scrollbar-thumb {
+    background-color: var(--accent-soft);
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* Side Filter Panel (Base) */
+.calendar-side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Di bawah 1024px panel filter menjadi area tinggi dengan gulir sendiri
+   supaya kalender tetap terlihat tanpa perlu menggulir halaman. */
+@media (max-width: 1023px) {
+  .calendar-side-panel {
+    max-height: 42vh;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .calendar-side-panel::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .calendar-side-panel::-webkit-scrollbar-thumb {
+    background-color: var(--accent-soft);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-side-panel {
+    max-height: 38vh;
+  }
+}
+
+/* Filter Section Cards (Checkbox List) */
+.filter-section-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.filter-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-section-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.filter-count-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-3);
+  background-color: var(--surface-2);
+  padding: 2px 6px;
+  border-radius: var(--radius-md);
+}
+
+.btn-select-all {
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border-accent);
+  color: var(--text-link);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-select-all:hover {
+  background-color: var(--surface-contrast);
+  color: var(--text-on-contrast);
+}
+
+.client-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.client-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.client-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.client-check-row input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Status Legend Card */
+.status-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-confirmed { background-color: var(--accent); }
+.dot-pending { background-color: var(--gold-400); }
+.dot-done { background-color: var(--status-done-fg); }
+.dot-cancelled { background-color: var(--status-cancel-fg); }
+
+/* ==========================================================================
+   3. CALENDAR VIEWPORT (MONTH, WEEK, DAY, YEAR)
+   ========================================================================== */
+.calendar-viewport-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.calendar-view-panel {
+  display: none;
+  width: 100%;
+  min-width: 0;
+}
+
+.calendar-view-panel.active {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   3A. MONTH VIEW
+   -------------------------------------------------------------------------- */
+.month-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 0;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.month-cells-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* --- Desktop: bulan pas dengan tinggi viewport (tidak terpotong / tidak
+   menghasilkan sel raksasa dari aspect-ratio 1:1) --- */
+@media (min-width: 1024px) {
+  .calendar-view-panel.active {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .month-cells-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-auto-rows: minmax(72px, 1fr);
+  }
+
+  .month-day-cell {
+    aspect-ratio: auto;
+  }
+}
+
+/* Kotak tanggal bulanan WAJIB persegi (1:1) dan tidak boleh dipengaruhi isi.
+   Lebar diambil dari kolom grid, tinggi dari aspect-ratio. Tanpa min-height
+   dan tanpa grid-auto-rows supaya semua baris sama tinggi. */
+.month-day-cell {
+  background-color: var(--surface);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  aspect-ratio: 1 / 1;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.month-day-cell:hover {
+  background-color: var(--surface);
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px var(--gold-a18);
+  transform: translateY(-1px);
+}
+.month-day-cell.other-month {
+  background-color: var(--surface);
+  opacity: 0.45;
+}
+
+.month-day-cell.is-today {
+  border-color: var(--accent);
+  background-color: var(--accent-soft);
+}
+
+.cell-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex: 0 0 auto;
+  min-height: 22px;
+}
+
+.cell-day-num {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-1);
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.month-day-cell.is-today .cell-day-num {
+  background-color: var(--ink);
+  color: var(--text-on-ink);
+}
+
+/* Daftar event di dalam kotak: tinggi ditentukan kotak, bukan isi. */
+.cell-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  flex: 1 1 auto;
+  /* Tidak dipotong di sini: penanda "+N lagi" diposisikan absolut pada sel,
+     sedangkan pembatas halaman tetapDijaga oleh overflow:hidden di .month-day-cell. */
+  overflow: visible;
+}
+
+/* Appointment Chip in Month Cell - Read-Only on Main Grid per User Directive */
+.apt-chip-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 3px;
+  border-radius: var(--radius-xs);
+  font-size: 0.66rem;
+  line-height: 1.25;
+  height: 16px;
+  flex: 0 0 16px;
+  min-width: 0;
+  font-weight: 700;
+  pointer-events: none; /* User requirement: Must click date first */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 3px solid;
+  min-width: 0;
+}
+
+.apt-chip-item:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.95);
+}
+
+.apt-chip-time {
+  font-weight: 800;
+  font-size: 0.62rem;
+  flex: 0 0 auto;
+}
+
+/* Di kotak bulanan 1:1 lebar kolom hanya ~76px. Jam tidak terbaca berdampingan
+   dengan nama, jadi yang ditampilkan hanya nama pelanggan; jam tetap tersedia
+   lewat title chip dan penuh di modal detail hari. */
+.month-cells-grid .apt-chip-time {
+  display: none;
+}
+
+.apt-chip-client {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apt-more-badge {
+  /* Diposisikan absolut di sudut sel supaya tidak menambah tinggi daftar chip
+     (kotak sel 1:1 punya tinggi tetap, sehingga badge lama ikut terpotong). */
+  position: absolute;
+  right: 5px;
+  bottom: 3px;
+  z-index: 2;
+  padding: 0 3px;
+  border-radius: var(--radius-xs);
+  background-color: var(--surface);
+  font-size: 0.6rem;
+  line-height: 13px;
+  font-weight: 800;
+  color: var(--text-3);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.apt-more-badge:hover {
+  color: var(--text-1);
+}
+
+/* --------------------------------------------------------------------------
+   3B. WEEK VIEW (TIME GRID 08:00 - 20:00)
+   -------------------------------------------------------------------------- */
+.week-time-grid-container {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.week-grid-header-row {
+  display: grid;
+  grid-template-columns: 55px repeat(7, minmax(110px, 1fr));
+  gap: 1px;
+  background-color: var(--accent-soft);
+  border-bottom: 2px solid var(--border);
+  padding: 8px 0;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.week-head-cell {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.week-head-cell .head-day-num {
+  font-size: 1.1rem;
+  color: var(--text-1);
+}
+
+.week-head-cell.is-today .head-day-num {
+  color: var(--accent);
+}
+
+.week-time-grid-body {
+  display: grid;
+  grid-template-columns: 55px repeat(7, minmax(110px, 1fr));
+  gap: 1px;
+  background-color: var(--border);
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.time-axis-col {
+  background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.time-axis-slot {
+  height: 52px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border-accent);
+}
+
+.week-day-col {
+  background-color: var(--surface);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.week-hour-slot {
+  height: 52px;
+  border-bottom: 1px solid var(--border-accent);
+}
+
+/* Appointment Block in Week View */
+.week-apt-block {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  border-left: 3.5px solid;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 1px 4px var(--black-08);
+  transition: transform 0.12s ease;
+  z-index: 5;
+}
+
+.week-apt-block:hover {
+  transform: scale(1.02);
+  z-index: 8;
+}
+
+.week-apt-time {
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.week-apt-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.week-apt-stylist {
+  font-size: 0.68rem;
+  opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   3C. DAY VIEW (HOURLY TIMELINE)
+   -------------------------------------------------------------------------- */
+.day-time-grid-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 540px;
+  overflow-y: auto;
+}
+
+.day-timeline-row {
+  display: grid;
+  grid-template-columns: 65px 1fr;
+  border-bottom: 1px solid var(--border-accent);
+  min-height: 60px;
+}
+
+.day-time-label {
+  padding: 8px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-align: right;
+  border-right: 1px solid var(--border-accent);
+}
+
+.day-events-slot {
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.day-apt-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.day-apt-card:hover {
+  transform: translateX(3px);
+}
+
+.day-apt-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.day-apt-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day-apt-client {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.day-apt-service {
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
+.day-apt-stylist-badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.day-apt-time-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+   3D. YEAR VIEW (12 MINI MONTHS GRID SESUAI GAMBAR 1)
+   -------------------------------------------------------------------------- */
+.year-months-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .year-months-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .year-months-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .year-months-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.year-month-box {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.year-month-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.year-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+  font-size: 0.68rem;
+}
+
+.year-mini-day-label {
+  font-weight: 700;
+  color: var(--text-3);
+  padding-bottom: 2px;
+}
+
+.year-mini-cell {
+  padding: 3px 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.year-mini-cell:hover {
+  background-color: var(--accent-soft);
+}
+
+.year-mini-cell.other-month {
+  color: var(--text-link);
+}
+
+.year-mini-cell.has-event {
+  font-weight: 800;
+}
+
+.year-mini-cell.has-event::after {
+  content: '';
+  display: block;
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  margin: 1px auto 0 auto;
+}
+
+/* ==========================================================================
+   4. APPOINTMENT DETAIL POPOVER MODAL
+   ========================================================================== */
+.appointment-popover-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.appointment-popover-modal.show {
+  display: flex;
+}
+
+.popover-content {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: 0 16px 40px var(--black-24);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--border);
+}
+
+.popover-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.popover-client-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.popover-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--accent-soft);
+  border: 1.5px solid var(--border);
+  color: var(--text-link);
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popover-client-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.popover-service-name {
+  font-size: 0.82rem;
+  color: var(--text-2);
+}
+
+.popover-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.popover-close-btn:hover {
+  color: var(--text-1);
+}
+
+.popover-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pop-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+.pop-info-row svg {
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.pop-notes-box {
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+/* Aksi popover: destruktif dulu, Edit, lalu utama (Selesaikan) paling akhir */
+.popover-footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.popover-footer .btn {
+  white-space: nowrap;
+}
+
+/* <480px: tiga tombol jadi dua kolom, utama tetap di kolom kanan baris terakhir */
+@media (max-width: 479px) {
+  .popover-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .popover-footer .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+  .popover-footer .btn-primary { grid-column: 2; }
+}
+
+@media (max-width: 359px) {
+  .popover-footer { grid-template-columns: 1fr; }
+  .popover-footer .btn-primary { grid-column: 1; }
+}
+
+/* ==========================================================================
+   4B. GOOGLE CALENDAR STYLE DAILY SCHEDULE MODAL (HOURLY TIMELINE POPUP)
+   ========================================================================== */
+.day-schedule-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent-soft);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: fadeInModal 0.18s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.day-schedule-dialog {
+  background-color: var(--surface);
+  color: var(--text-1);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  box-shadow: 0 20px 45px var(--black-16);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.day-schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+.day-schedule-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.day-schedule-date-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-soft);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.day-schedule-dow {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-link);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.day-schedule-dom {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--text-link);
+  line-height: 1;
+}
+
+.day-schedule-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day-schedule-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.day-schedule-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--text-2);
+}
+
+.day-schedule-count {
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  font-weight: 700;
+  border: 1px solid var(--border-accent);
+}
+
+.day-schedule-tz {
+  color: var(--text-2);
+}
+
+.day-schedule-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-schedule-add-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-schedule-add-action:hover {
+  background-color: var(--surface-contrast);
+}
+
+.btn-close-schedule {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-close-schedule:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+/* Hourly Timeline Grid */
+.day-schedule-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: var(--surface);
+}
+
+.gcal-timeline-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.gcal-hour-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  min-height: 62px;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.gcal-hour-time {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-2);
+  padding-top: 4px;
+  user-select: none;
+}
+
+.gcal-hour-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0 6px 12px;
+  border-left: 1px solid var(--border);
+  transition: background-color 0.12s ease;
+}
+
+.gcal-hour-slot:hover {
+  background-color: var(--gold-a04);
+}
+
+/* Interactive Event Card inside Daily Time Grid */
+.gcal-event-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid var(--border);
+  border-left: 4px solid;
+  box-shadow: 0 2px 6px var(--black-04);
+  background-color: var(--surface);
+}
+
+.gcal-event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px var(--black-08);
+  border-color: var(--border);
+}
+
+.gcal-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gcal-avatar-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.gcal-meta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gcal-client-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.gcal-service-name {
+  font-size: 0.8rem;
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+.gcal-stylist-tag {
+  font-size: 0.72rem;
+  color: var(--text-2);
+}
+
+.gcal-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.gcal-time-badge {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text-link);
+  background-color: var(--accent-soft);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-accent);
+}
+
+.gcal-status-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+}
+
+/* Terkonfirmasi: emas lembut + teks charcoal */
+.gcal-status-pill.confirmed {
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress-fg);
+}
+
+/* Menunggu: sama dengan terkonfirmasi (keduanya status aktif) */
+.gcal-status-pill.pending {
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress-fg);
+}
+
+/* Selesai: hijau lembut */
+.gcal-status-pill.done {
+  background-color: var(--status-done-bg);
+  color: var(--status-done-fg);
+}
+
+.gcal-empty-notice {
+  text-align: center;
+  padding: 28px 16px;
+  color: var(--text-2);
+  font-size: 0.84rem;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  margin: 12px 0;
+}
+
+.day-schedule-footer {
+  padding: 10px 20px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.schedule-hint-text {
+  font-size: 0.75rem;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   5. MOBILE RESPONSIVENESS (<= 640px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .calendar-top-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 14px;
+  }
+  .toolbar-left-group {
+    justify-content: space-between;
+  }
+  .cal-period-heading {
+    font-size: 1.15rem;
+  }
+  .toolbar-right-group {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .cal-search-box {
+    width: 100%;
+    order: 3;
+  }
+  .btn-cal-view-select {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  #btn-new-appointment {
+    padding: 0 var(--sp-3);
+    font-size: var(--fs-13);
+  }
+  .month-day-cell {
+    padding: 3px 3px;
+    gap: 2px;
+  }
+  .apt-chip-item {
+    display: none;
+  }
+  .apt-more-badge {
+    display: none;
+  }
+  /* Mobile: penanda appointment berupa titik emas, maksimal 3, tanpa chip teks. */
+  .cell-dot-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+  .cell-dot {
+    width: 4px;
+    height: 4px;
+    flex: 0 0 4px;
+    border-radius: 50%;
+    background-color: var(--accent);
+  }
+  .cell-day-num {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+    font-size: 0.75rem;
+  }
+  .month-days-header {
+    font-size: 0.68rem;
+  }
+}
+
+/* Desktop/tablet: baris titik hanya muncul di mode titik (<640px). */
+.cell-dot-row {
+  display: none;
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Tablet: hanya 1 chip per kotak. */
+  .cell-event-list .apt-chip-item:nth-of-type(n + 2) {
+    display: none;
+  }
+}

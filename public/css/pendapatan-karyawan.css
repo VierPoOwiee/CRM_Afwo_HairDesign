@@ -1,0 +1,471 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - PENDAPATAN BULANAN KARYAWAN STYLES
+   ========================================================================== */
+
+.income-header-row {
+  margin-bottom: 20px;
+}
+
+.income-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.income-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.income-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+
+/* Filter Bar Card */
+.income-filter-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.income-filter-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.filter-month-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.month-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.month-select-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+}
+
+.month-select-field {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  color: var(--text-1);
+  cursor: pointer;
+}
+
+.btn-show-dark {
+  background-color: var(--ink);
+  color: var(--text-on-ink);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 9px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-show-dark:hover {
+  background-color: var(--surface-contrast);
+}
+
+/* Gold Summary Banner Card */
+.income-summary-banner {
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-soft) 100%);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: 0 2px 10px var(--gold-a04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.income-banner-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-link);
+}
+
+.income-banner-amount {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--text-link);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.income-banner-subtext {
+  font-size: 0.8rem;
+  color: var(--text-link);
+  font-weight: 600;
+}
+
+/* Table Card */
+.income-table-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.income-detail-table {
+  width: 100%;
+  min-width: 950px;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.income-detail-table th {
+  padding: 14px 16px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  background-color: var(--accent-soft);
+  white-space: nowrap;
+}
+
+.income-detail-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.income-detail-table tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.income-tfoot-row th {
+  padding: 16px;
+  background-color: var(--accent-soft);
+  border-top: 2px solid var(--border);
+  font-weight: 900;
+  color: var(--text-1);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.scheme-badge-daily {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  border: 1px solid var(--border-accent);
+  white-space: nowrap;
+}
+
+.scheme-badge-service {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent);
+  white-space: nowrap;
+}
+
+.btn-slip-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-1);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-slip-detail:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.income-table-footer-legend {
+  padding: 16px 20px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border-accent);
+}
+
+.legend-text {
+  font-size: 0.76rem;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Slip Modal Dialog */
+.slip-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.slip-modal-dialog {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 20px 40px var(--black-24);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh;
+}
+
+.slip-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.slip-modal-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btn-close-modal:hover {
+  color: var(--text-1);
+}
+
+.slip-paper-content {
+  padding: 24px 28px;
+  overflow-y: auto;
+  background-color: var(--surface);
+}
+
+.slip-brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.slip-brand-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+}
+
+.slip-doc-type {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-link);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.slip-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  font-size: 0.84rem;
+  margin-bottom: 16px;
+}
+
+.slip-meta-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.slip-meta-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.slip-meta-val {
+  color: var(--text-1);
+}
+
+.slip-divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 16px 0;
+}
+
+.slip-breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.slip-breakdown-table th {
+  padding: 8px 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  border-bottom: 2px solid var(--border);
+  text-transform: uppercase;
+}
+
+.slip-breakdown-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+}
+
+.slip-total-row th {
+  padding: 14px 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--text-link);
+  border-top: 2px solid var(--border);
+  border-bottom: none;
+}
+
+.slip-signature-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.slip-sig-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160px;
+  text-align: center;
+}
+
+.sig-space {
+  height: 50px;
+}
+
+/* Aksi slip: Tutup (sekunder) selalu lebih dulu, Cetak (utama) paling akhir */
+.slip-modal-actions {
+  padding: 14px 20px;
+  background-color: var(--accent-soft);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+.slip-modal-actions .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .slip-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .slip-modal-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+}
+
+@media (max-width: 359px) {
+  .slip-modal-actions { grid-template-columns: 1fr; }
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .slip-modal-overlay,
+  .slip-modal-dialog,
+  .slip-paper-content,
+  .slip-paper-content * {
+    visibility: visible;
+  }
+  .slip-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    padding: 0;
+  }
+  .slip-modal-dialog {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

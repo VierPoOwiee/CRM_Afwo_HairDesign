@@ -1,0 +1,900 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - TRANSACTION HISTORY STYLES (MATCHING REFERENCE 1)
+   ========================================================================== */
+
+/* Page Header Row */
+.trans-page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.trans-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trans-page-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.trans-page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+
+/* KPI Sparkline Grid (Sesuai Referensi Gambar 1) */
+.trans-kpi-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 1024px) {
+  .trans-kpi-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+.trans-kpi-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.trans-kpi-card.featured-revenue-card {
+  border-color: var(--border-accent);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--surface) 100%);
+}
+
+.trans-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trans-kpi-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.trans-kpi-num {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+
+.trans-kpi-card.featured-revenue-card .trans-kpi-num {
+  color: var(--text-link);
+}
+
+.trans-kpi-chart {
+  width: 75px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.sparkline-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Toolbar Card (Tabs + Search + Dates)
+   - Desktop (>=900px): tab di kiri, seluruh kontrol filter dalam SATU BARIS.
+   - Tablet (641-899px): tetap satu baris, kotak pencarian boleh menyempit.
+   - Mobile (<=640px): kontrol ditumpuk penuh lebar agar tidak terpotong. */
+.trans-toolbar-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (min-width: 900px) {
+  .trans-toolbar-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.trans-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.trans-filter-tab {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-2);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.trans-filter-tab:hover {
+  background-color: var(--surface-2);
+  color: var(--text-1);
+}
+
+.trans-filter-tab.active {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.trans-search-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.trans-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  width: 100%;
+  max-width: 260px;
+  min-width: 0;
+}
+
+.trans-search-box .search-input {
+  min-width: 0;
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-1);
+}
+
+.trans-search-box .search-icon {
+  flex: 0 0 auto;
+  color: var(--text-3);
+}
+
+.trans-date-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.date-input-inline {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-family: var(--font-sans);
+  color: var(--text-1);
+  background-color: var(--surface);
+  outline: none;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.date-separator {
+  color: var(--text-3);
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+/* --- Desktop: seluruh kontrol dalam satu baris --- */
+@media (min-width: 900px) {
+  .trans-search-filter-controls {
+    flex-wrap: nowrap;
+    flex: 0 1 auto;
+    justify-content: flex-end;
+  }
+
+  .trans-search-box {
+    flex: 1 1 200px;
+    max-width: 320px;
+  }
+
+  .trans-date-filter-group {
+    flex: 0 0 auto;
+  }
+}
+
+/* --- Tablet: satu baris tetap, kotak pencarian menyempit --- */
+@media (min-width: 641px) and (max-width: 899px) {
+  .trans-search-filter-controls {
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .trans-search-box {
+    flex: 1 1 140px;
+    max-width: none;
+    min-width: 120px;
+  }
+
+  .trans-date-filter-group {
+    flex: 0 1 auto;
+  }
+
+  .date-input-inline {
+    flex: 1 1 auto;
+    width: 120px;
+  }
+}
+
+/* --- Mobile: kontrol ditumpuk, setiap kontrol penuh lebar --- */
+@media (max-width: 640px) {
+  .trans-toolbar-card {
+    padding: 12px;
+  }
+
+  .trans-search-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .trans-search-box {
+    max-width: none;
+  }
+
+  .trans-date-filter-group {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .date-input-inline {
+    flex: 1 1 130px;
+    width: auto;
+  }
+
+  .trans-date-filter-group .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* Daily Groups Container */
+.trans-daily-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.daily-group-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.daily-group-header {
+  background-color: var(--accent-soft);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.daily-group-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-group-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-link);
+  background-color: var(--accent-soft);
+  padding: 2px 10px;
+  border-radius: var(--radius-md);
+}
+
+/* Detail Table inside Group Card (Sesuai Referensi Gambar 1) */
+.daily-trans-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.daily-trans-table th {
+  padding: 10px 14px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+  text-align: left;
+}
+
+.daily-trans-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+  vertical-align: middle;
+}
+
+.daily-trans-table tr:last-child td {
+  border-bottom: none;
+}
+
+.daily-trans-table tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.trans-order-id-link {
+  font-weight: 800;
+  color: var(--text-link);
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 0.88rem;
+}
+
+.trans-order-id-link:hover {
+  color: var(--text-1);
+}
+
+.trans-client-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.trans-client-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.trans-client-name {
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.trans-client-phone {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.trans-service-title {
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.trans-worker-tag {
+  font-size: 0.75rem;
+  color: var(--text-2);
+}
+
+.trans-amount-cell {
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.payment-method-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  color: var(--text-2);
+}
+
+.badge-qris {
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+}
+
+.badge-cash {
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+}
+
+.badge-transfer {
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+}
+
+/* Status Badges */
+.status-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+}
+
+/* Selesai (Paid): hijau lembut + teks hijau tua */
+.status-paid {
+  background-color: var(--status-done-bg);
+  color: var(--status-done-fg);
+  border: 1px solid var(--status-done-border);
+}
+
+/* Menunggu (Pending): emas lembut + teks charcoal */
+.status-pending {
+  background-color: var(--status-progress-bg);
+  color: var(--status-progress-fg);
+  border: 1px solid var(--status-progress-border);
+}
+
+/* Dibatalkan: outline abu transparan (bukan emas) */
+.status-cancelled {
+  background-color: var(--status-cancel-bg);
+  color: var(--status-cancel-fg);
+  border: 1px solid var(--status-cancel-border);
+}
+
+.btn-detail-receipt {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-detail-receipt:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+/* Tombol aksi di dalam modal detail struk (ikon saja, ukuran seragam) */
+.btn-modal-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text-1);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-modal-action svg { flex-shrink: 0; }
+
+/* Sejajarkan tombol tutup di header modal dengan tombol aksi di footer */
+#trans-detail-modal .btn-close-modal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text-2);
+}
+
+#trans-detail-modal .btn-close-modal:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+
+.btn-modal-action:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.btn-receipt-edit:hover {
+  color: var(--accent);
+  border-color: var(--border-accent);
+}
+
+.btn-receipt-delete {
+  color: var(--status-danger-fg);
+  border-color: var(--status-danger-bg);
+}
+
+.btn-receipt-delete:hover {
+  background-color: var(--status-danger-bg);
+  border-color: var(--status-danger-fg);
+  color: var(--status-danger-fg);
+}
+
+.btn-receipt-print {
+  background-color: var(--ink);
+  border-color: var(--ink);
+  color: var(--text-on-ink);
+}
+
+.btn-receipt-print:hover {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+  color: var(--text-on-ink);
+}
+
+.btn-receipt-close {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text-2);
+}
+
+.btn-receipt-close:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+
+.modal-footer-row #form-hapus-transaksi { display: inline-flex; }
+
+/* Receipt Modal Styles */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal-dialog-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px var(--black-24);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.modal-header-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-3);
+}
+
+.modal-footer-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.modal-footer-row .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .modal-footer-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .modal-footer-row .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+}
+
+@media (max-width: 359px) {
+  .modal-footer-row { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 640px) {}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
+.table-responsive-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding-bottom: 2px;
+  box-sizing: border-box;
+}
+
+.btn-back-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-back-ghost:hover {
+  background-color: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.page-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.detail-section-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.detail-section-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+.detail-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-def-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.detail-def-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+.detail-def {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-def-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.detail-def-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.detail-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.detail-items-table th {
+  padding: 8px 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-items-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+.detail-items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.detail-item-name {
+  font-weight: 700;
+}
+
+.detail-item-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.usage-sub-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin: 2px 0 2px 10px;
+}
+
+.detail-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 10px 0;
+  border-top: 1px dashed var(--border-color);
+  margin-top: 10px;
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--text-link);
+}
+
+.komisi-entry {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.komisi-entry:last-child {
+  margin-bottom: 0;
+}
+
+.komisi-entry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.komisi-entry-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.komisi-entry-scheme {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.komisi-entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.komisi-entry-form {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+.komisi-item-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.82rem;
+  padding: 4px 0;
+}
+
+.komisi-item-line + .komisi-item-line {
+  border-top: 1px dashed var(--border);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+/* Group harian di halaman laporan memakai wrapper pill + total omset
+   (selain judul dan badge yang sudah ada di atas). */
+.daily-summary-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.daily-total-amount {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-link);
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-trans-table .trans-time-val {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}

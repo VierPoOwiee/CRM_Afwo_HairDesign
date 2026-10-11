@@ -1,0 +1,118 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - DATA PELANGGAN AKTIF (GAYA KHUSUS HALAMAN INI)
+   Base design mengikuti laporan.css & riwayat.css
+   ========================================================================== */
+
+/* Featured (gold) KPI card */
+.report-stat-mini-card.is-featured {
+  border-color: var(--gold-200);
+  background: linear-gradient(180deg, var(--accent-soft) 0%, var(--surface) 100%);
+}
+
+.report-stat-mini-card.is-featured .mini-stat-val {
+  color: var(--text-link);
+}
+
+.mini-stat-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Link nama pelanggan */
+.client-name-link {
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.client-name-link:hover {
+  color: var(--text-link);
+}
+
+/* Badge segmentasi (VIP / Loyal / Reguler) */
+.segment-pill {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 1px 8px;
+  border-radius: var(--radius-md);
+}
+
+.segment-pill-vip {
+  background-color: var(--gold-100);
+  color: var(--text-link);
+}
+
+.segment-pill-loyal {
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
+}
+
+.segment-pill-reguler {
+  background-color: var(--surface-2);
+  color: var(--status-progress-fg);
+}
+
+/* Chip jumlah kunjungan */
+.visit-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-2);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+/* Nominal belanja */
+.client-spend-cell {
+  color: var(--text-link);
+}
+
+/* Baris total tabel */
+.client-tfoot-row th {
+  padding: 14px;
+  background-color: var(--surface-2);
+  border-top: 2px solid var(--border-color);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* Tombol aksi di baris tabel */
+.btn-table-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-table-action:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.btn-table-action-back {
+  align-self: flex-start;
+  background-color: var(--surface);
+}

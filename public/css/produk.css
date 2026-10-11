@@ -1,0 +1,206 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - PRODUCT MANAGEMENT STYLES (RESPONSIVE)
+   ========================================================================== */
+
+/* Header & Intro
+   Jarak ke tombol "Tambah" sekarang datang dari .page-primary-action
+   (margin-top 16px), jadi blok ini tidak lagi memberi margin bawah sendiri. */
+.products-intro-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.products-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.products-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+/* Tombol "Tambah Produk": warna normal & hover ditukar */
+#add-product-btn.btn-primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#add-product-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #add-product-btn.btn-primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #add-product-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
+/* Category Tags */
+.product-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.product-tag.retail {
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+}
+
+.product-tag.produk-layanan {
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+}
+
+/* Product Card Grid */
+.products-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.product-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-card-name {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-top: 2px;
+}
+
+.product-card-desc {
+  font-size: 0.84rem;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+
+.product-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.product-info-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.product-price-val {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+/* Tablet & Desktop Layout */
+@media (min-width: 640px) {
+  .products-title {
+    font-size: 1.95rem;
+  }
+  .products-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+  }
+}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
+.product-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.product-status-pill.status-active {
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
+}
+
+.product-status-pill.status-inactive {
+  background-color: var(--surface-2);
+  color: var(--text-3);
+}
+
+.product-stock-low {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: var(--radius-md);
+  background-color: var(--gold-100);
+  color: var(--text-link);
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stock-low-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  margin-bottom: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gold-200);
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.stock-low-dot {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--gold-500);
+}

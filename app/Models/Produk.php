@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Produk extends Model
+{
+    use HasFactory;
+
+    public const STOK_MENIPIS = 10;
+
+    /** Tipe produk yang dipakai staf saat layanan (bukan dijual per pcs). */
+    public const KATEGORI_LAYANAN = [
+        'Color',
+        'Bleaching',
+        'Oxidant',
+        'Keratin',
+        'Smoothing',
+        'Hairtreatment',
+        'Creambath',
+        'Serum',
+        'Repair',
+        'Keriting',
+        'Masker',
+    ];
+
+    /** Daftar tipe produk yang bisa dipakai saat layanan. */
+    public static function kategoriLayanan(): array
+    {
+        return self::KATEGORI_LAYANAN;
+    }
+
+    protected $table = 'produk';
+
+    protected $fillable = [
+        'nama_produk',
+        'merek',
+        'kategori_produk',
+        'satuan',
+        'harga_per_satuan',
+        'harga_modal_rata_rata',
+        'stok',
+        'aktif',
+    ];
+
+    protected $casts = [
+        'harga_per_satuan' => 'decimal:2',
+        'harga_modal_rata_rata' => 'decimal:2',
+        'stok' => 'integer',
+        'aktif' => 'boolean',
+    ];
+
+    public function layanan(): BelongsToMany
+    {
+        return $this->belongsToMany(Layanan::class, 'layanan_produk', 'id_produk', 'id_layanan');
+    }
+
+    public function pembelianProduk(): HasMany
+    {
+        return $this->hasMany(PembelianProduk::class, 'produk_id');
+    }
+
+    public function riwayatStok(): HasMany
+    {
+        return $this->hasMany(RiwayatStokProduk::class, 'produk_id');
+    }
+
+    public function labelKategori(): string
+    {
+        if ($this->kategori_produk === 'dijual') {
+            return 'Dijual Per PCS';
+        }
+
+        if (in_array($this->kategori_produk, self::KATEGORI_LAYANAN, true)) {
+            return $this->kategori_produk;
+        }
+
+        return 'Dipakai Layanan';
+    }
+
+    public function labelHarga(): string
+    {
+        $harga = 'Rp'.number_format((float) $this->harga_per_satuan, 0, ',', '.');
+
+        if (str_starts_with($this->satuan, '/')) {
+            return $harga.$this->satuan;
+        }
+
+        return $harga.'/'.$this->satuan;
+    }
+
+    public function stokMenipis(): bool
+    {
+        return $this->stok <= self::STOK_MENIPIS;
+    }
+
+    public function labelModal(): string
+    {
+        return 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.');
+    }
+
+    /**
+     * Label modal per satuan, mis. "Rp50.000/pcs" atau "Rp25.000/10ml".
+     */
+    public function labelModalPerSatuan(): string
+    {
+        $harga = 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.');
+
+        if (str_starts_with($this->satuan, '/')) {
+            return $harga.$this->satuan;
+        }
+
+        return $harga.'/'.$this->satuan;
+    }
+}

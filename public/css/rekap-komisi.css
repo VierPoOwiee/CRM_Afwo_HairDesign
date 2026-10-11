@@ -1,0 +1,748 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - REKAP KOMISI & SLIP PENDAPATAN STYLES
+   ========================================================================== */
+
+.rekap-header-row {
+  margin-bottom: 20px;
+}
+
+.rekap-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rekap-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.rekap-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-2);
+}
+
+/* Filter Card */
+.rekap-filter-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.rekap-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+@media (min-width: 768px) {
+  .rekap-filter-grid {
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+  }
+}
+
+.filter-col-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filter-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  transition: border-color 0.15s ease;
+}
+
+.filter-input-wrapper:focus-within {
+  border-color: var(--ink);
+}
+
+.filter-select-field,
+.filter-date-field {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  color: var(--text-1);
+}
+
+.filter-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-filter-dark {
+  background-color: var(--ink);
+  color: var(--text-on-ink);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 9px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-filter-dark:hover {
+  background-color: var(--surface-contrast);
+}
+
+/* .btn-filter-reset memakai komponen global .btn.btn--secondary */
+
+/* Gold Summary Banner Card */
+.rekap-summary-banner {
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--accent-soft) 100%);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: 0 2px 10px var(--gold-a04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.summary-banner-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-link);
+  text-transform: capitalize;
+}
+
+.summary-banner-amount {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--text-link);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.summary-banner-period {
+  font-size: 0.78rem;
+  color: var(--text-link);
+  font-weight: 600;
+}
+
+/* Pendapatan Karyawan Table Card */
+.rekap-table-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.rekap-card-header {
+  padding: 18px 22px 14px 22px;
+  border-bottom: 1px solid var(--border-accent);
+}
+
+.rekap-card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.rekap-card-desc {
+  font-size: 0.84rem;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.inline-link-gold {
+  color: var(--text-link);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.rekap-struk-link {
+  color: var(--text-link);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.rekap-struk-link:hover {
+  color: var(--gold-700);
+}
+
+.rekap-commission-table {
+  width: 100%;
+  min-width: 820px;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.rekap-commission-table th {
+  padding: 14px 18px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  background-color: var(--accent-soft);
+  white-space: nowrap;
+}
+
+.rekap-commission-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.rekap-commission-table tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.scheme-badge-daily {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  border: 1px solid var(--border-accent);
+}
+
+.scheme-badge-service {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent);
+}
+
+.btn-view-slip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-view-slip:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.rekap-empty-card {
+  padding: 36px 20px;
+  text-align: center;
+  background-color: var(--surface);
+}
+
+.rekap-empty-text {
+  font-size: 0.88rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* Slip Modal Dialog */
+.slip-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.slip-modal-dialog {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 20px 40px var(--black-24);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh;
+}
+
+.slip-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.slip-modal-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btn-close-modal:hover {
+  color: var(--text-1);
+}
+
+.slip-paper-content {
+  padding: 24px 28px;
+  overflow-y: auto;
+  background-color: var(--surface);
+}
+
+.slip-brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.slip-brand-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+}
+
+.slip-doc-type {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-link);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.slip-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  font-size: 0.84rem;
+  margin-bottom: 16px;
+}
+
+.slip-meta-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.slip-meta-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.slip-meta-val {
+  color: var(--text-1);
+}
+
+.slip-divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 16px 0;
+}
+
+.slip-breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.slip-breakdown-table th {
+  padding: 8px 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  border-bottom: 2px solid var(--border);
+  text-transform: uppercase;
+}
+
+.slip-breakdown-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+}
+
+.slip-total-row th {
+  padding: 14px 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--text-link);
+  border-top: 2px solid var(--border);
+  border-bottom: none;
+}
+
+.slip-signature-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+
+.slip-sig-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 160px;
+  text-align: center;
+}
+
+.sig-space {
+  height: 50px;
+}
+
+/* Aksi slip: Tutup (sekunder) selalu lebih dulu, Cetak (utama) paling akhir */
+.slip-modal-actions {
+  padding: 14px 20px;
+  background-color: var(--accent-soft);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+.slip-modal-actions .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .slip-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+  }
+  .slip-modal-actions .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+}
+
+@media (max-width: 359px) {
+  .slip-modal-actions { grid-template-columns: 1fr; }
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .slip-modal-overlay,
+  .slip-modal-dialog,
+  .slip-paper-content,
+  .slip-paper-content * {
+    visibility: visible;
+  }
+  .slip-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none;
+    padding: 0;
+  }
+  .slip-modal-dialog {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+.rekap-detail-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.rekap-detail-header {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rekap-detail-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.rekap-detail-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.rekap-detail-total {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--text-link);
+  white-space: nowrap;
+}
+.rekap-hitung-ulang {
+  padding: 12px 22px;
+  background-color: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.rekap-hitung-ulang label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-bottom: 4px;
+}
+.rekap-hitung-input {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background-color: var(--surface);
+  outline: none;
+}
+.rekap-hitung-input:focus {
+  border-color: var(--dark-solid);
+}
+.btn-hitung-ulang {
+  background-color: var(--n-900);
+  color: var(--n-50);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-hitung-ulang:hover {
+  background-color: var(--n-800);
+}
+.rekap-detail-empty {
+  padding: 18px 22px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+/* Baris rekap yang bisa diklik untuk membuka rinciannya. */
+.rekap-staf-row {
+  cursor: pointer;
+}
+
+.rekap-staf-row:hover td {
+  background-color: var(--surface-2);
+}
+
+.rekap-detail-stack {
+  margin: -6px 0 18px;
+}
+
+.rekap-detail-stack .rekap-detail-card {
+  margin-bottom: 12px;
+}
+
+.rekap-chevron {
+  transition: transform 0.15s ease;
+  display: inline-flex;
+  color: var(--text-3);
+}
+.rekap-detail-open .rekap-chevron {
+  transform: rotate(180deg);
+}
+.slip-paper-document {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+  margin-bottom: 30px;
+}
+.slip-section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 20px 0 2px;
+}
+.slip-section-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.slip-gaji-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin: 16px 0 4px;
+}
+.slip-gaji-label {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.slip-gaji-note {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.slip-gaji-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.slip-total-box {
+  border-top: 2px solid var(--border);
+  margin-top: 18px;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.slip-amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.slip-amount-row b {
+  color: var(--text-primary);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.slip-grand-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, var(--gold-50) 0%, var(--accent-soft-2) 100%);
+  border: 1px solid var(--gold-200);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-top: 12px;
+}
+.slip-grand-total span {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-link);
+}
+.slip-grand-total b {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--text-link);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.btn-slip-action {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--gold-50);
+  color: var(--text-link);
+  border: 1px solid var(--gold-200);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.btn-slip-action:hover {
+  background-color: var(--gold-100);
+}
+.page-break {
+  page-break-before: always;
+}
+.app-sidebar,
+  .app-topbar,
+  .report-toolbar,
+  .no-print {
+    display: none !important;
+  }
+.app-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+  }
+.slip-paper-document {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 10px 4px;
+    margin: 0;
+  }

@@ -1,0 +1,626 @@
+﻿/* ==========================================================================
+   AFWO HAIR DESIGN - WORKER DIRECTORY STYLES (MATCHING CLIENT DIRECTORY)
+   ========================================================================== */
+
+.worker-page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Tombol "Tambah" ada di dalam header row, jadi jarak vertikalnya
+   ditangani oleh margin-bottom header row - bukan oleh margin tombol,
+   supaya tidak ada margin dobel. */
+.worker-page-header-row .page-primary-action {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Tombol "Tambah Karyawan": warna kuning sama seperti tombol Tambah Produk/Layanan */
+#btn-add-worker.btn-primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#btn-add-worker.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #btn-add-worker.btn-primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #btn-add-worker.btn-primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
+.worker-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.worker-page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+
+.worker-count-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-link);
+  background-color: var(--accent-soft);
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+}
+
+.worker-page-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+/* Toolbar Card */
+.worker-toolbar-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.worker-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.worker-filter-tab {
+  border: none;
+  background: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  color: var(--text-2);
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.worker-filter-tab:hover {
+  background-color: var(--surface-2);
+  color: var(--text-1);
+}
+
+.worker-filter-tab.active {
+  background-color: var(--ink);
+  color: var(--text-on-ink);
+}
+
+/* Controls Right */
+.worker-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.worker-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  width: 200px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.worker-search-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--gold-a12);
+}
+
+.worker-search-box .search-input {
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  color: var(--text-1);
+  width: 100%;
+}
+
+.worker-sort-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.sort-prefix-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   DROPDOWN WITH AFWO DESIGN SYSTEM
+   ========================================================================== */
+.sort-select-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 32px 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  color: var(--text-1);
+  background-color: var(--surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234B5563' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.sort-select-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--gold-a15);
+}
+
+.sort-select-control option {
+  background-color: var(--surface);
+  color: var(--text-1);
+  padding: 8px 12px;
+  font-size: 0.84rem;
+}
+
+/* Mobile filter dropdown wrapper (hidden by default on desktop) */
+.mobile-filter-dropdown-wrap {
+  display: none;
+}
+
+/* ==========================================================================
+   DIRECTORY CARD & TABLE (ZERO SCROLL & CLEAN EDGE ALIGNMENT)
+   ========================================================================== */
+.worker-directory-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.worker-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.worker-detail-table th {
+  padding: 14px 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+  background-color: var(--accent-soft);
+  white-space: nowrap;
+}
+
+.worker-detail-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1);
+  vertical-align: middle;
+}
+
+/* Margin wajar pada ujung kiri dan ujung kanan tabel */
+.worker-detail-table th:first-child,
+.worker-detail-table td:first-child {
+  padding-left: 20px;
+}
+
+.worker-detail-table th:last-child,
+.worker-detail-table td:last-child {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.worker-detail-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.worker-detail-table tbody tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.worker-name-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-1);
+  text-decoration: none;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.worker-name-title:hover {
+  color: var(--text-link);
+}
+
+.worker-phone-num {
+  font-family: monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+.client-segment-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 9px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
+
+/* Tier VIP: emas lembut + border emas lembut, teks charcoal */
+.badge-vip {
+  background-color: var(--accent-soft-2);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent-soft);
+}
+
+/* Tier Loyal: outline netral */
+.badge-loyal {
+  background-color: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-strong);
+}
+
+/* Action Buttons - Nempel rapi di kanan dengan margin wajar */
+.worker-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-worker-action {
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-worker-edit {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+}
+
+.btn-worker-edit:hover {
+  background-color: var(--surface-2);
+}
+
+.btn-worker-delete {
+  background-color: var(--status-danger-bg);
+  border: 1px solid var(--status-danger-border);
+  color: var(--status-danger-fg);
+}
+
+.btn-worker-delete:hover {
+  border-color: var(--status-danger);
+}
+
+.btn-worker-action.is-icon-only {
+  padding: 7px 9px;
+}
+
+.btn-worker-action.is-icon-only svg {
+  display: block;
+}
+
+/* ==========================================================================
+   MODAL DETAIL KARYAWAN
+   ========================================================================== */
+.worker-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface-overlay);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.worker-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.worker-modal-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 30px var(--black-16);
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+}
+
+.worker-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+}
+
+.btn-close-modal:hover {
+  color: var(--text-1);
+}
+
+.worker-modal-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-detail-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-detail-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-3);
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.modal-detail-val {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+.worker-modal-footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+  padding: 14px 20px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.worker-modal-footer .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 479px) {
+  .worker-modal-footer .btn {
+    width: 100%;
+    min-width: 0;
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+  }
+}
+
+/* Empty State */
+.empty-state-card {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state-text {
+  font-size: 0.9rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   GRADUAL FLUID RESPONSIVE BREAKPOINTS (KARYAWAN)
+   Urutan penambahan kolom saat space bertambah:
+   HP Minimal : NAMA, AKSI
+   + Space    : KONTAK (NO. WA)
+   + Space    : SKEMA KOMISI
+   + Space    : GAJI POKOK
+   + Space    : RATE / BESARAN KOMISI
+   ========================================================================== */
+
+/* 1. Layar Sedang (<= 1120px): Sembunyikan Rate Komisi */
+@media (max-width: 1120px) {
+  .col-rate {
+    display: none !important;
+  }
+}
+
+/* 2. Layar Menengah (<= 960px): Sembunyikan Gaji Pokok */
+@media (max-width: 960px) {
+  .col-salary {
+    display: none !important;
+  }
+  .worker-filter-tab {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+/* 3. Layar Tablet (<= 780px): Sembunyikan Skema Komisi & Toolbar beralih ke Search Full + 2 Dropdown */
+@media (max-width: 780px) {
+  .worker-toolbar-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .worker-tabs-row {
+    display: none !important;
+  }
+
+  .worker-controls-right {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .worker-search-box {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-filter-dropdown-wrap {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .mobile-filter-dropdown-wrap .sort-select-control {
+    flex: 1;
+    width: 50%;
+  }
+
+  .worker-sort-box {
+    display: none !important;
+  }
+
+  .col-scheme {
+    display: none !important;
+  }
+}
+
+/* 4. Layar HP (<= 580px): Sembunyikan No Kontak -> Tersisa NAMA LENGKAP & AKSI */
+@media (max-width: 580px) {
+  .col-phone {
+    display: none !important;
+  }
+
+  .worker-detail-table th:first-child,
+  .worker-detail-table td:first-child {
+    padding-left: 12px;
+  }
+
+  .worker-detail-table th:last-child,
+  .worker-detail-table td:last-child {
+    padding-right: 12px;
+  }
+
+  .worker-detail-table th,
+  .worker-detail-table td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .btn-worker-action {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+  }
+}

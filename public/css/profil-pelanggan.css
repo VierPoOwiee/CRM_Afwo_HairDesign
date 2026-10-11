@@ -1,0 +1,438 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - PROFIL PELANGGAN STYLES (RESPONSIVE)
+   ========================================================================== */
+
+/* Identity Header Section */
+.profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px 0 20px 0;
+}
+
+.profile-avatar-lg {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-lg);
+  background-color: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+  margin-bottom: 14px;
+}
+
+.profile-name {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  margin-bottom: var(--sp-2);
+}
+
+.profile-meta-line {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  margin-bottom: var(--sp-1);
+}
+
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.btn-profile-action {
+  letter-spacing: 0.01em;
+  text-transform: none;
+  font-weight: 700;
+}
+
+/* Profile Grid for Tablet/Desktop */
+.profile-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (min-width: 768px) {
+  .profile-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .profile-actions {
+    flex-direction: row;
+    justify-content: center;
+    max-width: 500px;
+    margin: 0 auto 24px auto;
+  }
+}
+
+/* Visit History Card */
+.visit-history-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.visit-history-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.visit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.visit-item:last-child {
+  border-bottom: none;
+}
+
+.visit-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.visit-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+
+.visit-date {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.visit-service {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-top: 1px;
+}
+
+.visit-amount {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-1);
+  text-align: right;
+}
+
+.visit-view-all {
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding-top: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.visit-view-all:hover {
+  opacity: 0.7;
+}
+
+/* Client Preferences Card */
+.preferences-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.preferences-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-1);
+}
+
+.preferences-heart-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-link);
+}
+
+.preferences-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+
+.preference-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preference-box {
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: var(--text-1);
+  line-height: 1.45;
+  box-shadow: 0 1px 2px var(--black-04);
+}
+
+@media (min-width: 640px) {}
+
+@media (min-width: 1024px) {}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
+.arsip-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.arsip-header-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.arsip-page-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.arsip-page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.arsip-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.arsip-search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 6px 6px 6px 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.arsip-search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  width: 220px;
+}
+
+.arsip-search-input::placeholder {
+  color: var(--text-3);
+}
+
+.btn-search-dark {
+  background-color: var(--dark-solid);
+  color: var(--n-50);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-search-dark:hover {
+  background-color: var(--n-800);
+}
+
+.btn-back-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--accent-gold);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 8px var(--gold-a25);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-back-gold:hover {
+  background-color: var(--gold-500);
+}
+
+.arsip-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.arsip-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+.arsip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+.arsip-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.arsip-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.arsip-card-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.arsip-trashed-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-color);
+  padding: 3px 10px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
+
+.arsip-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+}
+
+.arsip-meta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 0.84rem;
+}
+
+.arsip-meta-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.arsip-meta-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.arsip-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.btn-restore {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--status-ok-fg);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s ease;
+}
+
+.btn-restore:hover {
+  color: var(--status-ok-fg);
+}
+
+.arsip-empty-box {
+  background-color: var(--surface);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 44px 20px;
+  text-align: center;
+}
+
+.arsip-empty-text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.arsip-empty-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-link);
+  text-decoration: none;
+}

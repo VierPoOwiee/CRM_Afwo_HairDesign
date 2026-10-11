@@ -1,0 +1,322 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - ABSENSI KARYAWAN STYLES
+   ========================================================================== */
+
+.absensi-page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1080px;
+  margin: 0;
+}
+
+/* Page Header */
+.absensi-header-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.absensi-page-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-1, var(--text-1));
+  letter-spacing: -0.02em;
+}
+
+.absensi-page-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-2, var(--text-2));
+  line-height: 1.5;
+}
+
+/* Attendance Card */
+.absensi-card {
+  background-color: var(--surface, var(--surface));
+  border: 1px solid var(--border, var(--border));
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  box-shadow: 0 1px 3px var(--black-04);
+  box-sizing: border-box;
+}
+
+.absensi-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.absensi-card-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.absensi-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-1, var(--text-1));
+  letter-spacing: -0.01em;
+}
+
+.absensi-card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-2, var(--text-2));
+}
+
+.absensi-date-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.absensi-picker-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-3, var(--text-2));
+  text-transform: capitalize;
+}
+
+.absensi-date-input {
+  border: 1px solid var(--border, var(--border));
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-1, var(--text-1));
+  background-color: var(--surface);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.absensi-date-input:focus {
+  border-color: var(--accent, var(--border-accent));
+}
+
+.absensi-rekap-filter-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.absensi-select-month {
+  border: 1px solid var(--border, var(--border));
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-1, var(--text-1));
+  background-color: var(--surface);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Attendance Table */
+.absensi-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 16px;
+}
+
+.absensi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.absensi-table th {
+  padding: 12px 16px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--text-3, var(--text-2));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border, var(--border));
+  background-color: var(--accent-soft);
+  white-space: nowrap;
+}
+
+.absensi-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-accent);
+  color: var(--text-1, var(--text-1));
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.absensi-table tr:hover td {
+  background-color: var(--accent-soft);
+}
+
+.absensi-table tfoot td {
+  padding: 14px 16px;
+  font-weight: 800;
+  border-top: 2px solid var(--border, var(--border));
+  border-bottom: none;
+  background-color: var(--surface);
+}
+
+.worker-name-bold {
+  font-weight: 700;
+  color: var(--text-1, var(--text-1));
+}
+
+/* Skema Badges */
+.badge-skema-omset {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-soft);
+  color: var(--text-link);
+  white-space: nowrap;
+}
+
+.badge-skema-layanan {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+/* Custom Checkbox */
+.absensi-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.absensi-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  accent-color: var(--accent);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.absensi-checkbox:hover {
+  transform: scale(1.1);
+}
+
+/* Check-all Bar */
+.absensi-checkall-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.absensi-checkall-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.absensi-checkall-label .absensi-checkbox {
+  width: 18px;
+  height: 18px;
+}
+
+.absensi-checkall-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+/* Card Bottom Footer */
+.absensi-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-top: 10px;
+}
+
+.absensi-card-footer .btn {
+  flex-shrink: 0;
+}
+
+.absensi-footer-note {
+  font-size: 0.82rem;
+  color: var(--text-3, var(--text-2));
+  font-weight: 500;
+}
+
+.absensi-toast {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.absensi-toast.is-success {
+  display: block;
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+  border: 1px solid var(--border-accent);
+}
+
+@media (max-width: 640px) {
+  .absensi-card {
+    padding: 18px 16px;
+  }
+  
+  .absensi-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .absensi-date-picker-wrap,
+  .absensi-rekap-filter-wrap {
+    align-items: stretch;
+  }
+
+  .absensi-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .absensi-card-footer .btn {
+    width: 100%;
+  }
+}
+
+/*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
+
+.absensi-toast.is-error {
+  display: block;
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger-fg);
+  border: 1px solid var(--status-danger-border);
+}

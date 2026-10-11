@@ -1,0 +1,136 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'General Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* --- Surface --- */
+    --color-surface: #FFFFFF;
+    --color-card: #FFFFFF;
+    --color-card-hover: #FBF9F4;
+    --color-card-warm: #F6F3EC;
+    --color-card-warm-border: #EDEAE2;
+
+    /* --- Text --- */
+    --color-text-primary: #3D2A1C;
+    --color-text-secondary: #5C4033;
+    --color-text-muted: #8A7A6D;
+
+    /* --- Accent / Brand --- */
+    --color-accent: #C6A15B;
+    --color-accent-text: #8A6A2E;
+    --color-accent-light: #F7F0E1;
+    --color-accent-ring: #C6A15B66;
+
+    /* --- Afwo aliases (kalender appointment) --- */
+    --color-afwo-gold: #C6A15B;
+    --color-afwo-pill: #F7F0E1;
+
+    /* --- Success --- */
+    --color-success: #16A34A;
+    --color-success-bg: #E9F7EE;
+
+    /* --- Danger --- */
+    --color-danger: #B5473F;
+    --color-danger-bg: #FBEAE8;
+
+    /* --- Badge --- */
+    --color-badge-warm-bg: #F7F0E1;
+    --color-badge-warm-text: #6B4F17;
+    --color-badge-neutral-bg: #F4F2EE;
+    --color-badge-neutral-text: #5C4033;
+
+    /* --- Dark / Button --- */
+    --color-dark: #3D2A1C;
+    --color-dark-hover: #5C4033;
+    --color-dark-muted: #8A7A6D;
+    --color-sidebar: #FFFFFF;
+    --color-sidebar-active: #F4F2EE;
+    --color-sidebar-divider: #EDEAE2;
+
+    /* --- Warm neutral scale (overrides default Tailwind shades) --- */
+    --color-gray-50: #FBF9F4;
+    --color-gray-100: #F4F2EE;
+    --color-gray-200: #EAE6DE;
+    --color-gray-300: #DAD4C9;
+    --color-gray-400: #B9B2A5;
+    --color-gray-500: #8A8176;
+    --color-gray-600: #6E6355;
+    --color-gray-700: #4C3D2E;
+    --color-gray-800: #3D2A1C;
+    --color-gray-900: #3D2A1C;
+
+    /* --- Amber → gold --- */
+    --color-amber-50: #F7F0E1;
+    --color-amber-100: #F1E7CE;
+    --color-amber-200: #E4D2A4;
+    --color-amber-600: #9A7B2E;
+    --color-amber-700: #8A6A2E;
+    --color-amber-800: #6B4F17;
+
+    /* --- Blue → gold accent (badges, links, buttons) --- */
+    --color-blue-50: #F7F0E1;
+    --color-blue-100: #F1E7CE;
+    --color-blue-600: #8A6A2E;
+    --color-blue-700: #8A6A2E;
+    --color-blue-800: #6B4F17;
+
+    /* --- Red → warm brick --- */
+    --color-red-50: #FBEAE8;
+    --color-red-500: #B5473F;
+    --color-red-600: #A63B34;
+
+    /* --- Emerald → gold product accents --- */
+    --color-emerald-50: #F7F0E1;
+    --color-emerald-600: #8A6A2E;
+    --color-emerald-700: #6B4F17;
+}
+
+@media print {
+    .no-print,
+    header,
+    footer,
+    aside {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        font-size: 11px;
+    }
+
+    main {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .rounded-lg {
+        border-radius: 0 !important;
+    }
+
+    .shadow-sm {
+        box-shadow: none !important;
+    }
+
+    .border {
+        border-color: #e5e7eb !important;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+    }
+}
