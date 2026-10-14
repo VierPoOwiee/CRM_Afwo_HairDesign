@@ -110,7 +110,7 @@
                 <table class="worker-detail-table" id="worker-table">
                     <thead>
                         <tr>
-                            <th>NAMA LENGKAP KARYAWAN</th>
+                            <th>NAMA LENGKAP</th>
                             <th class="col-phone">KONTAK (NO. WA)</th>
                             <th class="col-salary">GAJI POKOK (BULAN)</th>
                             <th class="col-scheme">SKEMA KOMISI</th>

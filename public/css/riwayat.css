@@ -236,8 +236,9 @@
 /* --- Tablet: satu baris tetap, kotak pencarian menyempit --- */
 @media (min-width: 641px) and (max-width: 899px) {
   .trans-search-filter-controls {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     width: 100%;
+    gap: 8px;
   }
 
   .trans-search-box {
@@ -336,23 +337,25 @@
   font-size: 0.86rem;
 }
 
-.daily-trans-table th {
-  padding: 10px 14px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 1px solid var(--border);
-  background-color: var(--surface);
-  text-align: left;
-}
-
+.daily-trans-table th,
 .daily-trans-table td {
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--border-accent);
   color: var(--text-1);
   vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.daily-trans-table th {
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+.daily-trans-table td:nth-child(1),
+.daily-trans-table td:nth-child(6),
+.daily-trans-table td:nth-child(7) {
+  white-space: nowrap;
 }
 
 .daily-trans-table tr:last-child td {
@@ -368,7 +371,8 @@
   color: var(--text-link);
   text-decoration: none;
   font-family: monospace;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
+  white-space: nowrap;
 }
 
 .trans-order-id-link:hover {
@@ -395,19 +399,14 @@
   flex-shrink: 0;
 }
 
-.trans-client-name {
-  font-weight: 700;
-  color: var(--text-1);
-}
-
-.trans-client-phone {
-  font-size: 0.75rem;
-  color: var(--text-3);
-}
-
+.trans-client-name,
 .trans-service-title {
   font-weight: 600;
   color: var(--text-1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .trans-worker-tag {
@@ -676,6 +675,17 @@
   margin: 0;
   padding-bottom: 2px;
   box-sizing: border-box;
+}
+
+@media (max-width: 1180px) {
+  .daily-trans-table {
+    min-width: 760px;
+  }
+}
+@media (max-width: 900px) {
+  .daily-trans-table {
+    min-width: 680px;
+  }
 }
 
 .btn-back-ghost {
