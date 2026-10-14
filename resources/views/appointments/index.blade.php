@@ -34,6 +34,12 @@
         'menunggu'      => ['pill' => 'pending',   'label' => 'Menunggu'],
         'selesai'       => ['pill' => 'done',      'label' => 'Selesai'],
     ];
+
+    $statusColorMap = [
+        'terkonfirmasi' => ['color' => '#edb92f', 'bg' => 'rgba(237, 185, 47, 0.18)'],
+        'menunggu'      => ['color' => '#f0c445', 'bg' => 'rgba(240, 196, 69, 0.18)'],
+        'selesai'       => ['color' => '#1e6b3a', 'bg' => 'rgba(30, 107, 58, 0.18)'],
+    ];
 @endphp
 
 @section('content')
@@ -172,8 +178,7 @@
                                     <div class="cal-cell__events">
                                         @foreach ($daftarHari as $ap)
                                             @php
-                                                $warna = $ap->pelanggan ? \App\Support\AppointmentColor::forId((int) $ap->pelanggan->id) : 'orange';
-                                                $cc = $colorMap[$warna] ?? $colorMap['orange'];
+                                                $sc = $statusColorMap[$ap->status] ?? $statusColorMap['menunggu'];
                                                 $namaKlien = $ap->pelanggan?->nama ?? '-';
                                                 $namaLayanan = $ap->layanans->pluck('nama_layanan')->implode(', ');
                                                 $jamAp = $ap->jam_mulai?->format('H:i') ?? '';
@@ -181,14 +186,14 @@
                                                 $judulChip = $jamAp.' '.$namaKlien.($namaLayanan !== '' ? ' - '.$namaLayanan : '');
                                             @endphp
                                             <button type="button"
-                                                    class="cal-event{{ $ap->status === 'selesai' ? ' is-done' : '' }}"
+                                                    class="cal-event cal-event--{{ $ap->status }}{{ $ap->status === 'selesai' ? ' is-done' : '' }}"
                                                     data-appointment-id="{{ $ap->id }}"
                                                     data-pelanggan-id="{{ $ap->id_pelanggan }}"
                                                     data-karyawan-id="{{ $ap->id_karyawan }}"
                                                     data-status="{{ $ap->status }}"
                                                     data-search="{{ $cari }}"
                                                     title="{{ $judulChip }}"
-                                                    style="--client-color: {{ $cc['color'] }}; --client-bg: {{ $cc['bg'] }}; --client-fg: {{ $cc['color'] }};">
+                                                    style="--client-color: {{ $sc['color'] }}; --client-bg: {{ $sc['bg'] }}; --client-fg: {{ $sc['color'] }};">
                                                 @if ($ap->status === 'selesai')
                                                     <svg class="cal-event__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                                 @endif

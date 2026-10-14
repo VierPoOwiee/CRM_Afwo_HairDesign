@@ -465,9 +465,9 @@
   border-radius: 50%;
 }
 
-.dot-confirmed { background-color: var(--accent); }
-.dot-pending { background-color: var(--gold-400); }
-.dot-done { background-color: var(--status-done-fg); }
+.dot-confirmed { background-color: #edb92f; }
+.dot-pending { background-color: #f0c445; }
+.dot-done { background-color: #1e6b3a; }
 .dot-cancelled { background-color: var(--status-cancel-fg); }
 
 /* ==========================================================================
