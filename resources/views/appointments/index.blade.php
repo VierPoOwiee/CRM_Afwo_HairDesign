@@ -289,6 +289,8 @@
     }
     function closeOptive(modalEl) { if (modalEl) modalEl.style.display = 'none'; }
     function showModal(modalEl) { if (modalEl) modalEl.style.display = 'flex'; }
+    function showDetail(modalEl) { if (modalEl) modalEl.classList.add('show'); }
+    function hideDetail(modalEl) { if (modalEl) modalEl.classList.remove('show'); }
 
     // Notifikasi non-blocking (pengganti alert()).
     function toast(msg) {
@@ -537,7 +539,7 @@
     }
 
     function openDayModal(tanggal) {
-        if (detailModal) detailModal.style.display = 'none';
+        hideDetail(detailModal);
         fetch(URL_HARI.replace('P_TGL', tanggal))
             .then(function (r) { return r.json(); })
             .then(renderDayModal)
@@ -591,8 +593,8 @@
         '<div class="popover-footer">' + footer + '</div>';
 
         document.getElementById('popover-content').innerHTML = html;
-        document.getElementById('btn-close-popover').addEventListener('click', function () { closeOptive(detailModal); });
-        detailModal.classList.add('show');
+        document.getElementById('btn-close-popover').addEventListener('click', function () { hideDetail(detailModal); });
+        showDetail(detailModal);
     }
 
     function popRow(icon, innerHtml) {
@@ -614,33 +616,26 @@
 
     // ----- Events -----
     document.addEventListener('click', function (e) {
+        // Di dalam timeline harian: kartu appointment -> detail appointment.
+        // Timeline tetap terbuka di belakang agar menutup detail kembali ke timeline.
         var card = e.target.closest('.js-gcal-card');
         if (card) {
-            closeOptive(dayModal);
             openDetailModal(card.dataset.aptId);
-            return;
-        }
-
-        // Chip event -> buka pop up detail appointment.
-        var chip = e.target.closest('.cal-event');
-        if (chip) {
-            e.stopPropagation();
-            closeOptive(dayModal);
-            openDetailModal(chip.dataset.appointmentId);
             return;
         }
 
         var mini = e.target.closest('.mini-cal-cell');
         if (mini) { openDayModal(mini.dataset.tanggal); return; }
 
-        // Angka tanggal, tombol "+N lagi", atau area kosong sel -> jadwal hari.
+        // Seluruh bagian kotak tanggal (angka, badge janji temu, "+N lagi",
+        // area kosong) -> buka timeline detail hari.
         var cell = e.target.closest('.cal-cell');
         if (cell) { openDayModal(cell.dataset.date); return; }
 
         var bg = e.target.closest('.day-schedule-modal-overlay');
         if (bg && bg === e.target) closeOptive(dayModal);
         var popBg = e.target.closest('.appointment-popover-modal');
-        if (popBg && popBg === e.target) { closeOptive(detailModal); detailModal.classList.remove('show'); }
+        if (popBg && popBg === e.target) hideDetail(detailModal);
     });
 
     // Konfirmasi hapus tanpa confirm(): klik dua kali pada tombol Hapus.

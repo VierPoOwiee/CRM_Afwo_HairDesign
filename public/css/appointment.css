@@ -303,6 +303,7 @@
   .calendar-viewport-card {
     height: 100%;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
@@ -599,7 +600,8 @@
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
 }
