@@ -542,10 +542,10 @@
 .cal-cell {
   min-width: 0;
   min-height: 0;
-  padding: 4px 3px 2px;
+  padding: 4px 3px 3px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   overflow: hidden;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -568,6 +568,7 @@
 
 .cal-cell__num {
   align-self: center;
+  flex: 0 0 auto;
   min-width: 26px;
   height: 26px;
   padding: 0 6px;
@@ -593,24 +594,44 @@
 .cal-cell__events {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   gap: 2px;
   min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.cal-cell__events::-webkit-scrollbar {
+  width: 5px;
+}
+
+.cal-cell__events::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+.cal-cell__events::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .cal-event {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   width: 100%;
-  height: 22px;
-  line-height: 22px;
-  padding: 0 8px;
+  min-height: 22px;
+  padding: 2px 8px;
   border: 0;
   border-radius: 6px;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1.35;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   background: var(--client-bg, var(--surface-2));
   color: var(--client-fg, var(--text-1));
   box-shadow: inset 3px 0 0 var(--client-color, var(--accent)), inset 0 0 0 1px var(--border);
@@ -621,18 +642,26 @@
   filter: brightness(0.96);
 }
 
+.cal-event__check {
+  flex: 0 0 auto;
+}
+
 .cal-event__time {
+  flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
 }
 
-.cal-event__check {
-  vertical-align: -2px;
-  margin-right: 2px;
+.cal-event__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cal-event.is-done {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .cal-event[hidden],
