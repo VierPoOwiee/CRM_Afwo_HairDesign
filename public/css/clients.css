@@ -26,6 +26,24 @@
   margin-bottom: 0;
 }
 
+/* Tombol "Tambah Pelanggan": warna kuning sama seperti tombol Tambah Produk/Layanan */
+#btn-add-client.btn-primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#btn-add-client.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #btn-add-client.btn-primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #btn-add-client.btn-primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
 .clients-title-group {
   display: flex;
   flex-direction: column;
@@ -382,6 +400,24 @@
 
 .btn-client-schedule:hover {
   background-color: var(--surface-contrast);
+}
+
+.btn-client-delete {
+  background-color: var(--status-danger-bg);
+  border: 1px solid var(--status-danger-border);
+  color: var(--status-danger-fg);
+}
+
+.btn-client-delete:hover {
+  border-color: var(--status-danger);
+}
+
+.btn-client-action.is-icon-only {
+  padding: 7px 9px;
+}
+
+.btn-client-action.is-icon-only svg {
+  display: block;
 }
 
 /* ==========================================================================

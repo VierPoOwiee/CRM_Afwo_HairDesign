@@ -25,6 +25,24 @@
   line-height: 1.4;
 }
 
+/* Tombol "Tambah Produk": warna normal & hover ditukar */
+#add-product-btn.btn-primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#add-product-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #add-product-btn.btn-primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #add-product-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
 /* Category Tags */
 .product-tag {
   display: inline-flex;
@@ -115,6 +133,19 @@
   color: var(--text-1);
 }
 
+.product-price-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.product-price-usage {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
 /* Tablet & Desktop Layout */
 @media (min-width: 640px) {
   .products-title {
@@ -185,4 +216,13 @@
   flex-shrink: 0;
   border-radius: 50%;
   background-color: var(--gold-500);
+}
+
+/* Pencarian produk */
+.produk-search-form {
+  margin: 2px 0 18px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

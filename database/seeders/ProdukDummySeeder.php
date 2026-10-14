@@ -9,21 +9,22 @@ class ProdukDummySeeder extends Seeder
 {
     public function run(): void
     {
-        $buat = function (string $nama, string $merek, float $hargaPer10, string $satuan, string $kategori, float $harga = null, int $stok = 500) {
+        $buat = function (string $nama, string $merek, float $hargaPer10, string $satuan, string $kategori, int $stok = 500) {
             Produk::firstOrCreate(
                 ['nama_produk' => $nama],
                 [
                     'merek' => $merek,
                     'kategori_produk' => $kategori,
-                    'satuan' => $satuan,
-                    'harga_per_satuan' => $hargaPer10,
+                    'satuan_penggunaan' => $satuan,
+                    'harga_per_pcs' => 0,
+                    'harga_per_penggunaan' => $hargaPer10,
                     'stok' => $stok,
                     'aktif' => true,
                 ]
             );
         };
 
-        // ===== /10ml, dipakai_layanan (harga PER 10 GRAM / 10 ML) =====
+        // ===== Dipakai layanan (harga PER 10 GRAM / 10 ML) =====
         // kategori_produk = tipe spesifik (Color, Bleaching, Oxidant, dsb) untuk auto-fill produk default.
         $buat('Milbon Color', 'Milbon', 100000, '/10ml', 'Color');
         $buat('Alfaparf Color', 'Alfaparf', 100000, '/10ml', 'Color');
@@ -49,16 +50,16 @@ class ProdukDummySeeder extends Seeder
         $buat('Keratin Pharmavita', 'Pharmavita', 100000, '/10ml', 'Keratin');
         $buat('Cream Masker', '', 100000, '/10ml', 'Masker');
 
-        // ===== PCS, dijual (harga LANGSUNG PER 1 PCS, stok default lebih kecil) =====
-        // Kategori "Dijual Per PCS" tidak memakai merek (merek = null).
-        $buatPcs = function (string $nama, float $harga, int $stok = 30) {
+        // ===== Dijual per pcs (harga LANGSUNG PER 1 PCS, stok default lebih kecil) =====
+        $buatPcs = function (string $nama, float $harga, string $kategori = 'Hairtreatment', int $stok = 30) {
             Produk::firstOrCreate(
                 ['nama_produk' => $nama],
                 [
                     'merek' => null,
-                    'kategori_produk' => 'dijual',
-                    'satuan' => 'pcs',
-                    'harga_per_satuan' => $harga,
+                    'kategori_produk' => $kategori,
+                    'satuan_penggunaan' => '/10ml',
+                    'harga_per_pcs' => $harga,
+                    'harga_per_penggunaan' => 0,
                     'stok' => $stok,
                     'aktif' => true,
                 ]
@@ -66,7 +67,7 @@ class ProdukDummySeeder extends Seeder
         };
 
         $buatPcs('Alfaparf Shampoo 250ml', 185000);
-        $buatPcs('Milbon Hair Serum', 220000);
+        $buatPcs('Milbon Hair Serum', 220000, 'Serum');
         $buatPcs('Matrix Conditioner 250ml', 165000);
 
         $buatPcs('Shampoo Vegan 300ml', 350000);
@@ -77,8 +78,8 @@ class ProdukDummySeeder extends Seeder
         $buatPcs('Shampo Ketombe Keaune 300ml', 350000);
         $buatPcs('Shampo Sensitive Keaune 300ml', 350000);
         $buatPcs('Hair Spray Keaune', 350000);
-        $buatPcs('Silky Treatment 200ml', 350000);
-        $buatPcs('Elujuda Serum 120ml', 450000);
+        $buatPcs('Silky Treatment 200ml', 350000, 'Hairtreatment');
+        $buatPcs('Elujuda Serum 120ml', 450000, 'Serum');
         $buatPcs('Shampo Silver 200ml', 200000);
     }
 }

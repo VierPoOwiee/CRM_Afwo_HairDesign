@@ -32,12 +32,10 @@
 
     <div class="detail-card">
         <dl class="def-list">
-            @if ($produk->kategori_produk !== 'dijual')
             <div class="def-row">
                 <dt class="def-label">Merek</dt>
-                <dd class="def-value">{{ $produk->merek }}</dd>
+                <dd class="def-value">{{ $produk->merek ?? '—' }}</dd>
             </div>
-            @endif
             <div class="def-row">
                 <dt class="def-label">Kategori</dt>
                 <dd class="def-value">
@@ -45,28 +43,44 @@
                 </dd>
             </div>
             <div class="def-row">
-                <dt class="def-label">Satuan</dt>
-                <dd class="def-value">{{ $produk->satuan }}</dd>
+                <dt class="def-label">Harga per Pcs</dt>
+                <dd class="def-value product-price-val">{{ $produk->labelHargaPcs() ?? '—' }}</dd>
             </div>
             <div class="def-row">
-                <dt class="def-label">Harga</dt>
-                <dd class="def-value product-price-val">{{ $produk->labelHarga() }}</dd>
+                <dt class="def-label">Harga per Penggunaan</dt>
+                <dd class="def-value product-price-val">
+                    {{ $produk->labelHargaPenggunaan() ?? '—' }}
+                    <span class="pill pill--muted">Satuan: {{ $produk->satuanPenggunaanLabel() }}</span>
+                </dd>
             </div>
             <div class="def-row">
                 <dt class="def-label">Modal Rata-Rata</dt>
                 <dd class="def-value product-price-val">{{ $produk->labelModalPerSatuan() }}</dd>
             </div>
-            @if ($produk->kategori_produk === 'dijual')
+            <div class="def-row">
+                <dt class="def-label">Netto per Pcs</dt>
+                <dd class="def-value">
+                    {{ $produk->labelNetto() ?? '—' }}
+                    @if ($produk->jumlahPemakaianPerPcs() !== null)
+                        <span class="pill pill--muted">&asymp; {{ (float) $produk->jumlahPemakaianPerPcs() }} kali pemakaian</span>
+                    @endif
+                </dd>
+            </div>
+            @if ((float) $produk->sisa_penggunaan > 0)
+                <div class="def-row">
+                    <dt class="def-label">Sisa Kemasan Terbuka</dt>
+                    <dd class="def-value">{{ (float) $produk->sisa_penggunaan }} {{ ltrim($produk->satuanPenggunaanLabel(), '/') }}</dd>
+                </div>
+            @endif
             <div class="def-row">
                 <dt class="def-label">Stok</dt>
                 <dd class="def-value">
-                    {{ $produk->stok }}
+                    {{ $produk->stok }} pcs
                     @if ($produk->aktif && $produk->stokMenipis())
                         <span class="pill pill--warn">Menipis</span>
                     @endif
                 </dd>
             </div>
-            @endif
             <div class="def-row">
                 <dt class="def-label">Status</dt>
                 <dd class="def-value">

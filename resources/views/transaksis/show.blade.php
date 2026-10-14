@@ -95,7 +95,7 @@
                     </div>
                     <div class="detail-def">
                         <span class="detail-def-label">No. Transaksi</span>
-                        <span class="detail-def-value" style="font-family: monospace;">{{ $transaksi->no_struk }}</span>
+                        <span class="detail-def-value" style="font-family: monospace; white-space: nowrap;">{{ $transaksi->no_struk }}</span>
                     </div>
                 </div>
             </div>

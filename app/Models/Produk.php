@@ -40,15 +40,21 @@ class Produk extends Model
         'nama_produk',
         'merek',
         'kategori_produk',
-        'satuan',
-        'harga_per_satuan',
+        'satuan_penggunaan',
+        'netto',
+        'sisa_penggunaan',
+        'harga_per_pcs',
+        'harga_per_penggunaan',
         'harga_modal_rata_rata',
         'stok',
         'aktif',
     ];
 
     protected $casts = [
-        'harga_per_satuan' => 'decimal:2',
+        'netto' => 'decimal:2',
+        'sisa_penggunaan' => 'decimal:2',
+        'harga_per_pcs' => 'decimal:2',
+        'harga_per_penggunaan' => 'decimal:2',
         'harga_modal_rata_rata' => 'decimal:2',
         'stok' => 'integer',
         'aktif' => 'boolean',
@@ -71,31 +77,101 @@ class Produk extends Model
 
     public function labelKategori(): string
     {
-        if ($this->kategori_produk === 'dijual') {
-            return 'Dijual Per PCS';
-        }
-
         if (in_array($this->kategori_produk, self::KATEGORI_LAYANAN, true)) {
             return $this->kategori_produk;
         }
 
-        return 'Dipakai Layanan';
+        return (string) $this->kategori_produk;
     }
 
-    public function labelHarga(): string
+    /**
+     * Label harga jual per pcs, atau null jika tidak dijual per pcs.
+     */
+    public function labelHargaPcs(): ?string
     {
-        $harga = 'Rp'.number_format((float) $this->harga_per_satuan, 0, ',', '.');
-
-        if (str_starts_with($this->satuan, '/')) {
-            return $harga.$this->satuan;
+        if ((float) $this->harga_per_pcs <= 0) {
+            return null;
         }
 
-        return $harga.'/'.$this->satuan;
+        return 'Rp'.number_format((float) $this->harga_per_pcs, 0, ',', '.').'/pcs';
+    }
+
+    /**
+     * Label harga pemakaian layanan, mis. "Rp100.000/10ml", atau null jika kosong.
+     */
+    public function labelHargaPenggunaan(): ?string
+    {
+        if ((float) $this->harga_per_penggunaan <= 0) {
+            return null;
+        }
+
+        return 'Rp'.number_format((float) $this->harga_per_penggunaan, 0, ',', '.').$this->satuanPenggunaanLabel();
+    }
+
+    /**
+     * Gabungan kedua harga untuk ditampilkan singkat.
+     */
+    public function labelHarga(): string
+    {
+        $parts = array_filter([$this->labelHargaPcs(), $this->labelHargaPenggunaan()]);
+
+        return empty($parts) ? '-' : implode(' · ', $parts);
+    }
+
+    /**
+     * Satuan penggunaan siap tampil, mis. "/10ml" atau "per gram".
+     */
+    public function satuanPenggunaanLabel(): string
+    {
+        $satuan = trim((string) $this->satuan_penggunaan);
+
+        return $satuan === '' ? '/10ml' : $satuan;
+    }
+
+    /**
+     * Pembagi untuk menghitung biaya pemakaian: jumlah unit dari angka pada
+     * satuan penggunaan. Contoh "/10ml" => 10, "/20ml" => 20, "per gram" => 1.
+     */
+    public function divisorPenggunaan(): float
+    {
+        if (preg_match('/(\d+(?:[.,]\d+)?)/', str_replace(',', '.', $this->satuanPenggunaanLabel()), $m)) {
+            $divisor = (float) $m[1];
+
+            return $divisor > 0 ? $divisor : 1.0;
+        }
+
+        return 1.0;
     }
 
     public function stokMenipis(): bool
     {
         return $this->stok <= self::STOK_MENIPIS;
+    }
+
+    /**
+     * Berapa kali satu pcs bisa dipakai untuk layanan = netto / pembagi satuan.
+     * Contoh netto 100, satuan "/10ml" => 10 kali. Null jika netto belum diisi.
+     */
+    public function jumlahPemakaianPerPcs(): ?float
+    {
+        $netto = (float) $this->netto;
+        if ($netto <= 0) {
+            return null;
+        }
+
+        return round($netto / $this->divisorPenggunaan(), 2);
+    }
+
+    public function labelNetto(): ?string
+    {
+        if ((float) $this->netto <= 0) {
+            return null;
+        }
+
+        $angka = rtrim(rtrim(number_format((float) $this->netto, 2, ',', '.'), '0'), ',');
+        $satuan = ltrim($this->satuanPenggunaanLabel(), '/');
+
+        return $angka.' '.$satuan;
     }
 
     public function labelModal(): string
@@ -104,16 +180,10 @@ class Produk extends Model
     }
 
     /**
-     * Label modal per satuan, mis. "Rp50.000/pcs" atau "Rp25.000/10ml".
+     * Label modal per pcs, mis. "Rp50.000/pcs".
      */
     public function labelModalPerSatuan(): string
     {
-        $harga = 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.');
-
-        if (str_starts_with($this->satuan, '/')) {
-            return $harga.$this->satuan;
-        }
-
-        return $harga.'/'.$this->satuan;
+        return 'Rp'.number_format((float) $this->harga_modal_rata_rata, 0, ',', '.').'/pcs';
     }
 }

@@ -830,6 +830,39 @@ body.is-locked { overflow: hidden; }
 .btn-lg { min-height: 52px; padding: 0 var(--sp-5); font-size: var(--fs-16); border-radius: var(--radius-lg); }
 .btn-block { width: 100%; }
 
+/* Tombol "Cari" kuning di samping kolom pencarian */
+.btn-cari {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 18px;
+  background-color: #edb92f;
+  border: 1px solid #edb92f;
+  border-radius: var(--radius-md);
+  color: var(--ink, #3a3a3a);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.btn-cari:hover:not(:disabled) { background-color: #d9a71f; border-color: #d9a71f; }
+.btn-cari:active:not(:disabled) { transform: scale(0.98); }
+.btn-cari:focus-visible { outline-offset: 2px; }
+.btn-cari:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-cari svg { flex-shrink: 0; }
+
+.btn-cari--white {
+  background-color: #ffffff;
+  border-color: var(--border-color);
+  color: var(--text-1);
+}
+.btn-cari--white:hover:not(:disabled) { background-color: #f2f2f2; border-color: var(--border-color); }
+
 /* AKSI UTAMA HALAMAN: tombol aksi utama yang berdiri sendiri di antara
    judul halaman dan tab filter / daftar (mis. "Tambah Produk Baru"). */
 .page-primary-action {
@@ -1600,6 +1633,71 @@ body.is-locked { overflow: hidden; }
 }
 [data-theme="dark"] .btn--primary:hover:not(:disabled) { background-color: var(--ink-hover); border-color: var(--ink-hover); }
 [data-theme="dark"] .btn--primary:active:not(:disabled) { background-color: var(--ink-soft); border-color: var(--ink-soft); }
+
+/* ==========================================================================
+   TOMBOL SIMPAN / TAMBAH / TERAPKAN - warna kuning konsisten
+   Normal memakai emas terang (--accent-hover) dan hover memakai emas
+   (--accent), disamakan dengan tombol "Tambah Produk/Layanan/Pelanggan/
+   Karyawan". Semua memakai varian .btn-primary, kecuali .btn-filter-apply
+   yang memakai .btn--primary.
+   ========================================================================== */
+#btn-save-customer.btn-primary,
+#btn-save-worker.btn-primary,
+#btn-save-produk.btn-primary,
+#btn-save-layanan.btn-primary,
+#btn-save-changes.btn-primary,
+#savePelangganBtn.btn-primary,
+#btn-save-appointment.btn-primary,
+#btn-save-attendance.btn-primary,
+#btn-add-transaction.btn-primary,
+#btn-add-appointment.btn-primary,
+.btn-filter-apply.btn--primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#btn-save-customer.btn-primary:hover:not(:disabled),
+#btn-save-worker.btn-primary:hover:not(:disabled),
+#btn-save-produk.btn-primary:hover:not(:disabled),
+#btn-save-layanan.btn-primary:hover:not(:disabled),
+#btn-save-changes.btn-primary:hover:not(:disabled),
+#savePelangganBtn.btn-primary:hover:not(:disabled),
+#btn-save-appointment.btn-primary:hover:not(:disabled),
+#btn-save-attendance.btn-primary:hover:not(:disabled),
+#btn-add-transaction.btn-primary:hover:not(:disabled),
+#btn-add-appointment.btn-primary:hover:not(:disabled),
+.btn-filter-apply.btn--primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #btn-save-customer.btn-primary,
+[data-theme="dark"] #btn-save-worker.btn-primary,
+[data-theme="dark"] #btn-save-produk.btn-primary,
+[data-theme="dark"] #btn-save-layanan.btn-primary,
+[data-theme="dark"] #btn-save-changes.btn-primary,
+[data-theme="dark"] #savePelangganBtn.btn-primary,
+[data-theme="dark"] #btn-save-appointment.btn-primary,
+[data-theme="dark"] #btn-save-attendance.btn-primary,
+[data-theme="dark"] #btn-add-transaction.btn-primary,
+[data-theme="dark"] #btn-add-appointment.btn-primary,
+[data-theme="dark"] .btn-filter-apply.btn--primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #btn-save-customer.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-worker.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-produk.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-layanan.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-changes.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #savePelangganBtn.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-appointment.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-save-attendance.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-add-transaction.btn-primary:hover:not(:disabled),
+[data-theme="dark"] #btn-add-appointment.btn-primary:hover:not(:disabled),
+[data-theme="dark"] .btn-filter-apply.btn--primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
 .btn--dark {
   background-color: var(--ink);
   color: var(--text-on-ink);

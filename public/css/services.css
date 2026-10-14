@@ -27,6 +27,24 @@
 
 /* Jarak tombol "Tambah" memakai class global .page-primary-action */
 
+/* Tombol "Tambah Layanan": warna normal & hover ditukar */
+#add-service-btn.btn-primary {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+#add-service-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+[data-theme="dark"] #add-service-btn.btn-primary {
+  background-color: var(--ink-hover);
+  border-color: var(--ink-hover);
+}
+[data-theme="dark"] #add-service-btn.btn-primary:hover:not(:disabled) {
+  background-color: var(--ink);
+  border-color: var(--ink);
+}
+
 /* Horizontal Pill Filter Tabs */
 .pill-filter-container {
   display: flex;
@@ -143,6 +161,30 @@
 
 .btn-edit-icon:hover {
   color: var(--text-1);
+  transform: scale(1.15);
+}
+
+.card-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-delete-icon {
+  color: var(--text-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.btn-delete-icon:hover {
+  color: var(--status-danger);
   transform: scale(1.15);
 }
 
@@ -309,4 +351,13 @@
     color: var(--text-3);
   }
   .varian-table .varian-empty { display: block; padding: 24px 0; }
+}
+
+/* Pencarian layanan */
+.layanan-search-form {
+  margin: 2px 0 18px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

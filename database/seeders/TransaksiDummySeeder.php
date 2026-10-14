@@ -92,7 +92,7 @@ class TransaksiDummySeeder extends Seeder
         }
 
         $layananList = Layanan::with('hargaLayanan')->orderBy('id')->get();
-        $produkList = Produk::where('aktif', true)->where('kategori_produk', 'dijual')->orderBy('id')->get();
+        $produkList = Produk::where('aktif', true)->where('harga_per_pcs', '>', 0)->orderBy('id')->get();
 
         if ($layananList->isEmpty() || $produkList->isEmpty()) {
             $this->command->error('Data layanan/produk belum ada. Jalankan seeder utama dulu.');
@@ -152,7 +152,7 @@ class TransaksiDummySeeder extends Seeder
                     $produk = $produkList[$i % $produkList->count()];
                     $stafProduk = $semuaStaf[($i + 2) % $semuaStaf->count()];
                     $qty = 1;
-                    $subtotal = (float) $produk->harga_per_satuan * $qty;
+                    $subtotal = (float) $produk->harga_per_pcs * $qty;
 
                     DetailTransaksi::create([
                         'id_transaksi' => $transaksi->id,
@@ -160,7 +160,7 @@ class TransaksiDummySeeder extends Seeder
                         'tipe_item' => 'produk',
                         'id_produk' => $produk->id,
                         'qty' => $qty,
-                        'harga_saat_transaksi' => $produk->harga_per_satuan,
+                        'harga_saat_transaksi' => $produk->harga_per_pcs,
                         'subtotal' => $subtotal,
                         'catatan' => 'Dummy data',
                     ]);

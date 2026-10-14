@@ -12,6 +12,17 @@
   box-sizing: border-box;
 }
 
+/* Kontainer vertikal tiga blok halaman Appointment (kartu header, bar/panel
+   Filter, kartu kalender) dengan jarak SERAGAM 1rem. Dipasang pada
+   .app-content lewat @section('container_width') sehingga jarak di atas dan
+   di bawah bar Filter selalu sama, baik panel tertutup maupun terbuka. */
+.calendar-content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
 /* ==========================================================================
    1. TOP TOOLBAR (GOOGLE CALENDAR STYLE)
    ========================================================================== */
@@ -248,24 +259,32 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  /* Query container untuk pelipatan panel filter: berbasis lebar pembungkus,
+     bukan lebar viewport (panel filter < 880px disembunyikan). */
+  container-type: inline-size;
 }
 
 @media (min-width: 1024px) {
+  /* Halaman Appointment mengikuti model gulir aplikasi: konten tumbuh sesuai
+     kebutuhan dan digulir oleh .app-main-content (seperti halaman lain).
+     Tidak lagi dikunci setinggi viewport dengan overflow:hidden supaya
+     bagian bawah kalender / daftar filter tidak pernah terpotong. */
   .calendar-main-layout {
-    height: calc(100vh - 44px);
-    overflow: hidden;
+    height: auto;
+    overflow: visible;
   }
 
   .calendar-workspace-grid {
-  grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
     gap: 18px;
-    height: calc(100% - 68px);
+    height: auto;
     min-height: 0;
   }
 
-  /* Side Filter Panel: Independent Scroll */
+  /* Side Filter Panel: tetap punya gulir sendiri bila daftar klien panjang,
+     tinggi dibatasi agar tetap seimbang dengan kalender. */
   .calendar-side-panel {
-    height: 100%;
+    max-height: calc(100dvh - var(--appbar-h) - 120px);
     overflow-y: auto;
     padding-right: 6px;
     scrollbar-width: thin;
@@ -309,13 +328,12 @@
   min-width: 0;
 }
 
-/* Di bawah 1024px panel filter menjadi area tinggi dengan gulir sendiri
-   supaya kalender tetap terlihat tanpa perlu menggulir halaman. */
+/* Di bawah 1024px panel filter menjadi area tinggi dengan gulir sendiri */
 @media (max-width: 1023px) {
   .calendar-side-panel {
-    max-height: 42vh;
+    max-height: clamp(28vh, 38vh, 46vh);
     overflow-y: auto;
-    padding-right: 6px;
+    padding-right: 4px;
     scrollbar-width: thin;
     scrollbar-color: var(--border-strong) transparent;
   }
@@ -332,7 +350,7 @@
 
 @media (max-width: 640px) {
   .calendar-side-panel {
-    max-height: 38vh;
+    max-height: 32vh;
   }
 }
 
@@ -479,35 +497,184 @@
 }
 
 /* --------------------------------------------------------------------------
-   3A. MONTH VIEW
+   3A. MONTH VIEW — GOOGLE CALENDAR STYLE (satu kotak besar berujung membulat,
+   dibagi garis tipis 1px menjadi 7 kolom dan 5-6 baris)
    -------------------------------------------------------------------------- */
-.month-days-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background-color: var(--accent-soft);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 0;
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-1);
-  margin-bottom: 8px;
+
+/* Kartu pembungkus menjadi container query. Grid di dalamnya SELALU 7 kolom
+   pada lebar berapapun; varian tampilan menyesuaikan lebar kartu. */
+.calendar-viewport-card {
+  container-type: inline-size;
 }
 
-.month-cells-grid {
+.cal-month {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.cal-month__head,
+.cal-month__body {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  width: 100%;
-  align-items: stretch;
 }
 
-/* --- Desktop: bulan pas dengan tinggi viewport (tidak terpotong / tidak
-   menghasilkan sel raksasa dari aspect-ratio 1:1) --- */
+.cal-month__head > * {
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.cal-month__body {
+  grid-template-rows: repeat(var(--weeks, 6), minmax(0, 1fr));
+  flex: 1;
+  min-height: 0;
+}
+
+.cal-cell {
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 3px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  background-color: var(--surface);
+}
+
+.cal-cell:nth-child(7n) {
+  border-right: 0;
+}
+
+.cal-cell:nth-last-child(-n + 7) {
+  border-bottom: 0;
+}
+
+.cal-cell:hover {
+  background: var(--surface-2);
+}
+
+.cal-cell__num {
+  align-self: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 0;
+  background: none;
+  color: var(--text-1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-cell.is-outside .cal-cell__num {
+  color: var(--text-3);
+}
+
+.cal-cell.is-today .cal-cell__num {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.cal-cell__events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+.cal-event {
+  display: block;
+  width: 100%;
+  height: 22px;
+  line-height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--client-bg, var(--surface-2));
+  color: var(--client-fg, var(--text-1));
+  box-shadow: inset 3px 0 0 var(--client-color, var(--accent)), inset 0 0 0 1px var(--border);
+  cursor: pointer;
+}
+
+.cal-event:hover {
+  filter: brightness(0.96);
+}
+
+.cal-event__time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.cal-event__check {
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+
+.cal-event.is-done {
+  opacity: 0.7;
+}
+
+.cal-event[hidden],
+.cal-more[hidden],
+.cal-cell__dots[hidden] {
+  display: none;
+}
+
+.cal-event.is-filtered {
+  display: none;
+}
+
+.cal-more {
+  align-self: flex-start;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.cal-cell__dots {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-top: auto;
+  padding-bottom: 2px;
+}
+
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+/* Desktop: bulan mengisi tinggi layar dengan baris SAMA tinggi (selisih <= 1px).
+   Tinggi clamp 520-920px, garis pemisah 1px, sudut membulat dari .cal-month. */
 @media (min-width: 1024px) {
   .calendar-view-panel.active {
     display: flex;
@@ -516,158 +683,10 @@
     min-height: 0;
   }
 
-  .month-cells-grid {
+  .cal-month {
     flex: 1 1 auto;
-    min-height: 0;
-    grid-auto-rows: minmax(72px, 1fr);
+    height: clamp(520px, calc(100dvh - 240px), 920px);
   }
-
-  .month-day-cell {
-    aspect-ratio: auto;
-  }
-}
-
-/* Kotak tanggal bulanan WAJIB persegi (1:1) dan tidak boleh dipengaruhi isi.
-   Lebar diambil dari kolom grid, tinggi dari aspect-ratio. Tanpa min-height
-   dan tanpa grid-auto-rows supaya semua baris sama tinggi. */
-.month-day-cell {
-  background-color: var(--surface);
-  border: 1px solid var(--border-accent);
-  border-radius: var(--radius-md);
-  aspect-ratio: 1 / 1;
-  padding: 5px 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-height: 0;
-  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-  min-width: 0;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-}
-
-.month-day-cell:hover {
-  background-color: var(--surface);
-  border-color: var(--accent);
-  box-shadow: 0 4px 14px var(--gold-a18);
-  transform: translateY(-1px);
-}
-.month-day-cell.other-month {
-  background-color: var(--surface);
-  opacity: 0.45;
-}
-
-.month-day-cell.is-today {
-  border-color: var(--accent);
-  background-color: var(--accent-soft);
-}
-
-.cell-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  flex: 0 0 auto;
-  min-height: 22px;
-}
-
-.cell-day-num {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-1);
-  width: 22px;
-  height: 22px;
-  flex: 0 0 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-.month-day-cell.is-today .cell-day-num {
-  background-color: var(--ink);
-  color: var(--text-on-ink);
-}
-
-/* Daftar event di dalam kotak: tinggi ditentukan kotak, bukan isi. */
-.cell-event-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-height: 0;
-  flex: 1 1 auto;
-  /* Tidak dipotong di sini: penanda "+N lagi" diposisikan absolut pada sel,
-     sedangkan pembatas halaman tetapDijaga oleh overflow:hidden di .month-day-cell. */
-  overflow: visible;
-}
-
-/* Appointment Chip in Month Cell - Read-Only on Main Grid per User Directive */
-.apt-chip-item {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 3px;
-  border-radius: var(--radius-xs);
-  font-size: 0.66rem;
-  line-height: 1.25;
-  height: 16px;
-  flex: 0 0 16px;
-  min-width: 0;
-  font-weight: 700;
-  pointer-events: none; /* User requirement: Must click date first */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  border-left: 3px solid;
-  min-width: 0;
-}
-
-.apt-chip-item:hover {
-  transform: translateY(-1px);
-  filter: brightness(0.95);
-}
-
-.apt-chip-time {
-  font-weight: 800;
-  font-size: 0.62rem;
-  flex: 0 0 auto;
-}
-
-/* Di kotak bulanan 1:1 lebar kolom hanya ~76px. Jam tidak terbaca berdampingan
-   dengan nama, jadi yang ditampilkan hanya nama pelanggan; jam tetap tersedia
-   lewat title chip dan penuh di modal detail hari. */
-.month-cells-grid .apt-chip-time {
-  display: none;
-}
-
-.apt-chip-client {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.apt-more-badge {
-  /* Diposisikan absolut di sudut sel supaya tidak menambah tinggi daftar chip
-     (kotak sel 1:1 punya tinggi tetap, sehingga badge lama ikut terpotong). */
-  position: absolute;
-  right: 5px;
-  bottom: 3px;
-  z-index: 2;
-  padding: 0 3px;
-  border-radius: var(--radius-xs);
-  background-color: var(--surface);
-  font-size: 0.6rem;
-  line-height: 13px;
-  font-weight: 800;
-  color: var(--text-3);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.apt-more-badge:hover {
-  color: var(--text-1);
 }
 
 /* --------------------------------------------------------------------------
@@ -1477,51 +1496,154 @@
     padding: 0 var(--sp-3);
     font-size: var(--fs-13);
   }
-  .month-day-cell {
-    padding: 3px 3px;
-    gap: 2px;
-  }
-  .apt-chip-item {
-    display: none;
-  }
-  .apt-more-badge {
-    display: none;
-  }
-  /* Mobile: penanda appointment berupa titik emas, maksimal 3, tanpa chip teks. */
-  .cell-dot-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 0 0 auto;
-    min-height: 0;
-  }
-  .cell-dot {
-    width: 4px;
-    height: 4px;
-    flex: 0 0 4px;
-    border-radius: 50%;
-    background-color: var(--accent);
-  }
-  .cell-day-num {
-    width: 20px;
-    height: 20px;
-    flex-basis: 20px;
-    font-size: 0.75rem;
-  }
-  .month-days-header {
-    font-size: 0.68rem;
-  }
 }
 
-/* Desktop/tablet: baris titik hanya muncul di mode titik (<640px). */
-.cell-dot-row {
+/* ==========================================================================
+   6. FILTER PANEL COLLAPSE (< 880px) — panel filter jadi bagian terlipat di
+   ATAS kalender; grid kalender TIDAK terpengaruh.
+   ========================================================================== */
+.cal-filter-toggle {
   display: none;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-  /* Tablet: hanya 1 chip per kotak. */
-  .cell-event-list .apt-chip-item:nth-of-type(n + 2) {
+.cal-filter-toggle:hover {
+  background-color: var(--surface-2);
+  border-color: var(--border-accent);
+}
+
+.cal-filter-toggle svg {
+  color: var(--text-2);
+}
+
+@container (max-width: 879.98px) {
+  .cal-filter-toggle {
+    display: inline-flex;
+  }
+
+  .calendar-side-panel {
+    display: none;
+  }
+
+  .calendar-side-panel.is-open {
+    display: flex;
+    grid-column: 1 / -1;
+  }
+
+  .calendar-viewport-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ==========================================================================
+   7. TOOLBAR RESPONSIF (< 480px) — tidak ada kontrol yang saling menimpa
+   ========================================================================== */
+@media (max-width: 479.98px) {
+  .toolbar-left-group {
+    flex-wrap: wrap;
+  }
+
+  .cal-period-heading {
+    font-size: 1.05rem;
+  }
+
+  .toolbar-right-group {
+    flex-wrap: wrap;
+  }
+
+  .cal-search-box {
+    width: 100%;
+    flex: 1 1 100%;
+    order: 3;
+  }
+
+  #btn-cal-search,
+  #btn-add-appointment {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   8. CONTAINER QUERIES — varian bulanan mengikuti LEBAR KARTU, bukan viewport.
+   Grid SELALU 7 kolom pada 320-1920px, tidak pernah jadi satu kolom.
+   ========================================================================== */
+@container (max-width: 559.98px) {
+  .cal-month {
+    height: auto;
+  }
+
+  .cal-month__body {
+    grid-template-rows: repeat(var(--weeks, 6), minmax(64px, auto));
+  }
+
+  .cal-cell__events {
+    display: none;
+  }
+
+  .cal-more {
+    display: none;
+  }
+
+  .cal-cell__dots {
+    display: flex;
+  }
+
+  .cal-cell__num {
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.78rem;
+  }
+
+  .cal-month__head > * {
+    padding: 8px 2px;
+    font-size: 0.65rem;
+  }
+}
+
+@container (min-width: 560px) {
+  .cal-cell__dots {
     display: none;
   }
 }
+
+/* ==========================================================================
+   9. TOAST — pengganti alert() (non-blocking)
+   ========================================================================== */
+.cal-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px);
+  background-color: var(--surface-contrast);
+  color: var(--text-on-contrast);
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1200;
+}
+
+.cal-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+

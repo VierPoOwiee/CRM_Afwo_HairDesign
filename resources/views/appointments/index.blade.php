@@ -6,7 +6,7 @@
 
 @section('main-class', 'calendar-main-layout')
 
-@section('container_width', 'app-content-wide')
+@section('container_width', 'app-content-wide calendar-content-stack')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/appointment.css') }}">
@@ -14,7 +14,9 @@
 
 @php
     $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $namaBulanSingkat = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     $judulBulan = $namaBulan[$bulanAktif->month - 1].' '.$bulanAktif->year;
+    $jumlahMinggu = (int) ceil($hariGrid->count() / 7);
 
     $colorMap = [
         'amber'   => ['color' => 'var(--seg-amber)',   'bg' => 'var(--seg-amber-bg)'],
@@ -55,8 +57,9 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" id="cal-quick-search" placeholder="Cari appointment..." aria-label="Cari jadwal appointment">
                 </div>
+                <button type="button" class="btn-cari btn-cari--white" id="btn-cal-search">Cari</button>
 
-                <a href="{{ route('appointment.create') }}" class="btn btn-primary">
+                <a href="{{ route('appointment.create') }}" class="btn btn-primary" id="btn-add-appointment">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     <span>Appointment</span>
                 </a>
@@ -66,8 +69,14 @@
         <!-- Main Calendar Split Grid -->
         <div class="calendar-workspace-grid">
 
+            <!-- Tombol Filter (hanya tampil di layar sempit, panel tertutup bawaan) -->
+            <button type="button" class="cal-filter-toggle" id="btn-cal-filter" aria-expanded="false" aria-controls="cal-side-panel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                <span>Filter</span>
+            </button>
+
             <!-- SISI KIRI: Panel Filter Klien -->
-            <aside class="calendar-side-panel">
+            <aside class="calendar-side-panel" id="cal-side-panel">
 
                 <div class="filter-section-card">
                     <div class="filter-section-header">
@@ -134,54 +143,65 @@
             <!-- SISI KANAN: Calendar Month View -->
             <div class="calendar-viewport-card">
                 <div class="calendar-view-panel active" data-view="month" id="view-month">
-                    <div class="month-days-header">
-                        <span>Sen</span>
-                        <span>Sel</span>
-                        <span>Rab</span>
-                        <span>Kam</span>
-                        <span>Jum</span>
-                        <span>Sab</span>
-                        <span>Min</span>
-                    </div>
-                    <div class="month-cells-grid">
-                        @foreach ($hariGrid as $hari)
-                            @php
-                                $tanggalSel = $hari['tanggal']->format('Y-m-d');
-                                $daftarHari = $perTanggal->get($tanggalSel, collect());
-                                $cellClass = 'month-day-cell';
-                                if (! $hari['dalamBulanIni']) $cellClass .= ' other-month';
-                                if ($hari['isHariIni']) $cellClass .= ' is-today';
-                            @endphp
-                            <div class="{{ $cellClass }}" data-tanggal="{{ $tanggalSel }}">
-                                <div class="cell-top-bar">
-                                    <span class="cell-day-num">{{ $hari['tanggal']->day }}</span>
-                                </div>
-                                @foreach ($daftarHari as $ap)
-                                    @php
-                                        $warna = $ap->pelanggan ? \App\Support\AppointmentColor::forId((int) $ap->pelanggan->id) : 'orange';
-                                        $cc = $colorMap[$warna] ?? $colorMap['orange'];
-                                        $cari = strtolower(($ap->pelanggan?->nama ?? '').' '.$ap->layanans->pluck('nama_layanan')->implode(', '));
-                                    @endphp
-                                    <div class="apt-chip-item"
-                                         data-pelanggan-id="{{ $ap->id_pelanggan }}"
-                                         data-karyawan-id="{{ $ap->id_karyawan }}"
-                                         data-status="{{ $ap->status }}"
-                                         data-search="{{ $cari }}"
-                                         title="{{ $ap->jam_mulai?->format('H:i') }} {{ $ap->pelanggan?->nama ?? '-' }} - {{ $ap->layanans->pluck('nama_layanan')->implode(', ') }}"
-                                         style="background-color: {{ $cc['bg'] }}; border-left-color: {{ $cc['color'] }};">
-                                        @if ($ap->status === 'selesai')
-                                            <span style="flex-shrink: 0; text-decoration: line-through; opacity: 0.7;">{{ $ap->jam_mulai?->format('H:i') }}</span>
-                                        @else
-                                            <span class="apt-chip-time" style="color: {{ $cc['color'] }};">{{ $ap->jam_mulai?->format('H:i') }}</span>
-                                        @endif
-                                        <span class="apt-chip-client">{{ $ap->pelanggan?->nama ?? '-' }}</span>
+                    <div class="cal-month" role="grid" aria-label="Kalender {{ $judulBulan }}" style="--weeks: {{ $jumlahMinggu }}">
+                        <div class="cal-month__head" role="row">
+                            <div role="columnheader">SEN</div>
+                            <div role="columnheader">SEL</div>
+                            <div role="columnheader">RAB</div>
+                            <div role="columnheader">KAM</div>
+                            <div role="columnheader">JUM</div>
+                            <div role="columnheader">SAB</div>
+                            <div role="columnheader">MIN</div>
+                        </div>
+                        <div class="cal-month__body">
+                            @foreach ($hariGrid as $hari)
+                                @php
+                                    $tanggalSel = $hari['tanggal']->format('Y-m-d');
+                                    $daftarHari = $perTanggal->get($tanggalSel, collect());
+                                    $cellClass = 'cal-cell';
+                                    if (! $hari['dalamBulanIni']) $cellClass .= ' is-outside';
+                                    if ($hari['isHariIni']) $cellClass .= ' is-today';
+                                    $jumlahHariIni = $daftarHari->count();
+                                    $labelAngka = $hari['tanggal']->day === 1
+                                        ? '1 '.$namaBulanSingkat[$hari['tanggal']->month - 1]
+                                        : (string) $hari['tanggal']->day;
+                                    $ariaTanggal = $hari['tanggal']->day.' '.$namaBulan[$hari['tanggal']->month - 1].' '.$hari['tanggal']->year;
+                                @endphp
+                                <div class="{{ $cellClass }}" role="gridcell" data-date="{{ $tanggalSel }}" data-tanggal="{{ $tanggalSel }}" aria-label="{{ $ariaTanggal }}, {{ $jumlahHariIni }} appointment">
+                                    <button type="button" class="cal-cell__num">{{ $labelAngka }}</button>
+                                    <div class="cal-cell__events">
+                                        @foreach ($daftarHari as $ap)
+                                            @php
+                                                $warna = $ap->pelanggan ? \App\Support\AppointmentColor::forId((int) $ap->pelanggan->id) : 'orange';
+                                                $cc = $colorMap[$warna] ?? $colorMap['orange'];
+                                                $namaKlien = $ap->pelanggan?->nama ?? '-';
+                                                $namaLayanan = $ap->layanans->pluck('nama_layanan')->implode(', ');
+                                                $jamAp = $ap->jam_mulai?->format('H:i') ?? '';
+                                                $cari = strtolower($namaKlien.' '.$namaLayanan);
+                                                $judulChip = $jamAp.' '.$namaKlien.($namaLayanan !== '' ? ' - '.$namaLayanan : '');
+                                            @endphp
+                                            <button type="button"
+                                                    class="cal-event{{ $ap->status === 'selesai' ? ' is-done' : '' }}"
+                                                    data-appointment-id="{{ $ap->id }}"
+                                                    data-pelanggan-id="{{ $ap->id_pelanggan }}"
+                                                    data-karyawan-id="{{ $ap->id_karyawan }}"
+                                                    data-status="{{ $ap->status }}"
+                                                    data-search="{{ $cari }}"
+                                                    title="{{ $judulChip }}"
+                                                    style="--client-color: {{ $cc['color'] }}; --client-bg: {{ $cc['bg'] }}; --client-fg: {{ $cc['color'] }};">
+                                                @if ($ap->status === 'selesai')
+                                                    <svg class="cal-event__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                @endif
+                                                <span class="cal-event__time">{{ $jamAp }}</span>
+                                                <span class="cal-event__name">{{ $namaKlien }}</span>
+                                            </button>
+                                        @endforeach
                                     </div>
-                                @endforeach
-                                @if ($daftarHari->count() > 3)
-                                    <span class="apt-more-badge" style="display: none;" data-tanggal="{{ $tanggalSel }}">+{{ $daftarHari->count() - 3 }} lainnya</span>
-                                @endif
-                            </div>
-                        @endforeach
+                                    <div class="cal-cell__dots" aria-hidden="true"></div>
+                                    <button type="button" class="cal-more" hidden></button>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -265,54 +285,186 @@
     function closeOptive(modalEl) { if (modalEl) modalEl.style.display = 'none'; }
     function showModal(modalEl) { if (modalEl) modalEl.style.display = 'flex'; }
 
+    // Notifikasi non-blocking (pengganti alert()).
+    function toast(msg) {
+        var t = document.createElement('div');
+        t.className = 'cal-toast';
+        t.setAttribute('role', 'status');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        requestAnimationFrame(function () { t.classList.add('show'); });
+        setTimeout(function () {
+            t.classList.remove('show');
+            setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 220);
+        }, 3200);
+    }
+
     // ----- Filters -----
     var searchEl = document.getElementById('cal-quick-search');
 
-    function applyFilters() {
-        var q = (searchEl ? searchEl.value : '').toLowerCase().trim();
-        document.querySelectorAll('.apt-chip-item').forEach(function (chip) {
-            var show = true;
-            var ck = document.querySelector('.js-filter-klien[data-pelanggan-id="' + chip.dataset.pelangganId + '"]');
-            if (ck && !ck.checked) show = false;
-            var sk = document.querySelector('.js-filter-staf[data-karyawan-id="' + chip.dataset.karyawanId + '"]');
-            if (sk && !sk.checked) show = false;
-            var ss = document.querySelector('.js-filter-status[data-status="' + chip.dataset.status + '"]');
-            if (ss && !ss.checked) show = false;
-            if (show && q) show = (chip.dataset.search || '').indexOf(q) !== -1;
-            chip.classList.toggle('hidden', !show);
-        });
-        refreshDayCells();
+    var btnHapusKlien = document.querySelector('.js-hapus-semua-klien');
+    var btnHapusStaf = document.querySelector('.js-hapus-semua-staf');
+
+    function boxesOf(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector));
+    }
+    function groupState(selector) {
+        var list = boxesOf(selector);
+        var checked = list.filter(function (b) { return b.checked; }).length;
+        return {
+            total: list.length,
+            checked: checked,
+            none: checked === 0,
+            all: list.length > 0 && checked === list.length,
+            partial: checked > 0 && checked < list.length,
+        };
+    }
+    function allUnchecked(selector) {
+        var list = boxesOf(selector);
+        return list.length > 0 && list.every(function (b) { return !b.checked; });
     }
 
-    function refreshDayCells() {
-        document.querySelectorAll('.month-day-cell').forEach(function (cell) {
-            var visible = Array.prototype.slice.call(cell.querySelectorAll('.apt-chip-item'))
-                .filter(function (p) { return !p.classList.contains('hidden'); });
-            visible.forEach(function (p, i) { p.style.display = (i < 3) ? '' : 'none'; });
-            var more = cell.querySelector('.apt-more-badge');
-            if (more) {
-                var n = visible.length - 3;
-                more.textContent = (n > 0) ? '+ ' + n + ' lainnya' : '';
-                more.style.display = (n > 0) ? '' : 'none';
+    // Label tombol toggle: "Pilih Semua" saat belum ada yang dipilih,
+    // "Hapus Semua" saat sudah ada yang dipilih.
+    function updateToggleLabels() {
+        if (btnHapusKlien) btnHapusKlien.textContent = allUnchecked('.js-filter-klien') ? 'Pilih Semua' : 'Hapus Semua';
+        if (btnHapusStaf) btnHapusStaf.textContent = allUnchecked('.js-filter-staf') ? 'Pilih Semua' : 'Hapus Semua';
+    }
+
+    function applyFilters() {
+        var q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+
+        var cg = groupState('.js-filter-klien');
+        var sg = groupState('.js-filter-staf');
+
+        // Klien dan stylist difilter secara independen lalu digabung (union):
+        // appointment tampil jika klien-nya tercentang ATAU stylist-nya tercentang.
+        // Grup yang tercentang penuh dianggap tidak menyaring, supaya centang satu
+        // klien tetap fokus ke klien itu meski semua stylist tercentang.
+        var adaPenyaring = cg.partial || sg.partial;
+
+        document.querySelectorAll('.cal-event').forEach(function (chip) {
+            var show;
+
+            if (!adaPenyaring) {
+                // Semua tercentang -> tampil semua; keduanya kosong -> tidak ada yang tampil.
+                show = !(cg.none && sg.none);
+            } else {
+                var clientOk = false;
+                var stylistOk = false;
+                if (cg.partial) {
+                    var ck = document.querySelector('.js-filter-klien[data-pelanggan-id="' + chip.dataset.pelangganId + '"]');
+                    clientOk = ck ? ck.checked : true;
+                }
+                if (sg.partial) {
+                    var sk = document.querySelector('.js-filter-staf[data-karyawan-id="' + chip.dataset.karyawanId + '"]');
+                    stylistOk = sk ? sk.checked : true;
+                }
+                show = clientOk || stylistOk;
             }
+
+            // Status: hanya tampil kalau statusnya tercentang.
+            var ss = document.querySelector('.js-filter-status[data-status="' + chip.dataset.status + '"]');
+            if (ss && !ss.checked) show = false;
+
+            if (show && q) show = (chip.dataset.search || '').indexOf(q) !== -1;
+            chip.classList.toggle('is-filtered', !show);
+        });
+
+        updateToggleLabels();
+        scheduleFit();
+    }
+
+    // ----- Isi event per sel menyesuaikan tinggi sel (seperti Google Calendar) -----
+    function containerWidth() {
+        var card = document.querySelector('.calendar-viewport-card');
+        if (!card) return 0;
+        var cs = window.getComputedStyle(card);
+        var pl = parseFloat(cs.paddingLeft) || 0;
+        var pr = parseFloat(cs.paddingRight) || 0;
+        return card.clientWidth - pl - pr;
+    }
+
+    function fitCellEvents(cell, width, height) {
+        var events = Array.prototype.slice.call(cell.querySelectorAll('.cal-event'));
+        var active = events.filter(function (e) { return !e.classList.contains('is-filtered'); });
+        var more = cell.querySelector('.cal-more');
+        var dots = cell.querySelector('.cal-cell__dots');
+        var i;
+
+        if (width > 0 && width < 560) {
+            // Layar sempit: teks disembunyikan, ganti baris titik emas (maks 3).
+            events.forEach(function (e) { e.hidden = true; });
+            if (more) more.hidden = true;
+            if (dots) {
+                dots.innerHTML = '';
+                var nDots = Math.min(active.length, 3);
+                for (i = 0; i < nDots; i++) {
+                    var d = document.createElement('span');
+                    d.className = 'cal-dot';
+                    dots.appendChild(d);
+                }
+            }
+            return;
+        }
+
+        if (dots) dots.innerHTML = '';
+
+        var cap;
+        if (width > 0 && width < 760) {
+            cap = 1;
+        } else {
+            var space = height - 30 - 18;
+            cap = Math.max(0, Math.floor(space / 24));
+        }
+
+        active.forEach(function (e, idx) { e.hidden = idx >= cap; });
+
+        if (more) {
+            if (active.length > cap) {
+                more.hidden = false;
+                more.textContent = '+' + (active.length - cap) + ' lagi';
+            } else {
+                more.hidden = true;
+            }
+        }
+    }
+
+    var fitRaf = null;
+    function fitAll() {
+        var body = document.querySelector('.cal-month__body');
+        if (!body) return;
+        var width = containerWidth();
+        var cells = Array.prototype.slice.call(document.querySelectorAll('.cal-cell'));
+        // Baca dulu semua tinggi, baru tulis (hindari layout thrash).
+        var heights = cells.map(function (c) { return c.clientHeight; });
+        cells.forEach(function (cell, idx) { fitCellEvents(cell, width, heights[idx]); });
+    }
+    function scheduleFit() {
+        if (fitRaf) return;
+        fitRaf = requestAnimationFrame(function () {
+            fitRaf = null;
+            fitAll();
         });
     }
 
     if (searchEl) searchEl.addEventListener('input', applyFilters);
+    var btnCalSearch = document.getElementById('btn-cal-search');
+    if (btnCalSearch) btnCalSearch.addEventListener('click', applyFilters);
     document.addEventListener('change', function (e) {
         if (e.target.matches('.js-filter-klien, .js-filter-staf, .js-filter-status')) applyFilters();
     });
 
-    var btnHapusKlien = document.querySelector('.js-hapus-semua-klien');
-    if (btnHapusKlien) btnHapusKlien.addEventListener('click', function () {
-        document.querySelectorAll('.js-filter-klien').forEach(function (i) { i.checked = false; });
-        applyFilters();
-    });
-    var btnHapusStaf = document.querySelector('.js-hapus-semua-staf');
-    if (btnHapusStaf) btnHapusStaf.addEventListener('click', function () {
-        document.querySelectorAll('.js-filter-staf').forEach(function (i) { i.checked = false; });
-        applyFilters();
-    });
+    function bindToggle(btn, selector) {
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+            var pilihSemua = allUnchecked(selector);
+            boxesOf(selector).forEach(function (b) { b.checked = pilihSemua; });
+            applyFilters();
+        });
+    }
+    bindToggle(btnHapusKlien, '.js-filter-klien');
+    bindToggle(btnHapusStaf, '.js-filter-staf');
 
     // ----- Day Schedule Modal -----
     var dayModal = document.getElementById('day-schedule-modal');
@@ -384,7 +536,7 @@
         fetch(URL_HARI.replace('P_TGL', tanggal))
             .then(function (r) { return r.json(); })
             .then(renderDayModal)
-            .catch(function () { alert('Gagal memuat detail hari.'); });
+            .catch(function () { toast('Gagal memuat detail hari.'); });
     }
 
     document.getElementById('btn-close-day-schedule').addEventListener('click', function () { closeOptive(dayModal); });
@@ -407,14 +559,14 @@
             : '';
 
         var footer = '';
-        footer += '<form method="POST" action="' + URL_HAPUS.replace('P_ID', a.id) + '" style="margin:0;" onsubmit="return confirm(\'Hapus appointment ini? Tindakan tidak bisa dibatalkan.\')">' +
+        footer += '<form method="POST" action="' + URL_HAPUS.replace('P_ID', a.id) + '" class="js-delete-form" style="margin:0;">' +
             '<input type="hidden" name="_token" value="' + CSRF + '">' +
             '<input type="hidden" name="_method" value="DELETE">' +
             '<button type="submit" class="btn btn-danger">Hapus</button>' +
         '</form>' +
         '<a href="' + URL_EDIT.replace('P_ID', a.id) + '" class="btn btn-secondary">Edit</a>';
         if (a.status !== 'selesai') {
-            footer += '<form method="POST" action="' + URL_SELESAI.replace('P_ID', a.id) + '" style="margin:0;"><input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="PUT"><button type="submit" class="btn btn-primary">&#10003; Selesaikan</button></form>';
+            footer += '<form method="POST" action="' + URL_SELESAI.replace('P_ID', a.id) + '" style="margin:0;"><input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="PUT"><button type="submit" class="btn btn-primary">' + IX_CHECK + ' Selesaikan</button></form>';
         }
 
         var html = '<div class="popover-header">' +
@@ -427,7 +579,7 @@
             '</div>' +
             '<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">' +
                 '<span class="gcal-status-pill ' + st.pill + '">' + st.label + '</span>' +
-                '<button type="button" class="popover-close-btn" id="btn-close-popover" aria-label="Tutup Detail">&#10005;</button>' +
+                '<button type="button" class="popover-close-btn" id="btn-close-popover" aria-label="Tutup Detail">' + IX_X + '</button>' +
             '</div>' +
         '</div>' +
         '<div class="popover-body">' + infoRows + layanan + preferensi + '</div>' +
@@ -445,12 +597,14 @@
     var IX_CLOCK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
     var IX_USER  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
     var IX_PHONE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>';
+    var IX_CHECK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    var IX_X = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
     function openDetailModal(id) {
         fetch(URL_SHOW.replace('P_ID', id))
             .then(function (r) { return r.json(); })
             .then(renderDetailModal)
-            .catch(function () { alert('Gagal memuat detail appointment.'); });
+            .catch(function () { toast('Gagal memuat detail appointment.'); });
     }
 
     // ----- Events -----
@@ -461,15 +615,64 @@
             openDetailModal(card.dataset.aptId);
             return;
         }
+
+        // Chip event -> buka pop up detail appointment.
+        var chip = e.target.closest('.cal-event');
+        if (chip) {
+            e.stopPropagation();
+            closeOptive(dayModal);
+            openDetailModal(chip.dataset.appointmentId);
+            return;
+        }
+
         var mini = e.target.closest('.mini-cal-cell');
         if (mini) { openDayModal(mini.dataset.tanggal); return; }
-        var cell = e.target.closest('.month-day-cell');
-        if (cell) { openDayModal(cell.dataset.tanggal); return; }
+
+        // Angka tanggal, tombol "+N lagi", atau area kosong sel -> jadwal hari.
+        var cell = e.target.closest('.cal-cell');
+        if (cell) { openDayModal(cell.dataset.date); return; }
+
         var bg = e.target.closest('.day-schedule-modal-overlay');
         if (bg && bg === e.target) closeOptive(dayModal);
         var popBg = e.target.closest('.appointment-popover-modal');
         if (popBg && popBg === e.target) { closeOptive(detailModal); detailModal.classList.remove('show'); }
     });
+
+    // Konfirmasi hapus tanpa confirm(): klik dua kali pada tombol Hapus.
+    document.addEventListener('submit', function (e) {
+        var form = e.target.closest('.js-delete-form');
+        if (!form) return;
+        if (form.dataset.confirm === '1') return;
+        e.preventDefault();
+        form.dataset.confirm = '1';
+        var btn = form.querySelector('button[type="submit"]');
+        if (btn) btn.textContent = 'Klik lagi untuk hapus';
+        setTimeout(function () {
+            if (form) {
+                form.dataset.confirm = '';
+                if (btn) btn.textContent = 'Hapus';
+            }
+        }, 4000);
+    });
+
+    // Panel filter bisa dilipat pada layar sempit (< 880px).
+    var btnCalFilter = document.getElementById('btn-cal-filter');
+    var calSidePanel = document.getElementById('cal-side-panel');
+    if (btnCalFilter && calSidePanel) {
+        btnCalFilter.addEventListener('click', function () {
+            var open = calSidePanel.classList.toggle('is-open');
+            btnCalFilter.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    }
+
+    // Hitung ulang jumlah event yang tampil saat ukuran kalender berubah.
+    (function observeCalendarFit() {
+        var body = document.querySelector('.cal-month__body');
+        if (body && window.ResizeObserver) {
+            new ResizeObserver(scheduleFit).observe(body);
+        }
+        window.addEventListener('resize', scheduleFit);
+    })();
 
     applyFilters();
 })();

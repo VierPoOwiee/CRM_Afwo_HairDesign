@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const apt = appointmentsData.find(a => a.id === selectedAppointmentId);
       if (apt) {
         apt.status = 'done';
-        showToast(`✓ Appointment ${getClient(apt.clientId).name} diselesaikan!`);
+        showToast(` Appointment ${getClient(apt.clientId).name} diselesaikan!`);
         closeAppointmentDetail();
         renderCalendar();
       }

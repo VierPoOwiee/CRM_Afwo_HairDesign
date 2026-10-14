@@ -79,6 +79,7 @@
 
     <script src="{{ asset('js/theme.js') }}"></script>
     <script src="{{ asset('js/nav.js') }}"></script>
+    @stack('modals')
     @stack('scripts')
 </body>
 </html>

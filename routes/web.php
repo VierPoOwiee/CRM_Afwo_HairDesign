@@ -72,6 +72,8 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
     Route::get('produk/{produk}/restock', [ProdukController::class, 'restockForm'])->name('produk.restock-form');
     Route::post('produk/{produk}/restock', [ProdukController::class, 'restock'])->name('produk.restock');
 
+    Route::delete('produk/merek/{merek}', [ProdukController::class, 'destroyMerek'])->name('produk.merek.destroy');
+
     Route::get('karyawan/arsip', [KaryawanController::class, 'arsip'])->name('karyawan.arsip');
     Route::post('karyawan/{karyawan}/restore', [KaryawanController::class, 'restore'])->name('karyawan.restore');
 
@@ -94,8 +96,11 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
     Route::post('absensi', [AbsensiController::class, 'store'])->name('absensi.store');
 
     Route::resource('transaksi', TransaksiController::class)->only([
-        'index', 'create', 'store', 'show', 'destroy',
+    'index', 'create', 'store', 'show', 'edit', 'update', 'destroy',
     ]);
+
+    Route::get('transaksi/{transaksi}/struk', [TransaksiController::class, 'struk'])
+        ->name('transaksi.struk');
 
     Route::put('transaksi/{transaksi}/batal', [TransaksiController::class, 'cancel'])
         ->name('transaksi.cancel');

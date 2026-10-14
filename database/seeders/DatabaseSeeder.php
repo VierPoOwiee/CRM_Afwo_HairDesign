@@ -17,5 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LayananProdukSeeder::class);
         $this->call(DefaultProdukLayananSeeder::class);
         $this->call(TransaksiDummySeeder::class);
+        $this->call(AppointmentDummySeeder::class);
+        $this->call(AbsensiDummySeeder::class);
     }
 }

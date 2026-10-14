@@ -30,21 +30,26 @@
                         <span class="info-panel-value">{{ $produk->labelKategori() }}</span>
                     </div>
                     <div class="info-panel-item">
-                        <span class="info-panel-label">Satuan</span>
-                        <span class="info-panel-value">{{ $produk->satuan }}</span>
+                        <span class="info-panel-label">Satuan Penggunaan</span>
+                        <span class="info-panel-value">{{ $produk->satuanPenggunaanLabel() }}</span>
                     </div>
                     <div class="info-panel-item">
                         <span class="info-panel-label">Stok</span>
-                        <span class="info-panel-value {{ $produk->aktif && $produk->kategori_produk === 'dijual' && $produk->stokMenipis() ? 'highlight' : '' }}">
-                            {{ $produk->stok }}
-                            @if ($produk->aktif && $produk->kategori_produk === 'dijual' && $produk->stokMenipis())
+                        <span class="info-panel-value {{ $produk->aktif && $produk->stokMenipis() ? 'highlight' : '' }}">
+                            {{ $produk->stok }} pcs
+                            @if ($produk->aktif && $produk->stokMenipis())
                                 &nbsp;(menipis)
                             @endif
                         </span>
                     </div>
                     <div class="info-panel-item">
                         <span class="info-panel-label">Harga Jual</span>
-                        <span class="info-panel-value">{{ $produk->labelHarga() }}</span>
+                        <span class="info-panel-value">
+                            {{ $produk->labelHargaPcs() ?? '—' }}
+                            @if ($produk->labelHargaPenggunaan())
+                                &middot; {{ $produk->labelHargaPenggunaan() }}
+                            @endif
+                        </span>
                     </div>
                     <div class="info-panel-item">
                         <span class="info-panel-label">Modal rata-rata</span>
@@ -61,7 +66,7 @@
                     @csrf
 
                     <div class="form-group-item">
-                        <label class="form-label" for="qty">Jumlah ({{ $produk->kategori_produk === 'dijual' ? 'pcs' : 'ml' }}) <span class="required-star">*</span></label>
+                        <label class="form-label" for="qty">Jumlah (pcs) <span class="required-star">*</span></label>
                         <div class="form-input-box">
                             <input type="number" name="qty" id="qty" value="{{ old('qty') }}" min="1" step="1" required class="form-input-control">
                         </div>
@@ -71,11 +76,11 @@
                     </div>
 
                     <div class="form-group-item">
-                        <label class="form-label" for="harga_beli">Harga Beli per Satuan (Rp) <span class="required-star">*</span></label>
+                        <label class="form-label" for="harga_beli">Harga Beli per Pcs (Rp) <span class="required-star">*</span></label>
                         <div class="form-input-box">
                             <input type="text" inputmode="numeric" name="harga_beli" id="harga_beli" value="{{ old('harga_beli') }}" required class="form-input-control">
                         </div>
-                        <span class="field-help-text">Harga beli per {{ $produk->satuan }}.</span>
+                        <span class="field-help-text">Harga beli per 1 pcs produk.</span>
                         @error('harga_beli')
                             <span class="field-error">{{ $message }}</span>
                         @enderror

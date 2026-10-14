@@ -23,6 +23,22 @@
         <span>Tambah Layanan</span>
     </a>
 
+    <!-- Pencarian Layanan -->
+    <form method="GET" action="{{ route('layanan.index') }}" class="layanan-search-form" role="search">
+        @if ($kategoriSlug !== 'all')
+            <input type="hidden" name="kategori" value="{{ $kategoriSlug }}">
+        @endif
+        <div class="search-input-box">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="search" id="layanan-search" name="q" value="{{ $q }}" class="search-input"
+                   placeholder="Cari nama layanan atau kategori..." autocomplete="off">
+        </div>
+        <button type="submit" class="btn-cari" id="btn-layanan-search">Cari</button>
+    </form>
+
     <!-- Pill Filter Tabs -->
     <div class="pill-filter-container" id="service-category-filter">
         @php
@@ -78,12 +94,27 @@
             <article class="service-card" data-category="{{ $catKey }}">
                 <div class="service-card-top">
                     <span class="category-tag {{ $catKey }}">{{ $tagTokens[$catKey] }}</span>
-                    <a href="{{ route('layanan.edit', $l) }}" class="btn-edit-icon" aria-label="Edit {{ $l->nama_layanan }}">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </a>
+                    <div class="card-actions-group">
+                        <a href="{{ route('layanan.edit', $l) }}" class="btn-edit-icon" aria-label="Edit {{ $l->nama_layanan }}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </a>
+                        <form action="{{ route('layanan.destroy', $l) }}" method="POST" style="margin: 0; display: inline-flex;"
+                              onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($l->nama_layanan) }}&quot; beserta semua varian harganya?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-delete-icon" aria-label="Hapus {{ $l->nama_layanan }}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 <h2 class="service-card-name">{{ $l->nama_layanan }}</h2>
                 <p class="service-card-desc">

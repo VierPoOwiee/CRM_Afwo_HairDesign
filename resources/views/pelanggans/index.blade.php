@@ -58,6 +58,7 @@
                     </svg>
                     <input type="text" id="client-search" name="q" value="{{ $q }}" class="search-input" placeholder="Cari nama, WhatsApp, IG, alamat...">
                 </div>
+                <button type="submit" class="btn-cari" id="btn-client-search">Cari</button>
 
                 <div class="client-sort-box">
                     <span class="sort-prefix-label">Urutkan:</span>
@@ -117,7 +118,7 @@
                                 <th class="col-hair-type">JENIS RAMBUT</th>
                                 <th class="col-condition">KONDISI RAMBUT</th>
                                 <th class="col-notes">CATATAN</th>
-                                <th style="text-align: right; width: 140px;">AKSI</th>
+<th style="text-align: right; width: 130px;">AKSI</th>
                             </tr>
                         </thead>
                         <tbody id="client-table-body">
@@ -162,8 +163,35 @@
                                     </td>
                                     <td style="text-align: right;" onclick="event.stopPropagation();">
                                         <div class="client-actions-cell">
-                                            <a href="{{ route('pelanggan.edit', $p) }}" class="btn-client-action btn-client-edit">Edit</a>
-                                            <a href="{{ route('appointment.create', ['pelanggan' => $p->id]) }}" class="btn-client-action btn-client-schedule">+ Janji</a>
+                                            <a href="{{ route('pelanggan.edit', $p) }}" class="btn-client-action btn-client-edit is-icon-only" title="Edit pelanggan" aria-label="Edit {{ $p->nama }}">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                </svg>
+                                            </a>
+                                            <a href="{{ route('appointment.create', ['pelanggan' => $p->id]) }}" class="btn-client-action btn-client-schedule is-icon-only" title="Buat janji" aria-label="Buat janji untuk {{ $p->nama }}">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                    <line x1="12" y1="14" x2="12" y2="18"></line>
+                                                    <line x1="10" y1="16" x2="14" y2="16"></line>
+                                                </svg>
+                                            </a>
+                                            <form action="{{ route('pelanggan.destroy', $p) }}" method="POST" style="margin: 0; display: inline-flex;"
+                                                  onsubmit="return confirm('Hapus pelanggan &quot;{{ addslashes($p->nama) }}&quot;? Data akan dipindahkan ke arsip.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-client-action btn-client-delete is-icon-only" title="Hapus pelanggan" aria-label="Hapus {{ $p->nama }}">
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    </svg>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
