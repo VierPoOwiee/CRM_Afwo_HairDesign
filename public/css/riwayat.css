@@ -1097,22 +1097,45 @@
   box-sizing: border-box;
   overflow: hidden;
   word-break: normal;
+  text-align: center;
 }
 
+/* Semua kolom diberi lebar tetap proporsional. Dengan table-layout: fixed,
+   jika total lebar < lebar container maka sisa ruang dibagi ke SEMUA kolom
+   secara proporsional, bukan menumpuk di satu kolom. Ini membuat jarak antar
+   kolom konsisten di semua ukuran layar (tidak ada satu margin yang jauh
+   lebih besar dari yang lain). */
 .trans-page-container .daily-trans-table .col-id {
-  width: 156px;
+  width: 168px;
+}
+
+.trans-page-container .daily-trans-table .col-client {
+  width: 150px;
+}
+
+.trans-page-container .daily-trans-table .col-service {
+  width: 140px;
+}
+
+/* Avatar (32px + gap 10px) memakan ~42px lebar kolom sehingga nama yang
+   sebenarnya masih muat ikut terpotong "...". Di layar sempit (mis. iPad
+   mini) avatar disembunyikan agar seluruh lebar kolom dipakai untuk nama. */
+@container (max-width: 1023.98px) {
+  .trans-page-container .daily-trans-table .trans-client-avatar {
+    display: none;
+  }
 }
 
 .trans-page-container .daily-trans-table .col-total {
-  width: 128px;
+  width: 104px;
 }
 
 .trans-page-container .daily-trans-table .col-method {
-  width: 108px;
+  width: 104px;
 }
 
 .trans-page-container .daily-trans-table .col-status {
-  width: 132px;
+  width: 116px;
 }
 
 /* Tidak pernah terpecah ke dua baris */
@@ -1125,24 +1148,26 @@
   white-space: nowrap;
 }
 
-/* Pelanggan: avatar + nama terpotong rapi */
+/* Pelanggan: avatar + nama terpotong rapi (konten di tengah) */
 .trans-page-container .daily-trans-table .trans-client-meta {
   min-width: 0;
+  justify-content: center;
 }
 
 .trans-page-container .daily-trans-table .trans-client-text {
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
 }
 
 .trans-page-container .daily-trans-table .trans-client-name {
   max-width: 100%;
 }
 
-/* Layanan: nama utama terpotong, "+N" tetap terlihat */
+/* Layanan: nama utama terpotong, "+N" tetap terlihat (konten di tengah) */
 .trans-page-container .daily-trans-table .trans-service-title {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   min-width: 0;
 }
@@ -1197,9 +1222,11 @@
 /* Prioritas kolom: sembunyikan dari prioritas terendah lebih dulu.
    ID/Waktu dan Status TIDAK pernah disembunyikan.
    - Metode Bayar  : tampil mulai @4xl (896px)
-   - Total Biaya   : tampil mulai @3xl (768px)
-   - Layanan       : tampil mulai @2xl (672px)
-   - Pelanggan     : tampil mulai @md  (448px) */
+   - Total Biaya   : tampil mulai @3xl (648px)
+   - Layanan       : tampil mulai @2xl (592px)
+   - Pelanggan     : tampil mulai @md  (448px)
+   Ambang ini menyesuaikan lebar konten iPad mini (portrait ~720px,
+   landscape ~664px) supaya Total Biaya tetap bisa tampil. */
 .trans-page-container .daily-trans-table .col-client,
 .trans-page-container .daily-trans-table .col-service,
 .trans-page-container .daily-trans-table .col-total,
@@ -1213,13 +1240,13 @@
   }
 }
 
-@container (min-width: 672px) {
+@container (min-width: 592px) {
   .trans-page-container .daily-trans-table .col-service {
     display: table-cell;
   }
 }
 
-@container (min-width: 768px) {
+@container (min-width: 648px) {
   .trans-page-container .daily-trans-table .col-total {
     display: table-cell;
   }
