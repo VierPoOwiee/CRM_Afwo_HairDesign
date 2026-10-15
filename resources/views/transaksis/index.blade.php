@@ -18,10 +18,6 @@
 
     $grouped = collect($transaksis->items())->groupBy(fn ($t) => $t->waktu_kunjungan ? $t->waktu_kunjungan->toDateString() : '');
 
-    $statusMap = [
-        'selesai' => ['pill' => 'status-paid', 'label' => 'Selesai (Paid)'],
-        'batal' => ['pill' => 'status-cancelled', 'label' => 'Dibatalkan'],
-    ];
     $metodeMap = [
         'cash' => ['badge' => 'badge-cash', 'label' => 'Tunai'],
         'qris_bni' => ['badge' => 'badge-qris', 'label' => 'QRIS'],
@@ -219,7 +215,6 @@
                                     <th class="col-service">Layanan &amp; Stylist</th>
                                     <th class="col-total">Total Biaya</th>
                                     <th class="col-method">Metode Bayar</th>
-                                    <th class="col-status">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -240,7 +235,6 @@
                                         $daftarStaf = $t->details->pluck('staf.nama')->filter()->unique()->values();
                                         $iniNama = collect(preg_split('/\s+/', trim((string) ($t->pelanggan->nama ?? ''))))->take(2)->map(fn ($w) => mb_substr($w, 0, 1))->implode('');
                                         $methodInfo = $metodeMap[$t->metode_pembayaran] ?? ['badge' => '', 'label' => $t->labelMetode()];
-                                        $statusInfo = $statusMap[$t->status] ?? ['pill' => '', 'label' => ucfirst($t->status ?? '')];
                                     @endphp
 
                                     <tr data-trx-id="{{ $t->id }}"
@@ -274,9 +268,6 @@
                                         </td>
                                         <td class="col-method">
                                             <span class="payment-method-badge {{ $methodInfo['badge'] }}">{{ $methodInfo['label'] }}</span>
-                                        </td>
-                                        <td class="col-status">
-                                            <span class="status-pill {{ $statusInfo['pill'] }}">{{ $statusInfo['label'] }}</span>
                                         </td>
                                     </tr>
                                 @endforeach

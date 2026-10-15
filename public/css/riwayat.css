@@ -1134,16 +1134,11 @@
   width: 104px;
 }
 
-.trans-page-container .daily-trans-table .col-status {
-  width: 116px;
-}
-
 /* Tidak pernah terpecah ke dua baris */
 .trans-page-container .daily-trans-table .col-id,
 .trans-page-container .daily-trans-table .col-total,
 .trans-page-container .daily-trans-table .trans-order-id-link,
 .trans-page-container .daily-trans-table .trans-amount-cell,
-.trans-page-container .daily-trans-table .status-pill,
 .trans-page-container .daily-trans-table .payment-method-badge {
   white-space: nowrap;
 }
@@ -1220,7 +1215,7 @@
 }
 
 /* Prioritas kolom: sembunyikan dari prioritas terendah lebih dulu.
-   ID/Waktu dan Status TIDAK pernah disembunyikan.
+   ID/Waktu TIDAK pernah disembunyikan.
    - Metode Bayar  : tampil mulai @4xl (896px)
    - Total Biaya   : tampil mulai @3xl (648px)
    - Layanan       : tampil mulai @2xl (592px)
