@@ -95,7 +95,7 @@
                             <td style="text-align: right;" class="no-print">
                                 @if (!$isHarian)
                                     @foreach ($row['transaksis'] as $trx)
-                                        <a href="{{ route('transaksi.show', $trx) }}" class="btn-slip-action" title="Edit komisi di halaman transaksi">
+                                        <a href="{{ route('transaksi.edit', $trx) }}" class="btn-slip-action" title="Edit transaksi">
                                             Edit {{ $trx->no_struk }}
                                         </a>
                                     @endforeach

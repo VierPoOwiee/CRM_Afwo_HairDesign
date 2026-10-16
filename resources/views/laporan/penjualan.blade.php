@@ -523,7 +523,6 @@
                                 <th>Total Biaya</th>
                                 <th>Metode Bayar</th>
                                 <th>Status</th>
-                                <th style="text-align: right;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -546,7 +545,7 @@
 
                                 <tr data-trx-id="{{ $t->id }}">
                                     <td style="width: 110px;">
-                                        <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link">{{ $t->no_struk }}</a>
+                                        <span class="trans-order-id-link">{{ $t->no_struk }}</span>
                                         <div class="trans-time-val">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('H:i') : '--:--' }} WIB</div>
                                     </td>
                                     <td>
@@ -570,9 +569,6 @@
                                     </td>
                                     <td>
                                         <span class="status-pill status-paid">Selesai (Paid)</span>
-                                    </td>
-                                    <td style="text-align: right;">
-                                        <a href="{{ route('transaksi.show', $t) }}" class="btn-detail-receipt">Detail Struk</a>
                                     </td>
                                 </tr>
                             @endforeach

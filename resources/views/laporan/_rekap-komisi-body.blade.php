@@ -216,9 +216,9 @@
                                     @foreach ($layananItems as $kt)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('transaksi.show', $kt->transaksi) }}" class="rekap-struk-link">
+                                                <span class="rekap-struk-link">
                                                     {{ $kt->transaksi->no_struk ?? '-' }}
-                                                </a>
+                                                </span>
                                             </td>
                                             <td>{{ $tglIndo($kt->transaksi->waktu_kunjungan ?? null, true) }}</td>
                                             <td style="text-align: right; font-weight: 700;">{{ $fmt($kt->jumlah_komisi) }}</td>

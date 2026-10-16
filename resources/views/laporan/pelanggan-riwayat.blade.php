@@ -83,7 +83,7 @@
                         @foreach ($transaksis as $t)
                             <tr>
                                 <td>
-                                    <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link">{{ $t->no_struk }}</a>
+                                    <span class="trans-order-id-link">{{ $t->no_struk }}</span>
                                 </td>
                                 <td class="trans-worker-tag">{!! $fmtTanggal($t->waktu_kunjungan, true) !!}</td>
                                 <td>

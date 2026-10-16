@@ -474,23 +474,6 @@
   border: 1px solid var(--status-cancel-border);
 }
 
-.btn-detail-receipt {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-1);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 5px 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-detail-receipt:hover {
-  background-color: var(--surface-2);
-  border-color: var(--border-accent);
-}
-
 /* Tombol aksi di dalam modal detail struk (ikon saja, ukuran seragam) */
 .btn-modal-action {
   display: inline-flex;
@@ -549,18 +532,6 @@
   background-color: var(--status-danger-bg);
   border-color: var(--status-danger-fg);
   color: var(--status-danger-fg);
-}
-
-.btn-receipt-print {
-  background-color: var(--ink);
-  border-color: var(--ink);
-  color: var(--text-on-ink);
-}
-
-.btn-receipt-print:hover {
-  background-color: var(--ink-hover);
-  border-color: var(--ink-hover);
-  color: var(--text-on-ink);
 }
 
 .btn-receipt-close {
@@ -1255,7 +1226,7 @@
 
 /* ==========================================================================
    POP-UP DETAIL STRUK TRANSAKSI
-   Di-scope ke #trans-detail-modal + kelas .struk-* supaya tidak mengganggu
+   Di-scope ke #trans-detail-modal supaya tidak mengganggu
    halaman lain yang memakai riwayat.css.
    ========================================================================== */
 body.modal-open { overflow: hidden; }
@@ -1285,144 +1256,6 @@ body.modal-open .app-main-content { overflow: hidden; }
   border-radius: var(--radius-full);
 }
 
-/* Isi struk */
-.struk-receipt { font-size: 0.85rem; color: var(--text-1); }
-
-.struk-brand {
-  text-align: center;
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-}
-.struk-brand-name {
-  font-size: 1.3rem;
-  font-weight: 900;
-  margin: 0;
-  color: var(--text-1);
-}
-.struk-brand-tagline {
-  font-size: 0.78rem;
-  color: var(--text-3);
-  margin: 2px 0 0;
-}
-.struk-cancel-badge { margin-top: 8px; }
-
-.struk-info-list { margin: 0 0 12px; }
-.struk-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 0.82rem;
-  margin-bottom: 6px;
-}
-.struk-info-row dt { color: var(--text-3); flex-shrink: 0; }
-.struk-info-row dd { margin: 0; font-weight: 700; text-align: right; min-width: 0; }
-.struk-mono {
-  font-family: monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.struk-items {
-  border-top: 1px dashed var(--border);
-  border-bottom: 1px dashed var(--border);
-  padding: 10px 0;
-  margin-bottom: 12px;
-}
-.struk-item-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  margin-bottom: 4px;
-}
-.struk-item-row > span:last-child { white-space: nowrap; }
-.struk-usage-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.75rem;
-  color: var(--text-3);
-  margin: 2px 0 2px 12px;
-}
-.struk-usage-row > span:last-child { white-space: nowrap; }
-.struk-empty { font-size: 0.82rem; color: var(--text-3); }
-
-.struk-total-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 1.05rem;
-  font-weight: 900;
-  color: var(--text-link);
-  margin-bottom: 8px;
-}
-.struk-method-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.82rem;
-  color: var(--text-3);
-}
-.struk-method-row > span:last-child { font-weight: 700; color: var(--text-1); }
-
-/* Status memuat & gagal */
-.struk-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 40px 16px;
-  color: var(--text-3);
-}
-.struk-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2.5px solid var(--border-strong);
-  border-top-color: var(--accent);
-  border-radius: var(--radius-full);
-  animation: struk-spin 0.7s linear infinite;
-}
-@keyframes struk-spin { to { transform: rotate(360deg); } }
-
-.struk-error {
-  text-align: center;
-  padding: 24px 12px;
-  color: var(--text-2);
-}
-.struk-error p { margin: 0 0 12px; font-weight: 700; }
-.struk-error-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.struk-retry,
-.struk-open-detail {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background-color: var(--surface);
-  color: var(--text-1);
-  font: inherit;
-  font-weight: 700;
-  font-size: 0.82rem;
-  text-decoration: none;
-  cursor: pointer;
-}
-.struk-retry:hover,
-.struk-open-detail:hover {
-  background-color: var(--surface-2);
-  border-color: var(--border-accent);
-}
-
 /* Layar kecil: beri jarak tepi yang nyaman */
 @media (max-width: 479.98px) {
   #trans-detail-modal { padding: 12px; }
@@ -1432,52 +1265,3 @@ body.modal-open .app-main-content { overflow: hidden; }
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .struk-spinner { animation-duration: 1.4s; }
-}
-
-/* Cetak: hanya tampilkan struk, paksa tema terang, satu halaman */
-@media print {
-  body.printing-struk > *:not(#trans-detail-modal) { display: none !important; }
-  body.printing-struk { background: #fff !important; }
-  body.printing-struk #trans-detail-modal {
-    display: block !important;
-    position: static !important;
-    inset: auto !important;
-    background: #fff !important;
-    backdrop-filter: none !important;
-    padding: 0 !important;
-  }
-  body.printing-struk #trans-detail-modal .modal-dialog-card {
-    max-width: 100% !important;
-    max-height: none !important;
-    width: 100% !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    gap: 0 !important;
-    background: #fff !important;
-  }
-  body.printing-struk #trans-detail-modal .modal-header-row,
-  body.printing-struk #trans-detail-modal .modal-footer-row { display: none !important; }
-  body.printing-struk #trans-detail-modal .modal-body-content {
-    overflow: visible !important;
-    max-height: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  body.printing-struk .struk-receipt,
-  body.printing-struk .struk-brand-name,
-  body.printing-struk .struk-info-row dt,
-  body.printing-struk .struk-info-row dd,
-  body.printing-struk .struk-item-row,
-  body.printing-struk .struk-empty,
-  body.printing-struk .struk-total-row,
-  body.printing-struk .struk-method-row,
-  body.printing-struk .struk-method-row > span:last-child {
-    color: #111 !important;
-  }
-  body.printing-struk .struk-brand,
-  body.printing-struk .struk-items { border-color: #999 !important; }
-  @page { margin: 12mm; }
-}

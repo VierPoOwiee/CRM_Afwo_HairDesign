@@ -6,6 +6,34 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}">
+    <style>
+        /* Footer pop-up: dua tombol ikon (edit & hapus), rata tengah, jarak 8px. */
+        #trans-detail-modal .modal-footer-row {
+            justify-content: center;
+            gap: 8px;
+        }
+        #trans-detail-modal .btn-modal-action {
+            width: 42px;
+            height: 42px;
+        }
+
+        /* Pop-up konfirmasi hapus tampil di atas pop-up struk. */
+        #trans-hapus-confirm {
+            z-index: 10001;
+        }
+
+        /* Baris label (kiri) - nilai (kanan) pada isi struk. */
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+        }
+        .receipt-line > * {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+    </style>
 @endpush
 
 @php
@@ -238,14 +266,12 @@
                                     @endphp
 
                                     <tr data-trx-id="{{ $t->id }}"
-                                        data-struk-url="{{ route('transaksi.struk', $t) }}"
-                                        data-detail-url="{{ route('transaksi.show', $t) }}"
                                         data-edit-url="{{ route('transaksi.edit', $t) }}"
                                         data-delete-url="{{ route('transaksi.destroy', $t) }}"
                                         data-no-struk="{{ $t->no_struk }}"
                                         data-status="{{ $t->status }}">
                                         <td class="col-id">
-                                            <a href="{{ route('transaksi.show', $t) }}" class="trans-order-id-link trans-row-link" title="Lihat detail {{ $t->no_struk }}">{{ $t->no_struk }}</a>
+                                            <span class="trans-order-id-link trans-row-link" title="Buka struk {{ $t->no_struk }}">{{ $t->no_struk }}</span>
                                             <div class="trans-time-val">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('H:i') : '--:--' }} WIB</div>
                                         </td>
                                         <td class="col-client">
@@ -296,12 +322,81 @@
         @if ($transaksis->hasPages())
             @include('partials.pagination', ['paginator' => $transaksis])
         @endif
+
+        {{-- Isi struk per transaksi (server-rendered). Pop-up hanya menyalin
+             template ini, jadi tampilannya selalu sinkron dengan data asli. --}}
+        @foreach (collect($transaksis->items()) as $t)
+            <template id="tpl-receipt-{{ $t->id }}">
+                @php
+                    $tplDetails = $t->details->where('subtotal', '>', 0);
+                    $tplStaf = $tplDetails->pluck('staf.nama')->filter()->unique();
+                @endphp
+
+                <div style="text-align: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
+                    <h2 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: var(--text-primary);">Afwo. Hair Design</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Official Salon Payment Receipt</p>
+                </div>
+
+                <div class="receipt-line" style="font-size: 0.82rem; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">No. Transaksi:</span>
+                    <strong style="font-family: monospace; text-align: right;">{{ $t->no_struk }}</strong>
+                </div>
+                <div class="receipt-line" style="font-size: 0.82rem; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">Waktu:</span>
+                    <strong style="text-align: right;">{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('d M Y - H:i') : '-' }} WIB</strong>
+                </div>
+                <div class="receipt-line" style="font-size: 0.82rem; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">Pelanggan:</span>
+                    <strong style="text-align: right;">{{ $t->pelanggan->nama ?? '-' }}{{ $t->pelanggan && $t->pelanggan->no_wa ? ' ('.$t->pelanggan->no_wa.')' : '' }}</strong>
+                </div>
+                <div class="receipt-line" style="font-size: 0.82rem; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted);">Stylist:</span>
+                    <strong style="text-align: right;">{{ $tplStaf->join(' & ') ?: '-' }}</strong>
+                </div>
+
+                <div style="border-top: 1px dashed var(--border-color); border-bottom: 1px dashed var(--border-color); padding: 10px 0; margin-bottom: 12px;">
+                    @forelse ($tplDetails as $d)
+                        @php
+                            if ($d->tipe_item === 'layanan' && $d->layanan) {
+                                $dNama = $d->layanan->nama_layanan.($d->varian_dipilih ? ' ('.ucfirst($d->varian_dipilih).')' : '');
+                            } elseif ($d->tipe_item === 'produk' && $d->produk) {
+                                $dNama = $d->produk->nama_produk;
+                            } else {
+                                $dNama = '(Item)';
+                            }
+                        @endphp
+                        <div class="receipt-line" style="font-weight: 700; font-size: 0.88rem; margin-bottom: 4px;">
+                            <span>{{ $dNama }}{{ (float) $d->qty != 1 ? ' × '.rtrim(rtrim((string) $d->qty, '0'), '.') : '' }}</span>
+                            <span style="text-align: right;">{{ $fmt($d->subtotal) }}</span>
+                        </div>
+                        @forelse ($d->produkPenggunaan as $pu)
+                            <div class="receipt-line" style="font-size: 0.75rem; color: var(--text-muted); margin: 2px 0 2px 12px;">
+                                <span>├ Pemakaian: {{ $pu->produk->nama_produk ?? 'Produk' }} ({{ rtrim(rtrim((string) $pu->pemakaian_ml, '0'), '.') }} ml)</span>
+                                <span>-</span>
+                            </div>
+                        @empty
+                        @endforelse
+                    @empty
+                        <div style="font-size: 0.82rem; color: var(--text-muted);">Tidak ada item.</div>
+                    @endforelse
+                </div>
+
+                <div class="receipt-line" style="font-size: 1.05rem; font-weight: 900; color: var(--text-link); margin-bottom: 8px;">
+                    <span>TOTAL:</span>
+                    <span>{{ $fmt($t->total_bayar) }}</span>
+                </div>
+                <div class="receipt-line" style="font-size: 0.82rem; color: var(--text-muted);">
+                    <span>Metode Pembayaran:</span>
+                    <span style="font-weight: 700; color: var(--text-primary);">{{ $t->labelMetode() }}</span>
+                </div>
+            </template>
+        @endforeach
     </div>
 @endsection
 
 @push('modals')
-    {{-- Pop-up Detail Struk Transaksi. Konten struk dimuat dari server
-         (endpoint transaksi.struk) agar selalu sinkron dengan data asli. --}}
+    {{-- Pop-up Detail Struk Transaksi. Isinya disalin dari template
+         #tpl-receipt-<id> agar tanpa permintaan ke server. --}}
     <div id="trans-detail-modal" class="modal-backdrop" role="dialog" aria-modal="true"
          aria-labelledby="trans-detail-modal-title" aria-hidden="true">
         <div class="modal-dialog-card" tabindex="-1">
@@ -315,12 +410,7 @@
                 </button>
             </div>
 
-            <div class="modal-body-content" id="modal-receipt-body">
-                <div class="struk-loading" role="status" aria-live="polite">
-                    <span class="struk-spinner" aria-hidden="true"></span>
-                    <span class="sr-only">Memuat struk…</span>
-                </div>
-            </div>
+            <div class="modal-body-content" id="modal-receipt-body"></div>
 
             <div class="modal-footer-row">
                 <a href="#" class="btn-modal-action btn-receipt-edit" id="btn-edit-transaksi" title="Edit transaksi" aria-label="Edit transaksi">
@@ -341,13 +431,33 @@
                         </svg>
                     </button>
                 </form>
-                <button type="button" class="btn-modal-action btn-receipt-print" id="btn-print-receipt" title="Cetak struk" aria-label="Cetak struk">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
+            </div>
+        </div>
+    </div>
+
+    {{-- Konfirmasi hapus memakai komponen modal aplikasi (bukan confirm bawaan). --}}
+    <div id="trans-hapus-confirm" class="modal-backdrop" role="dialog" aria-modal="true"
+         aria-labelledby="trans-hapus-confirm-title" aria-hidden="true">
+        <div class="modal-dialog-card" tabindex="-1">
+            <div class="modal-header-row">
+                <h3 class="modal-header-title" id="trans-hapus-confirm-title">Hapus Transaksi?</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-confirm-hapus" aria-label="Tutup">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
+            </div>
+
+            <div class="modal-body-content">
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; line-height: 1.6;">
+                    Transaksi <strong id="confirm-no-struk" style="font-family: monospace;"></strong> akan dihapus. Stok produk akan dikembalikan.
+                </p>
+            </div>
+
+            <div class="modal-footer-row">
+                <button type="button" class="btn btn-secondary" id="btn-batal-hapus">Batal</button>
+                <button type="button" class="btn btn-danger" id="btn-konfirmasi-hapus">Ya, Hapus</button>
             </div>
         </div>
     </div>
@@ -410,29 +520,31 @@
             var hapusForm = document.getElementById('form-hapus-transaksi');
             var hapusBtn = document.getElementById('btn-hapus-transaksi');
             var closeBtn = document.getElementById('btn-close-modal');
-            var btnPrint = document.getElementById('btn-print-receipt');
+
+            var confirmModal = document.getElementById('trans-hapus-confirm');
+            var confirmCard = confirmModal ? confirmModal.querySelector('.modal-dialog-card') : null;
+            var confirmNo = document.getElementById('confirm-no-struk');
+            var confirmBtn = document.getElementById('btn-konfirmasi-hapus');
+            var batalBtn = document.getElementById('btn-batal-hapus');
+            var confirmClose = document.getElementById('btn-close-confirm-hapus');
+
             var lastFocused = null;
-            var requestSeq = 0;
 
             function lockScroll() { document.body.classList.add('modal-open'); }
             function unlockScroll() { document.body.classList.remove('modal-open'); }
 
-            function focusables() {
+            function focusables(scope) {
+                if (!scope) return [];
                 return Array.prototype.slice.call(
-                    card.querySelectorAll('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])')
+                    scope.querySelectorAll('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])')
                 ).filter(function (el) { return el.offsetParent !== null; });
-            }
-
-            function showModal() {
-                modal.classList.add('show');
-                modal.setAttribute('aria-hidden', 'false');
-                lockScroll();
-                card.focus();
             }
 
             function openModal(row, trigger) {
                 lastFocused = trigger || document.activeElement;
                 var status = row.getAttribute('data-status');
+                var tpl = document.getElementById('tpl-receipt-' + row.getAttribute('data-trx-id'));
+                if (!tpl) return;
 
                 if (editBtn) {
                     editBtn.setAttribute('href', row.getAttribute('data-edit-url') || '#');
@@ -441,62 +553,52 @@
                 if (hapusForm) hapusForm.setAttribute('action', row.getAttribute('data-delete-url') || '#');
                 if (hapusBtn) hapusBtn.setAttribute('data-no-struk', row.getAttribute('data-no-struk') || '');
 
-                modalBody.innerHTML = '<div class="struk-loading" role="status" aria-live="polite">'
-                    + '<span class="struk-spinner" aria-hidden="true"></span>'
-                    + '<span class="sr-only">Memuat struk…</span></div>';
-                showModal();
+                modalBody.innerHTML = '';
+                modalBody.appendChild(tpl.content.cloneNode(true));
 
-                var url = row.getAttribute('data-struk-url');
-                if (!url) { lastFocused = null; return; }
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+                lockScroll();
+                card.focus();
+            }
 
-                var seq = ++requestSeq;
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' },
-                    credentials: 'same-origin'
-                }).then(function (res) {
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    return res.text();
-                }).then(function (html) {
-                    if (seq !== requestSeq) return;
-                    modalBody.innerHTML = html;
-                }).catch(function () {
-                    if (seq !== requestSeq) return;
-                    var detailUrl = row.getAttribute('data-detail-url') || '#';
-                    modalBody.innerHTML = '<div class="struk-error" role="alert">'
-                        + '<p>Gagal memuat struk.</p>'
-                        + '<div class="struk-error-actions">'
-                        + '<button type="button" class="struk-retry">Coba lagi</button>'
-                        + '<a class="struk-open-detail" href="' + detailUrl + '">Buka halaman detail</a>'
-                        + '</div></div>';
-                    var retry = modalBody.querySelector('.struk-retry');
-                    if (retry) {
-                        retry.addEventListener('click', function () { openModal(row, trigger); });
-                    }
-                });
+            function closeConfirm() {
+                if (!confirmModal || !confirmModal.classList.contains('show')) return;
+                confirmModal.classList.remove('show');
+                confirmModal.setAttribute('aria-hidden', 'true');
+                if (hapusBtn) hapusBtn.focus();
             }
 
             function closeModal() {
                 if (!modal.classList.contains('show')) return;
                 modal.classList.remove('show');
                 modal.setAttribute('aria-hidden', 'true');
-                requestSeq++;
                 modalBody.innerHTML = '';
+                closeConfirm();
                 unlockScroll();
                 if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
                 lastFocused = null;
             }
 
-            /* Klik baris membuka pop-up. Ctrl/Cmd/Shift/Alt & klik tengah tetap
-               membuka halaman detail penuh (transaksi.show) sebagai fallback. */
+            function openConfirm() {
+                if (!confirmModal || !confirmCard) {
+                    if (hapusForm) hapusForm.submit();
+                    return;
+                }
+                if (confirmNo) confirmNo.textContent = hapusBtn ? (hapusBtn.getAttribute('data-no-struk') || '') : '';
+                confirmModal.classList.add('show');
+                confirmModal.setAttribute('aria-hidden', 'false');
+                confirmCard.focus();
+            }
+
+            /* Klik no. struk pada baris membuka pop-up struk. */
             var list = document.getElementById('transaction-history-list');
             if (list) {
                 list.addEventListener('click', function (e) {
                     var link = e.target.closest ? e.target.closest('.trans-row-link') : null;
                     if (!link) return;
-                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                    var row = link.closest('tr[data-struk-url]');
+                    var row = link.closest('tr[data-trx-id]');
                     if (!row) return;
-                    e.preventDefault();
                     openModal(row, link);
                 });
             }
@@ -506,11 +608,30 @@
                 if (e.target === modal) closeModal();
             });
 
+            if (confirmModal) {
+                confirmModal.addEventListener('click', function (e) {
+                    if (e.target === confirmModal) closeConfirm();
+                });
+            }
+            if (batalBtn) batalBtn.addEventListener('click', closeConfirm);
+            if (confirmClose) confirmClose.addEventListener('click', closeConfirm);
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function () {
+                    if (hapusForm) hapusForm.submit();
+                });
+            }
+
             document.addEventListener('keydown', function (e) {
                 if (!modal.classList.contains('show')) return;
-                if (e.key === 'Escape') { closeModal(); return; }
+                var confirmOpen = confirmModal && confirmModal.classList.contains('show');
+
+                if (e.key === 'Escape') {
+                    if (confirmOpen) { closeConfirm(); } else { closeModal(); }
+                    return;
+                }
+
                 if (e.key === 'Tab') {
-                    var f = focusables();
+                    var f = focusables(confirmOpen ? confirmCard : card);
                     if (!f.length) return;
                     var first = f[0];
                     var last = f[f.length - 1];
@@ -524,24 +645,13 @@
                 }
             });
 
+            /* Hapus dikonfirmasi lewat pop-up aplikasi, bukan confirm() bawaan. */
             if (hapusForm) {
                 hapusForm.addEventListener('submit', function (e) {
-                    var no = hapusBtn ? hapusBtn.getAttribute('data-no-struk') : '';
-                    if (!confirm('Hapus transaksi "' + no + '"? Stok produk akan dikembalikan.')) {
-                        e.preventDefault();
-                    }
+                    e.preventDefault();
+                    openConfirm();
                 });
             }
-
-            if (btnPrint) {
-                btnPrint.addEventListener('click', function () {
-                    document.body.classList.add('printing-struk');
-                    window.print();
-                });
-            }
-            window.addEventListener('afterprint', function () {
-                document.body.classList.remove('printing-struk');
-            });
         });
     </script>
 @endpush

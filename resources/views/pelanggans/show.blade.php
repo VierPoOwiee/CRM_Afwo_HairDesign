@@ -60,7 +60,7 @@
                             ->take(3)
                             ->implode(' + ');
                     @endphp
-                    <a href="{{ route('transaksi.show', $trx) }}" class="visit-item" style="text-decoration: none; color: inherit;">
+                    <div class="visit-item">
                         <div class="visit-item-left">
                             <div class="visit-icon-box">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         <div class="visit-amount">Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}</div>
-                    </a>
+                    </div>
                 @empty
                     <p style="font-size: 0.88rem; color: var(--text-muted); text-align: center; padding: 12px 0;">
                         Belum ada riwayat kunjungan untuk pelanggan ini.
