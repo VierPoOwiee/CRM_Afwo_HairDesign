@@ -9,6 +9,7 @@ class PertanyaanAi extends Model
     protected $table = 'pertanyaan_ai';
 
     protected $fillable = [
+        'sesi_id',
         'periode',
         'pertanyaan',
         'jawaban',

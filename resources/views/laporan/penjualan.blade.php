@@ -251,62 +251,6 @@
             <div class="insight-note-empty no-print">Belum ada analisa. Klik tombol "Generate Analisa" untuk mendapatkan insight dari AI.</div>
         @endif
 
-        {{-- Tanya AI --}}
-        <div id="tanya-ai" class="insight-subsection no-print">
-            <p class="insight-rekomendasi-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                </svg>
-                Tanya AI Soal Data Bisnis Anda
-            </p>
-            <p class="insight-quota-line">Ajukan pertanyaan bebas tentang data bisnis bulan ini. AI menjawab langsung dari ringkasan data periode aktif. Riwayat chat otomatis ter-reset setiap hari.</p>
-
-            <form method="POST" action="{{ route('laporan.insight.tanya') }}" id="formTanyaAi" style="margin-top: 10px;">
-                @csrf
-                <input type="hidden" name="periode" value="{{ $insightPeriode }}">
-                <textarea name="pertanyaan" rows="2" maxlength="500" required
-                    placeholder="Contoh: kenapa omset kategori Warna Rambut turun drastis?"
-                    class="tanya-field">{{ old('pertanyaan') }}</textarea>
-                @error('pertanyaan')
-                    <p style="font-size: 0.76rem; color: var(--status-danger); margin-top: 6px;">{{ $message }}</p>
-                @enderror
-                <div class="tanya-actions-bar">
-                    <span class="tanya-char-hint">Maksimal 500 karakter</span>
-                    <button type="submit"
-                        @if ($kuotaAi['habis']) disabled title="Kuota AI hari ini habis, reset {{ $kuotaAi['label_reset'] }}" @endif
-                        class="btn btn--primary">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                        Kirim
-                    </button>
-                </div>
-            </form>
-
-            @if ($kuotaAi['habis'])
-                <p style="font-size: 0.78rem; color: var(--status-danger); margin-top: 10px;">
-                    Kuota AI hari ini habis ({{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}). Lanjut besok &mdash; reset {{ $kuotaAi['label_reset'] }}.
-                </p>
-            @endif
-
-            @if ($tanyaRiwayat->isNotEmpty())
-                <div id="riwayatChat" class="chat-history-box">
-                    <span class="chat-group-label">Riwayat Pertanyaan Hari Ini</span>
-                    @foreach ($tanyaRiwayat as $item)
-                        <div>
-                            <div class="chat-row-user">
-                                <div class="chat-bubble-user">{{ $item->pertanyaan }}</div>
-                            </div>
-                            <div class="chat-row-ai">
-                                <div class="chat-bubble-ai">{{ $item->jawaban }}</div>
-                            </div>
-                            <p class="chat-time">{{ $item->dibuat_pada->format('d M Y H:i') }}</p>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
     </section>
 
     {{-- ============ TOTAL REVENUE & CHART ============ --}}
@@ -810,23 +754,6 @@ document.addEventListener('DOMContentLoaded', function () {
             chartTrenInst.update('none');
         }
     });
-
-    // Cooldown tombol Tanya AI: disable 3 detik setelah kirim
-    const formTanya = document.getElementById('formTanyaAi');
-    if (formTanya) {
-        formTanya.addEventListener('submit', function () {
-            const btn = formTanya.querySelector('button[type="submit"]');
-            if (!btn || btn.disabled) return;
-            btn.disabled = true;
-            setTimeout(() => { btn.disabled = false; }, 3000);
-        });
-    }
-
-    // Scroll chat ke pesan terbaru (paling bawah)
-    const riwayatChat = document.getElementById('riwayatChat');
-    if (riwayatChat) {
-        riwayatChat.scrollTop = riwayatChat.scrollHeight;
-    }
 
     // Countdown cooldown Generate Ulang
     const cdLabel = document.getElementById('insightCooldownLabel');

@@ -42,6 +42,11 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         Route::put('/pengguna/{user}/toggle-aktif', [PenggunaController::class, 'toggleAktif'])->name('pengguna.toggle-aktif');
 
         Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
+        Route::get('/laporan/ai-chat', [LaporanController::class, 'aiChat'])->name('laporan.ai-chat');
+        Route::post('/laporan/ai-chat/sesi/create', [LaporanController::class, 'sesiCreate'])->name('laporan.ai-chat.sesi.create');
+        Route::get('/laporan/ai-chat/sesi/{sesiId}', [LaporanController::class, 'sesiShow'])->name('laporan.ai-chat.sesi.show');
+        Route::post('/laporan/ai-chat/sesi/{sesiId}/tanya', [LaporanController::class, 'sesiTanya'])->name('laporan.ai-chat.sesi.tanya');
+        Route::delete('/laporan/ai-chat/sesi/{sesiId}', [LaporanController::class, 'hapusSesi'])->name('laporan.ai-chat.hapus-sesi');
         Route::get('/laporan/pelanggan-aktif', [LaporanController::class, 'pelangganAktif'])->name('laporan.pelanggan-aktif');
         Route::get('/laporan/pelanggan-aktif/{pelanggan}', [LaporanController::class, 'pelangganRiwayat'])->name('laporan.pelanggan-riwayat');
         Route::get('/laporan/rekap-komisi', [LaporanController::class, 'rekapKomisi'])->name('laporan.rekap-komisi');
