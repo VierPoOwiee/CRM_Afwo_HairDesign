@@ -6,20 +6,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 2px;
 }
 
 .form-inline-action-link {
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
   font-weight: 700;
+  line-height: 1.2;
   color: var(--text-link);
   text-decoration: none;
-  transition: color 0.15s ease;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .form-inline-action-link:hover {
   color: var(--text-1);
+  border-color: var(--border-accent);
+  background-color: var(--accent-soft);
 }
 
 /* Quick Time Slot Picker */

@@ -353,6 +353,33 @@
   .varian-table .varian-empty { display: block; padding: 24px 0; }
 }
 
+/* Toolbar pencarian + tombol tambah */
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0 18px;
+  flex-wrap: wrap;
+}
+
+.list-toolbar .layanan-search-form,
+.list-toolbar .produk-search-form {
+  flex: 1 1 320px;
+  max-width: none;
+  margin: 0;
+}
+
+.list-toolbar .page-primary-action {
+  margin: 0 0 0 auto;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .list-toolbar .page-primary-action {
+    margin-left: 0;
+  }
+}
+
 /* Pencarian layanan */
 .layanan-search-form {
   margin: 2px 0 18px;

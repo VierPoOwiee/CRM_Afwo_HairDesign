@@ -6,13 +6,8 @@
     $satuanVal = old('satuan_penggunaan', $produk->satuan_penggunaan ?? '/10ml');
 
     $kategoriLayanan = Produk::kategoriLayanan();
-<<<<<<< HEAD
-    $kategoriPenjualan = ['dijual', 'dipakai_layanan'];
-    $kategoriProduk = $kategoriLayanan;
-=======
     $radioLeft = array_values(array_intersect(['Bleaching', 'Keratin', 'Hairtreatment', 'Serum', 'Keriting'], $kategoriLayanan));
     $radioRight = array_values(array_intersect(['Color', 'Oxidant', 'Smoothing', 'Creambath', 'Repair', 'Masker'], $kategoriLayanan));
->>>>>>> baa04034f3a7243d0040ab7cb95b48a5fe68f3b4
 
     $formAction = isset($produk) && $produk->exists
         ? route('produk.update', $produk)
@@ -91,27 +86,14 @@
             <button type="button" class="btn btn-secondary" id="btn-ganti-merek-mode">Pilih Merek</button>
         </div>
 
-        <!-- Baris 2: Kategori Produk (2 Kelompok: Penjualan & Produk) -->
+        <!-- Baris 2: Kategori Produk (Radio Grid 2 Kolom) -->
         <div class="form-group-item">
             <label class="form-label">Kategori Produk <span class="required-star">*</span></label>
-<<<<<<< HEAD
-            <span class="field-help-text" style="margin-top: -2px; margin-bottom: 6px;">Pilih kelompok kategori, lalu jenis kategorinya.</span>
-
-            <div class="category-group">
-                <span class="category-group-title">Kategori Penjualan</span>
-                <span class="category-group-help">Dijual per pcs ke pelanggan, atau dipakai staf secara umum saat layanan.</span>
-                <div class="product-category-radio-grid">
-                    @foreach ($kategoriPenjualan as $val)
-                        @php
-                            [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
-                        @endphp
-=======
             <span class="field-help-text" style="margin-top: -2px; margin-bottom: 6px;">Kategori bahan ini dipakai pada layanan tertentu.</span>
 
             <div class="product-category-radio-grid">
                 <div class="radio-col">
                     @foreach ($radioLeft as $val)
->>>>>>> baa04034f3a7243d0040ab7cb95b48a5fe68f3b4
                         <label class="category-radio-card {{ $kategoriVal === $val ? 'active' : '' }}">
                             <input type="radio" name="kategori_produk" value="{{ $val }}"
                                    {{ $kategoriVal === $val ? 'checked' : '' }}>
@@ -120,21 +102,9 @@
                         </label>
                     @endforeach
                 </div>
-            </div>
 
-<<<<<<< HEAD
-            <div class="category-group">
-                <span class="category-group-title">Kategori Produk</span>
-                <span class="category-group-help">Jenis bahan khusus yang dipakai staf saat treatment (bleaching, warna, keratin, dll).</span>
-                <div class="product-category-radio-grid">
-                    @foreach ($kategoriProduk as $val)
-                        @php
-                            [$unit, $help] = $radioHelp[$val] ?? ['/10ml', 'Harga jual per 10ml bahan yang digunakan saat layanan. Modal dihitung otomatis dari riwayat restock.'];
-                        @endphp
-=======
                 <div class="radio-col">
                     @foreach ($radioRight as $val)
->>>>>>> baa04034f3a7243d0040ab7cb95b48a5fe68f3b4
                         <label class="category-radio-card {{ $kategoriVal === $val ? 'active' : '' }}">
                             <input type="radio" name="kategori_produk" value="{{ $val }}"
                                    {{ $kategoriVal === $val ? 'checked' : '' }}>

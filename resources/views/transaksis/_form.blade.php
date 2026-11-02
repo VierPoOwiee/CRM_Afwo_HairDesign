@@ -23,7 +23,10 @@
         {{-- Card: Interconnected Searchable Combobox untuk Pilih/Tambah Pelanggan --}}
         <article class="card customer-combobox-card" data-field="customer-card">
             <div class="combobox-group-item">
-                <label class="form-label" for="pelanggan_search">NAMA PELANGGAN</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                    <label class="form-label" for="pelanggan_search" style="margin: 0;">NAMA PELANGGAN</label>
+                    <button type="button" id="addPelangganBtn" class="btn btn-secondary btn-sm">+ Tambah Pelanggan Baru</button>
+                </div>
                 <div class="combobox-wrapper" id="name-combobox-wrapper">
                     <div class="combobox-input-box">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -44,7 +47,6 @@
                     <span id="pelanggan_nama"></span>
                     <span class="chip-actions">
                         <button type="button" onclick="clearPelanggan()" class="chip-clear" title="Hapus pilihan">&times;</button>
-                        <button type="button" id="addPelangganBtn" class="chip-addmore">+ Pelanggan Baru</button>
                     </span>
                 </div>
             </div>
@@ -380,6 +382,39 @@
 
         // --- Helpers ---
         function fmt(n) { return new Intl.NumberFormat('id-ID').format(Math.round(n)); }
+        function parseAngka(value) {
+            var s = String(value == null ? '' : value).trim();
+            if (s === '') return 0;
+            s = s.replace(/\./g, '').replace(',', '.');
+            var n = parseFloat(s);
+            return isNaN(n) ? 0 : n;
+        }
+        function formatAngkaInput(value, allowDecimal) {
+            var s = String(value == null ? '' : value).replace(/[^\d,]/g, '');
+            var hasComma = s.indexOf(',') !== -1;
+            var parts = s.split(',');
+            var intRaw = (parts[0] || '').replace(/\D/g, '');
+            var intFmt = intRaw === '' ? '' : fmt(parseInt(intRaw, 10));
+            if (!allowDecimal) return intFmt;
+            var decRaw = (parts.slice(1).join('') || '').replace(/\D/g, '').slice(0, 2);
+            return intFmt + (hasComma ? ',' + decRaw : '');
+        }
+        function rawAngkaInput(value) {
+            var s = String(value == null ? '' : value).replace(/\./g, '');
+            if (s === '') return '';
+            var n = parseAngka(s);
+            return String(n);
+        }
+        function formatAngkaField(el) {
+            if (!el || !el.classList || !el.classList.contains('format-angka')) return;
+            el.value = formatAngkaInput(el.value, el.dataset.decimal === '1');
+        }
+
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains('format-angka')) {
+                formatAngkaField(e.target);
+            }
+        });
         function formatMl(n) {
             n = parseFloat(n) || 0;
             return (n % 1 === 0) ? String(n) : String(Math.round(n * 100) / 100);
@@ -698,48 +733,60 @@
 
                     '<div class="form-grid-2">' +
                         '<div>' +
-                            '<label class="form-label">VARIAN HARGA</label>' +
-                            '<select name="items[' + idx + '][varian_dipilih]" class="varian-select select-dropdown-field" style="width: 100%;" onchange="onVarianChange(' + idx + ')"></select>' +
+                    '<label class="form-label">VARIAN HARGA</label>' +
+                    '<select name="items[' + idx + '][varian_dipilih]" class="varian-select select-dropdown-field has-outline" style="width: 100%;" onchange="onVarianChange(' + idx + ')"></select>' +
                         '</div>' +
                         '<div>' +
                             '<label class="form-label">HARGA SAAT TRANSAKSI (RP)</label>' +
                             '<div class="input-container-icon">' +
                                 '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
-                                '<input type="number" min="0" step="1000" class="harga-display" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" onchange="syncHarga(' + idx + ')">' +
+                                '<input type="text" inputmode="numeric" class="harga-display format-angka" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" oninput="syncHarga(' + idx + ')">' +
                             '</div>' +
                             '<p class="commission-suggestion harga-saran-note"></p>' +
                         '</div>' +
                     '</div>' +
 
-                    // ASSIGNED STYLIST
+                    // ASSIGNED STYLIST + KOMISI STAF 1
                     '<div class="assigned-stylists-group">' +
                         '<label class="form-label">ASSIGNED STYLIST / KARYAWAN</label>' +
-                        '<div class="input-container-icon">' +
-                            '<svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                                '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>' +
-                            '</svg>' +
-                            '<select name="items[' + idx + '][id_staf_1]" class="staf1-select select-dropdown-field" style="width: 100%;" required onchange="onStafChange(' + idx + ', 1)">' + stafOptsHtml() + '</select>' +
-                        '</div>' +
-                        '<button type="button" class="btn-dashed-mini" data-action="add-worker">' +
-                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>' +
-                            '<span>+ ADD KARYAWAN</span>' +
-                        '</button>' +
-                    '</div>' +
-
-                    // Staf 2 (berdua)
-                    '<div class="staf2-section" style="display: none;">' +
                         '<div class="form-grid-2">' +
                             '<div>' +
-                                '<label class="form-label">STAF 2 (BANTUAN)</label>' +
-                                '<select name="items[' + idx + '][id_staf_2]" class="staf2-select select-dropdown-field" style="width: 100%;" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
+                                '<label class="form-label">STAF 1</label>' +
+                                '<div class="input-container-icon">' +
+                                    '<svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                                        '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>' +
+                                    '</svg>' +
+                                    '<select name="items[' + idx + '][id_staf_1]" class="staf1-select select-dropdown-field" style="width: 100%;" required onchange="onStafChange(' + idx + ', 1)">' + stafOptsHtml() + '</select>' +
+                                '</div>' +
                             '</div>' +
                             '<div>' +
-                                '<label class="form-label">KOMISI STAF 2 (RP)</label>' +
+                                '<label class="form-label">KOMISI STAF 1 (RP)</label>' +
                                 '<div class="input-container-icon">' +
                                     '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
-                                    '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;">' +
+                                    '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_1]" class="komisi-input-1 format-angka" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;">' +
                                 '</div>' +
-                                '<p class="commission-suggestion komisi-note-2"></p>' +
+                                '<p class="commission-suggestion komisi-note-1"></p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="staf2-section" style="display: none; margin-top: 12px;">' +
+                            '<div class="form-grid-2">' +
+                                '<div>' +
+                                    '<label class="form-label">STAF 2 (BANTUAN)</label>' +
+                                    '<div class="input-container-icon">' +
+                                        '<svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                                            '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>' +
+                                        '</svg>' +
+                                        '<select name="items[' + idx + '][id_staf_2]" class="staf2-select select-dropdown-field" style="width: 100%;" onchange="onStafChange(' + idx + ', 2)">' + stafOptsHtml() + '</select>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div>' +
+                                    '<label class="form-label">KOMISI STAF 2 (RP)</label>' +
+                                    '<div class="input-container-icon">' +
+                                        '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
+                                        '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_2]" class="komisi-input-2 format-angka" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;">' +
+                                    '</div>' +
+                                    '<p class="commission-suggestion komisi-note-2"></p>' +
+                                '</div>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
@@ -773,22 +820,12 @@
                         '</div>' +
                     '</div>' +
 
-                    // WORKER COMMISSION & HINT
-                    '<div class="form-grid-2">' +
-                        '<div>' +
-                            '<label class="form-label">WORKER COMMISSION (KOMISI STAF 1)</label>' +
-                            '<div class="input-container-icon">' +
-                                '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
-                                '<input type="text" inputmode="numeric" name="items[' + idx + '][komisi_nominal_1]" class="komisi-input-1" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;">' +
-                            '</div>' +
-                            '<p class="commission-suggestion komisi-note-1"></p>' +
-                        '</div>' +
-                        '<div>' +
-                            '<label class="form-label">DISKON (RP)</label>' +
-                            '<div class="input-container-icon">' +
-                                '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
-                                '<input type="number" name="items[' + idx + '][diskon]" value="0" min="0" step="1000" placeholder="0" class="diskon-input" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" oninput="recalcTotal()">' +
-                            '</div>' +
+                    // DISKON
+                    '<div>' +
+                        '<label class="form-label">DISKON (RP)</label>' +
+                        '<div class="input-container-icon">' +
+                            '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
+                            '<input type="text" inputmode="numeric" name="items[' + idx + '][diskon]" value="0" placeholder="0" class="diskon-input format-angka" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" oninput="recalcTotal()">' +
                         '</div>' +
                     '</div>' +
 
@@ -826,13 +863,13 @@
                         '</div>' +
                         '<div>' +
                             '<label class="form-label qty-label">Jumlah dibeli</label>' +
-                            '<input type="number" name="items[' + idx + '][qty]" value="1" min="1" step="1" class="qty-field stepper-input" style="width: 100%;" onchange="syncQty(' + idx + ')">' +
+                            '<input type="text" inputmode="numeric" name="items[' + idx + '][qty]" value="1" class="qty-field stepper-input format-angka" style="width: 100%;" oninput="syncQty(' + idx + ')">' +
                         '</div>' +
                         '<div>' +
                             '<label class="form-label">DISKON (RP)</label>' +
                             '<div class="input-container-icon">' +
                                 '<span style="font-weight: 700; color: var(--text-muted); font-size: 0.88rem;">Rp</span>' +
-                                '<input type="number" name="items[' + idx + '][diskon]" value="0" min="0" step="1000" placeholder="0" class="diskon-input" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" oninput="recalcTotal()">' +
+                                '<input type="text" inputmode="numeric" name="items[' + idx + '][diskon]" value="0" placeholder="0" class="diskon-input format-angka" style="border: none; background: transparent; outline: none; flex: 1; padding: 8px 0;" oninput="recalcTotal()">' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
@@ -964,7 +1001,7 @@
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">âˆ’</button>' +
-                                '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="' + mlVal + '" min="0" step="1" class="pemakaian-ml-input stepper-input" oninput="recalcHarga(' + idx + ')">' +
+                                '<input type="text" inputmode="decimal" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="' + mlVal + '" class="pemakaian-ml-input stepper-input format-angka" data-decimal="1" oninput="recalcHarga(' + idx + ')">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
                             '</div>' +
@@ -984,7 +1021,7 @@
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">âˆ’</button>' +
-                                '<input type="number" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" min="0" step="1" class="pemakaian-ml-input stepper-input" oninput="recalcHarga(' + idx + ')">' +
+                                '<input type="text" inputmode="decimal" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" class="pemakaian-ml-input stepper-input format-angka" data-decimal="1" oninput="recalcHarga(' + idx + ')">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
                             '</div>' +
@@ -1014,9 +1051,9 @@
             var stepper = btn.closest('.dosage-stepper');
             var input = stepper.querySelector('.pemakaian-ml-input');
             if (!input) return;
-            var val = parseFloat(input.value || '0');
+            var val = parseAngka(input.value);
             val = Math.max(0, val + delta);
-            input.value = val;
+            input.value = formatAngkaInput(String(val), true);
             var idx = btn.closest('.item-row').dataset.idx;
             recalcHarga(idx);
         };
@@ -1221,7 +1258,7 @@
 
             delete row.dataset.manualHarga;
             var hargaMin = parseFloat(opt ? opt.dataset.hargaMin : 0) || 0;
-            row.querySelector('.harga-display').value = hargaMin;
+            row.querySelector('.harga-display').value = fmt(hargaMin);
             row.querySelector('.harga-input').value = hargaMin;
 
             recalcHarga(idx);
@@ -1263,7 +1300,7 @@
                 var unitEl = item.querySelector('.produk-unit-harga');
                 var hargaPerUnit = item.dataset.harga ? (parseFloat(item.dataset.harga) || 0) : 0;
                 var divisor = item.dataset.divisor ? (parseFloat(item.dataset.divisor) || 1) : 1;
-                var ml = mlInput ? (parseFloat(mlInput.value) || 0) : 0;
+                var ml = mlInput ? parseAngka(mlInput.value) : 0;
                 var isDefault = item.dataset.mode === 'default';
                 var defaultMl = isDefault ? (parseFloat(item.dataset.defaultMl) || 0) : 0;
                 var unitText = item.dataset.satuanPenggunaan ? unitLabelFromSatuan(item.dataset.satuanPenggunaan) : '10ml';
@@ -1297,7 +1334,7 @@
 
             if (!row.dataset.manualHarga) {
                 var finalHarga = hargaMin + extraCost;
-                row.querySelector('.harga-display').value = Math.round(finalHarga);
+                row.querySelector('.harga-display').value = fmt(Math.round(finalHarga));
                 row.querySelector('.harga-input').value = Math.round(finalHarga);
             }
 
@@ -1314,7 +1351,7 @@
 
         window.syncHarga = function(idx) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
-            var val = row.querySelector('.harga-display').value || 0;
+            var val = parseAngka(row.querySelector('.harga-display').value);
             row.querySelector('.harga-input').value = val;
             row.dataset.manualHarga = 'true';
             updateKomisiNotes(idx);
@@ -1410,9 +1447,9 @@
 
         window.syncQty = function(idx) {
             var row = document.querySelector('.item-row[data-idx="' + idx + '"]');
-            var qty = parseInt(row.querySelector('.qty-field').value) || 1;
+            var qty = Math.round(parseAngka(row.querySelector('.qty-field').value)) || 1;
             if (qty < 1) qty = 1;
-            row.querySelector('.qty-field').value = qty;
+            row.querySelector('.qty-field').value = fmt(qty);
             row.querySelector('.qty-input').value = qty;
 
             var harga = parseFloat(row.querySelector('.harga-input')?.value) || 0;
@@ -1509,7 +1546,7 @@
             document.querySelectorAll('.item-row').forEach(function(row, i) {
                 var harga = parseFloat(row.querySelector('.harga-input')?.value) || 0;
                 var qty = parseFloat(row.querySelector('.qty-input')?.value) || 1;
-                var diskon = row.querySelector('.diskon-input') ? (parseFloat(row.querySelector('.diskon-input').value) || 0) : 0;
+                var diskon = row.querySelector('.diskon-input') ? parseAngka(row.querySelector('.diskon-input').value) : 0;
                 var subtotal = harga * qty;
                 var lineTotal = Math.max(0, subtotal - diskon);
                 subtotalTotal += subtotal;
@@ -1543,6 +1580,12 @@
             var submitBtn = document.getElementById('btn-save-changes');
             if (submitBtn) submitBtn.disabled = !(hasPelanggan && hasItems);
         }
+
+        document.getElementById('form-add-transaction').addEventListener('submit', function() {
+            this.querySelectorAll('.format-angka').forEach(function(el) {
+                el.value = rawAngkaInput(el.value);
+            });
+        });
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(e) {
@@ -1730,11 +1773,11 @@
                 var item = usageList.querySelector('.produk-usage-item[data-pidx="' + pIdx + '"]');
                 selectProdukUsageInto(item, pu.id_produk, pu.nama_produk, pu.harga_per_penggunaan, pu.satuan_penggunaan);
                 var mlInput = item.querySelector('.pemakaian-ml-input');
-                if (mlInput) mlInput.value = pu.pemakaian_ml;
+                if (mlInput) mlInput.value = formatAngkaInput(String(pu.pemakaian_ml), true);
             });
 
             var hargaVal = parseFloat(it.harga) || 0;
-            row.querySelector('.harga-display').value = hargaVal;
+            row.querySelector('.harga-display').value = fmt(hargaVal);
             row.querySelector('.harga-input').value = hargaVal;
             row.dataset.manualHarga = 'true';
 
@@ -1745,12 +1788,12 @@
             }
 
             var k1 = row.querySelector('.komisi-input-1');
-            if (k1 && !k1.disabled) k1.value = it.komisi_1 != null ? it.komisi_1 : '';
+            if (k1 && !k1.disabled) k1.value = it.komisi_1 != null ? fmt(it.komisi_1) : '';
             var k2 = row.querySelector('.komisi-input-2');
-            if (k2 && !k2.disabled && it.komisi_2 != null) k2.value = it.komisi_2;
+            if (k2 && !k2.disabled && it.komisi_2 != null) k2.value = fmt(it.komisi_2);
 
             var d = row.querySelector('.diskon-input');
-            if (d) d.value = it.diskon || 0;
+            if (d) d.value = it.diskon != null ? fmt(it.diskon) : '0';
 
             var cat = row.querySelector('textarea[name="items[' + idx + '][catatan]"]');
             if (cat) cat.value = it.catatan || '';
@@ -1770,14 +1813,14 @@
             row.querySelector('.harga-input').value = it.harga;
 
             var qtyField = row.querySelector('.qty-field');
-            if (qtyField) qtyField.value = it.qty;
+            if (qtyField) qtyField.value = fmt(it.qty);
             row.querySelector('.qty-input').value = it.qty;
 
             var sub = row.querySelector('.produk-subtotal-display');
             if (sub) sub.textContent = 'Rp' + fmt((parseFloat(it.harga) || 0) * (parseFloat(it.qty) || 1));
 
             var d = row.querySelector('.diskon-input');
-            if (d) d.value = it.diskon || 0;
+            if (d) d.value = it.diskon != null ? fmt(it.diskon) : '0';
 
             var cat = row.querySelector('textarea[name="items[' + idx + '][catatan]"]');
             if (cat) cat.value = it.catatan || '';

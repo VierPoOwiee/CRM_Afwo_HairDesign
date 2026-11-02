@@ -55,7 +55,7 @@
             <div class="toolbar-right-group">
                 <div class="cal-search-box">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="cal-quick-search" placeholder="Cari appointment..." aria-label="Cari jadwal appointment">
+                    <input type="text" id="cal-quick-search" placeholder="Cari" aria-label="Cari jadwal appointment">
                 </div>
                 <button type="button" class="btn-cari btn-cari--white" id="btn-cal-search">Cari</button>
 
@@ -532,7 +532,7 @@
     }
 
     function openDayModal(tanggal) {
-        if (detailModal) detailModal.style.display = 'none';
+        closeDetailModal();
         fetch(URL_HARI.replace('P_TGL', tanggal))
             .then(function (r) { return r.json(); })
             .then(renderDayModal)
@@ -542,6 +542,12 @@
     document.getElementById('btn-close-day-schedule').addEventListener('click', function () { closeOptive(dayModal); });
 
     // ----- Detail Popover -----
+    function closeDetailModal() {
+        if (!detailModal) return;
+        closeOptive(detailModal);
+        detailModal.classList.remove('show');
+    }
+
     function renderDetailModal(a) {
         var c = colorOf(a.warna);
         var st = statusOf(a.status);
@@ -586,7 +592,8 @@
         '<div class="popover-footer">' + footer + '</div>';
 
         document.getElementById('popover-content').innerHTML = html;
-        document.getElementById('btn-close-popover').addEventListener('click', function () { closeOptive(detailModal); });
+        document.getElementById('btn-close-popover').addEventListener('click', closeDetailModal);
+        showModal(detailModal);
         detailModal.classList.add('show');
     }
 
@@ -611,17 +618,16 @@
     document.addEventListener('click', function (e) {
         var card = e.target.closest('.js-gcal-card');
         if (card) {
-            closeOptive(dayModal);
             openDetailModal(card.dataset.aptId);
             return;
         }
 
-        // Chip event -> buka pop up detail appointment.
+        // Chip event -> buka jadwal harian dulu, bukan langsung detail.
         var chip = e.target.closest('.cal-event');
         if (chip) {
             e.stopPropagation();
-            closeOptive(dayModal);
-            openDetailModal(chip.dataset.appointmentId);
+            var chipCell = chip.closest('.cal-cell');
+            if (chipCell) openDayModal(chipCell.dataset.date);
             return;
         }
 
@@ -635,7 +641,16 @@
         var bg = e.target.closest('.day-schedule-modal-overlay');
         if (bg && bg === e.target) closeOptive(dayModal);
         var popBg = e.target.closest('.appointment-popover-modal');
-        if (popBg && popBg === e.target) { closeOptive(detailModal); detailModal.classList.remove('show'); }
+        if (popBg && popBg === e.target) closeDetailModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        if (detailModal && detailModal.classList.contains('show')) {
+            closeDetailModal();
+            return;
+        }
+        if (dayModal && dayModal.style.display !== 'none') closeOptive(dayModal);
     });
 
     // Konfirmasi hapus tanpa confirm(): klik dua kali pada tombol Hapus.

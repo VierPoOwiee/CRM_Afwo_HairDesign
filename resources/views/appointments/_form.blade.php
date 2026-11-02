@@ -25,11 +25,11 @@
     <div class="form-group-item">
         <div class="label-with-action-row">
             <span class="form-label">Pilih Klien / Pelanggan <span class="required-star">*</span></span>
-            <button type="button" id="addPelangganBtn" class="form-inline-action-link" style="background:none;border:none;padding:0;cursor:pointer;">+ Tambah Pelanggan Baru</button>
+            <button type="button" id="addPelangganBtn" class="form-inline-action-link">+ Tambah Pelanggan Baru</button>
         </div>
         <div class="form-input-box" id="pelanggan_input_box">
             <div class="appt-combobox-wrap">
-                <input type="text" id="pelanggan_search" class="appt-combobox-input" placeholder="-- Pilih Klien Terdaftar / ketik nama atau no WA --" autocomplete="off">
+                <input type="text" id="pelanggan_search" class="appt-combobox-input" placeholder="Pilih klien atau ketik nama/no. WA" autocomplete="off">
                 <div id="pelanggan_results" class="appt-combobox-results"></div>
             </div>
         </div>
@@ -51,7 +51,7 @@
             <span class="form-label">Layanan yang Akan Digunakan <span class="required-star">*</span></span>
             <div class="form-input-box">
                 <div class="appt-combobox-wrap">
-                    <input type="text" id="layanan_search" class="appt-combobox-input" placeholder="-- Pilih Layanan / ketik nama layanan --" autocomplete="off">
+                    <input type="text" id="layanan_search" class="appt-combobox-input" placeholder="Pilih layanan atau ketik nama layanan" autocomplete="off">
                     <div id="layanan_results" class="appt-combobox-results"></div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <span class="form-label">Karyawan / Stylist Dikerahkan <span class="required-star">*</span></span>
             <div class="form-input-box" id="karyawan_input_box">
                 <div class="appt-combobox-wrap">
-                    <input type="text" id="karyawan_search" class="appt-combobox-input" placeholder="-- Pilih Stylist / ketik nama --" autocomplete="off">
+                    <input type="text" id="karyawan_search" class="appt-combobox-input" placeholder="Pilih stylist atau ketik nama" autocomplete="off">
                     <div id="karyawan_results" class="appt-combobox-results"></div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
     <div class="form-group-item">
         <label class="form-label" for="preferensi">Catatan Khusus / Preferensi Klien</label>
         <div class="form-input-box">
-            <textarea id="preferensi" name="preferensi" class="form-textarea" rows="3" placeholder="Contoh: Klien minta formula non-amonia, alergi produk tertentu...">{{ old('preferensi', $appointment->preferensi ?? '') }}</textarea>
+            <textarea id="preferensi" name="preferensi" class="form-textarea" rows="3" placeholder="Catatan atau preferensi klien">{{ old('preferensi', $appointment->preferensi ?? '') }}</textarea>
         </div>
     </div>
 
@@ -158,7 +158,7 @@
             <div class="form-group-item">
                 <label class="form-label" for="new_pelanggan_kelamin">Jenis Kelamin</label>
                 <select id="new_pelanggan_kelamin" class="select-dropdown-field">
-                    <option value="">-- Pilih --</option>
+                    <option value="">Pilih</option>
                     <option value="L">Laki-laki</option>
                     <option value="P">Perempuan</option>
                 </select>
@@ -166,7 +166,7 @@
             <div class="form-group-item">
                 <label class="form-label" for="new_pelanggan_rambut">Jenis Rambut</label>
                 <select id="new_pelanggan_rambut" class="select-dropdown-field">
-                    <option value="">-- Pilih --</option>
+                    <option value="">Pilih</option>
                     <option value="Lurus">Lurus</option>
                     <option value="Ikal">Ikal</option>
                     <option value="Bergelombang">Bergelombang</option>

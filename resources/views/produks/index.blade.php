@@ -16,32 +16,34 @@
         <p class="products-subtitle">Kelola stok produk retail dan produk pendukung layanan.</p>
     </div>
 
-    <a href="{{ route('produk.create') }}" class="btn btn-primary page-primary-action" id="add-product-btn" data-field="add-product-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>Tambah Produk</span>
-    </a>
+    <div class="list-toolbar">
+        <!-- Pencarian Produk -->
+        <form method="GET" action="{{ route('produk.index') }}" class="produk-search-form" role="search">
+            @if ($mode !== 'all')
+                <input type="hidden" name="mode" value="{{ $mode }}">
+            @endif
+            @if ($kategoriFilter !== '')
+                <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
+            @endif
+            <div class="search-input-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="search" id="produk-search" name="q" value="{{ $q }}" class="search-input"
+                       placeholder="Cari nama produk atau merek..." autocomplete="off">
+            </div>
+            <button type="submit" class="btn-cari" id="btn-produk-search">Cari</button>
+        </form>
 
-    <!-- Pencarian Produk -->
-    <form method="GET" action="{{ route('produk.index') }}" class="produk-search-form" role="search">
-        @if ($mode !== 'all')
-            <input type="hidden" name="mode" value="{{ $mode }}">
-        @endif
-        @if ($kategoriFilter !== '')
-            <input type="hidden" name="kategori" value="{{ $kategoriFilter }}">
-        @endif
-        <div class="search-input-box">
-            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <a href="{{ route('produk.create') }}" class="btn btn-primary page-primary-action" id="add-product-btn" data-field="add-product-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            <input type="search" id="produk-search" name="q" value="{{ $q }}" class="search-input"
-                   placeholder="Cari nama produk atau merek..." autocomplete="off">
-        </div>
-        <button type="submit" class="btn-cari" id="btn-produk-search">Cari</button>
-    </form>
+            <span>Tambah Produk</span>
+        </a>
+    </div>
 
     <!-- Pill Filter Tabs -->
     <div class="pill-filter-container" id="product-category-filter">

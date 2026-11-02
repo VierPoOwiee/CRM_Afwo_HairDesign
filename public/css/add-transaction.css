@@ -306,6 +306,22 @@
   cursor: pointer;
 }
 
+.select-dropdown-field.has-outline,
+.varian-select.has-outline {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  background-color: var(--surface, #fff);
+  padding: 10px 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.select-dropdown-field.has-outline:focus,
+.varian-select.has-outline:focus {
+  border-color: var(--border-accent, var(--accent));
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: none;
+}
+
 /* Sub-row additions (Worker & Product) */
 .sub-row-item {
   display: flex;
@@ -484,14 +500,22 @@
 .notes-textarea {
   width: 100%;
   min-height: 70px;
-  border: none;
-  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  background-color: var(--surface, #fff);
+  padding: 10px 12px;
   font-size: 0.92rem;
   font-family: var(--font-sans);
   color: var(--text-1);
   line-height: 1.5;
   outline: none;
   resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.notes-textarea:focus {
+  border-color: var(--border-accent, var(--accent));
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* Service Summary Card */
