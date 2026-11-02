@@ -63,7 +63,6 @@ class AuthAccessTest extends TestCase
             ['get', route('absensi.index'), 200],
             ['get', route('transaksi.index'), 200],
             ['get', route('transaksi.create'), 200],
-            ['get', route('transaksi.show', $d['transaksi']), 200],
             ['get', route('profile.show'), 200],
         ];
     }

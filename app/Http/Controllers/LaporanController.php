@@ -16,6 +16,7 @@ use App\Services\GeminiQuota;
 use App\Services\LaporanAiInsightService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class LaporanController extends Controller
 {
@@ -103,6 +104,122 @@ class LaporanController extends Controller
             'insight', 'insightPeriode', 'insightCooldown', 'insightCooldownSisaDetik',
             'ringkasanData', 'kuotaAi', 'tanyaRiwayat',
         ));
+    }
+
+    /**
+     * AI Asisten Bisnis (chat): halaman tersendiri di bawah laporan,
+     * tidak lagi bagian dari halaman Laporan Penjualan.
+     * Menampilkan daftar semua sesi percakapan.
+     */
+    public function aiChat(Request $request)
+    {
+        $preset = $request->input('preset', 'bulan-ini');
+        [$dari, $sampai] = $this->resolvePeriode($preset, $request->input('dari'), $request->input('sampai'));
+
+        $insightPeriode = Carbon::parse($dari)->startOfMonth()->toDateString();
+        $kuotaAi = (new GeminiQuota)->detail();
+
+        // Daftar sesi percakapan, digroup per sesi_id dan diurutkan dari yang terbaru
+        $sesiList = PertanyaanAi::whereNotNull('sesi_id')
+            ->orderBy('dibuat_pada', 'desc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->groupBy('sesi_id')
+            ->map(function ($messages, $sesiId) {
+                $first = $messages->first();
+                return [
+                    'sesi_id' => $sesiId,
+                    'tanggal' => $first->dibuat_pada->format('Y-m-d'),
+                    'label_tanggal' => $first->dibuat_pada->isToday() ? 'Hari Ini' : $first->dibuat_pada->format('d M Y'),
+                    'waktu_terakhir' => $first->dibuat_pada->format('H:i'),
+                    'jumlah' => $messages->count(),
+                    'pertanyaan_terakhir' => $first->pertanyaan,
+                ];
+            })
+            ->values();
+
+        return view('laporan.ai-chat', compact(
+            'dari', 'sampai', 'preset', 'insightPeriode', 'kuotaAi', 'sesiList',
+        ));
+    }
+
+    /**
+     * Tampilkan isi satu sesi percakapan beserta form untuk melanjutkan obrolan.
+     */
+    public function sesiShow(string $sesiId)
+    {
+        $messages = PertanyaanAi::where('sesi_id', $sesiId)
+            ->orderBy('dibuat_pada', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $insightPeriode = Carbon::now()->startOfMonth()->toDateString();
+        $kuotaAi = (new GeminiQuota)->detail();
+
+        return view('laporan.ai-chat-sesi', compact(
+            'sesiId', 'messages', 'insightPeriode', 'kuotaAi',
+        ));
+    }
+
+    /**
+     * Buat sesi percakapan baru (kosong) lalu arahkan ke halaman sesi tersebut.
+     */
+    public function sesiCreate()
+    {
+        $sesiId = 'sesi-' . Str::uuid()->toString();
+
+        return redirect()->route('laporan.ai-chat.sesi.show', $sesiId)
+            ->with('success', 'Sesi percakapan baru telah dibuat.');
+    }
+
+    /**
+     * Kirim pertanyaan dalam sesi tertentu dan simpan jawaban AI.
+     */
+    public function sesiTanya(Request $request, string $sesiId)
+    {
+        $validated = $request->validate([
+            'pertanyaan' => ['required', 'string', 'max:500'],
+        ]);
+
+        $pertanyaan = trim($validated['pertanyaan']);
+
+        $kuota = new GeminiQuota;
+        if ($kuota->habis()) {
+            return back()->withFragment('tanya-ai')
+                ->withInput()
+                ->with('error', 'Kuota AI hari ini sudah habis ('.$kuota->terpakaiHariIni().'/'.$kuota->batas().'). Bisa tanya lagi besok, reset '.$kuota->detail()['label_reset'].'.');
+        }
+
+        try {
+            $service = new LaporanAiInsightService;
+            $periode = Carbon::now()->startOfMonth();
+            $jawaban = $service->tanyaJawab($periode, $pertanyaan);
+            $kuota->catatPenggunaan();
+        } catch (\Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Gagal menjawab pertanyaan: '.$e->getMessage());
+        }
+
+        PertanyaanAi::create([
+            'sesi_id' => $sesiId,
+            'periode' => $periode->toDateString(),
+            'pertanyaan' => $pertanyaan,
+            'jawaban' => $jawaban,
+            'dibuat_pada' => now(),
+        ]);
+
+        return back()->withFragment('tanya-ai')->with('success', 'Pertanyaan berhasil dijawab.');
+    }
+
+    /**
+     * Hapus satu sesi percakapan (semua pertanyaan & jawaban dengan sesi_id tersebut).
+     */
+    public function hapusSesi(string $sesiId)
+    {
+        $dihapus = PertanyaanAi::where('sesi_id', $sesiId)->delete();
+
+        return back()
+            ->with('success', "Sesi percakapan berhasil dihapus ({$dihapus} percakapan).");
     }
 
     /**

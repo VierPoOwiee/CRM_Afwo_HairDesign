@@ -34,6 +34,12 @@
         'menunggu'      => ['pill' => 'pending',   'label' => 'Menunggu'],
         'selesai'       => ['pill' => 'done',      'label' => 'Selesai'],
     ];
+
+    $statusColorMap = [
+        'terkonfirmasi' => ['color' => '#edb92f', 'bg' => 'rgba(237, 185, 47, 0.18)'],
+        'menunggu'      => ['color' => '#f0c445', 'bg' => 'rgba(240, 196, 69, 0.18)'],
+        'selesai'       => ['color' => '#1e6b3a', 'bg' => 'rgba(30, 107, 58, 0.18)'],
+    ];
 @endphp
 
 @section('content')
@@ -172,8 +178,7 @@
                                     <div class="cal-cell__events">
                                         @foreach ($daftarHari as $ap)
                                             @php
-                                                $warna = $ap->pelanggan ? \App\Support\AppointmentColor::forId((int) $ap->pelanggan->id) : 'orange';
-                                                $cc = $colorMap[$warna] ?? $colorMap['orange'];
+                                                $sc = $statusColorMap[$ap->status] ?? $statusColorMap['menunggu'];
                                                 $namaKlien = $ap->pelanggan?->nama ?? '-';
                                                 $namaLayanan = $ap->layanans->pluck('nama_layanan')->implode(', ');
                                                 $jamAp = $ap->jam_mulai?->format('H:i') ?? '';
@@ -181,14 +186,14 @@
                                                 $judulChip = $jamAp.' '.$namaKlien.($namaLayanan !== '' ? ' - '.$namaLayanan : '');
                                             @endphp
                                             <button type="button"
-                                                    class="cal-event{{ $ap->status === 'selesai' ? ' is-done' : '' }}"
+                                                    class="cal-event cal-event--{{ $ap->status }}{{ $ap->status === 'selesai' ? ' is-done' : '' }}"
                                                     data-appointment-id="{{ $ap->id }}"
                                                     data-pelanggan-id="{{ $ap->id_pelanggan }}"
                                                     data-karyawan-id="{{ $ap->id_karyawan }}"
                                                     data-status="{{ $ap->status }}"
                                                     data-search="{{ $cari }}"
                                                     title="{{ $judulChip }}"
-                                                    style="--client-color: {{ $cc['color'] }}; --client-bg: {{ $cc['bg'] }}; --client-fg: {{ $cc['color'] }};">
+                                                    style="--client-color: {{ $sc['color'] }}; --client-bg: {{ $sc['bg'] }}; --client-fg: {{ $sc['color'] }};">
                                                 @if ($ap->status === 'selesai')
                                                     <svg class="cal-event__check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                                 @endif
@@ -284,6 +289,8 @@
     }
     function closeOptive(modalEl) { if (modalEl) modalEl.style.display = 'none'; }
     function showModal(modalEl) { if (modalEl) modalEl.style.display = 'flex'; }
+    function showDetail(modalEl) { if (modalEl) modalEl.classList.add('show'); }
+    function hideDetail(modalEl) { if (modalEl) modalEl.classList.remove('show'); }
 
     // Notifikasi non-blocking (pengganti alert()).
     function toast(msg) {
@@ -616,6 +623,8 @@
 
     // ----- Events -----
     document.addEventListener('click', function (e) {
+        // Di dalam timeline harian: kartu appointment -> detail appointment.
+        // Timeline tetap terbuka di belakang agar menutup detail kembali ke timeline.
         var card = e.target.closest('.js-gcal-card');
         if (card) {
             openDetailModal(card.dataset.aptId);
@@ -634,7 +643,8 @@
         var mini = e.target.closest('.mini-cal-cell');
         if (mini) { openDayModal(mini.dataset.tanggal); return; }
 
-        // Angka tanggal, tombol "+N lagi", atau area kosong sel -> jadwal hari.
+        // Seluruh bagian kotak tanggal (angka, badge janji temu, "+N lagi",
+        // area kosong) -> buka timeline detail hari.
         var cell = e.target.closest('.cal-cell');
         if (cell) { openDayModal(cell.dataset.date); return; }
 

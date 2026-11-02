@@ -316,7 +316,7 @@ class TransaksiController extends Controller
     {
         if ($transaksi->status === 'batal') {
             return redirect()
-                ->route('transaksi.show', $transaksi)
+                ->route('transaksi.index')
                 ->with('error', 'Transaksi yang sudah dibatalkan tidak dapat diedit.');
         }
 
@@ -444,39 +444,6 @@ class TransaksiController extends Controller
         ];
     }
 
-    public function show(TransaksiKunjungan $transaksi)
-    {
-        $transaksi->load([
-            'pelanggan',
-            'details.staf',
-            'details.layanan',
-            'details.produk',
-            'details.produkPenggunaan.produk',
-            'komisiTransaksi.staf',
-        ]);
-
-        return view('transaksis.show', compact('transaksi'));
-    }
-
-    /**
-     * Partial struk (brand → metode) untuk modal "Detail Struk Transaksi".
-     * Memakai sumber data & perhitungan yang sama dengan show(), tanpa
-     * mengubah logika bisnis apa pun.
-     */
-    public function struk(TransaksiKunjungan $transaksi)
-    {
-        $transaksi->load([
-            'pelanggan',
-            'details.staf',
-            'details.layanan',
-            'details.produk',
-            'details.produkPenggunaan.produk',
-            'komisiTransaksi.staf',
-        ]);
-
-        return view('transaksis._struk', compact('transaksi'));
-    }
-
     public function update(Request $request, TransaksiKunjungan $transaksi)
     {
         if ($transaksi->status === 'batal') {
@@ -517,7 +484,7 @@ class TransaksiController extends Controller
         });
 
         return redirect()
-            ->route('transaksi.show', $transaksi)
+            ->route('transaksi.index')
             ->with('success', 'Transaksi "'.$noStruk.'" berhasil diperbarui.');
     }
 

@@ -8,6 +8,7 @@ use App\Services\GeminiQuota;
 use App\Services\LaporanAiInsightService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class InsightController extends Controller
 {
@@ -43,37 +44,37 @@ class InsightController extends Controller
     {
         $validated = $request->validate([
             'pertanyaan' => ['required', 'string', 'max:500'],
-            'periode' => ['required', 'date_format:Y-m-d'],
         ]);
 
-        $bulan = Carbon::parse($validated['periode'])->startOfMonth();
         $pertanyaan = trim($validated['pertanyaan']);
+        $periode = Carbon::now()->startOfMonth();
+        $sesiId = 'sesi-' . Str::uuid()->toString();
 
         $kuota = new GeminiQuota;
         if ($kuota->habis()) {
             return back()
-                ->withFragment('tanya-ai')
                 ->withInput()
                 ->with('error', 'Kuota AI hari ini sudah habis ('.$kuota->terpakaiHariIni().'/'.$kuota->batas().'). Bisa tanya lagi besok, reset '.$kuota->detail()['label_reset'].'.');
         }
 
         try {
             $service = new LaporanAiInsightService;
-            $jawaban = $service->tanyaJawab($bulan, $pertanyaan);
+            $jawaban = $service->tanyaJawab($periode, $pertanyaan);
             $kuota->catatPenggunaan();
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
+            return back()->withInput()
                 ->with('error', 'Gagal menjawab pertanyaan: '.$e->getMessage());
         }
 
         PertanyaanAi::create([
-            'periode' => $bulan->toDateString(),
+            'sesi_id' => $sesiId,
+            'periode' => $periode->toDateString(),
             'pertanyaan' => $pertanyaan,
             'jawaban' => $jawaban,
             'dibuat_pada' => now(),
         ]);
 
-        return back()->withFragment('tanya-ai')->with('success', 'Pertanyaan berhasil dijawab.');
+        return redirect()->route('laporan.ai-chat.sesi.show', $sesiId)
+            ->with('success', 'Pertanyaan berhasil dijawab.');
     }
 }
