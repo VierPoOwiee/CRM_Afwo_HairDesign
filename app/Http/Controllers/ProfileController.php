@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\RecoveryCodes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
     public function show()
     {
-        return view('auth.profile');
+        return view('auth.profile', [
+            'sisaKode' => Auth::user()->recoveryCodes()->whereNull('used_at')->count(),
+        ]);
     }
 
     public function updateInfo(Request $request)
@@ -41,6 +45,51 @@ class ProfileController extends Controller
         ]);
 
         return back()->with('success', 'Informasi akun berhasil diperbarui.');
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $data = $request->validateWithBag('email', [
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore(Auth::id()),
+            ],
+            'current_password' => ['required', 'current_password'],
+        ], [
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
+            'current_password' => 'Password saat ini salah.',
+        ]);
+
+        $email = filled($data['email'] ?? null)
+            ? strtolower(trim($data['email']))
+            : null;
+
+        Auth::user()->update(['email' => $email]);
+
+        return back()->with(
+            'success',
+            $email
+                ? 'Email pemulihan berhasil disimpan.'
+                : 'Email pemulihan berhasil dihapus.'
+        );
+    }
+
+    public function generateRecoveryCodes(Request $request)
+    {
+        $request->validateWithBag('recovery', [
+            'current_password' => ['required', 'current_password'],
+        ], [
+            'current_password' => 'Password saat ini salah.',
+        ]);
+
+        $kode = RecoveryCodes::replaceFor(Auth::user());
+
+        return redirect()->to(route('profile.show').'#kode-pemulihan')
+            ->with('recovery_codes', $kode)
+            ->with('success', 'Kode pemulihan baru berhasil dibuat. Simpan sekarang karena tidak akan ditampilkan lagi.');
     }
 
     public function updatePassword(Request $request)

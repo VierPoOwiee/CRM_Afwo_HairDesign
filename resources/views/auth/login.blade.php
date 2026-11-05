@@ -35,7 +35,15 @@
 
         {{-- Login Card --}}
         <div class="login-card">
-            @if ($errors->any())
+            @if (session('status'))
+                <div id="login-alert" class="login-alert is-success" role="status">
+                    {{ session('status') }}
+                </div>
+            @elseif (session('success'))
+                <div id="login-alert" class="login-alert is-success" role="status">
+                    {{ session('success') }}
+                </div>
+            @elseif ($errors->any())
                 <div id="login-alert" class="login-alert is-error" role="alert">
                     {{ $errors->first() }}
                 </div>
@@ -59,6 +67,7 @@
                             placeholder="contoh: owner"
                             value="{{ old('username') }}"
                             required
+                            autofocus
                             autocomplete="username"
                         >
                     </div>
@@ -75,7 +84,6 @@
                             class="login-input-control with-toggle"
                             data-field="password"
                             placeholder="••••••••"
-                            value="12345678"
                             required
                             autocomplete="current-password"
                         >
@@ -94,6 +102,7 @@
                         <input type="checkbox" id="login-remember" data-field="remember" name="remember" class="login-checkbox-input" checked>
                         <span>Ingat saya</span>
                     </label>
+                    <a href="{{ route('password.request') }}" class="login-forgot-link">Lupa password?</a>
                 </div>
 
                 {{-- Submit Button --}}

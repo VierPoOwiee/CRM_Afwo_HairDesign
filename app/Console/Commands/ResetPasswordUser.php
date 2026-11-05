@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Support\RecoveryCodes;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -11,9 +12,9 @@ use Illuminate\Support\Str;
 
 class ResetPasswordUser extends Command
 {
-    protected $signature = 'user:reset-password {username}';
+    protected $signature = 'user:reset-password {username} {--generate-codes : Buat 8 kode pemulihan baru untuk user}';
 
-    protected $description = 'Reset password user berdasarkan username (dipakai owner saat lupa password).';
+    protected $description = 'Reset password user berdasarkan username, atau buat kode pemulihan baru (dipakai owner saat lupa password).';
 
     public function handle(): int
     {
@@ -25,6 +26,22 @@ class ResetPasswordUser extends Command
             $this->error('User tidak ditemukan');
 
             return self::FAILURE;
+        }
+
+        if ($this->option('generate-codes')) {
+            $kode = RecoveryCodes::replaceFor($user);
+
+            $this->info("Kode pemulihan baru untuk {$username}:");
+            $this->newLine();
+
+            foreach ($kode as $item) {
+                $this->line('  '.$item);
+            }
+
+            $this->newLine();
+            $this->warn('Simpan kode ini di tempat aman. Kode tidak akan ditampilkan lagi.');
+
+            return self::SUCCESS;
         }
 
         $password = $this->secret('Password baru (minimal 8 karakter):');

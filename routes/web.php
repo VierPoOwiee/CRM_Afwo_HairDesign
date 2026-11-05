@@ -8,6 +8,7 @@ use App\Http\Controllers\InsightController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LayananController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\ProdukController;
@@ -20,10 +21,22 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Lupa password & reset mandiri (khusus tamu, di luar middleware paksa.ganti.password)
+Route::middleware('guest')->group(function () {
+    Route::get('/lupa-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/lupa-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/lupa-password/kode', [PasswordResetController::class, 'showRecoveryForm'])->name('password.recovery');
+    Route::post('/lupa-password/kode', [PasswordResetController::class, 'recoverWithCode'])->name('password.recovery.submit');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+});
+
 // Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profil/info', [ProfileController::class, 'updateInfo'])->name('profile.info.update');
+    Route::put('/profil/email', [ProfileController::class, 'updateEmail'])->name('profile.email.update');
+    Route::post('/profil/kode-pemulihan', [ProfileController::class, 'generateRecoveryCodes'])->name('profile.recovery-codes.generate');
     Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 

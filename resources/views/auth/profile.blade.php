@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            @if ($errors->any())
+            @if ($errors->getBag('default')->any())
                 <div class="profil-form-alert is-error">Periksa kembali isian form di bawah.</div>
             @endif
 
@@ -72,6 +72,61 @@
 
                 <div class="profil-card-actions">
                     <button type="submit" class="btn-profil-submit">Simpan Perubahan</button>
+                </div>
+            </form>
+        </section>
+
+        {{-- Email Pemulihan Card --}}
+        <section class="profil-card" id="email-pemulihan">
+            <h2 class="profil-card-title">Email Pemulihan</h2>
+            <p class="profil-card-subtitle">Email ini dipakai untuk menerima tautan reset password saat Anda lupa password.</p>
+
+            @if ($errors->getBag('email')->any())
+                <div class="profil-form-alert is-error">Periksa kembali isian email pemulihan.</div>
+            @endif
+
+            @if (Auth::user()->email)
+                <div class="profil-email-status is-active">
+                    <span class="profil-email-status-label">Email aktif</span>
+                    <span class="profil-email-status-value">{{ Auth::user()->email }}</span>
+                </div>
+            @else
+                <div class="profil-email-status is-empty">
+                    <span class="profil-email-status-label">Belum ada email pemulihan</span>
+                    <span class="profil-email-status-value">Tanpa email, reset mandiri hanya bisa lewat kode pemulihan.</span>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('profile.email.update') }}">
+                @csrf
+                @method('PUT')
+
+                <div class="profil-form-grid">
+                    <div class="profil-form-group">
+                        <label for="email_pemulihan" class="profil-label">Email Pemulihan</label>
+                        <div class="profil-input-box">
+                            <input type="email" id="email_pemulihan" name="email" value="{{ old('email', Auth::user()->email) }}"
+                                   class="profil-input" placeholder="nama@email.com" autocomplete="email">
+                        </div>
+                        @error('email', 'email')
+                            <p class="profil-field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="profil-form-group">
+                        <label for="current_password_email" class="profil-label">Password Saat Ini <span class="req-star">*</span></label>
+                        <div class="profil-input-box">
+                            <input type="password" id="current_password_email" name="current_password" required autocomplete="current-password"
+                                   class="profil-input input-tinted" placeholder="Masukkan password untuk konfirmasi">
+                        </div>
+                        @error('current_password', 'email')
+                            <p class="profil-field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="profil-card-actions">
+                    <button type="submit" class="btn-profil-submit">Simpan Email</button>
                 </div>
             </form>
         </section>
@@ -126,6 +181,126 @@
                 </div>
             </form>
         </section>
+
+        {{-- Kode Pemulihan Card --}}
+        <section class="profil-card" id="kode-pemulihan">
+            <h2 class="profil-card-title">Kode Pemulihan</h2>
+            <p class="profil-card-subtitle">Kode sekali pakai sebagai cadangan jika Anda tidak bisa mengakses email.</p>
+
+            @if (session('recovery_codes'))
+                <div class="profil-recovery-box" role="region" aria-label="Kode pemulihan baru">
+                    <div class="profil-recovery-warning">
+                        Simpan di tempat aman. Kode ini hanya ditampilkan sekali dan tidak akan bisa dilihat lagi.
+                    </div>
+
+                    <ul class="profil-recovery-grid">
+                        @foreach (session('recovery_codes') as $kode)
+                            <li class="profil-recovery-item">
+                                <code class="profil-recovery-code">{{ $kode }}</code>
+                                <button type="button" class="btn-profil-copy js-copy-code" data-code="{{ $kode }}"
+                                        aria-label="Salin kode pemulihan {{ $kode }}">Salin</button>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="profil-recovery-actions">
+                        <button type="button" class="btn-profil-secondary" id="btn-download-codes"
+                                data-codes="{{ json_encode(session('recovery_codes')) }}">
+                            Unduh .txt
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            <div class="profil-recovery-status {{ ($sisaKode ?? 0) > 0 ? 'is-active' : '' }}">
+                @if (($sisaKode ?? 0) > 0)
+                    {{ $sisaKode }} dari 8 kode pemulihan belum dipakai.
+                @else
+                    Belum ada kode pemulihan yang tersisa.
+                @endif
+            </div>
+
+            @if ($errors->getBag('recovery')->any())
+                <div class="profil-form-alert is-error">Periksa password konfirmasi Anda.</div>
+            @endif
+
+            <form method="POST" action="{{ route('profile.recovery-codes.generate') }}">
+                @csrf
+
+                <div class="profil-notice-banner">
+                    Membuat kode baru akan menghapus semua kode lama.
+                </div>
+
+                <div class="profil-form-grid">
+                    <div class="profil-form-group">
+                        <label for="current_password_recovery" class="profil-label">Password Saat Ini <span class="req-star">*</span></label>
+                        <div class="profil-input-box">
+                            <input type="password" id="current_password_recovery" name="current_password" required autocomplete="current-password"
+                                   class="profil-input input-tinted" placeholder="Masukkan password untuk konfirmasi">
+                        </div>
+                        @error('current_password', 'recovery')
+                            <p class="profil-field-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="profil-card-actions">
+                    <button type="submit" class="btn-profil-submit">Buat Kode Pemulihan</button>
+                </div>
+            </form>
+        </section>
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    document.querySelectorAll('.js-copy-code').forEach(function (tombol) {
+        tombol.addEventListener('click', function () {
+            const kode = tombol.dataset.code || '';
+            if (!kode) return;
+
+            const selesai = function () {
+                tombol.textContent = 'Tersalin';
+                setTimeout(function () { tombol.textContent = 'Salin'; }, 1500);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(kode).then(selesai).catch(function () {});
+                return;
+            }
+
+            const sementara = document.createElement('textarea');
+            sementara.value = kode;
+            document.body.appendChild(sementara);
+            sementara.select();
+            try { document.execCommand('copy'); selesai(); } catch (e) { /* abaikan */ }
+            document.body.removeChild(sementara);
+        });
+    });
+
+    const unduh = document.getElementById('btn-download-codes');
+    if (unduh) {
+        unduh.addEventListener('click', function () {
+            let kode = [];
+            try { kode = JSON.parse(unduh.dataset.codes || '[]'); } catch (e) { kode = []; }
+
+            const isi = 'Kode Pemulihan AFWO Hair Design\n'
+                + 'Simpan di tempat aman. Setiap kode hanya bisa dipakai sekali.\n\n'
+                + kode.join('\n') + '\n';
+
+            const blob = new Blob([isi], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const tautan = document.createElement('a');
+            tautan.href = url;
+            tautan.download = 'kode-pemulihan-afwo.txt';
+            document.body.appendChild(tautan);
+            tautan.click();
+            tautan.remove();
+            URL.revokeObjectURL(url);
+        });
+    }
+})();
+</script>
+@endpush

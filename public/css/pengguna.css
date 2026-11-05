@@ -35,9 +35,14 @@
 
 @media (min-width: 768px) {
   .user-form-grid {
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr auto;
     gap: 14px;
   }
+}
+
+.form-label-optional {
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .user-form-actions {
@@ -110,6 +115,18 @@
 .user-username-text {
   font-weight: 700;
   color: var(--text-link);
+}
+
+.user-email-text {
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.user-email-empty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* Aksi baris */

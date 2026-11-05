@@ -7,6 +7,80 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## AFWO Hair Design — Reset Password Mandiri
+
+Pengguna owner maupun kasir dapat mengatur ulang password sendiri lewat dua jalur:
+
+1. **Tautan reset via email** — pengguna perlu mengisi email pemulihan di halaman Profil.
+2. **Kode pemulihan sekali pakai** — 8 kode cadangan yang dapat dibuat dari halaman Profil
+   (menu **Kode Pemulihan**). Setiap kode hanya bisa dipakai satu kali.
+
+Owner juga dapat mengisi email pemulihan saat membuat akun kasir baru di menu **Kelola Pengguna**.
+Jika pengguna tidak memiliki email, reset mandiri tetap bisa dilakukan dengan kode pemulihan.
+
+### Pengaturan Email (Lupa Password)
+
+Aplikasi mengirim email reset password melalui SMTP. Contoh konfigurasi Gmail:
+
+1. Aktifkan **Verifikasi 2 Langkah** pada akun Google yang akan dipakai mengirim email.
+2. Buat **App Password** (16 karakter) di halaman keamanan akun Google.
+   Jangan memakai password login Google biasa.
+3. Salin konfigurasi berikut ke `.env` (jangan commit file `.env`):
+
+   ```env
+   MAIL_MAILER=smtp
+   MAIL_SCHEME=null
+   MAIL_HOST=smtp.gmail.com
+   MAIL_PORT=587
+   MAIL_USERNAME=alamat@gmail.com
+   MAIL_PASSWORD=app-password-16-karakter
+   MAIL_ENCRYPTION=tls
+   MAIL_FROM_ADDRESS=alamat@gmail.com
+   MAIL_FROM_NAME="AFWO Hair Design"
+   ```
+
+4. Bersihkan cache konfigurasi setelah mengubah `.env`:
+
+   ```bash
+   php artisan config:clear
+   ```
+
+5. Uji pengiriman email lewat tinker:
+
+   ```bash
+   php artisan tinker
+   ```
+
+   ```php
+   Mail::raw('tes', fn ($m) => $m->to('alamat-tujuan@email.com')->subject('tes'));
+   ```
+
+### Mode Pengembangan Tanpa SMTP
+
+Saat `MAIL_MAILER=log`, email tidak benar-benar dikirim. Tautan reset password dapat dibaca
+di `storage/logs/laravel.log`:
+
+```bash
+# Linux/macOS
+tail -f storage/logs/laravel.log
+
+# Windows PowerShell
+Get-Content storage/logs/laravel.log -Wait
+```
+
+Cari teks `Atur Ulang Password` atau `/reset-password/` di log, lalu buka tautannya di browser.
+
+### Perintah Terminal Cadangan
+
+Owner dapat mereset password atau membuat kode pemulihan baru lewat terminal:
+
+```bash
+php artisan user:reset-password username
+php artisan user:reset-password username --generate-codes
+```
+
+Kode pemulihan hanya ditampilkan sekali. Simpan di tempat aman.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

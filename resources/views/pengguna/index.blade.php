@@ -91,6 +91,16 @@
                     @enderror
                 </div>
 
+                <div class="form-group-item">
+                    <label class="form-label" for="email-kasir">Email Pemulihan <span class="form-label-optional">(opsional)</span></label>
+                    <div class="input-box">
+                        <input type="email" id="email-kasir" name="email" value="{{ old('email') }}" class="form-input-control" placeholder="nama@email.com" autocomplete="email">
+                    </div>
+                    @error('email')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <button type="submit" class="btn-user-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -109,6 +119,7 @@
                     <tr>
                         <th>NAMA</th>
                         <th>USERNAME</th>
+                        <th>EMAIL</th>
                         <th>ROLE</th>
                         <th>STATUS</th>
                         <th style="text-align: right; width: 260px;">AKSI</th>
@@ -125,6 +136,13 @@
                             </td>
                             <td>
                                 <span class="user-username-text">{{ $u->username }}</span>
+                            </td>
+                            <td>
+                                @if ($u->email)
+                                    <span class="user-email-text">{{ $u->email }}</span>
+                                @else
+                                    <span class="user-email-empty">Belum ada</span>
+                                @endif
                             </td>
                             <td>
                                 <span class="user-role-pill {{ $u->isOwner() ? 'is-owner' : '' }}">{{ $u->isOwner() ? 'Owner' : 'Kasir' }}</span>

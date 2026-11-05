@@ -251,6 +251,99 @@
   border: 1px solid var(--border-accent);
 }
 
+/* Lupa password & tautan bantuan */
+.login-forgot-link {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-link);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+}
+
+.login-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.login-forgot-link:focus-visible,
+.login-auth-footer a:focus-visible,
+.login-hint a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.login-helper-text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.login-field-error {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--status-danger, var(--text-link));
+}
+
+.login-auth-footer {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--text-2);
+}
+
+.login-auth-footer a {
+  color: var(--text-link);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.login-hint {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.login-hint strong {
+  color: var(--text-1);
+}
+
+.login-hint a {
+  color: var(--text-link);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-hint a:hover {
+  text-decoration: underline;
+}
+
+.login-readonly {
+  background-color: var(--surface-2);
+  color: var(--text-2);
+  cursor: not-allowed;
+}
+
+.login-code-input {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+}
+
+.login-code-input::placeholder {
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
 /* Responsive adjustment */
 @media (max-width: 480px) {
   .login-card {
@@ -259,5 +352,10 @@
   
   .login-brand-title {
     font-size: 2rem;
+  }
+
+  .login-options-row {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }

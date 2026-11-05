@@ -32,11 +32,14 @@ class PenggunaController extends Controller
                 'regex:/^[a-zA-Z0-9._]+$/',
                 'unique:users,username',
             ],
+            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
         ], [
             'username.regex' => 'Username hanya boleh berisi huruf, angka, titik, atau underscore.',
             'username.min' => 'Username minimal 3 karakter.',
             'username.max' => 'Username maksimal 30 karakter.',
             'username.unique' => 'Username sudah dipakai akun lain.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
         ]);
 
         $sementara = $this->passwordSementara();
@@ -44,7 +47,7 @@ class PenggunaController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'username' => strtolower(trim($data['username'])),
-            'email' => null,
+            'email' => filled($data['email'] ?? null) ? strtolower(trim($data['email'])) : null,
             'role' => 'kasir',
             'aktif' => true,
             'wajib_ganti_password' => true,
