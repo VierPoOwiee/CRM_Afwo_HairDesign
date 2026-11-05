@@ -299,23 +299,122 @@
 
 .ai-insight-header {
   display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-2);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.ai-insight-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  min-width: 0;
 }
 
 /* Ikon AI: emas gelap di light agar >=3:1 di atas --accent-soft,
    emas terang di dark (latar gelap, kontras tinggi). */
-.ai-sparkle-icon {
+.ai-sparkle-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid var(--gold-a25);
+  border-radius: 12px;
+  background-color: var(--gold-a12);
   color: var(--text-link);
+}
+[data-theme="dark"] .ai-sparkle-badge { color: var(--accent); }
+
+.ai-sparkle-icon {
+  color: inherit;
   flex-shrink: 0;
 }
-[data-theme="dark"] .ai-sparkle-icon { color: var(--accent); }
+
+.ai-insight-heading-text {
+  min-width: 0;
+}
 
 .ai-insight-title {
+  margin: 0;
   font-size: var(--fs-16);
   font-weight: var(--fw-bold);
   color: var(--text-1);
+  line-height: 1.35;
+}
+
+.ai-insight-meta {
+  margin: 3px 0 0;
+  font-size: var(--fs-12);
+  color: var(--text-3);
+  line-height: 1.4;
+}
+
+.ai-insight-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.ai-insight-generate {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  max-width: 100%;
+}
+
+.ai-insight-generate .btn {
+  white-space: nowrap;
+}
+
+.insight-quota-pill {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border: 1px solid var(--gold-a25);
+  border-radius: 999px;
+  background-color: var(--surface);
+  color: var(--text-link);
+  font-size: var(--fs-12);
+  line-height: 1.3;
+}
+
+.insight-quota-pill strong {
+  font-weight: var(--fw-bold);
+}
+
+.insight-quota-pill .insight-quota-sep {
+  opacity: 0.55;
+}
+
+.insight-quota-pill .warn {
+  color: var(--status-danger);
+  font-weight: var(--fw-bold);
+}
+
+.ai-insight-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--gold-a25);
+}
+
+.ai-insight-card .insight-note-empty {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--gold-a25);
+  text-align: left;
 }
 
 .ai-insight-body {
@@ -337,6 +436,46 @@
 .ai-summary-link {
   font-size: var(--fs-13);
   padding-inline: var(--sp-2);
+}
+
+@media (max-width: 767px) {
+  .ai-insight-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-3);
+  }
+
+  .ai-insight-actions {
+    align-items: stretch;
+  }
+
+  .ai-insight-generate {
+    justify-content: flex-end;
+  }
+
+  .insight-quota-pill {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .ai-insight-generate {
+    justify-content: flex-start;
+  }
+
+  .ai-insight-generate .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .insight-cooldown-chip {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .insight-quota-pill {
+    align-self: flex-start;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -378,12 +517,22 @@
   color: var(--text-1);
 }
 
+.chart-tren-peak {
+  margin-top: 2px;
+  font-weight: var(--fw-semibold);
+  color: var(--text-2);
+}
+
 .svg-bar-chart-container {
   position: relative;
   width: 100%;
   /* Rasio sama dengan viewBox (700x150) supaya batang tidak terdistorsi
      walau svg memakai preserveAspectRatio="none". */
   aspect-ratio: 700 / 150;
+}
+
+.svg-bar-chart-container.chart-compact {
+  max-height: 220px;
 }
 
 .svg-bar-chart-container svg {
@@ -507,6 +656,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--sp-1);
+  min-width: 0;
   padding: var(--sp-3) var(--sp-2);
   background-color: var(--surface-inset);
   border: 1px solid var(--border);
@@ -517,6 +667,8 @@
 /* Ikon kategori: emas gelap di light (>=3:1 di atas abu terang),
    emas terang di dark. */
 .cat-tile-icon {
+  width: 24px;
+  height: 24px;
   color: var(--text-link);
   flex-shrink: 0;
 }
@@ -530,9 +682,12 @@
 }
 
 .cat-tile-name {
+  width: 100%;
   font-size: var(--fs-12);
   font-weight: var(--fw-semibold);
+  line-height: 1.3;
   color: var(--text-2);
+  overflow-wrap: anywhere;
 }
 
 .cat-detail-list {
@@ -635,14 +790,6 @@
    11. Responsif
    -------------------------------------------------------------------------- */
 @media (max-width: 1023px) {
-  .report-stat-triplet {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .report-stat-triplet > :last-child {
-    grid-column: 1 / -1;
-  }
-
   .category-visual-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -651,14 +798,6 @@
 @media (max-width: 767px) {
   .metrics-grid-duo {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .report-stat-triplet {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .report-stat-triplet > :last-child {
-    grid-column: auto;
   }
 
   .report-filter-grid {
@@ -697,7 +836,16 @@
   }
 }
 
-@media (min-width: 640px) {}
+@media (max-width: 639px) {
+  .report-stat-triplet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .report-stat-triplet > :last-child {
+    grid-column: auto;
+  }
+}
+
 @media (min-width: 1024px) {}
 
 /*  ---- Aturan khusus aplikasi (tidak ada di referensi) ----  */
@@ -876,17 +1024,18 @@
 }
 
 .insight-subsection {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 0;
+  padding-top: var(--sp-4);
   border-top: 1px solid var(--gold-a25);
 }
 
 .insight-headline {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 800;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: var(--fw-extrabold);
   color: var(--text-link);
   line-height: 1.45;
 }
@@ -896,27 +1045,38 @@
   margin-top: 2px;
 }
 
-.insight-sorotan-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
+.insight-headline span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .insight-sorotan-grid {
-    grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: var(--sp-2);
+}
+
+@media (min-width: 768px) {
+  .insight-sorotan-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
 
 .insight-sorotan-item {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 0.84rem;
-  color: var(--text-link);
-  line-height: 1.45;
-  background-color: rgba(255, 255, 255, 0.55);
+  min-width: 0;
+  height: 100%;
+  padding: 10px 12px;
   border: 1px solid var(--gold-a25);
   border-radius: var(--radius-md);
-  padding: 10px 12px;
+  background-color: var(--surface);
+  background-color: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--text-link);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .insight-sorotan-item svg {
@@ -924,36 +1084,49 @@
   margin-top: 1px;
 }
 
+.insight-sorotan-item span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .insight-rekomendasi-title {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  margin: 0 0 10px;
   color: var(--text-link);
-  margin-bottom: 8px;
+  font-size: 0.72rem;
+  font-weight: var(--fw-extrabold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .insight-rekomendasi-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .insight-rekomendasi-list li {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-size: 0.84rem;
   color: var(--text-link);
+  font-size: 0.84rem;
   line-height: 1.45;
 }
 
 .insight-rekomendasi-list li svg {
   flex-shrink: 0;
   margin-top: 2px;
+}
+
+.insight-rekomendasi-list li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .insight-note-empty {
@@ -968,11 +1141,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  max-width: 100%;
+  box-sizing: border-box;
   background-color: var(--gold-a12);
   border: 1px solid var(--gold-a25);
   color: var(--text-link);
   font-size: 0.76rem;
   font-weight: 700;
+  line-height: 1.3;
   padding: 6px 12px;
   border-radius: var(--radius-md);
 }
@@ -1200,4 +1376,11 @@
 .btn-hapus-sesi svg {
   width: 13px;
   height: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   Elemen khusus cetak: hanya tampil di media print (lihat print.css).
+   -------------------------------------------------------------------------- */
+.print-only {
+  display: none !important;
 }

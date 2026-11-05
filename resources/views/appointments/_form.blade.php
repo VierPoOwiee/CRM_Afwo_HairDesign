@@ -29,7 +29,7 @@
         </div>
         <div class="form-input-box" id="pelanggan_input_box">
             <div class="appt-combobox-wrap">
-                <input type="text" id="pelanggan_search" class="appt-combobox-input" placeholder="Pilih klien atau ketik nama/no. WA" autocomplete="off">
+                <input type="text" id="pelanggan_search" class="appt-combobox-input" placeholder="Pilih klien" autocomplete="off">
                 <div id="pelanggan_results" class="appt-combobox-results"></div>
             </div>
         </div>
@@ -51,7 +51,7 @@
             <span class="form-label">Layanan yang Akan Digunakan <span class="required-star">*</span></span>
             <div class="form-input-box">
                 <div class="appt-combobox-wrap">
-                    <input type="text" id="layanan_search" class="appt-combobox-input" placeholder="Pilih layanan atau ketik nama layanan" autocomplete="off">
+                    <input type="text" id="layanan_search" class="appt-combobox-input" placeholder="Pilih layanan" autocomplete="off">
                     <div id="layanan_results" class="appt-combobox-results"></div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <span class="form-label">Karyawan / Stylist Dikerahkan <span class="required-star">*</span></span>
             <div class="form-input-box" id="karyawan_input_box">
                 <div class="appt-combobox-wrap">
-                    <input type="text" id="karyawan_search" class="appt-combobox-input" placeholder="Pilih stylist atau ketik nama" autocomplete="off">
+                    <input type="text" id="karyawan_search" class="appt-combobox-input" placeholder="Pilih karyawan" autocomplete="off">
                     <div id="karyawan_results" class="appt-combobox-results"></div>
                 </div>
             </div>
@@ -454,6 +454,17 @@
     });
     karyawanSearch.addEventListener('blur', function () {
         setTimeout(function () { showRes(karyawanResults, false); }, 200);
+    });
+
+    // ----- Seluruh area kotak pencarian bisa diklik untuk fokus -----
+    document.querySelectorAll('.form-input-box .appt-combobox-input').forEach(function (input) {
+        var box = input.closest('.form-input-box');
+        if (!box) return;
+        box.addEventListener('click', function (e) {
+            if (e.target !== input) {
+                input.focus();
+            }
+        });
     });
 
     // ----- Quick slot waktu -----

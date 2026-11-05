@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="@yield('html-class')">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +13,9 @@
     {{-- Tema dipasang SEBELUM paint supaya tidak ada flash-of-wrong-theme. --}}
     <script>(function(){try{var k="afwo_theme",t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
     @stack('styles')
+    <link rel="stylesheet" href="{{ asset('css/print.css') }}" media="print">
 </head>
-<body data-nav-active="@yield('nav-active', 'dashboard')">
+<body class="@yield('body-class')" data-nav-active="@yield('nav-active', 'dashboard')">
 
     {{-- Navigation Backdrop Overlay (for mobile drawer) --}}
     <div id="nav-overlay" class="nav-overlay" aria-hidden="true"></div>

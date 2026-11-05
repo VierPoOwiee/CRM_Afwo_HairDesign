@@ -1,0 +1,450 @@
+/* ==========================================================================
+   AFWO HAIR DESIGN - PRINT STYLES (KHUSUS LAPORAN PENJUALAN)
+   --------------------------------------------------------------------------
+   File ini dimuat dengan media="print" dari layouts/app.blade.php sehingga
+   tidak mengubah tampilan layar sama sekali. Semua aturan komponen di-scope
+   ke html/body.page-laporan-penjualan agar tidak bentrok dengan aturan cetak
+   rekap-komisi dan slip-pendapatan yang sudah punya @media print sendiri.
+   ========================================================================== */
+
+/* Named page: hanya dipakai halaman Laporan Penjualan supaya aturan cetak
+   halaman lain (rekap komisi, slip pendapatan) tidak ikut berubah. */
+@page laporan-penjualan {
+  size: A4 portrait;
+  margin: 14mm 12mm;
+
+  /* Margin box halaman. Chrome belum mendukung ini, jadi otomatis dilewati
+     tanpa mengganggu aturan @page lain. */
+  @bottom-right {
+    content: "Halaman " counter(page) " / " counter(pages);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 8pt;
+    color: #666;
+  }
+}
+
+@media print {
+  html.page-laporan-penjualan,
+  body.page-laporan-penjualan {
+    page: laporan-penjualan;
+  }
+
+  /* ------------------------------------------------------------------------
+     1. Paksa tampilan terang (walau layar sedang dark mode)
+     ------------------------------------------------------------------------ */
+  html.page-laporan-penjualan,
+  body.page-laporan-penjualan,
+  body.page-laporan-penjualan * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html[data-theme="dark"].page-laporan-penjualan {
+    color-scheme: light;
+
+    --bg-page: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f7f7f7;
+    --surface-3: #efefef;
+    --surface-inset: #fafafa;
+    --surface-inverse: #1a1a1a;
+    --surface-overlay: transparent;
+    --surface-contrast: #1a1a1a;
+
+    --border: #d6d6d6;
+    --border-strong: #bdbdbd;
+    --border-subtle: #e4e4e4;
+    --border-inverse: #d6d6d6;
+    --border-accent: #d6d6d6;
+    --border-accent-soft: #dddddd;
+
+    --text-1: #1a1a1a;
+    --text-2: #333333;
+    --text-3: #555555;
+    --text-muted: #555555;
+    --text-link: #333333;
+    --text-inverse: #ffffff;
+    --text-on-accent: #1a1a1a;
+    --text-on-contrast: #ffffff;
+    --text-on-ink: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #333333;
+
+    --accent: #e5e5e5;
+    --accent-hover: #dddddd;
+    --accent-active: #d5d5d5;
+    --accent-contrast: #1a1a1a;
+    --accent-soft: #f4f4f4;
+    --accent-soft-2: #ededed;
+    --accent-ring: transparent;
+    --accent-shadow: transparent;
+    --ink: #1a1a1a;
+
+    --bg-card: #ffffff;
+    --bg-cream: #fafafa;
+    --bg-main: #ffffff;
+    --bg-card-hover: #f7f7f7;
+    --border-color: #d6d6d6;
+    --border-cream: #dddddd;
+
+    --status-done-bg: #e8f5e9;
+    --status-done-fg: #1b5e20;
+    --status-done-border: #b7d7bb;
+    --status-ok: #2e7d32;
+    --status-ok-bg: #e8f5e9;
+    --status-ok-fg: #1b5e20;
+    --status-ok-border: #b7d7bb;
+    --status-progress-bg: #f7f0e1;
+    --status-progress-fg: #3d2a1c;
+    --status-progress-border: #e4d2a4;
+    --status-warn-bg: #fff9e6;
+    --status-warn-fg: #3d2a1c;
+    --status-warn-border: #f7dd9a;
+    --status-danger: #b5473f;
+    --status-danger-bg: #fbeae8;
+    --status-danger-fg: #a12b25;
+    --status-danger-border: #f2c2be;
+    --status-cancel-bg: transparent;
+    --status-cancel-fg: #555555;
+    --status-cancel-border: #d6d6d6;
+
+    --chart-series-1: #6e5008;
+    --chart-series-2: #333333;
+    --chart-grid: #d6d6d6;
+
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-accent: none;
+    --shadow-fab: none;
+  }
+
+  html.page-laporan-penjualan,
+  body.page-laporan-penjualan {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+
+  html.page-laporan-penjualan {
+    font-size: 11pt !important;
+  }
+
+  body.page-laporan-penjualan {
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. Sembunyikan seluruh elemen UI aplikasi
+     ------------------------------------------------------------------------ */
+  .no-print,
+  body.page-laporan-penjualan .admin-sidebar,
+  body.page-laporan-penjualan .app-bar,
+  body.page-laporan-penjualan #nav-overlay,
+  body.page-laporan-penjualan .toast-box,
+  body.page-laporan-penjualan .page-header,
+  body.page-laporan-penjualan .report-filter-card,
+  body.page-laporan-penjualan .report-summary-actions,
+  body.page-laporan-penjualan #ai-insight-card,
+  body.page-laporan-penjualan .report-history-section {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     3. Reset shell aplikasi supaya dokumen mengalir multi-halaman
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .app-layout,
+  body.page-laporan-penjualan .app-main-content,
+  body.page-laporan-penjualan .app-main,
+  body.page-laporan-penjualan .app-content {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  body.page-laporan-penjualan .app-content {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Urutan dokumen cetak: kop -> ringkasan -> grafik -> kategori ->
+     ringkasan periode -> riwayat transaksi. */
+  body.page-laporan-penjualan .print-kop { order: 1; }
+  body.page-laporan-penjualan .report-stat-triplet { order: 2; }
+  body.page-laporan-penjualan .revenue-chart-card:not(.no-print) { order: 3; }
+  body.page-laporan-penjualan .category-breakdown-card { order: 4; }
+  body.page-laporan-penjualan .report-summary-banner { order: 5; }
+  body.page-laporan-penjualan .print-history { order: 6; }
+
+  /* ------------------------------------------------------------------------
+     4. Hilangkan efek layar: shadow, blur, animasi, transisi
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     5. Kartu & permukaan
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .card,
+  body.page-laporan-penjualan .stat-card,
+  body.page-laporan-penjualan .daily-group-card,
+  body.page-laporan-penjualan .cat-tile-box,
+  body.page-laporan-penjualan .report-summary-banner {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+  }
+
+  body.page-laporan-penjualan .card,
+  body.page-laporan-penjualan .stat-card {
+    padding: 4mm !important;
+  }
+
+  body.page-laporan-penjualan .card {
+    margin-bottom: 5mm !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     6. Jeda halaman
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .card,
+  body.page-laporan-penjualan .stat-card,
+  body.page-laporan-penjualan .cat-tile-box,
+  body.page-laporan-penjualan .daily-group-card,
+  body.page-laporan-penjualan .print-trans-table tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body.page-laporan-penjualan .card__title,
+  body.page-laporan-penjualan .section-heading,
+  body.page-laporan-penjualan .print-section-title,
+  body.page-laporan-penjualan .daily-group-header {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  body.page-laporan-penjualan table thead {
+    display: table-header-group !important;
+  }
+
+  body.page-laporan-penjualan table tfoot {
+    display: table-footer-group !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     7. Grid & grafik
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .report-stat-triplet {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4mm !important;
+    margin-bottom: 5mm !important;
+  }
+
+  body.page-laporan-penjualan .report-stat-triplet > :last-child {
+    grid-column: auto !important;
+  }
+
+  body.page-laporan-penjualan .category-visual-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 3mm !important;
+    margin-bottom: 4mm !important;
+  }
+
+  body.page-laporan-penjualan .svg-bar-chart-container {
+    width: 100% !important;
+    height: 260px !important;
+    aspect-ratio: auto !important;
+  }
+
+  body.page-laporan-penjualan .svg-bar-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     8. Hierarki tipografi cetak
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .card__title {
+    font-size: 12pt !important;
+    line-height: 1.25 !important;
+    color: #1a1a1a !important;
+  }
+
+  body.page-laporan-penjualan .card__subtitle {
+    font-size: 9pt !important;
+    color: #555555 !important;
+  }
+
+  body.page-laporan-penjualan .stat-card__icon {
+    display: none !important;
+  }
+
+  body.page-laporan-penjualan .stat-card__label {
+    padding-right: 0 !important;
+    font-size: 8pt !important;
+  }
+
+  body.page-laporan-penjualan .stat-card__value {
+    font-size: 16pt !important;
+    white-space: nowrap !important;
+  }
+
+  body.page-laporan-penjualan .stat-card__subtext {
+    font-size: 8.5pt !important;
+  }
+
+  body.page-laporan-penjualan .cat-tile-percentage {
+    font-size: 14pt !important;
+  }
+
+  body.page-laporan-penjualan .cat-tile-name {
+    font-size: 9pt !important;
+  }
+
+  body.page-laporan-penjualan .cat-detail-name,
+  body.page-laporan-penjualan .cat-detail-total {
+    font-size: 9.5pt !important;
+  }
+
+  body.page-laporan-penjualan .cat-detail-count {
+    font-size: 8pt !important;
+  }
+
+  body.page-laporan-penjualan .report-summary-label {
+    font-size: 9pt !important;
+  }
+
+  body.page-laporan-penjualan .report-summary-total {
+    font-size: 14pt !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     9. KOP laporan (hanya cetak)
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .print-only {
+    display: block !important;
+  }
+
+  body.page-laporan-penjualan .print-kop {
+    border-bottom: 2px solid #222222 !important;
+    padding-bottom: 4mm !important;
+    margin-bottom: 5mm !important;
+  }
+
+  body.page-laporan-penjualan .print-kop__brand {
+    font-size: 16pt !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    color: #1a1a1a !important;
+  }
+
+  body.page-laporan-penjualan .print-kop__title {
+    font-size: 18pt !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 1.5mm 0 1mm !important;
+    color: #1a1a1a !important;
+  }
+
+  body.page-laporan-penjualan .print-kop__meta,
+  body.page-laporan-penjualan .print-kop__filters {
+    font-size: 9.5pt !important;
+    line-height: 1.45 !important;
+    color: #444444 !important;
+    margin: 0 !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     10. Tabel riwayat transaksi khusus cetak
+     ------------------------------------------------------------------------ */
+  body.page-laporan-penjualan .print-history {
+    margin-top: 2mm !important;
+  }
+
+  body.page-laporan-penjualan .print-section-title {
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    margin: 0 0 3mm !important;
+    color: #1a1a1a !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
+    table-layout: fixed !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table th,
+  body.page-laporan-penjualan .print-trans-table td {
+    border: 1px solid #bbbbbb !important;
+    padding: 1.6mm 1.4mm !important;
+    text-align: left !important;
+    vertical-align: top !important;
+    color: #1a1a1a !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table th {
+    background: #eeeeee !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .num {
+    text-align: right !important;
+    white-space: nowrap !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .col-tanggal {
+    width: 21mm !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .col-trx {
+    width: 32mm !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .col-metode {
+    width: 20mm !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .col-total {
+    width: 24mm !important;
+  }
+
+  body.page-laporan-penjualan .print-trans-table .col-status {
+    width: 18mm !important;
+  }
+}

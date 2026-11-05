@@ -6,6 +6,9 @@
 
 @section('container_width', 'app-content-wide')
 
+@section('html-class', 'page-laporan-penjualan')
+@section('body-class', 'page-laporan-penjualan')
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/laporan.css') }}">
     <link rel="stylesheet" href="{{ asset('css/riwayat.css') }}">
@@ -31,6 +34,23 @@
         'debit' => ['badge' => 'badge-transfer', 'label' => 'Debit'],
         'kartu_kredit' => ['badge' => 'badge-qris', 'label' => 'Kartu Kredit'],
     ];
+
+    $fmtTgl = fn ($d) => \Carbon\Carbon::parse($d)->locale('id')->translatedFormat('j M Y');
+    $periodeRingkas = $fmtTgl($dari).' – '.$fmtTgl($sampai);
+
+    $filterAktif = [];
+    if ($jenisPengerjaan) {
+        $filterAktif[] = 'Jenis Pengerjaan: '.($jenisPengerjaan === 'sendiri' ? 'Sendiri' : 'Berdua');
+    }
+    if ($metode) {
+        $filterAktif[] = 'Metode Pembayaran: '.($metodeMap[$metode]['label'] ?? $metode);
+    }
+    if ($stafId) {
+        $namaStafFilter = $karyawans->firstWhere('id', (int) $stafId)?->nama;
+        $filterAktif[] = 'Karyawan: '.($namaStafFilter ?? '#'.$stafId);
+    }
+
+    $dicetakLabel = now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm').' WIB';
 
     $kategoriIkon = function (string $kategori) {
         $k = strtolower($kategori);
@@ -98,13 +118,7 @@
         'mtd' => $isBulanBerjalan,
     ];
 
-    $trenAxisRaw = $trenHarian->pluck('tanggal');
-    if ($trenAxisRaw->count() > 7) {
-        $step = $trenAxisRaw->count() / 7;
-        $trenAxis = collect(range(0, 6))->map(fn ($i) => $trenAxisRaw[(int) floor($i * $step)] ?? '')->values();
-    } else {
-        $trenAxis = $trenAxisRaw;
-    }
+    $trenPuncak = $trenHarian->sortByDesc('total')->first();
 
     $catTotalAll = (float) $breakdownKategori->sum('total_subtotal');
     $catTiles = $breakdownKategori->take(4)->map(function ($row) use ($catTotalAll) {
@@ -121,6 +135,17 @@
 @endphp
 
 @section('content')
+
+    {{-- ===== KOP laporan (hanya tampil saat cetak) ===== --}}
+    <div class="print-only print-kop">
+        <div class="print-kop__brand">AFWO Hair Design</div>
+        <h1 class="print-kop__title">Laporan Penjualan</h1>
+        <p class="print-kop__meta">Periode: {{ $periodeRingkas }}</p>
+        @if (!empty($filterAktif))
+            <p class="print-kop__filters">Filter aktif: {{ implode(' | ', $filterAktif) }}</p>
+        @endif
+        <p class="print-kop__meta">Dicetak: {{ $dicetakLabel }}</p>
+    </div>
 
     {{-- ===== Page Header (pola global) ===== --}}
     <div class="page-header">
@@ -142,108 +167,117 @@
     ])
 
     @if (session('success'))
-        <div class="report-empty-note" style="background-color: var(--status-ok-bg); color: var(--status-ok-fg); border: 1px solid var(--status-ok-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('success') }}</div>
+        <div class="report-empty-note no-print" style="background-color: var(--status-ok-bg); color: var(--status-ok-fg); border: 1px solid var(--status-ok-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('success') }}</div>
     @endif
     @if (session('error'))
-        <div class="report-empty-note" style="background-color: var(--status-danger-bg); color: var(--status-danger-fg); border: 1px solid var(--status-danger-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('error') }}</div>
+        <div class="report-empty-note no-print" style="background-color: var(--status-danger-bg); color: var(--status-danger-fg); border: 1px solid var(--status-danger-border); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('error') }}</div>
     @endif
     @if (session('insight_info'))
-        <div class="report-empty-note" style="background-color: var(--gold-50); color: var(--text-link); border: 1px solid var(--gold-200); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('insight_info') }}</div>
+        <div class="report-empty-note no-print" style="background-color: var(--gold-50); color: var(--text-link); border: 1px solid var(--gold-200); border-radius: 12px; margin-bottom: 18px; padding: 12px 16px; text-align: left;">{{ session('insight_info') }}</div>
     @endif
 
     {{-- ============ AI INSIGHT CARD ============ --}}
     <section class="card ai-insight-card" id="ai-insight-card" data-field="ai-insight-card">
-        <div class="ai-insight-header no-print" style="justify-content: space-between; flex-wrap: wrap;">
-            <div class="card__title-group" style="display: flex; align-items: center; gap: 10px;">
-                <svg class="ai-sparkle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                    <path d="M12 2L14.39 8.26L21 9.27L16.27 13.88L17.82 20.4L12 16.77L6.18 20.4L7.73 13.88L3 9.27L9.61 8.26L12 2Z"></path>
-                </svg>
-                <h2 class="ai-insight-title">AI Insight — Analisa Keuntungan</h2>
-            </div>
-
-            <form method="POST" action="{{ route('laporan.insight.generate') }}" class="no-print" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                @csrf
-                <input type="hidden" name="periode" value="{{ $insightPeriode }}">
-                <button type="submit" id="btnGenerateInsight" class="btn btn--ghost"
-                    @if ($insightCooldown || $kuotaAi['habis'])
-                        disabled
-                        title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, reset ' . $kuotaAi['label_reset'] : 'Analisa baru saja digenerate, tunggu beberapa menit' }}"
-                    @endif>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
-                    {{ $insight ? 'Generate Ulang' : 'Generate Analisa' }}
-                </button>
-                @if ($insightCooldown)
-                    <span id="insightCooldownLabel" data-sisa="{{ $insightCooldownSisaDetik }}" class="insight-cooldown-chip">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Bisa generate lagi dalam
-                        <span id="insightCountdown" class="tabular-nums">{{ floor($insightCooldownSisaDetik / 60) }}:{{ str_pad($insightCooldownSisaDetik % 60, 2, '0', STR_PAD_LEFT) }}</span>
-                    </span>
-                @endif
-            </form>
-        </div>
-
-        <p class="insight-quota-line">
-            Kuota AI hari ini:
-            <strong>{{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}</strong>
-            @if ($kuotaAi['habis'])
-                <span class="warn">&middot; habis, reset {{ $kuotaAi['label_reset'] }}</span>
-            @elseif ($kuotaAi['hampir_habis'])
-                <span class="warn">&middot; sisa {{ $kuotaAi['sisa'] }}, reset {{ $kuotaAi['label_reset'] }}</span>
-            @else
-                &middot; reset {{ $kuotaAi['label_reset'] }}
-            @endif
-        </p>
-        @if ($insight)
-            <p class="insight-quota-line">Terakhir digenerate: {{ $insight->dibuat_pada->format('d M Y H:i') }}</p>
-        @endif
-
-        {{-- Headline banner --}}
-        @if ($insightValid)
-            <p class="insight-headline" style="margin-top: 12px;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ $trendIcon[$trendKey($sentiment)]['color'] }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="{{ $trendIcon[$trendKey($sentiment)]['path'] }}"/>
-                </svg>
-                {{ $insightData['headline'] }}
-            </p>
-        @endif
-
-        {{-- Sorotan: chip grid --}}
-        @if ($insightValid && !empty($insightData['sorotan']))
-            <div class="insight-sorotan-grid">
-                @foreach ($insightData['sorotan'] as $sorotan)
-                    <div class="insight-sorotan-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ $trendIcon[$trendKey($sorotan['trend'] ?? 'neutral')]['color'] }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="{{ $trendIcon[$trendKey($sorotan['trend'] ?? 'neutral')]['path'] }}"/>
-                        </svg>
-                        <span>{{ $sorotan['teks'] }}</span>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-
-        {{-- Rekomendasi: checklist ringkas --}}
-        @if ($insightValid && !empty($insightData['rekomendasi']))
-            <div class="insight-subsection no-print">
-                <p class="insight-rekomendasi-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <div class="ai-insight-header">
+            <div class="ai-insight-heading">
+                <span class="ai-sparkle-badge" aria-hidden="true">
+                    <svg class="ai-sparkle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" focusable="false">
                         <path d="M12 2L14.39 8.26L21 9.27L16.27 13.88L17.82 20.4L12 16.77L6.18 20.4L7.73 13.88L3 9.27L9.61 8.26L12 2Z"></path>
                     </svg>
-                    Rekomendasi
-                </p>
-                <ul class="insight-rekomendasi-list">
-                    @foreach ($insightData['rekomendasi'] as $rekomendasi)
-                        <li>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </span>
+                <div class="ai-insight-heading-text">
+                    <h2 class="ai-insight-title">AI Insight — Analisa Keuntungan</h2>
+                    <p class="ai-insight-meta">
+                        @if ($insight)
+                            Terakhir digenerate: {{ $insight->dibuat_pada->format('d M Y H:i') }}
+                        @else
+                            Belum ada analisa tersimpan
+                        @endif
+                    </p>
+                </div>
+            </div>
+
+            <div class="ai-insight-actions no-print">
+                <form method="POST" action="{{ route('laporan.insight.generate') }}" class="ai-insight-generate">
+                    @csrf
+                    <input type="hidden" name="periode" value="{{ $insightPeriode }}">
+                    <button type="submit" id="btnGenerateInsight" class="btn btn--ghost"
+                        @if ($insightCooldown || $kuotaAi['habis'])
+                            disabled
+                            title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, reset ' . $kuotaAi['label_reset'] : 'Analisa baru saja digenerate, tunggu beberapa menit' }}"
+                        @endif>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        {{ $insight ? 'Generate Ulang' : 'Generate Analisa' }}
+                    </button>
+                    @if ($insightCooldown)
+                        <span id="insightCooldownLabel" data-sisa="{{ $insightCooldownSisaDetik }}" class="insight-cooldown-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            {{ $rekomendasi }}
-                        </li>
-                    @endforeach
-                </ul>
+                            Bisa generate lagi dalam
+                            <span id="insightCountdown" class="tabular-nums">{{ floor($insightCooldownSisaDetik / 60) }}:{{ str_pad($insightCooldownSisaDetik % 60, 2, '0', STR_PAD_LEFT) }}</span>
+                        </span>
+                    @endif
+                </form>
+
+                <span class="insight-quota-pill">
+                    Kuota <strong>{{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}</strong>
+                    <span class="insight-quota-sep" aria-hidden="true">&middot;</span>
+                    @if ($kuotaAi['habis'])
+                        <span class="warn">habis, reset {{ $kuotaAi['label_reset'] }}</span>
+                    @elseif ($kuotaAi['hampir_habis'])
+                        <span class="warn">sisa {{ $kuotaAi['sisa'] }}, reset {{ $kuotaAi['label_reset'] }}</span>
+                    @else
+                        <span>reset {{ $kuotaAi['label_reset'] }}</span>
+                    @endif
+                </span>
+            </div>
+        </div>
+
+        @if ($insightValid)
+            <div class="ai-insight-content">
+                <p class="insight-headline">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ $trendIcon[$trendKey($sentiment)]['color'] }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="{{ $trendIcon[$trendKey($sentiment)]['path'] }}"/>
+                    </svg>
+                    <span>{{ $insightData['headline'] }}</span>
+                </p>
+
+                @if (!empty($insightData['sorotan']))
+                    <div class="insight-sorotan-grid">
+                        @foreach ($insightData['sorotan'] as $sorotan)
+                            <div class="insight-sorotan-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ $trendIcon[$trendKey($sorotan['trend'] ?? 'neutral')]['color'] }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="{{ $trendIcon[$trendKey($sorotan['trend'] ?? 'neutral')]['path'] }}"/>
+                                </svg>
+                                <span>{{ $sorotan['teks'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if (!empty($insightData['rekomendasi']))
+                    <div class="insight-subsection no-print">
+                        <p class="insight-rekomendasi-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                                <path d="M12 2L14.39 8.26L21 9.27L16.27 13.88L17.82 20.4L12 16.77L6.18 20.4L7.73 13.88L3 9.27L9.61 8.26L12 2Z"></path>
+                            </svg>
+                            Rekomendasi
+                        </p>
+                        <ul class="insight-rekomendasi-list">
+                            @foreach ($insightData['rekomendasi'] as $rekomendasi)
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>{{ $rekomendasi }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         @elseif ($insight && ! $insightValid)
             <div class="insight-note-empty no-print">Analisa tersimpan masih menggunakan format lama (teks panjang). Klik tombol "Generate Ulang" untuk memperbaruinya ke tampilan ringkas.</div>
@@ -258,7 +292,7 @@
         <div class="card__header">
             <div class="card__title-group">
                 <h2 class="card__title">Grafik Pendapatan</h2>
-                <p class="card__subtitle">Perbandingan omset {{ $dari }} s/d {{ $sampai }}.</p>
+                <p class="card__subtitle">Perbandingan omset {{ $periodeRingkas }}.</p>
             </div>
             @if ($omsetMaks > 0)
                 <span class="badge badge--accent growth-badge-pill {{ $perubahan >= 0 ? '' : 'down' }}">
@@ -306,6 +340,9 @@
                 <div class="card__title-group">
                     <h2 class="card__title">Tren Omset Harian</h2>
                     <p class="card__subtitle">{{ $trenHarian->count() }} hari punya transaksi pada periode ini.</p>
+                    @if ($trenPuncak)
+                        <p class="card__subtitle chart-tren-peak">Hari tertinggi: {{ $trenPuncak['tanggal'] }} ({{ $fmt($trenPuncak['total']) }}).</p>
+                    @endif
                 </div>
             </div>
             <div class="revenue-chart-body">
@@ -313,13 +350,8 @@
                     <span class="chart-label-sm">Total Harian</span>
                     <span class="chart-revenue-val">{{ $fmt($trenHarian->sum('total')) }}</span>
                 </div>
-                <div class="svg-bar-chart-container">
+                <div class="svg-bar-chart-container chart-compact">
                     <canvas id="chartTren"></canvas>
-                </div>
-                <div class="chart-axis-labels">
-                    @foreach ($trenAxis as $t)
-                        <span>{{ $t }}</span>
-                    @endforeach
                 </div>
             </div>
         </section>
@@ -330,21 +362,27 @@
         <article class="stat-card">
             <div class="stat-card__top">
                 <span class="stat-card__label">Total Omset</span>
-                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                    <path d="M18 18.5a2.5 2.5 0 00-2.5-2.5h-1a2.5 2.5 0 110-5h.5a2.5 2.5 0 001.5-4.46l-1.7-1.16A2.5 2.5 0 0012.5 3c-.4 0-.79.1-1.16.25L9.6 2.1A2.5 2.5 0 006 3.2L4.3 4.36A2.5 2.5 0 002 8.8v2.2a2.5 2.5 0 001.2 2.12l1.6 1.1A2.5 2.5 0 008 16.4v2.2a2.5 2.5 0 001.2 2.12l1.6 1.1A2.5 2.5 0 0014 23.5h1a2.5 2.5 0 002.5-2.5v-2.5z"></path>
-                </svg>
+                <span class="stat-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                        <circle cx="12" cy="12" r="2.5"></circle>
+                        <path d="M6 12h.01M18 12h.01"></path>
+                    </svg>
+                </span>
             </div>
             <span class="stat-card__value" id="report-total-revenue" data-field="total-revenue">{{ $fmt($totalOmset) }}</span>
-            <span class="stat-card__subtext">{{ $dari }} s/d {{ $sampai }}</span>
+            <span class="stat-card__subtext">{{ $periodeRingkas }}</span>
         </article>
 
         <article class="stat-card">
             <div class="stat-card__top">
                 <span class="stat-card__label">Jumlah Transaksi</span>
-                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                    <path d="M9 11l3 3L22 4"></path>
-                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
-                </svg>
+                <span class="stat-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2z"></path>
+                        <path d="M9 7h6M9 11h6M9 15h4"></path>
+                    </svg>
+                </span>
             </div>
             <span class="stat-card__value" id="report-transaction-count" data-field="transaction-count">{{ $jumlahTransaksi }}</span>
             <span class="stat-card__subtext">Transaksi selesai</span>
@@ -353,10 +391,11 @@
         <article class="stat-card">
             <div class="stat-card__top">
                 <span class="stat-card__label">Rata-rata / Transaksi</span>
-                <svg class="stat-card__deco" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                    <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"></path>
-                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"></path>
-                </svg>
+                <span class="stat-card__icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <path d="M4 20V10M10 20V4M16 20v-8M22 20H2"></path>
+                    </svg>
+                </span>
             </div>
             <span class="stat-card__value" id="report-average-revenue" data-field="average-revenue">{{ $fmt($rataRata) }}</span>
             <span class="stat-card__subtext">Per transaksi</span>
@@ -409,7 +448,7 @@
     {{-- ============ RINGKASAN + AKSI ============ --}}
     <section class="report-summary-banner" data-field="category-summary-banner">
         <div class="report-summary-text">
-            <span class="report-summary-label">Ringkasan Periode ({{ $dari }} – {{ $sampai }})</span>
+            <span class="report-summary-label">Ringkasan Periode ({{ $periodeRingkas }})</span>
             <span class="report-summary-total" id="dark-summary-total-val">Total Omset: {{ $fmt($totalOmset) }}</span>
         </div>
         <div class="report-summary-actions">
@@ -525,6 +564,55 @@
         @endforelse
     </section>
 
+    {{-- ===== Riwayat transaksi versi tabel padat (hanya tampil saat cetak) ===== --}}
+    @if ($transaksis->isNotEmpty())
+        <div class="print-only print-history">
+            <h2 class="print-section-title">Riwayat Transaksi</h2>
+            <table class="print-trans-table">
+                <thead>
+                    <tr>
+                        <th class="col-tanggal">Tanggal</th>
+                        <th class="col-trx">Kode TRX</th>
+                        <th>Pelanggan</th>
+                        <th>Layanan</th>
+                        <th>Stylist</th>
+                        <th class="col-metode">Metode</th>
+                        <th class="col-total num">Total</th>
+                        <th class="col-status">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($transaksis as $t)
+                        @php
+                            $printDetails = $t->details->where('subtotal', '>', 0);
+                            $printNamaBarang = $printDetails->map(function ($d) {
+                                if ($d->tipe_item === 'layanan' && $d->layanan) {
+                                    return $d->layanan->nama_layanan.($d->varian_dipilih ? ' ('.ucfirst($d->varian_dipilih).')' : '');
+                                }
+                                if ($d->tipe_item === 'produk' && $d->produk) {
+                                    return $d->produk->nama_produk;
+                                }
+                                return '(Item)';
+                            })->unique()->implode(', ');
+                            $printStaf = $t->details->pluck('staf.nama')->filter()->unique()->implode(', ');
+                            $printMetode = $metodeMap[$t->metode_pembayaran] ?? ['label' => $t->labelMetode()];
+                        @endphp
+                        <tr>
+                            <td>{{ $t->waktu_kunjungan ? $t->waktu_kunjungan->format('d/m/y H:i') : '-' }}</td>
+                            <td>{{ $t->no_struk }}</td>
+                            <td>{{ $t->pelanggan->nama ?? '-' }}</td>
+                            <td>{{ $printNamaBarang ?: '-' }}</td>
+                            <td>{{ $printStaf ?: '-' }}</td>
+                            <td>{{ $printMetode['label'] }}</td>
+                            <td class="num">{{ $fmt($t->total_bayar) }}</td>
+                            <td>{{ $t->status === 'selesai' ? 'Selesai' : 'Batal' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+
 @endsection
 
 @push('scripts')
@@ -548,6 +636,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return 'Rp' + Math.round(v);
     }
 
+    // Saat cetak, grafik dipaksa memakai warna tema terang supaya label dan
+    // grid tetap terbaca di atas kertas putih (terutama saat layar dark mode).
+    var printColorOverride = false;
+
     // Plugin: tulis angka rupiah di atas tiap bar
     const rupiahLabelPlugin = {
         id: 'rupiahLabel',
@@ -560,7 +652,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const raw = dataset.data[j];
                     if (raw <= 0) return;
                     ctx.save();
-                    ctx.fillStyle = tok('--text-2', '#374151');
+                    ctx.fillStyle = printColorOverride ? '#4B4843' : tok('--text-2', '#374151');
                     ctx.font = '600 11px sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'bottom';
@@ -688,6 +780,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (canvasTren) {
         const labelsTren = @json($trenHarian->pluck('tanggal'));
         const dataTren = @json($trenHarian->pluck('total'));
+        const trenPadat = labelsTren.length > 12;
+        const trenBarThickness = trenPadat ? 28 : 90;
+        const trenPlugins = trenPadat ? [] : [rupiahLabelPlugin];
 
         chartTrenInst = new Chart(canvasTren, {
             type: 'bar',
@@ -699,30 +794,249 @@ document.addEventListener('DOMContentLoaded', function () {
                     backgroundColor: tok('--gold-600', '#B45309'),
                     borderColor: tok('--gold-700', '#8A6A2E'),
                     borderWidth: 1,
-                    borderRadius: 4,
+                    borderRadius: 6,
+                    maxBarThickness: trenBarThickness
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: { top: 24 }
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: (ctx) => 'Rp' + ctx.parsed.y.toLocaleString('id-ID')
+                            title: (items) => items[0].label,
+                            label: (ctx) => 'Omset: ' + rpFull(ctx.parsed.y)
                         }
                     }
                 },
                 scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: tok('--text-3', '#6F6B63'),
+                            font: { size: 11 },
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 8
+                        }
+                    },
                     y: {
                         beginAtZero: true,
+                        grid: { color: tok('--border', '#E8E5DD') },
                         ticks: {
+                            color: tok('--text-3', '#6F6B63'),
+                            font: { size: 10 },
                             callback: (v) => 'Rp' + (v / 1e6).toFixed(0).replace('.', ',') + ' jt'
                         }
                     }
                 }
-            }
+            },
+            plugins: trenPlugins
         });
+    }
+
+    // ===== Persiapan grafik untuk cetak (A4) =====
+    // Chart.js merender canvas sesuai ukuran container di layar. Saat masuk
+    // mode print, container dibuat lebar penuh dan tinggi tetap supaya grafik
+    // tidak gepeng. Ukuran semula disimpan untuk dipulihkan setelah print.
+    var printChartState = null;
+
+    function chartsForPrint() {
+        return [chartOmsetInst, chartTrenInst, chartKategoriInst].filter(Boolean);
+    }
+
+    function collectChartColors(chart) {
+        var scales = chart.options.scales || {};
+        var scaleColors = {};
+        Object.keys(scales).forEach(function (key) {
+            var sc = scales[key];
+            scaleColors[key] = {
+                tick: sc.ticks ? sc.ticks.color : undefined,
+                grid: sc.grid ? sc.grid.color : undefined,
+                border: sc.border ? sc.border.color : undefined
+            };
+        });
+
+        var legendLabels = chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels;
+
+        return {
+            datasets: chart.data.datasets.map(function (ds) {
+                return { backgroundColor: ds.backgroundColor, borderColor: ds.borderColor };
+            }),
+            scaleColors: scaleColors,
+            legendLabels: legendLabels || null,
+            legendColor: legendLabels ? legendLabels.color : undefined
+        };
+    }
+
+    function applyPrintChartColors(chart) {
+        if (chart === chartOmsetInst) {
+            var dsOmset = chart.data.datasets[0];
+            dsOmset.backgroundColor = ['#6E5008', '#D8A322'];
+            dsOmset.borderColor = ['#3A2A03', '#A87C14'];
+        } else if (chart === chartTrenInst) {
+            var dsTren = chart.data.datasets[0];
+            dsTren.backgroundColor = '#D8A322';
+            dsTren.borderColor = '#A87C14';
+        } else if (chart === chartKategoriInst) {
+            var dsLalu = chart.data.datasets[0];
+            var dsIni = chart.data.datasets[1];
+            dsLalu.backgroundColor = '#6F6B63';
+            if (dsIni) {
+                dsIni.backgroundColor = dsIni.data.map(function (v, i) {
+                    return v >= (dsLalu.data[i] || 0) ? '#047857' : '#DC2626';
+                });
+            }
+        }
+
+        var scales = chart.options.scales || {};
+        Object.keys(scales).forEach(function (key) {
+            var sc = scales[key];
+            if (sc.ticks) sc.ticks.color = '#4B4843';
+            if (sc.grid && sc.grid.display !== false) sc.grid.color = '#E8E5DD';
+            if (sc.border) sc.border.color = '#E8E5DD';
+        });
+
+        var legendLabels = chart.options.plugins && chart.options.plugins.legend && chart.options.plugins.legend.labels;
+        if (legendLabels) legendLabels.color = '#4B4843';
+    }
+
+    function restoreChartColors(chart, colors) {
+        chart.data.datasets.forEach(function (ds, i) {
+            if (!colors.datasets[i]) return;
+            ds.backgroundColor = colors.datasets[i].backgroundColor;
+            ds.borderColor = colors.datasets[i].borderColor;
+        });
+
+        var scales = chart.options.scales || {};
+        Object.keys(colors.scaleColors).forEach(function (key) {
+            var sc = scales[key];
+            if (!sc) return;
+            var saved = colors.scaleColors[key];
+            if (sc.ticks) sc.ticks.color = saved.tick;
+            if (sc.grid) sc.grid.color = saved.grid;
+            if (sc.border) sc.border.color = saved.border;
+        });
+
+        if (colors.legendLabels) colors.legendLabels.color = colors.legendColor;
+    }
+
+    function resizeChartsForPrint() {
+        var charts = chartsForPrint();
+        if (!charts.length) return;
+
+        if (!printChartState) {
+            printChartState = charts.map(function (chart) {
+                var el = chart.canvas.parentElement;
+                var rect = el.getBoundingClientRect();
+                var xTicks = chart.options.scales && chart.options.scales.x && chart.options.scales.x.ticks;
+                var yTicks = chart.options.scales && chart.options.scales.y && chart.options.scales.y.ticks;
+                return {
+                    chart: chart,
+                    el: el,
+                    width: el.style.width,
+                    maxWidth: el.style.maxWidth,
+                    height: el.style.height,
+                    computedHeight: rect.height,
+                    animation: chart.options.animation,
+                    xFont: xTicks ? xTicks.font : null,
+                    yFont: yTicks ? yTicks.font : null,
+                    colors: collectChartColors(chart)
+                };
+            });
+        }
+
+        printColorOverride = true;
+
+        charts.forEach(function (chart) {
+            var el = chart.canvas.parentElement;
+            el.style.width = '100%';
+            el.style.maxWidth = '100%';
+            el.style.height = '260px';
+
+            chart.options.animation = false;
+
+            var xTicks = chart.options.scales && chart.options.scales.x && chart.options.scales.x.ticks;
+            var yTicks = chart.options.scales && chart.options.scales.y && chart.options.scales.y.ticks;
+            if (xTicks) {
+                xTicks.font = { size: 12 };
+                xTicks.autoSkip = true;
+                xTicks.maxRotation = 0;
+            }
+            if (yTicks) {
+                yTicks.font = { size: 11 };
+            }
+
+            applyPrintChartColors(chart);
+            chart.resize();
+            chart.update('none');
+        });
+    }
+
+    function restoreChartsAfterPrint() {
+        if (!printChartState) return;
+
+        printColorOverride = false;
+
+        printChartState.forEach(function (state) {
+            var chart = state.chart;
+            var el = state.el;
+            el.style.width = state.width;
+            el.style.maxWidth = state.maxWidth;
+            // Kunci tinggi asli dulu supaya Chart.js tidak menghitung tinggi
+            // dari canvas yang masih 260px (menyebabkan chart tetap gepeng).
+            el.style.height = state.computedHeight > 0 ? state.computedHeight + 'px' : state.height;
+
+            chart.options.animation = state.animation;
+
+            var xTicks = chart.options.scales && chart.options.scales.x && chart.options.scales.x.ticks;
+            var yTicks = chart.options.scales && chart.options.scales.y && chart.options.scales.y.ticks;
+            if (xTicks && state.xFont !== null) {
+                xTicks.font = state.xFont;
+            }
+            if (yTicks && state.yFont !== null) {
+                yTicks.font = state.yFont;
+            }
+
+            restoreChartColors(chart, state.colors);
+            chart.resize();
+            chart.update('none');
+
+            // Setelah canvas kembali ke tinggi asli, lepas lagi tinggi
+            // sementara agar container tetap mengikuti CSS responsif.
+            window.requestAnimationFrame(function () {
+                el.style.height = state.height;
+                chart.resize();
+                chart.update('none');
+            });
+        });
+
+        printChartState = null;
+    }
+
+    window.addEventListener('beforeprint', resizeChartsForPrint);
+    window.addEventListener('afterprint', restoreChartsAfterPrint);
+
+    // DevTools "Emulate CSS media type: print" tidak memicu beforeprint,
+    // jadi perubahan media juga dipantau lewat matchMedia.
+    if (window.matchMedia) {
+        var printMediaQuery = window.matchMedia('print');
+        var onPrintMediaChange = function (e) {
+            if (e.matches) {
+                resizeChartsForPrint();
+            } else {
+                restoreChartsAfterPrint();
+            }
+        };
+        if (printMediaQuery.addEventListener) {
+            printMediaQuery.addEventListener('change', onPrintMediaChange);
+        } else if (printMediaQuery.addListener) {
+            printMediaQuery.addListener(onPrintMediaChange);
+        }
     }
 
     // Warna kanvas tidak bisa membaca var(--x), jadi saat tema berganti
@@ -751,6 +1065,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const ds = chartTrenInst.data.datasets[0];
             ds.backgroundColor = tok('--gold-600', '#B45309');
             ds.borderColor = tok('--gold-700', '#8A6A2E');
+            chartTrenInst.options.scales.x.ticks.color = tok('--text-3', '#6F6B63');
+            chartTrenInst.options.scales.y.ticks.color = tok('--text-3', '#6F6B63');
+            chartTrenInst.options.scales.y.grid.color = tok('--border', '#E8E5DD');
             chartTrenInst.update('none');
         }
     });
@@ -805,7 +1122,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnGenerateReport = document.getElementById('btn-generate-report');
     if (btnGenerateReport) {
         btnGenerateReport.addEventListener('click', function () {
-            window.print();
+            resizeChartsForPrint();
+            window.requestAnimationFrame(function () {
+                window.setTimeout(function () {
+                    window.print();
+                }, 100);
+            });
         });
     }
 });
