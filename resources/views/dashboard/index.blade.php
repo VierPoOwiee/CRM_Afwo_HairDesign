@@ -34,8 +34,7 @@
         $chartPoints[] = ['x' => $x, 'y' => $y, 'day' => $d['day'], 'income' => $d['income']];
     }
 
-    function buildSmoothPath(array $pts): string
-    {
+    $buildSmoothPath = function (array $pts): string {
         if (count($pts) === 0) return '';
         $d = 'M ' . number_format($pts[0]['x'], 1) . ',' . number_format($pts[0]['y'], 1);
         for ($i = 0; $i < count($pts) - 1; $i++) {
@@ -50,9 +49,9 @@
                 . number_format($p1['x'], 1) . ',' . number_format($p1['y'], 1);
         }
         return $d;
-    }
+    };
 
-    $linePathD = buildSmoothPath($chartPoints);
+    $linePathD = $buildSmoothPath($chartPoints);
     $firstX = $chartPoints[0]['x'] ?? $paddingX;
     $lastX = end($chartPoints)['x'] ?? ($chartWidth - $paddingX);
     $areaPathD = $linePathD . ' L ' . number_format($lastX, 1) . ',' . $groundY
