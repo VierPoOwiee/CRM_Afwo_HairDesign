@@ -96,10 +96,18 @@ class ProfileController extends Controller
     {
         $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8),
+                'different:current_password',
+            ],
         ], [
             'current_password' => 'Password saat ini salah.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password baru minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.different' => 'Password baru tidak boleh sama dengan password lama.',
         ]);
 
         Auth::user()->update([
@@ -107,6 +115,14 @@ class ProfileController extends Controller
             'wajib_ganti_password' => false,
         ]);
 
-        return back()->with('success', 'Password berhasil diperbarui.');
+        $request->session()->regenerate();
+
+        // Dashboard hanya untuk owner; kasir diarahkan ke halaman operasionalnya.
+        $tujuan = Auth::user()->role === 'owner'
+            ? 'dashboard'
+            : 'pelanggan.index';
+
+        return redirect()->route($tujuan)
+            ->with('success', 'Password berhasil diperbarui.');
     }
 }

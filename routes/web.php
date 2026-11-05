@@ -53,6 +53,7 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
         Route::put('/pengguna/{user}/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset-password');
         Route::put('/pengguna/{user}/toggle-aktif', [PenggunaController::class, 'toggleAktif'])->name('pengguna.toggle-aktif');
+        Route::delete('/pengguna/{user}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
         Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
         Route::get('/laporan/ai-chat', [LaporanController::class, 'aiChat'])->name('laporan.ai-chat');
