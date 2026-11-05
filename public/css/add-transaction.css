@@ -1065,13 +1065,24 @@
 .btn-close-modal {
   background: none;
   border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-sm);
   font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
   cursor: pointer;
   color: var(--text-muted);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .btn-close-modal:hover {
   color: var(--text-primary);
+  background-color: var(--surface-2);
 }
 
 .modal-card-plain .text-input-field,

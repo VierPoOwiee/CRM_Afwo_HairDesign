@@ -108,9 +108,26 @@ class AppointmentController extends Controller
             $tanggal = now()->toDateString();
         }
 
+        // Jam dari popup jadwal harian. Hanya dipakai bila formatnya valid dan
+        // masih berada dalam jam operasional salon; jika tidak, biarkan null
+        // agar form memakai default lamanya (10:00).
+        $jamQuery = $request->query('jam');
+        $jamQuery = is_string($jamQuery) && preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $jamQuery)
+            ? $jamQuery
+            : null;
+
+        if ($jamQuery !== null) {
+            [$jamH, $jamM] = array_map('intval', explode(':', $jamQuery));
+            $menit = ($jamH * 60) + $jamM;
+
+            if ($menit < Appointment::JAM_BUKA * 60 || $menit > Appointment::JAM_TUTUP * 60) {
+                $jamQuery = null;
+            }
+        }
+
         $appointment = new Appointment(['tanggal' => $tanggal]);
 
-        return view('appointments.create', compact('appointment'));
+        return view('appointments.create', compact('appointment', 'jamQuery'));
     }
 
     public function store(Request $request)

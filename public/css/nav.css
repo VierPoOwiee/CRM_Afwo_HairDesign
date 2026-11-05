@@ -478,6 +478,137 @@ a.sidebar-nav-link.active .nav-icon { color: var(--accent-contrast) !important; 
   .admin-sidebar { width: 280px; }
 }
 
+/* ==========================================================================
+   7B. TABLET DESKTOP (1024px - 1279.98px)
+   Sidebar dipadatkan agar iPad landscape masih lega; desktop >=1280px
+   tidak terpengaruh sama sekali.
+   ========================================================================== */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  :root {
+    --sidebar-w: 220px;
+  }
+
+  .app-layout {
+    gap: var(--sp-3);
+    padding: var(--sp-3);
+    padding-left: max(var(--sp-3), env(safe-area-inset-left));
+    padding-right: max(var(--sp-3), env(safe-area-inset-right));
+    padding-bottom: max(var(--sp-3), env(safe-area-inset-bottom));
+  }
+
+  .admin-sidebar {
+    top: var(--sp-3);
+    padding-left: var(--sp-2);
+    padding-right: var(--sp-2);
+    height: calc(100vh - var(--sp-3) * 2);
+    height: calc(100dvh - var(--sp-3) * 2);
+  }
+
+  .sidebar-brand-header {
+    padding: 0 var(--sp-2) var(--sp-3);
+  }
+
+  .sidebar-brand-title {
+    font-size: var(--fs-16);
+    line-height: 1.2;
+  }
+
+  .sidebar-brand-badge {
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .sidebar-section-label,
+  .sidebar-section-label:first-child {
+    padding-top: var(--sp-3);
+    font-size: 11px;
+    margin-top: 0 !important;
+  }
+
+  .sidebar-menu-list,
+  ul.sidebar-menu-list {
+    gap: 2px !important;
+  }
+
+  .sidebar-nav-link {
+    gap: var(--sp-2);
+    min-height: 38px;
+    padding: var(--sp-2);
+    font-size: 0.84rem;
+  }
+
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .sidebar-user-footer {
+    gap: var(--sp-1);
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-3);
+  }
+
+  .sidebar-user-card {
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+  }
+
+  .user-avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: var(--fs-12);
+  }
+
+  .sidebar-user-meta .user-name {
+    font-size: var(--fs-12);
+  }
+
+  .sidebar-user-meta .user-role {
+    font-size: 11px;
+  }
+
+  .sidebar-logout-btn {
+    min-height: 38px;
+    padding: var(--sp-1) var(--sp-3);
+    font-size: var(--fs-12);
+  }
+
+  /* Konten memakai sisa ruang; tidak ada overflow horizontal. */
+  .app-main-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .app-content {
+    min-width: 0;
+  }
+}
+
+/* Drawer tablet (768px - 1023.98px): lebih ramping, item menu dipadatkan.
+   Di bawah 768px tetap memakai ukuran lama. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .admin-sidebar {
+    width: 248px;
+  }
+
+  .sidebar-menu-list,
+  ul.sidebar-menu-list {
+    gap: 2px !important;
+  }
+
+  .sidebar-nav-link {
+    gap: var(--sp-2);
+    min-height: 40px;
+    padding: var(--sp-2);
+    font-size: 0.84rem;
+  }
+
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 /* Mobile: app bar tanpa border bawah yang membulat */
 @media (max-width: 1023px) {
   .app-bar { border-bottom: 1px solid var(--border); }

@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Data Pelanggan Aktif')
 
@@ -18,19 +18,6 @@
     $totalKunjungan = (int) $pelanggans->sum('jumlah_kunjungan');
     $totalBelanja = (float) $pelanggans->sum('total_belanja');
     $rataRata = $totalKunjungan > 0 ? $totalBelanja / $totalKunjungan : 0;
-
-    $sektor = fn (int $j) => $j >= 5 ? 'vip' : ($j >= 3 ? 'loyal' : 'reguler');
-    $sektorLabel = ['vip' => 'VIP', 'loyal' => 'Loyal', 'reguler' => 'Reguler'];
-    $jumlahSektor = ['vip' => 0, 'loyal' => 0, 'reguler' => 0];
-    foreach ($pelanggans as $row) {
-        $jumlahSektor[$sektor((int) $row->jumlah_kunjungan)]++;
-    }
-
-    $sektorIkon = [
-        'vip' => '<svg class="cat-tile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26L21 9.27l-4.5 4.37 1.06 6.19L12 16.77l-5.56 3.06L7.5 13.64 3 9.27l6.1-.99L12 2z"></path></svg>',
-        'loyal' => '<svg class="cat-tile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>',
-        'reguler' => '<svg class="cat-tile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
-    ];
 
     $topBelanja = $pelanggans->sortByDesc(fn ($p) => (float) $p->total_belanja)->take(5)->values();
 
@@ -81,44 +68,8 @@
         </div>
     </div>
 
-    {{-- ===== Segmentasi Pelanggan ===== --}}
-    <div class="category-breakdown-card">
-        <div class="category-breakdown-title">Segmentasi Pelanggan</div>
-
-        <div class="category-visual-grid">
-            @foreach ($jumlahSektor as $key => $jumlah)
-                <div class="cat-tile-box">
-                    {!! $sektorIkon[$key] !!}
-                    <span class="cat-tile-percentage">{{ $jumlah }}</span>
-                    <span class="cat-tile-name">{{ $sektorLabel[$key] }}</span>
-                </div>
-            @endforeach
-        </div>
-
-        <div class="cat-detail-list">
-            <div class="cat-detail-row">
-                <span class="cat-detail-name">VIP &middot; 5 kunjungan atau lebih</span>
-                <span class="cat-detail-total">{{ $jumlahSektor['vip'] }} orang</span>
-            </div>
-            <div class="cat-detail-row">
-                <span class="cat-detail-name">Loyal &middot; 3&ndash;4 kunjungan</span>
-                <span class="cat-detail-total">{{ $jumlahSektor['loyal'] }} orang</span>
-            </div>
-            <div class="cat-detail-row">
-                <span class="cat-detail-name">Reguler &middot; 1&ndash;2 kunjungan</span>
-                <span class="cat-detail-total">{{ $jumlahSektor['reguler'] }} orang</span>
-            </div>
-        </div>
-    </div>
-
-    {{-- ===== Toolbar: filter segmen + pencarian ===== --}}
-    <div class="trans-toolbar-card">
-        <div class="trans-tabs-row" id="segmen-tabs">
-            <button type="button" class="trans-filter-tab active" data-segmen="">Semua</button>
-            <button type="button" class="trans-filter-tab" data-segmen="vip">VIP</button>
-            <button type="button" class="trans-filter-tab" data-segmen="loyal">Loyal</button>
-            <button type="button" class="trans-filter-tab" data-segmen="reguler">Reguler</button>
-        </div>
+    {{-- ===== Toolbar: pencarian nama / no. WhatsApp ===== --}}
+    <div class="trans-toolbar-card active-clients-toolbar">
         <div class="trans-search-filter-controls">
             <div class="trans-search-box">
                 <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -158,9 +109,7 @@
                     </thead>
                     <tbody>
                         @foreach ($pelanggans as $p)
-                            @php $segmen = $sektor((int) $p->jumlah_kunjungan); @endphp
-                            <tr data-segmen="{{ $segmen }}"
-                                data-cari="{{ \Illuminate\Support\Str::lower($p->nama . ' ' . ($p->no_wa ?? '')) }}">
+                            <tr data-cari="{{ \Illuminate\Support\Str::lower($p->nama . ' ' . ($p->no_wa ?? '')) }}">
                                 <td>
                                     <div class="trans-client-meta">
                                         <div class="trans-client-avatar">{{ mb_substr($p->nama, 0, 1) }}</div>
@@ -168,9 +117,6 @@
                                             <a href="{{ route('laporan.pelanggan-riwayat', $p) }}" class="client-name-link">
                                                 {{ $p->nama }}
                                             </a>
-                                            <div class="trans-worker-tag">
-                                                <span class="segment-pill segment-pill-{{ $segmen }}">{{ $sektorLabel[$segmen] }}</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -268,33 +214,21 @@
     var inputCari = document.getElementById('cari-pelanggan');
     var badgeJumlah = document.getElementById('pelanggan-count');
     var catatanKosong = document.getElementById('pelanggan-tidak-cocok');
-    var tombolSegmen = Array.prototype.slice.call(document.querySelectorAll('#segmen-tabs .trans-filter-tab'));
-    var segmenAktif = '';
 
     function terapkanFilter() {
         var kata = (inputCari ? inputCari.value : '').trim().toLowerCase();
         var tampil = 0;
 
         baris.forEach(function (tr) {
-            var cocokSegmen = !segmenAktif || tr.dataset.segmen === segmenAktif;
             var cocokCari = !kata || (tr.dataset.cari || '').indexOf(kata) !== -1;
-            var tampilkan = cocokSegmen && cocokCari;
-            tr.classList.toggle('hidden', !tampilkan);
-            if (tampilkan) tampil++;
+            tr.classList.toggle('hidden', !cocokCari);
+            if (cocokCari) tampil++;
         });
 
         if (badgeJumlah) badgeJumlah.textContent = tampil + ' Orang';
         if (catatanKosong) catatanKosong.classList.toggle('hidden', tampil > 0);
-        if (tfoot) tfoot.classList.toggle('hidden', segmenAktif !== '' || kata !== '');
+        if (tfoot) tfoot.classList.toggle('hidden', kata !== '');
     }
-
-    tombolSegmen.forEach(function (tombol) {
-        tombol.addEventListener('click', function () {
-            segmenAktif = tombol.dataset.segmen || '';
-            tombolSegmen.forEach(function (t) { t.classList.toggle('active', t === tombol); });
-            terapkanFilter();
-        });
-    });
 
     if (inputCari) inputCari.addEventListener('input', terapkanFilter);
 })();

@@ -31,29 +31,20 @@
   color: var(--text-link);
 }
 
-/* Badge segmentasi (VIP / Loyal / Reguler) */
-.segment-pill {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  padding: 1px 8px;
-  border-radius: var(--radius-md);
+/* Toolbar pencarian pelanggan aktif: satu kontrol, melebar penuh.
+   Tinggi input disamakan dengan halaman laporan lain. */
+.active-clients-toolbar .trans-search-filter-controls {
+  width: 100%;
 }
 
-.segment-pill-vip {
-  background-color: var(--gold-100);
-  color: var(--text-link);
+.active-clients-toolbar .trans-search-box {
+  width: 100%;
+  max-width: none;
+  padding: 10px 14px;
 }
 
-.segment-pill-loyal {
-  background-color: var(--status-ok-bg);
-  color: var(--status-ok-fg);
-}
-
-.segment-pill-reguler {
-  background-color: var(--surface-2);
-  color: var(--status-progress-fg);
+.active-clients-toolbar .trans-search-box .search-input {
+  font-size: 0.9rem;
 }
 
 /* Chip jumlah kunjungan */
@@ -86,6 +77,23 @@
   text-transform: uppercase;
   color: var(--text-primary);
   white-space: nowrap;
+}
+
+/* Perataan header tabel daftar pelanggan mengikuti isi kolomnya:
+   teks ke kiri, angka & aksi ke kanan. */
+#tabel-pelanggan-aktif thead th:nth-child(1),
+#tabel-pelanggan-aktif thead th:nth-child(2),
+#tabel-pelanggan-aktif thead th:nth-child(5),
+#tabel-pelanggan-aktif tfoot th:first-child {
+  text-align: left;
+}
+
+#tabel-pelanggan-aktif thead th:nth-child(3),
+#tabel-pelanggan-aktif thead th:nth-child(4),
+#tabel-pelanggan-aktif thead th:nth-child(6),
+#tabel-pelanggan-aktif tfoot th:nth-child(3),
+#tabel-pelanggan-aktif tfoot th:nth-child(4) {
+  text-align: right;
 }
 
 /* Tombol aksi di baris tabel */

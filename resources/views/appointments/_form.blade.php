@@ -4,7 +4,7 @@
     $preKaryawanId = old('id_karyawan', $appointment->id_karyawan ?? '');
     $preKaryawanNama = old('karyawan_nama', isset($selectedKaryawan) && $selectedKaryawan ? $selectedKaryawan->nama : '');
     $preTanggal = old('tanggal', $appointment->tanggal ? $appointment->tanggal->format('Y-m-d') : date('Y-m-d'));
-    $preJam = old('jam_mulai', $appointment->jam_mulai ? $appointment->jam_mulai->format('H:i') : '10:00');
+    $preJam = old('jam_mulai', $jamQuery ?? ($appointment->jam_mulai ? $appointment->jam_mulai->format('H:i') : '10:00'));
     $slotWaktu = ['09:00', '10:00', '10:30', '13:00', '14:30', '16:00', '17:30', '19:00'];
 
     $seedLayanan = collect();

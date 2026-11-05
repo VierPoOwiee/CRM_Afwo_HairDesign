@@ -242,7 +242,7 @@
                 <div class="gcal-timeline-container" id="gcal-timeline-container"></div>
             </div>
             <div class="day-schedule-footer">
-                <span class="schedule-hint-text"><strong>Petunjuk:</strong> Klik salah satu kartu reservasi di atas untuk membuka rincian detail klien dan layanan.</span>
+                <span class="schedule-hint-text"><strong>Petunjuk:</strong> Klik kartu reservasi untuk melihat detail, atau klik jam kosong untuk membuat appointment baru.</span>
             </div>
         </div>
     </div>
@@ -505,6 +505,7 @@
         var rows = '';
         for (var h = day.jam_buka; h <= day.jam_tutup; h++) {
             var list = byHour[h] || [];
+            var jamSlot = pad2(h) + ':00';
             var cards = '';
             if (list.length) {
                 cards = list.map(function (a) {
@@ -526,9 +527,13 @@
                     '</div>';
                 }).join('');
             }
-            rows += '<div class="gcal-hour-row">' +
-                '<div class="gcal-hour-time">' + pad2(h) + ':00</div>' +
-                '<div class="gcal-hour-slot">' + (cards || '') + '</div>' +
+            rows += '<div class="gcal-hour-row" data-jam="' + jamSlot + '" data-tanggal="' + day.tanggal + '">' +
+                '<div class="gcal-hour-time" role="button" tabindex="0" aria-label="Tambah appointment jam ' + jamSlot + '">' + jamSlot + '</div>' +
+                '<div class="gcal-hour-slot' + (cards ? '' : ' is-empty') + '"' +
+                    (cards ? '' : ' role="button" tabindex="0" aria-label="Tambah appointment jam ' + jamSlot + '"') + '>' +
+                    (cards || '') +
+                    (cards ? '' : '<span class="gcal-slot-hint" aria-hidden="true">+ Tambah ' + jamSlot + '</span>') +
+                '</div>' +
             '</div>';
         }
         if (!(day.appointments || []).length) {
@@ -537,6 +542,41 @@
         gcal.innerHTML = rows;
         showModal(dayModal);
     }
+
+    // Klik jam / area kosong pada timeline harian -> form tambah appointment
+    // dengan tanggal dan jam terisi. Kartu reservasi tetap membuka detail
+    // (ditangani delegasi klik global di bawah / .js-gcal-card).
+    function bukaFormTambahJam(row) {
+        if (!row) return;
+        var tanggal = row.dataset.tanggal || '';
+        var jam = row.dataset.jam || '';
+        window.location.href = URL_CREATE
+            + '?tanggal=' + encodeURIComponent(tanggal)
+            + '&jam=' + encodeURIComponent(jam);
+    }
+
+    gcal.addEventListener('click', function (e) {
+        if (e.target.closest('.js-gcal-card')) return;
+        var target = e.target.closest('.gcal-hour-time, .gcal-hour-slot');
+        if (!target) return;
+        var row = target.closest('.gcal-hour-row');
+        if (!row) return;
+        e.preventDefault();
+        e.stopPropagation();
+        bukaFormTambahJam(row);
+    });
+
+    gcal.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+        if (e.target.closest('.js-gcal-card')) return;
+        var target = e.target.closest('.gcal-hour-time, .gcal-hour-slot');
+        if (!target) return;
+        var row = target.closest('.gcal-hour-row');
+        if (!row) return;
+        e.preventDefault();
+        e.stopPropagation();
+        bukaFormTambahJam(row);
+    });
 
     function openDayModal(tanggal) {
         closeDetailModal();

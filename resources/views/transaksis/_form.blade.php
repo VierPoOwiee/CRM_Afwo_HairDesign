@@ -336,7 +336,7 @@
         <div class="modal-card-plain">
             <div class="modal-header-row">
                 <h3 class="modal-header-title">Tambah Pelanggan Baru</h3>
-                <button type="button" id="cancelPelangganBtn" class="btn-close-modal">âœ•</button>
+                <button type="button" id="cancelPelangganBtn" class="btn-close-modal" aria-label="Tutup">&times;</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <div>
@@ -988,7 +988,7 @@
                         '<div class="search-results-dropdown produk-search-results"></div>' +
                         '<p class="ml-usage-hint commission-suggestion' + (isDefault ? ' hidden' : '') + '">Pilih produk terlebih dahulu untuk mengisi pemakaian.</p>' +
                     '</div>' +
-                    '<button type="button" onclick="removeProdukUsage(this, ' + idx + ')" class="btn-remove-row" style="margin-top: 6px;">âœ•</button>' +
+                    '<button type="button" onclick="removeProdukUsage(this, ' + idx + ')" class="btn-remove-row" style="margin-top: 6px;" aria-label="Hapus produk">&times;</button>' +
                 '</div>';
 
             var html;
@@ -1000,7 +1000,7 @@
                         '<div>' +
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
-                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">âˆ’</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)" aria-label="Kurangi 10 ml">&minus;</button>' +
                                 '<input type="text" inputmode="decimal" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="' + mlVal + '" class="pemakaian-ml-input stepper-input format-angka" data-decimal="1" oninput="recalcHarga(' + idx + ')">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
@@ -1020,7 +1020,7 @@
                         '<div>' +
                             '<label class="form-label" style="font-size: 0.7rem;">Pemakaian (ml)</label>' +
                             '<div class="dosage-stepper">' +
-                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)">âˆ’</button>' +
+                                '<button type="button" class="btn btn-secondary btn-icon btn-step-minus" onclick="stepMl(this, -10)" aria-label="Kurangi 10 ml">&minus;</button>' +
                                 '<input type="text" inputmode="decimal" name="items[' + idx + '][produk_penggunaan][' + pIdx + '][pemakaian_ml]" value="0" class="pemakaian-ml-input stepper-input format-angka" data-decimal="1" oninput="recalcHarga(' + idx + ')">' +
                                 '<button type="button" class="btn btn-secondary btn-icon btn-step-plus" onclick="stepMl(this, 10)">+</button>' +
                                 '<span class="unit-label">ml</span>' +
@@ -1621,7 +1621,7 @@
         });
 
         // Pilih produk dari dropdown hasil search (retail & pemakaian) via delegasi
-        // event, sehingga seluruh baris hasil â€” termasuk teks merk â€” selalu bisa
+        // event, sehingga seluruh baris hasil &mdash; termasuk teks merk &mdash; selalu bisa
         // diklik apa pun isi nama produknya.
         document.addEventListener('click', function(e) {
             var opt = e.target.closest ? e.target.closest('.search-produk-results .search-result-option') : null;
