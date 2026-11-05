@@ -9,6 +9,16 @@
 @section('content')
 
     <div class="profil-page-stack">
+        @if (Auth::user()->wajib_ganti_password)
+            <div class="profil-force-banner" role="alert">
+                <svg class="profil-force-banner-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <div class="profil-force-banner-text">Password Anda masih sementara. Buat password baru sekarang untuk melanjutkan.</div>
+            </div>
+        @endif
+
         <div class="profil-header-section">
             <h1 class="profil-page-title">Profil Saya</h1>
             <p class="profil-page-subtitle">Kelola informasi akun dan kata sandi Anda.</p>
@@ -36,7 +46,7 @@
                 </div>
             </div>
 
-            @if ($errors->getBag('default')->any())
+            @if ($errors->has('name') || $errors->has('username') || ($errors->has('current_password') && ! $errors->has('password')))
                 <div class="profil-form-alert is-error">Periksa kembali isian form di bawah.</div>
             @endif
 
@@ -145,9 +155,9 @@
         {{-- Password Card --}}
         <section class="profil-card" id="ganti-password">
             <h2 class="profil-card-title">Ubah Password</h2>
-            <p class="profil-card-subtitle">Pastikan password baru minimal 8 karakter.</p>
+            <p class="profil-card-subtitle">Pastikan password baru minimal 8 karakter dan berbeda dari password saat ini.</p>
 
-            @if (!empty($errors->getBag('password')->all()))
+            @if ($errors->has('password'))
                 <div class="profil-form-alert is-error">Periksa kembali password yang Anda masukkan.</div>
             @endif
 
@@ -162,7 +172,7 @@
                             <input type="password" id="current_password_pw" name="current_password" required autocomplete="current-password"
                                    class="profil-input" placeholder="Masukkan password saat ini">
                         </div>
-                        @error('password.current_password')
+                        @error('current_password')
                             <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
@@ -173,7 +183,7 @@
                             <input type="password" id="password" name="password" required autocomplete="new-password"
                                    class="profil-input" placeholder="Minimal 8 karakter">
                         </div>
-                        @error('password.password')
+                        @error('password')
                             <p style="font-size: .78rem; color: var(--status-danger); margin: 2px 0 0;">{{ $message }}</p>
                         @enderror
                     </div>

@@ -80,6 +80,8 @@ class ProfileController extends Controller
             'password' => ['required', 'confirmed', Password::min(8), 'different:current_password'],
         ], [
             'current_password' => 'Password saat ini salah.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password baru minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'password.min' => 'Password baru minimal 8 karakter.',
             'password.different' => 'Password baru tidak boleh sama dengan password lama.',

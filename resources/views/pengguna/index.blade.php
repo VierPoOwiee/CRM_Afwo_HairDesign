@@ -47,6 +47,8 @@
                     </div>
                 </div>
 
+                <p class="user-temppass-hint">Minta user login memakai password ini. Ia akan langsung diarahkan ke halaman Profil untuk membuat password baru.</p>
+
                 <p class="user-temppass-note">Catat sekarang, tidak akan ditampilkan lagi.</p>
             </div>
         </div>
@@ -239,8 +241,126 @@
 
 @endsection
 
+@push('modals')
+    <div id="user-delete-modal" class="user-delete-overlay" role="dialog" aria-modal="true"
+         aria-labelledby="user-delete-title" aria-describedby="user-delete-desc" aria-hidden="true">
+        <div class="user-delete-card">
+            <div class="user-delete-header">
+                <h3 class="user-delete-title" id="user-delete-title">Hapus akun kasir?</h3>
+                <button type="button" class="user-delete-close" id="user-delete-close" aria-label="Tutup">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <form method="POST" action="#" id="user-delete-form">
+                @csrf
+                @method('DELETE')
+
+                <div class="user-delete-body">
+                    <p class="user-delete-desc" id="user-delete-desc">
+                        Akun <strong id="user-delete-name"></strong> (<span id="user-delete-username"></span>)
+                        akan dihapus <strong>PERMANEN</strong> dan tidak bisa dikembalikan.
+                        Riwayat transaksi tetap tersimpan.
+                    </p>
+
+                    <label class="user-delete-label" for="user-delete-confirm">Ketik username untuk konfirmasi</label>
+                    <div class="user-delete-input-wrap">
+                        <input type="text" id="user-delete-confirm" class="user-delete-input"
+                               placeholder="Ketik username..." autocomplete="off" autocapitalize="none" spellcheck="false">
+                    </div>
+                    <p class="user-delete-hint">Ketik <strong id="user-delete-username-hint"></strong> untuk mengaktifkan tombol Hapus Permanen.</p>
+                </div>
+
+                <div class="user-delete-footer">
+                    <button type="button" class="btn-user-action" id="user-delete-cancel">Batal</button>
+                    <button type="submit" class="btn-user-delete-confirm" id="user-delete-submit" disabled>Hapus Permanen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endpush
+
 @push('scripts')
 <script>
+(function () {
+    var input = document.getElementById('password-kasir');
+    var toggle = document.getElementById('btn-toggle-password');
+    var generate = document.getElementById('btn-generate-password');
+    if (!input) return;
+
+    function setVisible(visible) {
+        input.type = visible ? 'text' : 'password';
+
+        if (!toggle) return;
+
+        toggle.setAttribute('aria-pressed', visible ? 'true' : 'false');
+        toggle.setAttribute('aria-label', visible ? 'Sembunyikan password' : 'Tampilkan password');
+
+        var eye = toggle.querySelector('.icon-eye');
+        var eyeOff = toggle.querySelector('.icon-eye-off');
+        if (eye) eye.classList.toggle('hidden', visible);
+        if (eyeOff) eyeOff.classList.toggle('hidden', !visible);
+    }
+
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            setVisible(input.type === 'password');
+            input.focus();
+        });
+    }
+
+    var hurufBesar = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    var hurufKecil = 'abcdefghijkmnopqrstuvwxyz';
+    var angka = '23456789';
+    var semua = hurufBesar + hurufKecil + angka;
+
+    function randomInt(max) {
+        if (window.crypto && window.crypto.getRandomValues) {
+            var batas = Math.floor(4294967296 / max) * max;
+            var buffer = new Uint32Array(1);
+            do {
+                window.crypto.getRandomValues(buffer);
+            } while (buffer[0] >= batas);
+            return buffer[0] % max;
+        }
+
+        return Math.floor(Math.random() * max);
+    }
+
+    function ambil(karakter) {
+        return karakter.charAt(randomInt(karakter.length));
+    }
+
+    function buatPassword() {
+        var hasil = [ambil(hurufBesar), ambil(hurufKecil), ambil(angka)];
+
+        while (hasil.length < 10) {
+            hasil.push(ambil(semua));
+        }
+
+        for (var i = hasil.length - 1; i > 0; i--) {
+            var j = randomInt(i + 1);
+            var sementara = hasil[i];
+            hasil[i] = hasil[j];
+            hasil[j] = sementara;
+        }
+
+        return hasil.join('');
+    }
+
+    if (generate) {
+        generate.addEventListener('click', function () {
+            input.value = buatPassword();
+            setVisible(true);
+            input.focus();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+    }
+})();
+
 (function () {
     document.querySelectorAll('.js-copy').forEach(function (tombol) {
         tombol.addEventListener('click', function () {
@@ -386,6 +506,91 @@
             }
         });
     }
+})();
+
+(function () {
+    var modal = document.getElementById('user-delete-modal');
+    if (!modal) return;
+
+    var form = document.getElementById('user-delete-form');
+    var input = document.getElementById('user-delete-confirm');
+    var submit = document.getElementById('user-delete-submit');
+    var nameEl = document.getElementById('user-delete-name');
+    var usernameEl = document.getElementById('user-delete-username');
+    var usernameHintEl = document.getElementById('user-delete-username-hint');
+    var closeEl = document.getElementById('user-delete-close');
+    var cancelEl = document.getElementById('user-delete-cancel');
+    var openButtons = document.querySelectorAll('.js-user-delete');
+    var expectedUsername = '';
+    var previousFocus = null;
+
+    function syncSubmitState() {
+        submit.disabled = !expectedUsername || input.value !== expectedUsername;
+    }
+
+    function openModal(button) {
+        expectedUsername = button.dataset.userUsername || '';
+        form.action = button.dataset.userUrl || '#';
+        nameEl.textContent = button.dataset.userName || '';
+        usernameEl.textContent = expectedUsername;
+        usernameHintEl.textContent = expectedUsername;
+        input.value = '';
+        syncSubmitState();
+
+        previousFocus = document.activeElement;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('user-delete-open');
+
+        window.setTimeout(function () {
+            input.focus();
+        }, 30);
+    }
+
+    function closeModal() {
+        if (!modal.classList.contains('is-open')) return;
+
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('user-delete-open');
+        input.value = '';
+        expectedUsername = '';
+        form.action = '#';
+        syncSubmitState();
+
+        if (previousFocus && typeof previousFocus.focus === 'function') {
+            previousFocus.focus();
+        }
+        previousFocus = null;
+    }
+
+    openButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            openModal(button);
+        });
+    });
+
+    if (closeEl) closeEl.addEventListener('click', closeModal);
+    if (cancelEl) cancelEl.addEventListener('click', closeModal);
+
+    input.addEventListener('input', syncSubmitState);
+
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeModal();
+        }
+    });
+
+    form.addEventListener('submit', function (event) {
+        if (input.value !== expectedUsername) {
+            event.preventDefault();
+            syncSubmitState();
+        }
+    });
 })();
 </script>
 @endpush

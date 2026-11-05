@@ -28,9 +28,9 @@
 
 .user-form-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
-  align-items: flex-end;
+  align-items: end;
 }
 
 @media (min-width: 641px) {
@@ -61,6 +61,103 @@
   color: var(--text-muted);
 }
 
+/* Field password pada form tambah kasir */
+.user-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.user-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.btn-generate-password {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-link);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-generate-password:hover {
+  color: var(--text-primary);
+}
+
+.btn-generate-password:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.user-password-box {
+  padding-right: 6px;
+}
+
+.btn-toggle-password {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-toggle-password:hover {
+  background-color: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.btn-toggle-password:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Opsi wajib ganti password */
+.user-form-check {
+  margin-top: 12px;
+}
+
+.user-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.user-checkbox-label input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.user-checkbox-hint {
+  margin: 4px 0 0 24px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
 .user-form-actions {
   display: flex;
   align-items: center;
@@ -77,6 +174,8 @@
   background-color: var(--accent);
   color: var(--accent-contrast);
   border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-accent);
   font-family: var(--font-sans);
   font-size: 0.82rem;
   font-weight: 800;
@@ -316,6 +415,14 @@
   justify-content: flex-end;
   gap: 6px;
   flex-wrap: wrap;
+  max-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .user-actions-cell {
+    max-width: 230px;
+    margin-left: auto;
+  }
 }
 
 /* Kotak password sementara (sekali tampil) */
@@ -407,7 +514,19 @@
 }
 
 .btn-copy-temppass:hover {
-  background-color: var(--gold-700);
+  background-color: var(--accent);
+}
+
+.user-temppass-hint {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-link);
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--gold-600);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
 }
 
 .user-temppass-note {
