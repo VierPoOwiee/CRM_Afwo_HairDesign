@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Produk')
+@section('title', 'Ubah Produk')
 
 @section('nav-active', 'products')
 
@@ -11,7 +11,7 @@
 
 @section('content')
     <div class="edit-produk-header">
-        <h1 class="edit-produk-title" id="edit-produk-title">Edit Produk</h1>
+        <h1 class="edit-produk-title" id="edit-produk-title">Ubah Produk</h1>
         <p class="edit-produk-subtitle" id="edit-produk-subtitle">Perbarui data "{{ $produk->nama_produk }}" beserta tarifnya.</p>
     </div>
 

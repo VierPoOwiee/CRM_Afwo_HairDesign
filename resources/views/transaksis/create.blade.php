@@ -2,7 +2,7 @@
 
 @section('title', 'Tambah Transaksi')
 
-@section('nav-active', 'history')
+@section('nav-active', Auth::user()->isOwner() ? 'history' : 'transaksi-baru')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/add-transaction.css') }}">

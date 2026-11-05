@@ -41,11 +41,11 @@
             Kuota AI hari ini:
             <strong>{{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}</strong>
             @if ($kuotaAi['habis'])
-                <span class="warn">&middot; habis, reset {{ $kuotaAi['label_reset'] }}</span>
+                <span class="warn">&middot; habis, diperbarui {{ $kuotaAi['label_reset'] }}</span>
             @elseif ($kuotaAi['hampir_habis'])
-                <span class="warn">&middot; sisa {{ $kuotaAi['sisa'] }}, reset {{ $kuotaAi['label_reset'] }}</span>
+                <span class="warn">&middot; sisa {{ $kuotaAi['sisa'] }}, diperbarui {{ $kuotaAi['label_reset'] }}</span>
             @else
-                &middot; reset {{ $kuotaAi['label_reset'] }}
+                &middot; diperbarui {{ $kuotaAi['label_reset'] }}
             @endif
         </p>
 
@@ -60,7 +60,7 @@
             <div class="tanya-actions-bar">
                 <span class="tanya-char-hint">Maksimal 500 karakter</span>
                 <button type="submit"
-                    @if ($kuotaAi['habis']) disabled title="Kuota AI hari ini habis, reset {{ $kuotaAi['label_reset'] }}" @endif
+                    @if ($kuotaAi['habis']) disabled title="Kuota AI hari ini habis, diperbarui {{ $kuotaAi['label_reset'] }}" @endif
                     class="btn btn--primary">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -73,14 +73,14 @@
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Ses Baru
+                    Sesi Baru
                 </a>
             </div>
         </form>
 
         @if ($kuotaAi['habis'])
             <p style="font-size: 0.78rem; color: var(--status-danger); margin-top: 10px;">
-                Kuota AI hari ini habis ({{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}). Lanjut besok &mdash; reset {{ $kuotaAi['label_reset'] }}.
+                Kuota AI hari ini habis ({{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}). Lanjut besok &mdash; diperbarui {{ $kuotaAi['label_reset'] }}.
             </p>
         @endif
 

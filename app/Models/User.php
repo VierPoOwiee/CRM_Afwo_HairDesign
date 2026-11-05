@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -49,9 +48,12 @@ class User extends Authenticatable
         return $this->role === 'kasir';
     }
 
-    public function recoveryCodes(): HasMany
+    /**
+     * Nama route beranda sesuai peran: owner ke dashboard, kasir ke form transaksi baru.
+     */
+    public function homeRoute(): string
     {
-        return $this->hasMany(RecoveryCode::class);
+        return $this->isOwner() ? 'dashboard' : 'transaksi.create';
     }
 
     /**

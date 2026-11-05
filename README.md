@@ -9,18 +9,15 @@
 
 ## AFWO Hair Design — Reset Password Mandiri
 
-Pengguna owner maupun kasir dapat mengatur ulang password sendiri lewat dua jalur:
+Pengguna owner maupun kasir dapat mengatur ulang password sendiri lewat **tautan reset via email**.
+Pengguna perlu mengisi email pemulihan di halaman Profil terlebih dahulu.
 
-1. **Tautan reset via email** — pengguna perlu mengisi email pemulihan di halaman Profil.
-2. **Kode pemulihan sekali pakai** — 8 kode cadangan yang dapat dibuat dari halaman Profil
-   (menu **Kode Pemulihan**). Setiap kode hanya bisa dipakai satu kali.
+Jika pengguna tidak memiliki email pemulihan, owner dapat mereset password melalui menu
+**Kelola Pengguna** atau perintah terminal di bawah.
 
-Owner juga dapat mengisi email pemulihan saat membuat akun kasir baru di menu **Kelola Pengguna**.
-Jika pengguna tidak memiliki email, reset mandiri tetap bisa dilakukan dengan kode pemulihan.
+### Mengatur email untuk reset password
 
-### Pengaturan Email (Lupa Password)
-
-Aplikasi mengirim email reset password melalui SMTP. Contoh konfigurasi Gmail:
+Aplikasi mengirim email reset password secara sinkron melalui SMTP. Contoh konfigurasi Gmail:
 
 1. Aktifkan **Verifikasi 2 Langkah** pada akun Google yang akan dipakai mengirim email.
 2. Buat **App Password** (16 karakter) di halaman keamanan akun Google.
@@ -29,15 +26,18 @@ Aplikasi mengirim email reset password melalui SMTP. Contoh konfigurasi Gmail:
 
    ```env
    MAIL_MAILER=smtp
-   MAIL_SCHEME=null
+   MAIL_SCHEME=smtp
    MAIL_HOST=smtp.gmail.com
    MAIL_PORT=587
    MAIL_USERNAME=alamat@gmail.com
    MAIL_PASSWORD=app-password-16-karakter
-   MAIL_ENCRYPTION=tls
    MAIL_FROM_ADDRESS=alamat@gmail.com
    MAIL_FROM_NAME="AFWO Hair Design"
    ```
+
+   `MAIL_FROM_ADDRESS` harus sama dengan `MAIL_USERNAME`, dan `MAIL_SCHEME=smtp`
+   dipakai untuk port 587. `QUEUE_CONNECTION` boleh tetap `database` karena notifikasi
+   reset password dikirim sinkron, bukan melalui antrean.
 
 4. Bersihkan cache konfigurasi setelah mengubah `.env`:
 
@@ -45,15 +45,13 @@ Aplikasi mengirim email reset password melalui SMTP. Contoh konfigurasi Gmail:
    php artisan config:clear
    ```
 
-5. Uji pengiriman email lewat tinker:
+5. Uji pengiriman email secara sinkron:
 
    ```bash
-   php artisan tinker
+   php artisan mail:test alamat@contoh.com
    ```
 
-   ```php
-   Mail::raw('tes', fn ($m) => $m->to('alamat-tujuan@email.com')->subject('tes'));
-   ```
+6. Periksa kotak masuk **dan folder spam** pada alamat tujuan.
 
 ### Mode Pengembangan Tanpa SMTP
 
@@ -69,17 +67,15 @@ Get-Content storage/logs/laravel.log -Wait
 ```
 
 Cari teks `Atur Ulang Password` atau `/reset-password/` di log, lalu buka tautannya di browser.
+Tautan reset berlaku 30 menit.
 
 ### Perintah Terminal Cadangan
 
-Owner dapat mereset password atau membuat kode pemulihan baru lewat terminal:
+Owner dapat mereset password pengguna lewat terminal:
 
 ```bash
 php artisan user:reset-password username
-php artisan user:reset-password username --generate-codes
 ```
-
-Kode pemulihan hanya ditampilkan sekali. Simpan di tempat aman.
 
 ## About Laravel
 

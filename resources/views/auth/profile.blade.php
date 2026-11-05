@@ -14,6 +14,17 @@
             <p class="profil-page-subtitle">Kelola informasi akun dan kata sandi Anda.</p>
         </div>
 
+        @if (Auth::user()->wajib_ganti_password)
+            <div class="profil-force-banner" id="banner-wajib-ganti" role="alert">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <p>Password Anda masih sementara. Buat password baru sekarang untuk melanjutkan.</p>
+            </div>
+        @endif
+
         {{-- User Info Card --}}
         <section class="profil-card">
             <div class="profil-user-header">
@@ -79,7 +90,7 @@
         {{-- Email Pemulihan Card --}}
         <section class="profil-card" id="email-pemulihan">
             <h2 class="profil-card-title">Email Pemulihan</h2>
-            <p class="profil-card-subtitle">Email ini dipakai untuk menerima tautan reset password saat Anda lupa password.</p>
+            <p class="profil-card-subtitle">Email ini dipakai untuk menerima tautan atur ulang password saat Anda lupa password.</p>
 
             @if ($errors->getBag('email')->any())
                 <div class="profil-form-alert is-error">Periksa kembali isian email pemulihan.</div>
@@ -93,7 +104,7 @@
             @else
                 <div class="profil-email-status is-empty">
                     <span class="profil-email-status-label">Belum ada email pemulihan</span>
-                    <span class="profil-email-status-value">Tanpa email, reset mandiri hanya bisa lewat kode pemulihan.</span>
+                    <span class="profil-email-status-value">Tanpa email, reset password dapat dilakukan oleh owner.</span>
                 </div>
             @endif
 
@@ -182,73 +193,6 @@
             </form>
         </section>
 
-        {{-- Kode Pemulihan Card --}}
-        <section class="profil-card" id="kode-pemulihan">
-            <h2 class="profil-card-title">Kode Pemulihan</h2>
-            <p class="profil-card-subtitle">Kode sekali pakai sebagai cadangan jika Anda tidak bisa mengakses email.</p>
-
-            @if (session('recovery_codes'))
-                <div class="profil-recovery-box" role="region" aria-label="Kode pemulihan baru">
-                    <div class="profil-recovery-warning">
-                        Simpan di tempat aman. Kode ini hanya ditampilkan sekali dan tidak akan bisa dilihat lagi.
-                    </div>
-
-                    <ul class="profil-recovery-grid">
-                        @foreach (session('recovery_codes') as $kode)
-                            <li class="profil-recovery-item">
-                                <code class="profil-recovery-code">{{ $kode }}</code>
-                                <button type="button" class="btn-profil-copy js-copy-code" data-code="{{ $kode }}"
-                                        aria-label="Salin kode pemulihan {{ $kode }}">Salin</button>
-                            </li>
-                        @endforeach
-                    </ul>
-
-                    <div class="profil-recovery-actions">
-                        <button type="button" class="btn-profil-secondary" id="btn-download-codes"
-                                data-codes="{{ json_encode(session('recovery_codes')) }}">
-                            Unduh .txt
-                        </button>
-                    </div>
-                </div>
-            @endif
-
-            <div class="profil-recovery-status {{ ($sisaKode ?? 0) > 0 ? 'is-active' : '' }}">
-                @if (($sisaKode ?? 0) > 0)
-                    {{ $sisaKode }} dari 8 kode pemulihan belum dipakai.
-                @else
-                    Belum ada kode pemulihan yang tersisa.
-                @endif
-            </div>
-
-            @if ($errors->getBag('recovery')->any())
-                <div class="profil-form-alert is-error">Periksa password konfirmasi Anda.</div>
-            @endif
-
-            <form method="POST" action="{{ route('profile.recovery-codes.generate') }}">
-                @csrf
-
-                <div class="profil-notice-banner">
-                    Membuat kode baru akan menghapus semua kode lama.
-                </div>
-
-                <div class="profil-form-grid">
-                    <div class="profil-form-group">
-                        <label for="current_password_recovery" class="profil-label">Password Saat Ini <span class="req-star">*</span></label>
-                        <div class="profil-input-box">
-                            <input type="password" id="current_password_recovery" name="current_password" required autocomplete="current-password"
-                                   class="profil-input input-tinted" placeholder="Masukkan password untuk konfirmasi">
-                        </div>
-                        @error('current_password', 'recovery')
-                            <p class="profil-field-error">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="profil-card-actions">
-                    <button type="submit" class="btn-profil-submit">Buat Kode Pemulihan</button>
-                </div>
-            </form>
-        </section>
     </div>
 
 @endsection
@@ -256,49 +200,19 @@
 @push('scripts')
 <script>
 (function () {
-    document.querySelectorAll('.js-copy-code').forEach(function (tombol) {
-        tombol.addEventListener('click', function () {
-            const kode = tombol.dataset.code || '';
-            if (!kode) return;
+    // Password masih sementara: arahkan perhatian ke form ganti password.
+    const bannerWajibGanti = document.getElementById('banner-wajib-ganti');
+    if (bannerWajibGanti) {
+        const sectionGanti = document.getElementById('ganti-password');
+        const inputSaatIni = document.getElementById('current_password_pw');
 
-            const selesai = function () {
-                tombol.textContent = 'Tersalin';
-                setTimeout(function () { tombol.textContent = 'Salin'; }, 1500);
-            };
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(kode).then(selesai).catch(function () {});
-                return;
+        window.addEventListener('load', function () {
+            if (sectionGanti) {
+                sectionGanti.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-
-            const sementara = document.createElement('textarea');
-            sementara.value = kode;
-            document.body.appendChild(sementara);
-            sementara.select();
-            try { document.execCommand('copy'); selesai(); } catch (e) { /* abaikan */ }
-            document.body.removeChild(sementara);
-        });
-    });
-
-    const unduh = document.getElementById('btn-download-codes');
-    if (unduh) {
-        unduh.addEventListener('click', function () {
-            let kode = [];
-            try { kode = JSON.parse(unduh.dataset.codes || '[]'); } catch (e) { kode = []; }
-
-            const isi = 'Kode Pemulihan AFWO Hair Design\n'
-                + 'Simpan di tempat aman. Setiap kode hanya bisa dipakai sekali.\n\n'
-                + kode.join('\n') + '\n';
-
-            const blob = new Blob([isi], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const tautan = document.createElement('a');
-            tautan.href = url;
-            tautan.download = 'kode-pemulihan-afwo.txt';
-            document.body.appendChild(tautan);
-            tautan.click();
-            tautan.remove();
-            URL.revokeObjectURL(url);
+            if (inputSaatIni) {
+                inputSaatIni.focus({ preventScroll: true });
+            }
         });
     }
 })();

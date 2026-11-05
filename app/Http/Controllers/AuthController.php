@@ -83,10 +83,6 @@ class AuthController extends Controller
 
     private function redirectByRole()
     {
-        if (Auth::user()->role === 'owner') {
-            return redirect()->route('dashboard');
-        }
-
-        return redirect()->route('pelanggan.index');
+        return redirect()->route(Auth::user()->homeRoute());
     }
 }

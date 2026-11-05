@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Transaksi')
+@section('title', 'Ubah Transaksi')
 
 @section('nav-active', 'history')
 
@@ -10,7 +10,7 @@
 
 @section('content')
     @include('transaksis._form', [
-        'pageTitle' => 'Edit Transaksi',
+        'pageTitle' => 'Ubah Transaksi',
         'pageSubtitle' => 'Perbarui '.$transaksi->no_struk.' — kunjungan layanan / penjualan produk pelanggan.',
         'formAction' => route('transaksi.update', $transaksi),
         'isEdit' => true,

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Restock '.$produk->nama_produk)
+@section('title', 'Tambah Stok '.$produk->nama_produk)
 
 @section('nav-active', 'products')
 
@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="edit-produk-header">
-        <h1 class="edit-produk-title" id="edit-produk-title">Restock Produk</h1>
+        <h1 class="edit-produk-title" id="edit-produk-title">Tambah Stok Produk</h1>
         <p class="edit-produk-subtitle" id="edit-produk-subtitle">Catat pembelian stok &mdash; modal rata-rata dihitung otomatis.</p>
     </div>
 
@@ -55,13 +55,13 @@
                         <span class="info-panel-label">Modal rata-rata</span>
                         <span class="info-panel-value highlight">{{ $produk->labelModalPerSatuan() }}</span>
                     </div>
-                    <span class="field-help-text">Modal rata-rata (weighted average) &mdash; campuran harga beli lama &amp; baru. Diperbarui otomatis setiap kali restock.</span>
+                    <span class="field-help-text">Modal rata-rata (rata-rata tertimbang) &mdash; campuran harga beli lama &amp; baru. Diperbarui otomatis setiap kali tambah stok.</span>
                 </div>
             </article>
 
             {{-- Form restock --}}
             <article class="card form-section-card">
-                <h2 class="restock-panel-title">Form Restock</h2>
+                <h2 class="restock-panel-title">Form Tambah Stok</h2>
                 <form id="form-restock" class="edit-produk-stack" action="{{ route('produk.restock', $produk) }}" method="POST">
                     @csrf
 
@@ -100,7 +100,7 @@
                         <label class="form-label" for="keterangan">Keterangan</label>
                         <div class="form-input-box">
                             <textarea name="keterangan" id="keterangan" rows="2" maxlength="255" class="form-input-control" style="resize: vertical;"
-                                      placeholder="Contoh: stok habis, restock bulanan...">{{ old('keterangan') }}</textarea>
+                                      placeholder="Contoh: stok habis, tambah stok bulanan...">{{ old('keterangan') }}</textarea>
                         </div>
                         @error('keterangan')
                             <span class="field-error">{{ $message }}</span>
@@ -114,7 +114,7 @@
 
                     <div class="form-actions-row">
                         <a href="{{ route('produk.show', $produk) }}" class="btn btn-secondary" id="btn-cancel-restock">Batal</a>
-                        <button type="submit" class="btn btn-primary" id="btn-save-restock">Simpan Restock</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save-restock">Simpan Stok</button>
                     </div>
                 </form>
             </article>
@@ -122,13 +122,13 @@
 
         {{-- Riwayat pembelian --}}
         <article class="card form-section-card">
-            <h2 class="restock-panel-title">Riwayat Pembelian / Restock</h2>
+            <h2 class="restock-panel-title">Riwayat Pembelian / Tambah Stok</h2>
             <span class="field-help-text">Terakhir {{ $riwayat->count() }} catatan. Total stok &amp; modal rata-rata setelah tiap pembelian tercatat di sini.</span>
 
             @if ($riwayat->isEmpty())
                 <div class="restock-empty">
                     <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Belum ada riwayat pembelian.</p>
-                    <p class="field-help-text">Restock pertama akan mencatat harga beli sebagai modal awal.</p>
+                    <p class="field-help-text">Penambahan stok pertama akan mencatat harga beli sebagai modal awal.</p>
                 </div>
             @else
                 <div class="restock-table-wrapper">
@@ -136,7 +136,7 @@
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Qty</th>
+                                <th>Jumlah</th>
                                 <th>Harga Beli</th>
                                 <th>Modal Rata2</th>
                                 <th>Stok Akhir</th>

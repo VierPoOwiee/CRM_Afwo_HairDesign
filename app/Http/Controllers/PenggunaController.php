@@ -32,31 +32,32 @@ class PenggunaController extends Controller
                 'regex:/^[a-zA-Z0-9._]+$/',
                 'unique:users,username',
             ],
-            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'max:72'],
+            'wajib_ganti_password' => ['nullable', 'boolean'],
         ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
             'username.regex' => 'Username hanya boleh berisi huruf, angka, titik, atau underscore.',
             'username.min' => 'Username minimal 3 karakter.',
             'username.max' => 'Username maksimal 30 karakter.',
             'username.unique' => 'Username sudah dipakai akun lain.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email tersebut sudah dipakai akun lain.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.max' => 'Password maksimal 72 karakter.',
         ]);
-
-        $sementara = $this->passwordSementara();
 
         $user = User::create([
             'name' => $data['name'],
             'username' => strtolower(trim($data['username'])),
-            'email' => filled($data['email'] ?? null) ? strtolower(trim($data['email'])) : null,
+            'email' => null,
             'role' => 'kasir',
             'aktif' => true,
-            'wajib_ganti_password' => true,
-            'password' => Hash::make($sementara),
+            'wajib_ganti_password' => $request->boolean('wajib_ganti_password'),
+            'password' => $data['password'],
         ]);
 
         return redirect()->route('pengguna.index')->with(
-            'password_sementara',
-            ['username' => $user->username, 'password' => $sementara, 'aksi' => 'Dibuat']
+            'success',
+            "Akun kasir {$user->username} berhasil dibuat."
         );
     }
 
@@ -95,6 +96,32 @@ class PenggunaController extends Controller
             $user->aktif
                 ? "Akun {$user->username} berhasil diaktifkan."
                 : "Akun {$user->username} berhasil dinonaktifkan."
+        );
+    }
+
+    public function destroy(Request $request, User $user)
+    {
+        $this->tolakAkunSendiri($request, $user);
+
+        if (! $user->isKasir()) {
+            abort(403, 'Hanya akun kasir yang dapat dihapus permanen.');
+        }
+
+        $username = $user->username;
+
+        DB::transaction(function () use ($user) {
+            $this->hapusSesi($user);
+
+            if (Schema::hasTable('password_reset_tokens') && filled($user->email)) {
+                DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+            }
+
+            $user->delete();
+        });
+
+        return redirect()->route('pengguna.index')->with(
+            'success',
+            "Akun {$username} berhasil dihapus permanen."
         );
     }
 

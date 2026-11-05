@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Appointment')
+@section('title', 'Ubah Janji Temu')
 
 @section('nav-active', 'appointment')
 

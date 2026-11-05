@@ -21,7 +21,7 @@
                         <option value="mingguan" {{ $currentPreset === 'mingguan' ? 'selected' : '' }}>Mingguan (Sen–Min)</option>
                         <option value="bulan-ini" {{ $currentPreset === 'bulan-ini' ? 'selected' : '' }}>Bulan Ini</option>
                         <option value="bulan-lalu" {{ $currentPreset === 'bulan-lalu' ? 'selected' : '' }}>Bulan Lalu</option>
-                        <option value="custom" {{ $currentPreset === 'custom' ? 'selected' : '' }}>Custom</option>
+                        <option value="custom" {{ $currentPreset === 'custom' ? 'selected' : '' }}>Kustom</option>
                     </select>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                     <div class="form-input-box">
                         <select name="metode_pembayaran" id="filter-metode" class="form-select-control">
                             <option value="">Semua</option>
-                            <option value="cash" {{ ($metode ?? '') === 'cash' ? 'selected' : '' }}>Cash</option>
+                            <option value="cash" {{ ($metode ?? '') === 'cash' ? 'selected' : '' }}>Tunai</option>
                             <option value="qris_bni" {{ ($metode ?? '') === 'qris_bni' ? 'selected' : '' }}>QRIS BNI</option>
                             <option value="qris_bri" {{ ($metode ?? '') === 'qris_bri' ? 'selected' : '' }}>QRIS BRI</option>
                             <option value="debit" {{ ($metode ?? '') === 'debit' ? 'selected' : '' }}>Debit</option>
@@ -92,7 +92,7 @@
         </div>
 
         <div class="report-filter-actions">
-            <a href="{{ $resetUrl ?? '#' }}" class="btn btn--secondary btn-filter-reset">Refresh</a>
+            <a href="{{ $resetUrl ?? '#' }}" class="btn btn--secondary btn-filter-reset">Segarkan</a>
             <button type="submit" class="btn btn--primary btn-filter-apply">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                     <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>

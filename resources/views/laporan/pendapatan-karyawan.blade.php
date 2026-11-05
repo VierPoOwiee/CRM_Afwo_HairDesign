@@ -40,7 +40,7 @@
             </div>
             <button type="submit" class="btn-show-dark" data-field="btn-show-month">Tampilkan</button>
             @if ($bulanInput !== now()->format('Y-m'))
-                <a href="{{ route('laporan.pendapatan-karyawan') }}" class="btn-slip-detail">Reset ke Bulan Ini</a>
+                <a href="{{ route('laporan.pendapatan-karyawan') }}" class="btn-slip-detail">Atur Ulang ke Bulan Ini</a>
             @endif
         </form>
     </section>
@@ -123,7 +123,7 @@
                                         'sampai' => $sampaiCarbon->toDateString(),
                                     ]) }}"
                                    class="btn-slip-detail">
-                                    Slip Detail
+                                    Detail Slip
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>
                                 </a>
                             </td>

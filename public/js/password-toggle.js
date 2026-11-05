@@ -1,4 +1,4 @@
-// Toggle tampil/sembunyi password untuk halaman reset & kode pemulihan.
+// Toggle tampil/sembunyi password untuk halaman reset password.
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.js-toggle-password').forEach((tombol) => {
     tombol.addEventListener('click', () => {

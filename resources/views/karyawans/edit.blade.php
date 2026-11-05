@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Karyawan')
+@section('title', 'Ubah Karyawan')
 @section('nav-active', 'workers')
 
 @push('styles')
@@ -16,7 +16,7 @@
             </svg>
         </a>
         <div class="edit-title-group">
-            <h1 class="edit-page-title">Edit Karyawan</h1>
+            <h1 class="edit-page-title">Ubah Karyawan</h1>
             <p class="edit-page-subtitle">Perbarui data {{ $karyawan->nama }}.</p>
         </div>
     </div>

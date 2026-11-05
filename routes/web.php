@@ -25,8 +25,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('guest')->group(function () {
     Route::get('/lupa-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/lupa-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
-    Route::get('/lupa-password/kode', [PasswordResetController::class, 'showRecoveryForm'])->name('password.recovery');
-    Route::post('/lupa-password/kode', [PasswordResetController::class, 'recoverWithCode'])->name('password.recovery.submit');
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 });
@@ -36,14 +34,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profil/info', [ProfileController::class, 'updateInfo'])->name('profile.info.update');
     Route::put('/profil/email', [ProfileController::class, 'updateEmail'])->name('profile.email.update');
-    Route::post('/profil/kode-pemulihan', [ProfileController::class, 'generateRecoveryCodes'])->name('profile.recovery-codes.generate');
     Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });
 
 // Semua halaman harus login dulu
 Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
 
-    Route::redirect('/', '/pelanggan');
+    Route::get('/', function () {
+        return redirect()->route(request()->user()->homeRoute());
+    });
 
     // Owner-only routes
     Route::middleware('role:owner')->group(function () {
@@ -53,6 +52,7 @@ Route::middleware(['auth', 'paksa.ganti.password'])->group(function () {
         Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
         Route::put('/pengguna/{user}/reset-password', [PenggunaController::class, 'resetPassword'])->name('pengguna.reset-password');
         Route::put('/pengguna/{user}/toggle-aktif', [PenggunaController::class, 'toggleAktif'])->name('pengguna.toggle-aktif');
+        Route::delete('/pengguna/{user}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 
         Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan'])->name('laporan.penjualan');
         Route::get('/laporan/ai-chat', [LaporanController::class, 'aiChat'])->name('laporan.ai-chat');

@@ -24,7 +24,7 @@ class ResetPasswordNotification extends Notification
         $url = route('password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
-        ]);
+        ], absolute: true);
 
         return (new MailMessage)
             ->subject('Atur Ulang Password — AFWO Hair Design')

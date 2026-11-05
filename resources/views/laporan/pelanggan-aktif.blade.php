@@ -158,7 +158,7 @@
         <div class="daily-group-card" style="margin-top: 20px;">
             <div class="daily-group-header">
                 <div class="daily-group-title">
-                    <span>Top 5 Pelanggan Berdasarkan Belanja</span>
+                    <span>5 Pelanggan Teratas Berdasarkan Belanja</span>
                 </div>
                 <span class="daily-group-badge">Periode Terpilih</span>
             </div>

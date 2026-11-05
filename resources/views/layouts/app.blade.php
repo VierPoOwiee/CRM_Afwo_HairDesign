@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#F7F6F3">
-    <title>@yield('title', 'Dashboard') — AFWO Hair Design</title>
+    <title>@yield('title', 'Dasbor') — AFWO Hair Design</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
                             <line x1="3" y1="17.5" x2="21" y2="17.5"></line>
                         </svg>
                     </button>
-                    <a href="{{ route('dashboard') }}" class="brand-logo mobile-only">Afwo<span class="brand-logo__dot">.</span></a>
+                    <a href="{{ route(Auth::check() ? Auth::user()->homeRoute() : 'login') }}" class="brand-logo mobile-only">Afwo<span class="brand-logo__dot">.</span></a>
                     <span class="app-bar__title desktop-only">AFWO Hair Design CRM</span>
                 </div>
                 <div class="app-bar__right">

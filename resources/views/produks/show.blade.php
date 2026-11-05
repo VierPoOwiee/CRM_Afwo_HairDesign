@@ -19,8 +19,8 @@
             <p class="page-subtitle">Detail informasi produk.</p>
         </div>
         <div class="page-header-actions">
-            <a href="{{ route('produk.restock-form', $produk) }}" class="btn btn-primary">Restock</a>
-            <a href="{{ route('produk.edit', $produk) }}" class="btn btn-secondary">Edit</a>
+            <a href="{{ route('produk.restock-form', $produk) }}" class="btn btn-primary">Tambah Stok</a>
+            <a href="{{ route('produk.edit', $produk) }}" class="btn btn-secondary">Ubah</a>
             <form action="{{ route('produk.destroy', $produk) }}" method="POST"
                   onsubmit="return confirm('Hapus produk &quot;{{ addslashes($produk->nama_produk) }}&quot;?')">
                 @csrf

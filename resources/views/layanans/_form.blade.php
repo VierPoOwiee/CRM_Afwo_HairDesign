@@ -3,9 +3,9 @@
     $kategoriLabels = [
         'Potong' => 'Potong Rambut',
         'Styling' => 'Styling &amp; Blowout',
-        'Treatment Rambut' => 'Hair Treatment &amp; Spa',
-        'Warna Rambut' => 'Color &amp; Highlights',
-        'Treatment' => 'Hair Treatment &amp; Spa',
+        'Treatment Rambut' => 'Perawatan Rambut &amp; Spa',
+        'Warna Rambut' => 'Warna &amp; Highlight',
+        'Treatment' => 'Perawatan Rambut &amp; Spa',
     ];
     $kategoriList = \App\Models\Produk::kategoriLayanan();
 
@@ -122,7 +122,7 @@
                 <input type="hidden" name="termasuk_potong" value="0">
                 <input type="checkbox" id="checkbox-include-cut" name="termasuk_potong" value="1"
                        @checked(old('termasuk_potong', $layanan->termasuk_potong ?? false))>
-                <span class="checkbox-text">Termasuk Potong <span class="muted-note">(exclude dari basis komisi persen_omset_harian)</span></span>
+                <span class="checkbox-text">Termasuk Potong <span class="muted-note">(tidak termasuk dalam basis komisi persen_omset_harian)</span></span>
             </label>
         </div>
 

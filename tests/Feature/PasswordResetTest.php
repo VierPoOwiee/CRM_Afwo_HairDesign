@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\RecoveryCode;
 use App\Models\User;
 use App\Notifications\PasswordChangedNotification;
 use App\Notifications\ResetPasswordNotification;
-use App\Support\RecoveryCodes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,9 +17,7 @@ class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const PESAN_UMUM = 'Jika akun terdaftar dan memiliki email pemulihan, tautan reset sudah dikirim. Cek juga folder spam.';
-
-    private const PESAN_KODE_SALAH = 'Username atau kode pemulihan tidak valid.';
+    private const PESAN_UMUM = 'Jika akun terdaftar dan memiliki email pemulihan, tautan reset sudah dikirim. Cek juga folder spam. Tautan berlaku 30 menit.';
 
     private function user(array $atribut = []): User
     {
@@ -49,15 +45,17 @@ class PasswordResetTest extends TestCase
     {
         $this->get(route('password.request'))
             ->assertOk()
-            ->assertSee('Lupa Password');
-
-        $this->get(route('password.recovery'))
-            ->assertOk()
-            ->assertSee('Kode Pemulihan');
+            ->assertSee('Lupa Password')
+            ->assertSee('Tautan berlaku 30 menit');
 
         $this->get(route('password.reset', ['token' => 'token-uji', 'email' => 'uji@example.com']))
             ->assertOk()
             ->assertSee('Atur Ulang Password');
+    }
+
+    public function test_halaman_kode_pemulihan_sudah_dihapus(): void
+    {
+        $this->get('/lupa-password/kode')->assertNotFound();
     }
 
     public function test_halaman_lupa_password_hanya_untuk_tamu(): void
@@ -69,7 +67,7 @@ class PasswordResetTest extends TestCase
             ->assertRedirect();
     }
 
-    public function test_profil_menampilkan_section_pemulihan(): void
+    public function test_profil_menampilkan_email_pemulihan_tanpa_kode_pemulihan(): void
     {
         $user = $this->user(['email' => null]);
 
@@ -77,8 +75,7 @@ class PasswordResetTest extends TestCase
             ->get(route('profile.show'))
             ->assertOk()
             ->assertSee('Email Pemulihan')
-            ->assertSee('Belum ada email pemulihan')
-            ->assertSee('Kode Pemulihan');
+            ->assertSee('Belum ada email pemulihan');
     }
 
     public function test_login_tidak_mengisi_password_default(): void
@@ -117,8 +114,10 @@ class PasswordResetTest extends TestCase
 
         $this->post(route('password.email'), ['login' => 'aktif'])
             ->assertSessionHas('status', self::PESAN_UMUM);
-        $this->post(route('password.email'), ['login' => 'nonaktif']);
-        $this->post(route('password.email'), ['login' => 'tanpaemail']);
+        $this->post(route('password.email'), ['login' => 'nonaktif'])
+            ->assertSessionHas('status', self::PESAN_UMUM);
+        $this->post(route('password.email'), ['login' => 'tanpaemail'])
+            ->assertSessionHas('status', self::PESAN_UMUM);
 
         Notification::assertSentTo($aktif, ResetPasswordNotification::class);
         Notification::assertNotSentTo($nonaktif, ResetPasswordNotification::class);
@@ -140,6 +139,41 @@ class PasswordResetTest extends TestCase
 
         $response->assertSessionHasErrors('login');
         $this->assertStringContainsString('Terlalu banyak', session('errors')->first('login'));
+    }
+
+    public function test_notifikasi_reset_memuat_host_request_dan_token_yang_valid(): void
+    {
+        Notification::fake();
+
+        $user = $this->user(['username' => 'hostuji', 'email' => 'hostuji@example.com']);
+
+        $this->post('http://crm.test/lupa-password', ['login' => 'hostuji'])
+            ->assertSessionHas('status', self::PESAN_UMUM);
+
+        $token = null;
+        $url = null;
+
+        Notification::assertSentTo(
+            $user,
+            ResetPasswordNotification::class,
+            function (ResetPasswordNotification $notification) use ($user, &$token, &$url) {
+                $token = $notification->token;
+                $url = $notification->toMail($user)->actionUrl;
+
+                return true;
+            }
+        );
+
+        $this->assertNotNull($token);
+        $this->assertStringStartsWith('http://crm.test/reset-password/', $url);
+        $this->assertStringContainsString('email=', $url);
+
+        $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'PasswordBaru123',
+            'password_confirmation' => 'PasswordBaru123',
+        ])->assertRedirect(route('login'));
     }
 
     public function test_reset_via_token_sukses(): void
@@ -175,6 +209,23 @@ class PasswordResetTest extends TestCase
         $this->assertSame(0, DB::table('password_reset_tokens')->where('email', $user->email)->count());
 
         Notification::assertSentTo($user, PasswordChangedNotification::class);
+    }
+
+    public function test_reset_menerima_email_dengan_spasi_dan_huruf_besar(): void
+    {
+        Notification::fake();
+
+        $user = $this->user(['email' => 'campur@example.com']);
+        $token = Password::broker()->createToken($user);
+
+        $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => '  CAMPUR@EXAMPLE.COM  ',
+            'password' => 'PasswordBaru123',
+            'password_confirmation' => 'PasswordBaru123',
+        ])->assertRedirect(route('login'));
+
+        $this->assertTrue(Hash::check('PasswordBaru123', $user->fresh()->password));
     }
 
     public function test_token_reset_kedaluwarsa_ditolak(): void
@@ -241,151 +292,5 @@ class PasswordResetTest extends TestCase
         $response->assertSessionHasErrors('email');
         $this->assertTrue(Hash::check('password123', $user->fresh()->password));
         Notification::assertNotSentTo($user, PasswordChangedNotification::class);
-    }
-
-    public function test_kode_pemulihan_sukses(): void
-    {
-        Notification::fake();
-
-        $user = $this->user([
-            'username' => 'kodeuser',
-            'wajib_ganti_password' => true,
-            'remember_token' => 'token-lama',
-        ]);
-
-        $this->buatSesi($user);
-
-        $kode = RecoveryCodes::replaceFor($user)[0];
-        $kodeDenganSpasi = strtolower(substr($kode, 0, 4).' - '.substr($kode, 5));
-
-        $response = $this->post(route('password.recovery.submit'), [
-            'username' => strtoupper($user->username),
-            'code' => $kodeDenganSpasi,
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ]);
-
-        $response->assertRedirect(route('login'));
-        $response->assertSessionHas('success');
-
-        $user->refresh();
-
-        $this->assertTrue(Hash::check('PasswordBaru123', $user->password));
-        $this->assertFalse($user->wajib_ganti_password);
-        $this->assertNotSame('token-lama', $user->remember_token);
-        $this->assertSame(0, DB::table('sessions')->where('user_id', $user->id)->count());
-        $this->assertSame(1, RecoveryCode::where('user_id', $user->id)->whereNotNull('used_at')->count());
-
-        Notification::assertSentTo($user, PasswordChangedNotification::class);
-    }
-
-    public function test_kode_pemulihan_tidak_bisa_dipakai_dua_kali(): void
-    {
-        Notification::fake();
-
-        $user = $this->user(['username' => 'sekali-kode']);
-        $kode = RecoveryCodes::replaceFor($user)[0];
-
-        $data = [
-            'username' => $user->username,
-            'code' => $kode,
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ];
-
-        $this->post(route('password.recovery.submit'), $data)->assertRedirect(route('login'));
-        $this->post(route('password.recovery.submit'), $data)->assertSessionHasErrors('code');
-
-        $this->assertSame(1, RecoveryCode::where('user_id', $user->id)->whereNotNull('used_at')->count());
-    }
-
-    public function test_kode_pemulihan_salah_ditolak_dengan_pesan_generik(): void
-    {
-        Notification::fake();
-
-        $user = $this->user(['username' => 'salah-kode']);
-        RecoveryCodes::replaceFor($user);
-
-        $response = $this->post(route('password.recovery.submit'), [
-            'username' => $user->username,
-            'code' => '0000-0000',
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ]);
-
-        $response->assertSessionHasErrors('code');
-        $this->assertSame(self::PESAN_KODE_SALAH, session('errors')->first('code'));
-        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
-        Notification::assertNotSentTo($user, PasswordChangedNotification::class);
-    }
-
-    public function test_kode_pemulihan_dibatasi_rate_limiter(): void
-    {
-        Notification::fake();
-
-        $user = $this->user(['username' => 'batas-kode']);
-        RecoveryCodes::replaceFor($user);
-
-        for ($i = 0; $i < 5; $i++) {
-            $this->post(route('password.recovery.submit'), [
-                'username' => $user->username,
-                'code' => '0000-0000',
-                'password' => 'PasswordBaru123',
-                'password_confirmation' => 'PasswordBaru123',
-            ]);
-        }
-
-        $response = $this->post(route('password.recovery.submit'), [
-            'username' => $user->username,
-            'code' => '0000-0000',
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ]);
-
-        $response->assertSessionHasErrors('code');
-        $this->assertStringContainsString('Terlalu banyak', session('errors')->first('code'));
-    }
-
-    public function test_kode_lama_invalid_setelah_generate_ulang(): void
-    {
-        Notification::fake();
-
-        $user = $this->user(['username' => 'regenerate']);
-        $kodeLama = RecoveryCodes::replaceFor($user)[0];
-
-        RecoveryCodes::replaceFor($user);
-
-        $response = $this->post(route('password.recovery.submit'), [
-            'username' => $user->username,
-            'code' => $kodeLama,
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ]);
-
-        $response->assertSessionHasErrors('code');
-        $this->assertSame(self::PESAN_KODE_SALAH, session('errors')->first('code'));
-        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
-    }
-
-    public function test_kode_pemulihan_menolak_user_nonaktif(): void
-    {
-        Notification::fake();
-
-        $user = $this->user([
-            'username' => 'nonaktif-kode',
-            'aktif' => false,
-        ]);
-
-        $kode = RecoveryCodes::replaceFor($user)[0];
-
-        $response = $this->post(route('password.recovery.submit'), [
-            'username' => $user->username,
-            'code' => $kode,
-            'password' => 'PasswordBaru123',
-            'password_confirmation' => 'PasswordBaru123',
-        ]);
-
-        $response->assertSessionHasErrors('code');
-        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
     }
 }

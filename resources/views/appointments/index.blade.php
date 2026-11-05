@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Appointment')
+@section('title', 'Janji Temu')
 
 @section('nav-active', 'appointment')
 
@@ -61,13 +61,13 @@
             <div class="toolbar-right-group">
                 <div class="cal-search-box">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="cal-quick-search" placeholder="Cari" aria-label="Cari jadwal appointment">
+                    <input type="text" id="cal-quick-search" placeholder="Cari" aria-label="Cari jadwal janji temu">
                 </div>
                 <button type="button" class="btn-cari btn-cari--white" id="btn-cal-search">Cari</button>
 
                 <a href="{{ route('appointment.create') }}" class="btn btn-primary" id="btn-add-appointment">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    <span>Appointment</span>
+                    <span>Janji Temu</span>
                 </a>
             </div>
         </header>
@@ -173,7 +173,7 @@
                                         : (string) $hari['tanggal']->day;
                                     $ariaTanggal = $hari['tanggal']->day.' '.$namaBulan[$hari['tanggal']->month - 1].' '.$hari['tanggal']->year;
                                 @endphp
-                                <div class="{{ $cellClass }}" role="gridcell" data-date="{{ $tanggalSel }}" data-tanggal="{{ $tanggalSel }}" aria-label="{{ $ariaTanggal }}, {{ $jumlahHariIni }} appointment">
+                                <div class="{{ $cellClass }}" role="gridcell" data-date="{{ $tanggalSel }}" data-tanggal="{{ $tanggalSel }}" aria-label="{{ $ariaTanggal }}, {{ $jumlahHariIni }} janji temu">
                                     <button type="button" class="cal-cell__num">{{ $labelAngka }}</button>
                                     <div class="cal-cell__events">
                                         @foreach ($daftarHari as $ap)
@@ -231,7 +231,7 @@
                 <div class="day-schedule-actions">
                     <a href="{{ route('appointment.create') }}" id="btn-add-for-day" class="btn-schedule-add-action">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        <span>Tambah Appointment</span>
+                        <span>Tambah Janji Temu</span>
                     </a>
                     <button type="button" id="btn-close-day-schedule" class="btn-close-schedule" aria-label="Tutup Jadwal Harian">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -242,7 +242,7 @@
                 <div class="gcal-timeline-container" id="gcal-timeline-container"></div>
             </div>
             <div class="day-schedule-footer">
-                <span class="schedule-hint-text"><strong>Petunjuk:</strong> Klik kartu reservasi untuk melihat detail, atau klik jam kosong untuk membuat appointment baru.</span>
+                <span class="schedule-hint-text"><strong>Petunjuk:</strong> Klik kartu reservasi untuk melihat detail, atau klik jam kosong untuk membuat janji temu baru.</span>
             </div>
         </div>
     </div>
@@ -517,7 +517,7 @@
                             '<div class="gcal-meta-text">' +
                                 '<span class="gcal-client-title">' + esc(a.pelanggan) + '</span>' +
                                 '<span class="gcal-service-name">' + esc(a.layanan) + '</span>' +
-                                '<span class="gcal-stylist-tag">Stylist: <strong>' + esc(a.karyawan) + '</strong> &bull; ' + a.durasi_menit + ' mnt</span>' +
+                                '<span class="gcal-stylist-tag">Stylist: <strong>' + esc(a.karyawan) + '</strong> &bull; ' + a.durasi_menit + ' menit</span>' +
                             '</div>' +
                         '</div>' +
                         '<div class="gcal-card-right">' +
@@ -528,16 +528,16 @@
                 }).join('');
             }
             rows += '<div class="gcal-hour-row" data-jam="' + jamSlot + '" data-tanggal="' + day.tanggal + '">' +
-                '<div class="gcal-hour-time" role="button" tabindex="0" aria-label="Tambah appointment jam ' + jamSlot + '">' + jamSlot + '</div>' +
+                '<div class="gcal-hour-time" role="button" tabindex="0" aria-label="Tambah janji temu jam ' + jamSlot + '">' + jamSlot + '</div>' +
                 '<div class="gcal-hour-slot' + (cards ? '' : ' is-empty') + '"' +
-                    (cards ? '' : ' role="button" tabindex="0" aria-label="Tambah appointment jam ' + jamSlot + '"') + '>' +
+                    (cards ? '' : ' role="button" tabindex="0" aria-label="Tambah janji temu jam ' + jamSlot + '"') + '>' +
                     (cards || '') +
                     (cards ? '' : '<span class="gcal-slot-hint" aria-hidden="true">+ Tambah ' + jamSlot + '</span>') +
                 '</div>' +
             '</div>';
         }
         if (!(day.appointments || []).length) {
-            rows += '<div class="gcal-empty-notice">Tidak ada reservasi pada tanggal ini. Klik <strong>+ Tambah Appointment</strong> untuk membuat jadwal baru.</div>';
+            rows += '<div class="gcal-empty-notice">Tidak ada reservasi pada tanggal ini. Klik <strong>+ Tambah Janji Temu</strong> untuk membuat jadwal baru.</div>';
         }
         gcal.innerHTML = rows;
         showModal(dayModal);
@@ -598,7 +598,7 @@
     function renderDetailModal(a) {
         var c = colorOf(a.warna);
         var st = statusOf(a.status);
-        var lamanya = (a.jam_mulai || '') + ' - ' + (a.jam_selesai || '') + ' (' + a.durasi_menit + ' mnt)';
+        var lamanya = (a.jam_mulai || '') + ' - ' + (a.jam_selesai || '') + ' (' + a.durasi_menit + ' menit)';
         var infoRows = '' +
             popRow(IX_CLOCK, '<span style="font-weight: 700;">' + lamanya + '</span>') +
             popRow(IX_USER, 'Stylist: <span style="font-weight: 700;">' + esc(a.karyawan) + '</span>') +
@@ -617,7 +617,7 @@
             '<input type="hidden" name="_method" value="DELETE">' +
             '<button type="submit" class="btn btn-danger">Hapus</button>' +
         '</form>' +
-        '<a href="' + URL_EDIT.replace('P_ID', a.id) + '" class="btn btn-secondary">Edit</a>';
+        '<a href="' + URL_EDIT.replace('P_ID', a.id) + '" class="btn btn-secondary">Ubah</a>';
         if (a.status !== 'selesai') {
             footer += '<form method="POST" action="' + URL_SELESAI.replace('P_ID', a.id) + '" style="margin:0;"><input type="hidden" name="_token" value="' + CSRF + '"><input type="hidden" name="_method" value="PUT"><button type="submit" class="btn btn-primary">' + IX_CHECK + ' Selesaikan</button></form>';
         }
@@ -658,7 +658,7 @@
         fetch(URL_SHOW.replace('P_ID', id))
             .then(function (r) { return r.json(); })
             .then(renderDetailModal)
-            .catch(function () { toast('Gagal memuat detail appointment.'); });
+            .catch(function () { toast('Gagal memuat detail janji temu.'); });
     }
 
     // ----- Events -----

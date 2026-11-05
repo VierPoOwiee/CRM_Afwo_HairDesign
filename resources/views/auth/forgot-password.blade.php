@@ -9,6 +9,7 @@
 
         <p class="login-helper-text">
             Masukkan username atau email pemulihan Anda. Kami akan mengirim tautan untuk mengatur ulang password.
+            Tautan berlaku 30 menit.
         </p>
 
         <div class="login-form-group">
@@ -32,7 +33,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn-login-submit">Kirim Tautan Reset</button>
+        <button type="submit" class="btn-login-submit">Kirim Tautan Atur Ulang</button>
     </form>
 
     <div class="login-auth-footer">
@@ -41,6 +42,6 @@
 
     <div class="login-hint" id="login-identifier-help">
         <strong>Tidak punya email pemulihan?</strong>
-        <a href="{{ route('password.recovery') }}">Gunakan kode pemulihan</a>.
+        Hubungi owner untuk reset password.
     </div>
 @endsection

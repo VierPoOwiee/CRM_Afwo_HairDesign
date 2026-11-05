@@ -108,7 +108,7 @@
     $bulanLaluRange = $periodeBulanIni->copy()->subMonth()->startOfMonth()->format('d M Y')
         .' s.d. '.$periodeBulanIni->copy()->subMonth()->endOfMonth()->format('d M Y');
     $bulanIniRange = ($isBulanBerjalan
-        ? $periodeBulanIni->copy()->startOfMonth()->format('d M Y').' s.d. '.now()->format('d M Y').' (MTD)'
+        ? $periodeBulanIni->copy()->startOfMonth()->format('d M Y').' s.d. '.now()->format('d M Y').' (bulan berjalan)'
         : $periodeBulanIni->copy()->startOfMonth()->format('d M Y').' s.d. '.$periodeBulanIni->copy()->endOfMonth()->format('d M Y'));
     $omsetChart = [
         'lalu' => $omsetSebelumnya,
@@ -186,10 +186,10 @@
                     </svg>
                 </span>
                 <div class="ai-insight-heading-text">
-                    <h2 class="ai-insight-title">AI Insight — Analisa Keuntungan</h2>
+                    <h2 class="ai-insight-title">Wawasan AI — Analisa Keuntungan</h2>
                     <p class="ai-insight-meta">
                         @if ($insight)
-                            Terakhir digenerate: {{ $insight->dibuat_pada->format('d M Y H:i') }}
+                            Terakhir dibuat: {{ $insight->dibuat_pada->format('d M Y H:i') }}
                         @else
                             Belum ada analisa tersimpan
                         @endif
@@ -204,19 +204,19 @@
                     <button type="submit" id="btnGenerateInsight" class="btn btn--ghost"
                         @if ($insightCooldown || $kuotaAi['habis'])
                             disabled
-                            title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, reset ' . $kuotaAi['label_reset'] : 'Analisa baru saja digenerate, tunggu beberapa menit' }}"
+                            title="{{ $kuotaAi['habis'] ? 'Kuota AI hari ini habis, diperbarui ' . $kuotaAi['label_reset'] : 'Analisa baru saja dibuat, tunggu beberapa menit' }}"
                         @endif>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
-                        {{ $insight ? 'Generate Ulang' : 'Generate Analisa' }}
+                        {{ $insight ? 'Buat Ulang' : 'Buat Analisa' }}
                     </button>
                     @if ($insightCooldown)
                         <span id="insightCooldownLabel" data-sisa="{{ $insightCooldownSisaDetik }}" class="insight-cooldown-chip">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                                 <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Bisa generate lagi dalam
+                            Bisa dibuat lagi dalam
                             <span id="insightCountdown" class="tabular-nums">{{ floor($insightCooldownSisaDetik / 60) }}:{{ str_pad($insightCooldownSisaDetik % 60, 2, '0', STR_PAD_LEFT) }}</span>
                         </span>
                     @endif
@@ -226,11 +226,11 @@
                     Kuota <strong>{{ $kuotaAi['terpakai'] }}/{{ $kuotaAi['batas'] }}</strong>
                     <span class="insight-quota-sep" aria-hidden="true">&middot;</span>
                     @if ($kuotaAi['habis'])
-                        <span class="warn">habis, reset {{ $kuotaAi['label_reset'] }}</span>
+                        <span class="warn">habis, diperbarui {{ $kuotaAi['label_reset'] }}</span>
                     @elseif ($kuotaAi['hampir_habis'])
-                        <span class="warn">sisa {{ $kuotaAi['sisa'] }}, reset {{ $kuotaAi['label_reset'] }}</span>
+                        <span class="warn">sisa {{ $kuotaAi['sisa'] }}, diperbarui {{ $kuotaAi['label_reset'] }}</span>
                     @else
-                        <span>reset {{ $kuotaAi['label_reset'] }}</span>
+                        <span>diperbarui {{ $kuotaAi['label_reset'] }}</span>
                     @endif
                 </span>
             </div>
@@ -280,9 +280,9 @@
                 @endif
             </div>
         @elseif ($insight && ! $insightValid)
-            <div class="insight-note-empty no-print">Analisa tersimpan masih menggunakan format lama (teks panjang). Klik tombol "Generate Ulang" untuk memperbaruinya ke tampilan ringkas.</div>
+            <div class="insight-note-empty no-print">Analisa tersimpan masih menggunakan format lama (teks panjang). Klik tombol "Buat Ulang" untuk memperbaruinya ke tampilan ringkas.</div>
         @else
-            <div class="insight-note-empty no-print">Belum ada analisa. Klik tombol "Generate Analisa" untuk mendapatkan insight dari AI.</div>
+            <div class="insight-note-empty no-print">Belum ada analisa. Klik tombol "Buat Analisa" untuk mendapatkan wawasan dari AI.</div>
         @endif
 
     </section>
@@ -315,7 +315,7 @@
                 <span class="chart-label-sm">Total Pendapatan</span>
                 <span class="chart-revenue-val">{{ $fmt($totalOmset) }}</span>
                 @if ($isBulanBerjalan)
-                    <span class="card__subtitle">Bulan Ini = omset month-to-date s.d. {{ now()->format('d M Y') }} (belum final).</span>
+                    <span class="card__subtitle">Bulan Ini = omset bulan berjalan s.d. {{ now()->format('d M Y') }} (belum final).</span>
                 @endif
             </div>
 
@@ -327,7 +327,7 @@
                 </div>
                 <div class="chart-axis-labels">
                     <span>Bulan Lalu</span>
-                    <span>Bulan Ini{{ $isBulanBerjalan ? ' (MTD)' : '' }}</span>
+                    <span>Bulan Ini{{ $isBulanBerjalan ? ' (bulan berjalan)' : '' }}</span>
                 </div>
             @endif
         </div>
@@ -551,7 +551,7 @@
                                         <span class="payment-method-badge {{ $methodInfo['badge'] }}">{{ $methodInfo['label'] }}</span>
                                     </td>
                                     <td>
-                                        <span class="status-pill status-paid">Selesai (Paid)</span>
+                                        <span class="status-pill status-paid">Selesai (Lunas)</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -672,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
         chartOmsetInst = new Chart(canvasOmset, {
             type: 'bar',
             data: {
-                labels: ['Bulan Lalu', 'Bulan Ini' + (omset.mtd ? ' (MTD)' : '')],
+                labels: ['Bulan Lalu', 'Bulan Ini' + (omset.mtd ? ' (bulan berjalan)' : '')],
                 datasets: [{
                     label: 'Omset',
                     data: [omset.lalu, omset.ini],
@@ -693,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         callbacks: {
                             title: () => 'Perbandingan Omset',
                             label: (ctx) => {
-                                const nama = ctx.dataIndex === 0 ? 'Bulan Lalu' : 'Bulan Ini' + (omset.mtd ? ' (MTD)' : '');
+                                const nama = ctx.dataIndex === 0 ? 'Bulan Lalu' : 'Bulan Ini' + (omset.mtd ? ' (bulan berjalan)' : '');
                                 return nama + ': ' + rpFull(ctx.parsed.y);
                             },
                             footer: (items) => 'Periode: ' + (items[0].dataIndex === 0 ? omset.rangeLalu : omset.rangeIni),

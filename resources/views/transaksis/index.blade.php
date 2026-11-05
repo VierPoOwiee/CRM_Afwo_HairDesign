@@ -93,7 +93,7 @@
 
             <div class="trans-kpi-card">
                 <div class="trans-kpi-info">
-                    <span class="trans-kpi-label">Selesai (Paid)</span>
+                    <span class="trans-kpi-label">Selesai (Lunas)</span>
                     <span class="trans-kpi-num">{{ $kpi['selesai'] }}</span>
                 </div>
                 <div class="trans-kpi-chart">
@@ -175,7 +175,7 @@
                         <input type="date" id="filter-date-from" name="dari" value="{{ $dari ?? '' }}" class="date-input-inline js-auto-submit" title="Dari Tanggal" aria-label="Dari tanggal">
                         <span class="date-separator">-</span>
                         <input type="date" id="filter-date-to" name="sampai" value="{{ $sampai ?? '' }}" class="date-input-inline js-auto-submit" title="Sampai Tanggal" aria-label="Sampai tanggal">
-                        <button type="button" class="btn btn-secondary" id="btn-reset-dates" title="Refresh Filter Tanggal">Refresh</button>
+                        <button type="button" class="btn btn-secondary" id="btn-reset-dates" title="Segarkan Filter Tanggal">Segarkan</button>
                     </div>
                 </div>
 
@@ -334,7 +334,7 @@
 
                 <div style="text-align: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px; margin-bottom: 12px;">
                     <h2 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: var(--text-primary);">Afwo. Hair Design</h2>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Official Salon Payment Receipt</p>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0 0;">Struk Pembayaran Resmi Salon</p>
                 </div>
 
                 <div class="receipt-line" style="font-size: 0.82rem; margin-bottom: 8px;">
@@ -413,7 +413,7 @@
             <div class="modal-body-content" id="modal-receipt-body"></div>
 
             <div class="modal-footer-row">
-                <a href="#" class="btn-modal-action btn-receipt-edit" id="btn-edit-transaksi" title="Edit transaksi" aria-label="Edit transaksi">
+                <a href="#" class="btn-modal-action btn-receipt-edit" id="btn-edit-transaksi" title="Ubah transaksi" aria-label="Ubah transaksi">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                         <path d="M12 20h9"></path>
                         <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>

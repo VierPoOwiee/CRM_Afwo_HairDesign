@@ -3,7 +3,7 @@
     {{-- Sidebar Brand Header --}}
     <div class="sidebar-brand-header">
         <div class="brand-text-group">
-            <a href="{{ route('dashboard') }}" class="sidebar-brand-title">Afwo.</a>
+            <a href="{{ route(Auth::check() ? Auth::user()->homeRoute() : 'login') }}" class="sidebar-brand-title">Afwo.</a>
             <span class="sidebar-brand-badge">Hair Design CRM</span>
         </div>
     </div>
@@ -23,7 +23,20 @@
                             <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                             <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                         </svg>
-                        <span>Dashboard</span>
+                        <span>Dasbor</span>
+                    </a>
+                </li>
+            @endif
+
+            @if (Auth::check() && Auth::user()->isKasir())
+                <li class="sidebar-nav-item">
+                    <a href="{{ route('transaksi.create') }}" class="sidebar-nav-link" id="nav-transaksi-baru">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <span>Transaksi Baru</span>
                     </a>
                 </li>
             @endif
@@ -81,7 +94,7 @@
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
-                    <span>Transaksi</span>
+                    <span>{{ Auth::check() && Auth::user()->isKasir() ? 'Riwayat Transaksi' : 'Transaksi' }}</span>
                 </a>
             </li>
 
@@ -93,7 +106,7 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <span>Appointment</span>
+                    <span>Janji Temu</span>
                 </a>
             </li>
 

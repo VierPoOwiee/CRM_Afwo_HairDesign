@@ -19,7 +19,7 @@
             <p class="page-subtitle">Detail harga &amp; komisi tiap varian.</p>
         </div>
         <div class="page-header-actions">
-            <a href="{{ route('layanan.edit', $layanan) }}" class="btn btn-secondary">Edit</a>
+            <a href="{{ route('layanan.edit', $layanan) }}" class="btn btn-secondary">Ubah</a>
             <form action="{{ route('layanan.destroy', $layanan) }}" method="POST"
                   onsubmit="return confirm('Hapus layanan &quot;{{ addslashes($layanan->nama_layanan) }}&quot; beserta semua varian harganya?')">
                 @csrf

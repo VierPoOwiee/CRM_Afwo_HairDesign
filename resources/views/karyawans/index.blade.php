@@ -114,7 +114,7 @@
                             <th class="col-phone">KONTAK (NO. WA)</th>
                             <th class="col-salary">GAJI POKOK (BULAN)</th>
                             <th class="col-scheme">SKEMA KOMISI</th>
-                            <th class="col-rate">RATE / KOMISI</th>
+                            <th class="col-rate">TARIF / KOMISI</th>
 <th style="text-align: right; width: 100px;">AKSI</th>
                         </tr>
                     </thead>
@@ -154,7 +154,7 @@
                                 </td>
                                 <td style="text-align: right;" onclick="event.stopPropagation();">
                                     <div class="worker-actions-cell">
-                                        <a href="{{ route('karyawan.edit', $k) }}" class="btn-worker-action btn-worker-edit is-icon-only" title="Edit karyawan" aria-label="Edit {{ $k->nama }}">
+                                        <a href="{{ route('karyawan.edit', $k) }}" class="btn-worker-action btn-worker-edit is-icon-only" title="Ubah karyawan" aria-label="Ubah {{ $k->nama }}">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -216,7 +216,7 @@
             </div>
 
             <div class="worker-modal-footer">
-                <a href="#" class="btn btn-secondary" id="mdl-btn-worker-edit">Edit Data</a>
+                <a href="#" class="btn btn-secondary" id="mdl-btn-worker-edit">Ubah Data</a>
             </div>
         </div>
     </div>

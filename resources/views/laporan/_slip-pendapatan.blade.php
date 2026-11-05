@@ -59,7 +59,7 @@
     </div>
 
     {{-- Breakdown komisi harian --}}
-    <h4 class="slip-section-title">Breakdown Komisi Harian</h4>
+    <h4 class="slip-section-title">Rincian Komisi Harian</h4>
     <p class="slip-section-desc">
         @if ($isHarian)
             Sumber: komisi harian spesial (% omset harian).
@@ -95,8 +95,8 @@
                             <td style="text-align: right;" class="no-print">
                                 @if (!$isHarian)
                                     @foreach ($row['transaksis'] as $trx)
-                                        <a href="{{ route('transaksi.edit', $trx) }}" class="btn-slip-action" title="Edit transaksi">
-                                            Edit {{ $trx->no_struk }}
+                                        <a href="{{ route('transaksi.edit', $trx) }}" class="btn-slip-action" title="Ubah transaksi">
+                                            Ubah {{ $trx->no_struk }}
                                         </a>
                                     @endforeach
                                 @else
@@ -116,7 +116,7 @@
     @endif
 
     {{-- Breakdown komisi mingguan (selalu dihitung ulang dari breakdown harian) --}}
-    <h4 class="slip-section-title">Breakdown Komisi Mingguan</h4>
+    <h4 class="slip-section-title">Rincian Komisi Mingguan</h4>
     <p class="slip-section-desc">Minggu Senin&ndash;Minggu, dijumlahkan otomatis dari data harian.</p>
     @if ($slip['mingguan']->isEmpty())
         <p class="rekap-detail-empty">Tidak ada komisi pada periode ini.</p>

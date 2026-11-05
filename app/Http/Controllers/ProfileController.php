@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\RecoveryCodes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -13,9 +11,7 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        return view('auth.profile', [
-            'sisaKode' => Auth::user()->recoveryCodes()->whereNull('used_at')->count(),
-        ]);
+        return view('auth.profile');
     }
 
     public function updateInfo(Request $request)
@@ -77,36 +73,28 @@ class ProfileController extends Controller
         );
     }
 
-    public function generateRecoveryCodes(Request $request)
-    {
-        $request->validateWithBag('recovery', [
-            'current_password' => ['required', 'current_password'],
-        ], [
-            'current_password' => 'Password saat ini salah.',
-        ]);
-
-        $kode = RecoveryCodes::replaceFor(Auth::user());
-
-        return redirect()->to(route('profile.show').'#kode-pemulihan')
-            ->with('recovery_codes', $kode)
-            ->with('success', 'Kode pemulihan baru berhasil dibuat. Simpan sekarang karena tidak akan ditampilkan lagi.');
-    }
-
     public function updatePassword(Request $request)
     {
         $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => ['required', 'confirmed', Password::min(8), 'different:current_password'],
         ], [
             'current_password' => 'Password saat ini salah.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'password.different' => 'Password baru tidak boleh sama dengan password lama.',
         ]);
 
-        Auth::user()->update([
-            'password' => Hash::make($request->password),
+        $user = Auth::user();
+
+        $user->update([
+            'password' => $request->password,
             'wajib_ganti_password' => false,
         ]);
 
-        return back()->with('success', 'Password berhasil diperbarui.');
+        $request->session()->regenerate();
+
+        return redirect()->route($user->homeRoute())
+            ->with('success', 'Password berhasil diperbarui.');
     }
 }

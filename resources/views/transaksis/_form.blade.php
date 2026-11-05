@@ -52,7 +52,7 @@
             </div>
 
             <div class="combobox-group-item">
-                <label class="form-label" for="customer-phone-input">PHONE NUMBER <span class="unique-key-hint">(ID Unik Database)</span></label>
+                <label class="form-label" for="customer-phone-input">NOMOR TELEPON <span class="unique-key-hint">(ID Unik Database)</span></label>
                 <div class="combobox-wrapper" id="phone-combobox-wrapper">
                     <div class="combobox-input-box">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -67,7 +67,7 @@
         {{-- Native Date & Time Pickers Row --}}
         <div class="date-time-grid">
             <div>
-                <label class="form-label" for="input-date">DATE</label>
+                <label class="form-label" for="input-date">TANGGAL</label>
                 <div class="input-container-icon">
                     <svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <div>
-                <label class="form-label" for="input-time">TIME</label>
+                <label class="form-label" for="input-time">WAKTU</label>
                 <div class="input-container-icon">
                     <svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -124,7 +124,7 @@
                     <line x1="8" y1="2" x2="8" y2="6"></line>
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                <h2 class="card-section-title">Isi dari Appointment</h2>
+                <h2 class="card-section-title">Isi dari Janji Temu</h2>
                 <button type="button" id="appt_toggle" class="btn btn-secondary" style="margin-left: auto;">Sembunyikan</button>
             </div>
             <div id="appt_picker_body" class="appt-picker-body">
@@ -136,7 +136,7 @@
                     <button type="button" id="appt_load_btn" class="btn btn-secondary" style="padding: 9px 16px;">Muat Jadwal</button>
                 </div>
                 <div id="appt_list" class="appt-list"></div>
-                <p id="appt_empty" class="appt-empty-text hidden">Tidak ada appointment pada tanggal ini.</p>
+                <p id="appt_empty" class="appt-empty-text hidden">Tidak ada janji temu pada tanggal ini.</p>
             </div>
         </article>
 
@@ -151,12 +151,12 @@
                 <line x1="12" y1="8" x2="12" y2="16"></line>
                 <line x1="8" y1="12" x2="16" y2="12"></line>
             </svg>
-            <span>ADD SERVICE</span>
+            <span>TAMBAH LAYANAN</span>
         </button>
 
         {{-- Card: Special Notes (Optional) --}}
         <article class="card" data-field="notes-card">
-            <label class="form-label" for="notes-textarea">SPECIAL NOTES (OPTIONAL)</label>
+            <label class="form-label" for="notes-textarea">CATATAN KHUSUS (OPSIONAL)</label>
             <textarea id="notes-textarea" class="notes-textarea" rows="3" placeholder="Catatan umum untuk transaksi ini (diteruskan ke riwayat)..."></textarea>
         </article>
 
@@ -170,7 +170,7 @@
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                <h2 class="card-section-title">Service Summary</h2>
+                <h2 class="card-section-title">Ringkasan Layanan</h2>
                 <span class="unique-key-hint" style="margin-left: auto;">Total dikalkulasi otomatis</span>
             </div>
             <div class="summary-rows">
@@ -201,7 +201,7 @@
                     <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                     <line x1="2" y1="10" x2="22" y2="10"></line>
                 </svg>
-                <h2 class="card-section-title">Payment Method</h2>
+                <h2 class="card-section-title">Metode Pembayaran</h2>
             </div>
 
             <div class="payment-methods-list" id="payment-methods-group">
@@ -220,7 +220,7 @@
                         </div>
                         <div class="payment-texts">
                             <span class="payment-title">QRIS BNI</span>
-                            <span class="payment-subtitle">Scan to pay instantly</span>
+                            <span class="payment-subtitle">Pindai untuk bayar instan</span>
                         </div>
                     </div>
                     <input type="radio" id="pay-qris-bni" name="metode_pembayaran" value="qris_bni" @checked(old('metode_pembayaran', 'qris_bni') === 'qris_bni') required>
@@ -242,7 +242,7 @@
                         </div>
                         <div class="payment-texts">
                             <span class="payment-title">QRIS BRI</span>
-                            <span class="payment-subtitle">Scan to pay instantly</span>
+                            <span class="payment-subtitle">Pindai untuk bayar instan</span>
                         </div>
                     </div>
                     <input type="radio" id="pay-qris-bri" name="metode_pembayaran" value="qris_bri" @checked(old('metode_pembayaran') === 'qris_bri')>
@@ -276,7 +276,7 @@
                         </div>
                         <div class="payment-texts">
                             <span class="payment-title">Kartu Kredit</span>
-                            <span class="payment-subtitle">Credit card / Manual Entry</span>
+                            <span class="payment-subtitle">Kartu kredit / input manual</span>
                         </div>
                     </div>
                     <input type="radio" id="pay-kartu-kredit" name="metode_pembayaran" value="kartu_kredit" @checked(old('metode_pembayaran') === 'kartu_kredit')>
@@ -293,8 +293,8 @@
                             </svg>
                         </div>
                         <div class="payment-texts">
-                            <span class="payment-title">Cash</span>
-                            <span class="payment-subtitle">Pay at front desk</span>
+                            <span class="payment-title">Tunai</span>
+                            <span class="payment-subtitle">Bayar di meja kasir</span>
                         </div>
                     </div>
                     <input type="radio" id="pay-cash" name="metode_pembayaran" value="cash" @checked(old('metode_pembayaran') === 'cash')>
@@ -641,7 +641,7 @@
         function buildItemHtml(idx) {
             return '<article class="item-row card service-item-card" data-idx="' + idx + '">' +
                 '<div class="service-item-header">' +
-                    '<span class="label-caps service-item-number">SERVICE ITEM #' + (idx + 1) + '</span>' +
+                    '<span class="label-caps service-item-number">ITEM LAYANAN #' + (idx + 1) + '</span>' +
                     '<div class="item-type-toggle">' +
                         '<label class="segmented-pill-label' + ' active' + '">' +
                             '<input type="radio" name="tipe-' + idx + '" value="layanan" checked onchange="switchTipe(' + idx + ', \'layanan\')">' +
@@ -652,7 +652,7 @@
                             '<span>Produk</span>' +
                         '</label>' +
                     '</div>' +
-                    '<button type="button" class="btn-delete-service" data-action="delete-service" onclick="removeItem(this)" title="Hapus Service Item Ini" style="display: none;">' +
+                    '<button type="button" class="btn-delete-service" data-action="delete-service" onclick="removeItem(this)" title="Hapus Item Layanan Ini" style="display: none;">' +
                         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                             '<polyline points="3 6 5 6 21 6"></polyline>' +
                             '<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>' +
@@ -715,7 +715,7 @@
 
                 // SERVICE
                 '<div class="has-dropdown">' +
-                    '<label class="form-label">SERVICE</label>' +
+                    '<label class="form-label">LAYANAN</label>' +
                     '<div class="input-container-icon">' +
                         '<svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                             '<circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle>' +
@@ -748,7 +748,7 @@
 
                     // ASSIGNED STYLIST + KOMISI STAF 1
                     '<div class="assigned-stylists-group">' +
-                        '<label class="form-label">ASSIGNED STYLIST / KARYAWAN</label>' +
+                        '<label class="form-label">STYLIST / KARYAWAN BERTUGAS</label>' +
                         '<div class="form-grid-2">' +
                             '<div>' +
                                 '<label class="form-label">STAF 1</label>' +
@@ -793,17 +793,17 @@
 
                     // PRODUCT / BRAND (produk yang dipakai)
                     '<div class="products-group">' +
-                        '<label class="form-label">PRODUCT / BRAND (PRODUK YANG DIPAKAI)</label>' +
+                        '<label class="form-label">PRODUK / MEREK (PRODUK YANG DIPAKAI)</label>' +
                         '<div class="produk-usage-list" style="display: flex; flex-direction: column; gap: 12px;"></div>' +
                         '<button type="button" class="btn-dashed-mini add-produk-usage" data-action="add-product">' +
                             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>' +
-                            '<span>ADD PRODUCT</span>' +
+                            '<span>TAMBAH PRODUK</span>' +
                         '</button>' +
                     '</div>' +
 
                     // HAIR THICKNESS
                     '<div>' +
-                        '<label class="form-label">HAIR THICKNESS (KETEBALAN RAMBUT)</label>' +
+                        '<label class="form-label">KETEBALAN RAMBUT</label>' +
                         '<div class="segmented-pill-group is-static">' +
                             '<label class="segmented-pill-label">' +
                                 '<input type="radio" name="items[' + idx + '][ketebalan_rambut]" value="Tipis">' +
@@ -831,7 +831,7 @@
 
                     // CATATAN
                     '<div>' +
-                        '<label class="form-label">CATATAN ITEM (OPTIONAL)</label>' +
+                        '<label class="form-label">CATATAN ITEM (OPSIONAL)</label>' +
                         '<textarea name="items[' + idx + '][catatan]" rows="2" class="notes-textarea" placeholder="Detail hasil treatment / tambahan..."></textarea>' +
                     '</div>' +
 
@@ -842,7 +842,7 @@
         function buildProdukBody(idx) {
             return '<div style="display: flex; flex-direction: column; gap: 16px;">' +
                 '<div class="has-dropdown">' +
-                    '<label class="form-label">PRODUCT (DIJUAL PER PCS)</label>' +
+                    '<label class="form-label">PRODUK (DIJUAL PER PCS)</label>' +
                     '<div class="input-container-icon">' +
                         '<svg class="input-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                             '<path d="m7.5 4.27 9 5.15"></path><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>' +
@@ -878,7 +878,7 @@
                         '<p class="produk-subtotal-display" style="font-size: 1.15rem; font-weight: 900; color: var(--text-primary); margin: 0;">Rp0</p>' +
                     '</div>' +
                     '<div>' +
-                        '<label class="form-label">CATATAN (OPTIONAL)</label>' +
+                        '<label class="form-label">CATATAN (OPSIONAL)</label>' +
                         '<textarea name="items[' + idx + '][catatan]" rows="2" class="notes-textarea" placeholder="Detail produk..."></textarea>' +
                     '</div>' +
                 '</div>' +
@@ -1464,7 +1464,7 @@
             if (stokDisplay && stokWarning) {
                 var stok = parseFloat(stokDisplay.textContent) || 0;
                 if (parseFloat(qty) > stok) {
-                    stokWarning.textContent = 'Qty melebihi stok!';
+                    stokWarning.textContent = 'Jumlah melebihi stok!';
                     stokWarning.classList.remove('hidden');
                 } else if (stok <= 2 && parseFloat(qty) > 0) {
                     stokWarning.textContent = 'Stok hampir habis';
@@ -1506,7 +1506,7 @@
             var items = document.querySelectorAll('.item-row');
             items.forEach(function(row, i) {
                 var num = row.querySelector('.service-item-number');
-                if (num) num.textContent = 'SERVICE ITEM #' + (i + 1);
+                if (num) num.textContent = 'ITEM LAYANAN #' + (i + 1);
             });
             syncDeleteVisibility();
             recalcTotal();
@@ -1671,16 +1671,16 @@
                     });
                     if ((res.appointments || []).length === 0) empty.classList.remove('hidden');
                 })
-                .catch(function() { alert('Gagal memuat jadwal appointment.'); });
+                .catch(function() { alert('Gagal memuat jadwal janji temu.'); });
         }
 
         window.applyAppointment = function(id) {
             var a = apptCache[id];
             if (!a) return;
-            if (!a.id_pelanggan) { alert('Appointment ini belum punya pelanggan.'); return; }
-            if (!a.id_karyawan) { alert('Appointment ini belum punya stylist.'); return; }
-            if (a.status === 'batal') { alert('Appointment berstatus batal.'); return; }
-            if (!a.id_layanan || a.id_layanan.length === 0) { alert('Appointment ini belum punya layanan.'); return; }
+            if (!a.id_pelanggan) { alert('Janji temu ini belum punya pelanggan.'); return; }
+            if (!a.id_karyawan) { alert('Janji temu ini belum punya stylist.'); return; }
+            if (a.status === 'batal') { alert('Janji temu berstatus batal.'); return; }
+            if (!a.id_layanan || a.id_layanan.length === 0) { alert('Janji temu ini belum punya layanan.'); return; }
 
             document.querySelectorAll('.item-row').forEach(function(row) { row.remove(); });
             itemIndex = 0;

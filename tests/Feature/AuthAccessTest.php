@@ -150,7 +150,125 @@ class AuthAccessTest extends TestCase
         $this->post(route('logout'))->assertRedirect(route('login'));
 
         $this->post(route('login.post'), ['username' => 'ks', 'password' => 'secret123'])
-            ->assertRedirect(route('pelanggan.index'));
+            ->assertRedirect(route('transaksi.create'));
+    }
+
+    public function test_pengguna_sudah_login_dialihkan_ke_beranda_sesuai_peran(): void
+    {
+        $this->actingAs($this->user('kasir'))
+            ->get(route('login'))
+            ->assertRedirect(route('transaksi.create'));
+
+        $this->actingAs($this->user('owner'))
+            ->get(route('login'))
+            ->assertRedirect(route('dashboard'));
+    }
+
+    public function test_root_dialihkan_ke_beranda_sesuai_peran(): void
+    {
+        $this->actingAs($this->user('kasir'))
+            ->get('/')
+            ->assertRedirect(route('transaksi.create'));
+
+        $this->actingAs($this->user('owner'))
+            ->get('/')
+            ->assertRedirect(route('dashboard'));
+    }
+
+    public function test_kasir_wajib_ganti_password_tetap_di_profil_lalu_ke_form_transaksi(): void
+    {
+        $kasir = User::factory()->create([
+            'password' => 'secret123',
+            'role' => 'kasir',
+            'wajib_ganti_password' => true,
+        ]);
+
+        $this->actingAs($kasir)
+            ->get('/')
+            ->assertRedirect(route('profile.show').'#ganti-password');
+
+        $this->actingAs($kasir)
+            ->put(route('profile.password.update'), [
+                'current_password' => 'secret123',
+                'password' => 'passwordbaru123',
+                'password_confirmation' => 'passwordbaru123',
+            ])
+            ->assertRedirect(route('transaksi.create'));
+
+        $this->assertFalse($kasir->fresh()->wajib_ganti_password);
+    }
+
+    public function test_logo_mengarah_ke_beranda_sesuai_peran(): void
+    {
+        $this->actingAs($this->user('kasir'))
+            ->get(route('profile.show'))
+            ->assertOk()
+            ->assertSee('href="'.route('transaksi.create').'" class="sidebar-brand-title"', false)
+            ->assertSee('href="'.route('transaksi.create').'" class="brand-logo mobile-only"', false);
+
+        $this->actingAs($this->user('owner'))
+            ->get(route('profile.show'))
+            ->assertOk()
+            ->assertSee('href="'.route('dashboard').'" class="sidebar-brand-title"', false)
+            ->assertSee('href="'.route('dashboard').'" class="brand-logo mobile-only"', false);
+    }
+
+    public function test_sidebar_kasir_menampilkan_transaksi_baru_paling_atas_dan_riwayat_transaksi(): void
+    {
+        $this->actingAs($this->user('kasir'))
+            ->get(route('profile.show'))
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Transaksi Baru',
+                'Pelanggan',
+                'Karyawan',
+                'Layanan',
+                'Produk',
+                'Riwayat Transaksi',
+                'Janji Temu',
+                'Absensi',
+            ])
+            ->assertDontSee('nav-dashboard');
+    }
+
+    public function test_kasir_tetap_forbidden_di_route_owner(): void
+    {
+        $this->actingAs($this->user('kasir'));
+
+        $this->get(route('dashboard'))->assertForbidden();
+        $this->get(route('pengguna.index'))->assertForbidden();
+        $this->get(route('laporan.penjualan'))->assertForbidden();
+    }
+
+    public function test_penanda_menu_aktif_form_transaksi_sesuai_peran(): void
+    {
+        $this->actingAs($this->user('kasir'))
+            ->get(route('transaksi.create'))
+            ->assertOk()
+            ->assertSee('data-nav-active="transaksi-baru"', false);
+
+        $this->actingAs($this->user('owner'))
+            ->get(route('transaksi.create'))
+            ->assertOk()
+            ->assertSee('data-nav-active="history"', false);
+    }
+
+    public function test_sidebar_owner_tidak_berubah(): void
+    {
+        $this->actingAs($this->user('owner'))
+            ->get(route('profile.show'))
+            ->assertOk()
+            ->assertDontSee('Transaksi Baru')
+            ->assertSeeInOrder([
+                'Dasbor',
+                'Pelanggan',
+                'Karyawan',
+                'Layanan',
+                'Produk',
+                'Transaksi',
+                'Janji Temu',
+                'Absensi',
+            ]);
     }
 
     public function test_login_gagal_dibatasi_rate_limiter(): void

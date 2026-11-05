@@ -11,8 +11,8 @@
 @section('content')
     <!-- Section Intro & Add Button -->
     <div class="services-intro-section">
-        <h1 class="services-title">Service Management</h1>
-        <p class="services-subtitle">Organize and update your premium salon offerings.</p>
+        <h1 class="services-title">Manajemen Layanan</h1>
+        <p class="services-subtitle">Kelola dan perbarui layanan salon premium Anda.</p>
     </div>
 
     <div class="list-toolbar">
@@ -48,7 +48,7 @@
                 'all' => 'Semua',
                 'potong' => 'Potong',
                 'styling' => 'Styling',
-                'warna' => 'Warna &amp; Highlights',
+                'warna' => 'Warna &amp; Highlight',
                 'spa' => 'Spa',
             ];
             $pillValues = ['all', 'potong', 'styling', 'warna', 'spa'];
@@ -81,9 +81,9 @@
                     $catKey = 'potong';
                 }
                 $tagTokens = [
-                    'potong' => 'HAIR',
+                    'potong' => 'POTONG',
                     'styling' => 'STYLING',
-                    'warna' => 'COLOR',
+                    'warna' => 'WARNA',
                     'spa' => 'SPA',
                 ];
                 $hargaList = $l->hargaLayanan;
@@ -97,7 +97,7 @@
                 <div class="service-card-top">
                     <span class="category-tag {{ $catKey }}">{{ $tagTokens[$catKey] }}</span>
                     <div class="card-actions-group">
-                        <a href="{{ route('layanan.edit', $l) }}" class="btn-edit-icon" aria-label="Edit {{ $l->nama_layanan }}">
+                        <a href="{{ route('layanan.edit', $l) }}" class="btn-edit-icon" aria-label="Ubah {{ $l->nama_layanan }}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>

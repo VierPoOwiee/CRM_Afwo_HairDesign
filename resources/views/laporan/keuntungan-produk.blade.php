@@ -22,7 +22,7 @@
     <div class="report-intro-section">
         <h1 class="report-title">Laporan Keuntungan Produk</h1>
         <p class="report-subtitle">
-            Selisih harga jual dengan modal (harga beli/restock) yang tersimpan saat transaksi.
+            Selisih harga jual dengan modal (harga beli/tambah stok) yang tersimpan saat transaksi.
             Modal rata-rata dihitung otomatis dari riwayat pembelian.
         </p>
     </div>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Notifications\PasswordChangedNotification;
-use App\Support\RecoveryCodes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -22,9 +21,7 @@ class PasswordResetController extends Controller
 
     private const DECAY_SECONDS = 900;
 
-    private const PESAN_UMUM = 'Jika akun terdaftar dan memiliki email pemulihan, tautan reset sudah dikirim. Cek juga folder spam.';
-
-    private const PESAN_KODE_SALAH = 'Username atau kode pemulihan tidak valid.';
+    private const PESAN_UMUM = 'Jika akun terdaftar dan memiliki email pemulihan, tautan reset sudah dikirim. Cek juga folder spam. Tautan berlaku 30 menit.';
 
     private const PESAN_TAUTAN_SALAH = 'Tautan reset tidak valid atau sudah kedaluwarsa.';
 
@@ -42,6 +39,7 @@ class PasswordResetController extends Controller
         ]);
 
         $identifier = trim((string) $request->input('login'));
+        $identifierLower = Str::lower($identifier);
         $kunci = $this->kunciPembatas('email', $identifier, $request);
 
         if (RateLimiter::tooManyAttempts($kunci, self::MAX_ATTEMPTS)) {
@@ -53,16 +51,38 @@ class PasswordResetController extends Controller
         }
 
         $user = User::query()
-            ->where('username', Str::lower($identifier))
-            ->orWhere('email', $identifier)
+            ->where('username', $identifierLower)
+            ->orWhereRaw('LOWER(email) = ?', [$identifierLower])
             ->first();
 
-        if ($user && $user->aktif && filled($user->email)) {
+        if (! $user) {
+            Log::info('Permintaan reset password tidak diproses: akun tidak ditemukan.', [
+                'ip' => $request->ip(),
+            ]);
+        } elseif (! $user->aktif) {
+            Log::warning('Permintaan reset password tidak diproses: akun nonaktif.', [
+                'user_id' => $user->id,
+            ]);
+        } elseif (! filled($user->email)) {
+            Log::warning('Permintaan reset password tidak diproses: akun tidak memiliki email.', [
+                'user_id' => $user->id,
+            ]);
+        } else {
+            $this->catatMailerModePengembangan();
+
             try {
-                Password::broker()->sendResetLink(['email' => $user->email]);
+                $status = Password::broker()->sendResetLink(['email' => $user->email]);
+
+                if ($status !== Password::RESET_LINK_SENT) {
+                    Log::warning('Permintaan reset password tidak terkirim oleh broker.', [
+                        'user_id' => $user->id,
+                        'status' => $status,
+                    ]);
+                }
             } catch (\Throwable $e) {
                 // Jangan bocorkan detail kegagalan pengiriman ke pengguna.
-                Log::error('Gagal mengirim email reset password.', [
+                Log::error('Gagal mengirim email reset password', [
+                    'user_id' => $user->id,
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -94,7 +114,8 @@ class PasswordResetController extends Controller
             'password.min' => 'Password minimal 8 karakter.',
         ]);
 
-        $user = User::where('email', $request->input('email'))->first();
+        $email = Str::lower(trim((string) $request->input('email')));
+        $user = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
         if (! $user || ! $user->aktif) {
             throw ValidationException::withMessages([
@@ -102,12 +123,13 @@ class PasswordResetController extends Controller
             ]);
         }
 
-        $status = Password::broker()->reset(
-            $request->only('email', 'password', 'token'),
-            function (User $user, string $password) use ($request) {
-                $this->simpanPasswordBaru($request, $user, $password, 'email');
-            }
-        );
+        $status = Password::broker()->reset([
+            'email' => $user->email,
+            'password' => (string) $request->input('password'),
+            'token' => (string) $request->input('token'),
+        ], function (User $user, string $password) use ($request) {
+            $this->simpanPasswordBaru($request, $user, $password);
+        });
 
         if ($status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
@@ -121,73 +143,7 @@ class PasswordResetController extends Controller
         );
     }
 
-    public function showRecoveryForm()
-    {
-        return view('auth.recovery-code');
-    }
-
-    public function recoverWithCode(Request $request)
-    {
-        $request->validate([
-            'username' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:50'],
-            'password' => ['required', 'confirmed', PasswordRule::min(8)],
-        ], [
-            'username.required' => 'Masukkan username.',
-            'code.required' => 'Masukkan kode pemulihan.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password minimal 8 karakter.',
-        ]);
-
-        $username = Str::lower(trim((string) $request->input('username')));
-        $kunci = $this->kunciPembatas('recovery', $username, $request);
-
-        if (RateLimiter::tooManyAttempts($kunci, self::MAX_ATTEMPTS)) {
-            $detik = RateLimiter::availableIn($kunci);
-
-            throw ValidationException::withMessages([
-                'code' => "Terlalu banyak percobaan, coba lagi dalam {$detik} detik.",
-            ]);
-        }
-
-        $kode = RecoveryCodes::normalize((string) $request->input('code'));
-        $user = User::where('username', $username)->first();
-
-        if (! $user || ! $user->aktif) {
-            RateLimiter::hit($kunci, self::DECAY_SECONDS);
-
-            throw ValidationException::withMessages([
-                'code' => self::PESAN_KODE_SALAH,
-            ]);
-        }
-
-        $kodeCocok = $user->recoveryCodes()
-            ->whereNull('used_at')
-            ->get()
-            ->first(fn ($item) => Hash::check($kode, $item->code_hash));
-
-        if (! $kodeCocok) {
-            RateLimiter::hit($kunci, self::DECAY_SECONDS);
-
-            throw ValidationException::withMessages([
-                'code' => self::PESAN_KODE_SALAH,
-            ]);
-        }
-
-        $kodeCocok->used_at = now();
-        $kodeCocok->save();
-
-        $this->simpanPasswordBaru($request, $user, (string) $request->input('password'), 'kode');
-
-        RateLimiter::clear($kunci);
-
-        return redirect()->route('login')->with(
-            'success',
-            'Password berhasil diubah. Silakan masuk dengan password baru Anda.'
-        );
-    }
-
-    private function simpanPasswordBaru(Request $request, User $user, string $password, string $jalur): void
+    private function simpanPasswordBaru(Request $request, User $user, string $password): void
     {
         $user->password = Hash::make($password);
         $user->wajib_ganti_password = false;
@@ -210,8 +166,17 @@ class PasswordResetController extends Controller
             'username' => $user->username,
             'ip' => $request->ip(),
             'waktu' => now()->toDateTimeString(),
-            'jalur' => $jalur,
+            'jalur' => 'email',
         ]);
+    }
+
+    private function catatMailerModePengembangan(): void
+    {
+        $mailer = config('mail.default');
+
+        if (app()->environment('local') && in_array($mailer, ['log', 'array'], true)) {
+            Log::warning("MAIL_MAILER={$mailer}: email tidak benar-benar dikirim; tautan reset ada di log ini.");
+        }
     }
 
     private function hapusSesi(User $user): void

@@ -210,7 +210,7 @@
                 <label class="form-label">Modal rata-rata saat ini</label>
                 <div class="modal-note-box">
                     <span class="modal-note-value">{{ $produk->labelModalPerSatuan() }}</span>
-                    <span class="field-help-text">Modal tidak diedit manual &mdash; otomatis dihitung ulang setiap kali <a href="{{ route('produk.restock-form', $produk) }}" class="modal-note-link">Restock</a> produk ini.</span>
+                    <span class="field-help-text">Modal tidak diedit manual &mdash; otomatis dihitung ulang setiap kali <a href="{{ route('produk.restock-form', $produk) }}" class="modal-note-link">Tambah Stok</a> produk ini.</span>
                 </div>
             </div>
         @endif

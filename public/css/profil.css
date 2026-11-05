@@ -299,104 +299,32 @@
   color: var(--text-link);
 }
 
-/* Kode pemulihan */
-.profil-recovery-box {
-  border: 1px solid var(--border-accent);
-  background-color: var(--accent-soft);
+/* Banner wajib ganti password */
+.profil-force-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent);
   border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 18px;
+  background-color: var(--accent-soft);
+  color: var(--text-link);
 }
 
-.profil-recovery-warning {
-  font-size: 0.84rem;
+.profil-force-banner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.profil-force-banner p {
+  margin: 0;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.5;
-  color: var(--text-link);
-  margin-bottom: 12px;
 }
 
-.profil-recovery-grid {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-}
-
-.profil-recovery-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background-color: var(--surface);
-}
-
-.profil-recovery-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.88rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--text-1);
-  overflow-wrap: anywhere;
-}
-
-.btn-profil-copy,
-.btn-profil-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background-color: var(--surface);
-  color: var(--text-1);
-  font-family: inherit;
-  font-size: 0.76rem;
-  font-weight: 700;
-  padding: 5px 10px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.btn-profil-copy:hover,
-.btn-profil-secondary:hover {
-  background-color: var(--surface-2);
-  border-color: var(--border-strong, var(--border));
-}
-
-.btn-profil-copy:focus-visible,
-.btn-profil-secondary:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.profil-recovery-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.profil-recovery-status {
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--border);
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--text-2);
-  margin-bottom: 16px;
-}
-
-.profil-recovery-status.is-active {
-  border-style: solid;
-  border-color: var(--status-ok-border);
-  background-color: var(--status-ok-bg);
-  color: var(--status-ok-fg);
+#ganti-password {
+  scroll-margin-top: 90px;
 }
 
 /* Responsive adjustment */
@@ -407,9 +335,5 @@
   
   .btn-profil-submit {
     width: 100%;
-  }
-
-  .profil-recovery-grid {
-    grid-template-columns: 1fr;
   }
 }
